@@ -1,2 +1,2 @@
-class Scraper:
+class WebsiteScraper:
     pass

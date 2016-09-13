@@ -1,4 +1,4 @@
-from scraper.scraper import Scraper
+from scraper.scraper import WebsiteScraper
 
-class JustGivingScraper(Scraper):
+class JustGivingScraper(WebsiteScraper):
     pass
