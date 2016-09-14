@@ -44,9 +44,11 @@ class SoupDataSources:
     def __init__(self):
         self.sources = {}
 
+    # Reference: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
     def set_source(self, source_name, tag_type, tag_class='', tag_id=''):
         # TODO: Validate against a known set of tag types
-        # TODO: Check if BS4 requires the # for a tag id and if not, remove it from the string
+        # Remove the # from the id
+        tag_id = tag_id.replace('#', '')
         self.sources[source_name] = {
             'tag': tag_type,
             'class': tag_class,
@@ -54,9 +56,25 @@ class SoupDataSources:
         }
 
     # Get the dictionary for parameters, translated from the internal SoupDataSources dictionary to what BS4 understands
-    def get_bs4_find_parameters(self, source_name):
+    def get_bs4_find_parameters_dict(self, source_name):
+        return {
+            'class': self.get_source_class(source_name=source_name),
+            'id': self.get_source_id(source_name=source_name)
+        }
+
+    def get_source_tag(self, source_name):
+        return self.get_source_attribute(source_name=source_name, attribute='tag')
+
+    def get_source_class(self, source_name):
+        return self.get_source_attribute(source_name=source_name, attribute='class')
+
+    def get_source_id(self, source_name):
+        return self.get_source_attribute(source_name=source_name, attribute='id')
+
+    def get_source_attribute(self, source_name, attribute):
         if not self.source_available(source_name=source_name):
             raise SoupDataSourceNotRegisteredException
+        return self.sources[attribute]
 
     def source_available(self, source_name):
         return source_name in self.sources
