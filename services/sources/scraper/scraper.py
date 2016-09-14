@@ -29,3 +29,28 @@ class Scraper:
 
     def soup_url_contents(self):
         return BeautifulSoup(self.get_url_contents(), self.parser)
+
+
+class SoupDataSources:
+    """
+    This class represents the locations on an HTML page where specific sources (such as amount raised
+    or number of donations) can be found.
+    """
+    def __init__(self):
+        self.sources = {}
+
+    def set_source(self, source_name, tag_type, tag_class='', tag_id=''):
+        # TODO: Validate against a known set of tag types
+        # TODO: Check if BS4 requires the # for a tag id and if not, remove it from the string
+        self.sources[source_name] = {
+            'tag': tag_type,
+            'class': tag_class,
+            'id': tag_id
+        }
+
+    # Get the dictionary for parameters, translated from the internal SoupDataSources dictionary to what BS4 understands
+    def get_bs4_find_parameters(self, source_name):
+        pass
+
+    def source_available(self, source_name):
+        return source_name in self.sources
