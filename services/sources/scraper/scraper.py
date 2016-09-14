@@ -24,7 +24,7 @@ class Scraper:
         try:
             self.get.make_request()
         except smokesignal.exceptions.ConnectionFailedException:
-            raise SourceUnavailableException('Could not connect to url: {0}'.format(self.url))
+            raise SourceUnavailableException('Scraper could not connect to url: {0}'.format(self.url))
         return self.get.get_response_contents()
 
     def soup_url_contents(self):
