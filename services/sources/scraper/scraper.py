@@ -74,7 +74,10 @@ class SoupDataSources:
     def get_source_attribute(self, source_name, attribute):
         if not self.source_available(source_name=source_name):
             raise SoupDataSourceNotRegisteredException
-        return self.sources[attribute]
+        return self.sources[source_name][attribute]
 
     def source_available(self, source_name):
         return source_name in self.sources
+
+    def get_available_source_names(self):
+        return self.sources.keys()
