@@ -31,6 +31,10 @@ class Scraper:
         return BeautifulSoup(self.get_url_contents(), self.parser)
 
 
+class SoupDataSourceNotRegisteredException(Exception):
+    pass
+
+
 class SoupDataSources:
     """
     This class represents the locations on an HTML page where specific sources (such as amount raised
@@ -50,7 +54,8 @@ class SoupDataSources:
 
     # Get the dictionary for parameters, translated from the internal SoupDataSources dictionary to what BS4 understands
     def get_bs4_find_parameters(self, source_name):
-        pass
+        if not self.source_available(source_name=source_name):
+            raise SoupDataSourceNotRegisteredException
 
     def source_available(self, source_name):
         return source_name in self.sources
