@@ -23,7 +23,7 @@ class JustGivingScraper(Scraper):
     def validate_scraper(self):
         if not self.fundraiser_name:
             raise NoFundraiserNameGivenException('Cannot start a JustGiving object without a fundraiser name')
-        if not self.is_url_valid():
+        if not self.url_is_valid():
             raise InvalidFundraiserUrlException('Fundraiser URL could not be validated. Make sure the name is correct?')
         self.is_valid = True
 
