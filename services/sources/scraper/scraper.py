@@ -43,6 +43,16 @@ class SoupDataSources:
     """
     def __init__(self):
         self.sources = {}
+        self.source_names = [
+            'amount_raised',
+            'amount_target',
+            'last_donation_name',
+            'last_donation_source',
+            'last_donation_amount',
+            'last_donation_message',
+            'last_donation_timestamp',
+            'last_donation_giftaid'
+        ]
 
     # Reference: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
     def set_source(self, source_name, tag_type, tag_class='', tag_id=''):
@@ -54,6 +64,9 @@ class SoupDataSources:
             'class': tag_class,
             'id': tag_id
         }
+
+    def is_source_valid(self, source_name):
+        return source_name in self.source_names
 
     # Get the dictionary for parameters, translated from the internal SoupDataSources dictionary to what BS4 understands
     def get_bs4_find_parameters_dict(self, source_name):
