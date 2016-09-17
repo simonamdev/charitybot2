@@ -80,4 +80,4 @@ class SoupDataSources:
         return source_name in self.sources
 
     def get_available_source_names(self):
-        return self.sources.keys()
+        return tuple(self.sources.keys())
