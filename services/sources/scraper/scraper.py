@@ -36,6 +36,10 @@ class SoupDataSourceNotRegisteredException(Exception):
     pass
 
 
+class InvalidSoupSourceNameGiven(Exception):
+    pass
+
+
 class SoupDataSources:
     """
     This class represents the locations on an HTML page where specific sources (such as amount raised
@@ -56,7 +60,8 @@ class SoupDataSources:
 
     # Reference: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
     def set_source(self, source_name, tag_type, tag_class='', tag_id=''):
-        # TODO: Validate against a known set of tag types
+        if not self.is_source_valid(source_name=source_name):
+            raise InvalidSoupSourceNameGiven('')
         # Remove the # from the id
         tag_id = tag_id.replace('#', '')
         self.sources[source_name] = {
