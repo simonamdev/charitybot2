@@ -12,7 +12,8 @@ def test_url_is_valid():
 
 def test_non_empty_url_contents():
     s = scraper.Scraper(url=url, verbose=True)
-    contents = s.get_url_contents()
+    s.get_url_contents()
+    contents = s.url_contents
     assert '<!DOCTYPE html>' in contents
 
 
@@ -23,5 +24,5 @@ def test_non_available_source_exception():
 
 def test_soup_valid_url_returns_bs4_object():
     s = scraper.Scraper(url=url, verbose=True)
-    soup = s.get_soup_from_url()
+    soup = s.get_soup()
     assert isinstance(soup, type(BeautifulSoup('<h1>something</h1>', 'lxml')))

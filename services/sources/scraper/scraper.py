@@ -16,6 +16,8 @@ class Scraper:
         self.parser = 'lxml'
         self.get = smokesignal.GetRequest(url=url, verbose=verbose)
         self.url_is_valid = self.check_url_is_valid()
+        self.url_contents = None
+        self.url_soup = None
 
     def check_url_is_valid(self):
         try:
@@ -24,12 +26,18 @@ class Scraper:
             raise SourceUnavailableException('Scraper could not connect to url: {0}'.format(self.url))
         return self.get.get_response_code() == 200
 
+    # TODO: Review and clean this API
     def get_url_contents(self):
         self.get.make_request()
-        return self.get.get_response_contents()
+        self.url_contents = self.get.get_response_contents()
 
     def get_soup_from_url(self):
-        return BeautifulSoup(self.get_url_contents(), self.parser)
+        self.get_url_contents()
+        self.url_soup = BeautifulSoup(self.url_contents, self.parser)
+
+    def get_soup(self):
+        self.get_soup_from_url()
+        return self.url_soup
 
 
 class SoupDataSourceNotRegisteredException(Exception):
