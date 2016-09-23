@@ -1,5 +1,6 @@
-from scraper import scraper
 import pytest
+
+from scraper import scraper
 
 
 def test_retrieval_of_passed_parameters():
