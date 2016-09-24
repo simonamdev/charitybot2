@@ -52,8 +52,8 @@ class EventConfiguration:
         try:
             self.config_data = json.loads(data)
         except json.decoder.JSONDecodeError:
-            raise InvalidEventConfigException('Event Configuration file'
-                                            ' is not correctly formatted {0}'.format(EventConfiguration.config_format))
+            raise InvalidEventConfigException('Event Configuration file '
+                                              'is not correctly formatted {0}'.format(EventConfiguration.config_format))
         self.validate_config_data()
 
     def get_config_last_read_time(self):
