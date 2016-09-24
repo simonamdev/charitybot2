@@ -32,6 +32,10 @@ class EventConfiguration:
         'update_tick'
     ]
 
+    list_keys = [
+        'sources_required'
+    ]
+
     def __init__(self, file_path):
         self.file_path = file_path
         if not self.config_exists():
@@ -66,6 +70,7 @@ class EventConfiguration:
             raise InvalidEventConfigException('Event Configuration file is not valid: it has some missing keys')
 
     def get_config_value(self, value_name):
+        self.read_config()
         if value_name not in EventConfiguration.keys_required:
             raise EventConfigFieldDoesNotExistException('Value {0} does not exist as one of the config fields'.format(value_name))
         return_value = self.config_data[value_name]
