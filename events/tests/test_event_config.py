@@ -8,11 +8,6 @@ current_directory = os.path.dirname(os.path.abspath(__file__))
 
 def get_config_file_path(config_name):
     return os.path.join(current_directory, 'configs', config_name + '.' + event_config.EventConfiguration.config_format)
-# valid_config_path = os.path.join(current_directory, 'valid_test_config.json')
-# invalid_json_config_path = os.path.join(current_directory, 'invalid_json_test_config.json')
-# invalid_config_path = os.path.join(current_directory, 'invalid_test_config.json')
-# empty_config_path = os.path.join(current_directory, 'empty_test_config.json')
-# no_source_config_path = os.path.join(current_directory, 'empty_source_event_config.json')
 
 
 def test_event_config_does_not_exist():
