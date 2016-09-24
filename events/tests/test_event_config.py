@@ -8,6 +8,7 @@ valid_config_path = os.path.join(current_directory, 'valid_test_config.json')
 invalid_json_config_path = os.path.join(current_directory, 'invalid_json_test_config.json')
 invalid_config_path = os.path.join(current_directory, 'invalid_test_config.json')
 empty_config_path = os.path.join(current_directory, 'empty_test_config.json')
+no_source_config_path = os.path.join(current_directory, 'empty_source_event_config.json')
 
 
 def test_event_config_does_not_exist():
@@ -73,6 +74,12 @@ def test_retrieving_non_integer_when_requesting_non_number_key_values():
         values.append(ec.get_config_value(value_name=key))
     for value in values:
         assert not isinstance(value, int)
+
+
+def test_no_defined_sources_throwing_invalid_config_exception():
+    ec = event_config.EventConfiguration(file_path=no_source_config_path)
+    with pytest.raises(event_config.InvalidEventConfigException):
+        ec.read_config()
 
 
 def test_retrieving_list_when_requesting_lift_key_values():

@@ -68,6 +68,8 @@ class EventConfiguration:
         same_keys_found = collections.Counter(EventConfiguration.keys_required) == collections.Counter(current_config_keys)
         if not same_keys_found:
             raise InvalidEventConfigException('Event Configuration file is not valid: it has some missing keys')
+        if len(self.config_data['sources_required']) == 0:
+            raise InvalidEventConfigException('Event Configuration file has no sources defined')
 
     def get_config_value(self, value_name):
         self.read_config()
