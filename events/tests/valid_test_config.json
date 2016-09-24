@@ -1,3 +1,10 @@
 {
-  "test": "test"
+  "name": "name",
+  "start_time": 0,
+  "end_time": 1,
+  "sources_required": [
+    "source_1",
+    "source_2"
+  ],
+  "update_tick": 5
 }
