@@ -70,6 +70,8 @@ class EventConfiguration:
             raise InvalidEventConfigException('Event Configuration file is not valid: it has some missing keys')
         if len(self.config_data['sources_required']) == 0:
             raise InvalidEventConfigException('Event Configuration file has no sources defined')
+        if self.config_data['end_time'] <= self.config_data['start_time']:
+            raise InvalidEventConfigException('Event end time cannot be after or the same as event start time')
 
     def get_config_value(self, value_name):
         self.read_config()

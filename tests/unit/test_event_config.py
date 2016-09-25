@@ -90,3 +90,8 @@ def test_retrieving_list_when_requesting_lift_key_values():
     for value in values:
         assert isinstance(value, list)
 
+
+def test_end_time_smaller_or_equal_to_start_time_rasies_exception():
+    ec = event_config.EventConfiguration(file_path=get_config_file_path('invalid_time_config'))
+    with pytest.raises(event_config.InvalidEventConfigException):
+        ec.read_config()
