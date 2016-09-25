@@ -1,13 +1,14 @@
 import os
-import events.event_config as event_config
-import sources.sources
+
+import charitybot2.events.event_config as event_config
+import charitybot2.sources.sources as sources
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 config_directory = os.path.join(current_directory, 'configs')
 good_source_path = os.path.join(config_directory, 'good_source_event_config.json')
 bad_source_path = os.path.join(config_directory, 'bad_source_event_config.json')
 
-sources_available = sources.sources.sources_available
+sources_available = sources.sources_available
 
 
 def test_bad_sources_in_event_config_throws_exception():

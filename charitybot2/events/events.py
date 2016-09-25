@@ -1,4 +1,4 @@
-import events.event_config as event_config
+import charitybot2.events.event_config as event_config
 
 
 class Event:

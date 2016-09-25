@@ -1,4 +1,4 @@
-from scraper.scraper import Scraper, SoupDataSources
+from .scraper import Scraper, SoupDataSources
 
 
 class NoFundraiserNameGivenException(Exception):

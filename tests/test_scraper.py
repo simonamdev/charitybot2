@@ -1,7 +1,7 @@
 import pytest
 from bs4 import BeautifulSoup
 
-from scraper import scraper
+import charitybot2.sources.scraper as scraper
 
 url = 'https://httpbin.org'
 
