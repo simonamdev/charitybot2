@@ -1,7 +1,8 @@
-import pytest
 import os
-from events import event_config
+import pytest
+import charitybot2.events.event_config as event_config
 from time import sleep
+
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 

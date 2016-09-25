@@ -1,6 +1,6 @@
 import pytest
 
-from scraper import scraper
+import charitybot2.sources.scraper as scraper
 
 
 def test_retrieval_of_passed_parameters():

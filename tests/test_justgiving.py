@@ -1,6 +1,5 @@
 import pytest
-
-import justgiving
+import charitybot2.sources.justgiving as justgiving
 
 
 def test_always_passes():
