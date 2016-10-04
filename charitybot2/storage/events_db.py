@@ -1,7 +1,13 @@
+import uuid
 from neopysqlite.neopysqlite import Neopysqlite
 from neopysqlite.neopysqlite import exception as npysql
 
+
 events_db_file_name = 'events.db'
+
+
+class EventAlreadyRegisteredException(Exception):
+    pass
 
 
 class EventsDB:
@@ -27,6 +33,13 @@ class EventsDB:
         self.print('Created DB at path: {}'.format(self.db_path))
 
     def event_exists(self, event_name):
-        print(self.db.get_all_rows(table='events'))
-        event_names = [row[1] for row in self.db.get_all_rows(table='events')]
-        return event_name in event_names
+        return event_name in self.get_all_event_names()
+
+    def get_all_event_names(self):
+        return [row[1] for row in self.db.get_all_rows(table='events')]
+
+    def register_event(self, event_name):
+        if event_name in self.get_all_event_names():
+            raise EventAlreadyRegisteredException('Event with name: {} is already registered'.format(event_name))
+        event_uuid = uuid.uuid4().bytes
+        self.db.insert_row(table='events', row_string='(NULL, ?, ?)', row_data=(event_name, event_uuid))
