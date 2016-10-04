@@ -12,6 +12,7 @@ test_events = [
     'event_two'
 ]
 
+
 class TestEventsDBInitialisation:
     def test_initialising_db(self):
         edb = EventsDB(db_path=dummy_db_path, verbose=True)

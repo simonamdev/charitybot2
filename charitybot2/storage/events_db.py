@@ -27,4 +27,6 @@ class EventsDB:
         self.print('Created DB at path: {}'.format(self.db_path))
 
     def event_exists(self, event_name):
-        pass
+        print(self.db.get_all_rows(table='events'))
+        event_names = [row[1] for row in self.db.get_all_rows(table='events')]
+        return event_name in event_names
