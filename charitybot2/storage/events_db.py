@@ -40,6 +40,14 @@ class EventsDB:
     def get_all_event_names(self):
         return [row[1] for row in self.db.get_all_rows(table='events')]
 
+    def get_event_metadata(self, event_name):
+        row = self.db.get_specific_rows(table='events', filter_string='name = \'{}\''.format(event_name))[0]
+        return {
+            'name': row[1],
+            'uuid': row[2],
+            'state': row[3]
+        }
+
     def register_event(self, event_name):
         if event_name in self.get_all_event_names():
             raise EventAlreadyRegisteredException('Event with name: {} is already registered'.format(event_name))

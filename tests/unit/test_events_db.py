@@ -33,6 +33,15 @@ class TestEventDBRetrieve:
         edb = EventsDB(db_path=test_db_path, verbose=True)
         assert sorted(test_events) == sorted(edb.get_all_event_names())
 
+    def test_get_event_metadata(self):
+        edb = EventsDB(db_path=test_db_path, verbose=True)
+        data = edb.get_event_metadata(event_name='event_two')
+        assert data == {
+            'name': 'event_two',
+            'uuid': '123457',
+            'state': EventsDB.event_default_state
+        }
+
 
 class TestEventDBCreate:
     def test_register_event_already_registered_throws_exception(self):
@@ -44,3 +53,7 @@ class TestEventDBCreate:
         edb = EventsDB(db_path=test_db_path, verbose=True)
         edb.register_event(event_name='new_event_one')
         assert edb.event_exists(event_name='new_event_one')
+
+    def test_new_events_default_state_is_correct(self):
+        edb = EventsDB(db_path=test_db_path, verbose=True)
+        edb.register_event(event_name='new_event_two')
