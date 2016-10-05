@@ -12,6 +12,11 @@ class EventAlreadyRegisteredException(Exception):
 
 class EventsDB:
     event_default_state = 'REGISTERED'
+    event_possible_states = [
+        'REGISTERED',
+        'ONGOING',
+        'COMPLETED'
+    ]
 
     def __init__(self, db_path=events_db_file_name, verbose=False):
         self.db_path = db_path
@@ -53,3 +58,6 @@ class EventsDB:
             raise EventAlreadyRegisteredException('Event with name: {} is already registered'.format(event_name))
         event_uuid = uuid.uuid4().bytes
         self.db.insert_row(table='events', row_string='(NULL, ?, ?, ?)', row_data=(event_name, event_uuid, EventsDB.event_default_state))
+
+    def change_event_state(self, event_name, new_state):
+        self.db.update_rows(table='events', update_string='state = ?', update_values=(new_state,), filter_string='name = \'{}\''.format(event_name))
