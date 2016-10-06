@@ -13,3 +13,10 @@ class TestEventConfigurationValidity:
     def test_invalid_config_throws_exception(self):
         with pytest.raises(event_config.InvalidEventConfigException):
             e = Event(config_file_path=invalid_config_path)
+
+    def test_valid_config_loads_without_exception(self):
+        e = Event(config_file_path=valid_config_path)
+
+    def test_register_new_event_successfully(self):
+        e = Event(config_file_path=valid_config_path)
+        e.register_event()
