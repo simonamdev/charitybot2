@@ -21,7 +21,7 @@ class TestEventConfigExistence:
         assert ec.config_exists() is True
 
 
-class TestEventConfigFormatting:
+class TestEventConfigValidity:
     def test_empty_event_config(self):
         ec = event_config.EventConfiguration(file_path=get_config_file_path('empty_config'))
         with pytest.raises(event_config.InvalidEventConfigException):
