@@ -1,0 +1,1 @@
+C:\sqlite3\sqlite3.exe test_events.db < init_integration_test_events_db.sql

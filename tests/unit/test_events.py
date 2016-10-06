@@ -27,9 +27,3 @@ class TestEventConfigurationValidity:
 
     def test_valid_config_loads_without_exception(self):
         e = ValidEvent()
-
-    # Move to integration test
-    def test_register_new_event_successfully(self):
-        e = ValidEvent()
-        e.initialise_db_interface()
-        e.register_event()
