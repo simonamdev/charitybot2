@@ -10,15 +10,26 @@ valid_config_path = os.path.join(current_directory, 'configs', 'valid_config' + 
 invalid_config_path = os.path.join(current_directory, 'configs', 'invalid_config' + '.' + event_config.EventConfiguration.config_format)
 
 
+class TestValidEvent(Event):
+    def __init__(self):
+        super().__init__(config_file_path=valid_config_path, db_path=events_db_path)
+
+
+class TestInvalidEvent(Event):
+    def __init__(self):
+        super().__init__(config_file_path=invalid_config_path, db_path=events_db_path)
+
+
 class TestEventConfigurationValidity:
     def test_invalid_config_throws_exception(self):
         with pytest.raises(event_config.InvalidEventConfigException):
-            e = Event(config_file_path=invalid_config_path)
+            e = TestInvalidEvent()
 
     def test_valid_config_loads_without_exception(self):
-        e = Event(config_file_path=valid_config_path)
+        e = TestValidEvent()
 
+    # Move to integration test
     def test_register_new_event_successfully(self):
-        e = Event(config_file_path=valid_config_path)
+        e = TestValidEvent()
         e.initialise_db_interface()
         e.register_event()
