@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from charitybot2.storage.events_db import EventsDB, EventAlreadyRegisteredException
+from charitybot2.storage.events_db import EventsDB, EventAlreadyRegisteredException, EventGivenInvalidStateException
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 dummy_db_path = os.path.join(current_directory, 'db', 'dummy_events.db')
@@ -65,3 +65,8 @@ class TestEventDBCreate:
         edb.change_event_state(event_name='event_one', new_state='ONGOING')
         data = edb.get_event_metadata(event_name='event_one')
         assert data['state'] == 'ONGOING'
+
+    def test_event_state_change_to_nonexistent_throws_exception(self):
+        edb = EventsDB(db_path=test_db_path, verbose=True)
+        with pytest.raises(EventGivenInvalidStateException):
+            edb.change_event_state(event_name='event_one', new_state='GARBAGE')

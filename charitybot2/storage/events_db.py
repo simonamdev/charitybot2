@@ -10,6 +10,10 @@ class EventAlreadyRegisteredException(Exception):
     pass
 
 
+class EventGivenInvalidStateException(Exception):
+    pass
+
+
 class EventsDB:
     event_default_state = 'REGISTERED'
     event_possible_states = [
@@ -60,4 +64,6 @@ class EventsDB:
         self.db.insert_row(table='events', row_string='(NULL, ?, ?, ?)', row_data=(event_name, event_uuid, EventsDB.event_default_state))
 
     def change_event_state(self, event_name, new_state):
+        if new_state not in EventsDB.event_possible_states:
+            raise EventGivenInvalidStateException
         self.db.update_rows(table='events', update_string='state = ?', update_values=(new_state,), filter_string='name = \'{}\''.format(event_name))
