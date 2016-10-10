@@ -18,4 +18,4 @@ class Event:
         self.db_interface = storage.EventsDB(db_path=self.db_path)
 
     def register_event(self):
-        pass
+        self.db_interface.register_event(event_name=self.config.get_config_value('name'))
