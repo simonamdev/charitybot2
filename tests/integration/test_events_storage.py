@@ -17,7 +17,6 @@ class TestEventRegistration:
         edb = EventsDB(db_path=test_db_path)
         event_names = edb.get_all_event_names()
         event_metadata = edb.get_event_metadata(event_name='name')
-        print(event_metadata)
         assert 'name' in event_names
         assert event_metadata['name'] == 'name'
         assert event_metadata['state'] == EventsDB.event_default_state
