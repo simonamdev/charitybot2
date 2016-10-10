@@ -3,8 +3,14 @@
   "start_time": 0,
   "end_time": 1,
   "sources_required": [
-    "source_1",
-    "source_2"
+    {
+      "name": "justgiving",
+      "url_name": "Disability-North"
+    },
+    {
+      "name": "btdonate",
+      "url_name": "highgatehasheart"
+    }
   ],
   "update_tick": 5
 }

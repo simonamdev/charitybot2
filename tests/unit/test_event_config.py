@@ -72,6 +72,13 @@ class TestEventConfigAccess:
         for value in values:
             assert not isinstance(value, int)
 
+    def test_retrieving_objects_from_sources_list(self):
+        ec = event_config.EventConfiguration(file_path=get_config_file_path('valid_config'))
+        sources = ec.get_config_value(value_name='sources_required')
+        assert isinstance(sources, list)
+        for source in sources:
+            assert isinstance(source, dict)
+
 
 class TestEventConfigRetrieve:
     def test_no_defined_sources_throwing_invalid_config_exception(self):
