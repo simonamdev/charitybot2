@@ -30,3 +30,6 @@ class Event:
             event_name=self.config.get_config_value('name'),
             new_state=storage.EventsDB.event_completed_state
         )
+
+    def check_for_donation(self):
+        pass
