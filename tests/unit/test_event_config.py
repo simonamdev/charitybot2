@@ -79,6 +79,12 @@ class TestEventConfigAccess:
         for source in sources:
             assert isinstance(source, dict)
 
+    def test_sources_have_required_keys(self):
+        ec = event_config.EventConfiguration(file_path=get_config_file_path('valid_config'))
+        sources = ec.get_config_value(value_name='sources_required')
+        for source in sources:
+            assert sorted(['name', 'url_name']) == sorted(list(source.keys()))
+
 
 class TestEventConfigRetrieve:
     def test_no_defined_sources_throwing_invalid_config_exception(self):
