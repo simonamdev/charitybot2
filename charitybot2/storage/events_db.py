@@ -15,7 +15,10 @@ class EventGivenInvalidStateException(Exception):
 
 
 class EventsDB:
-    event_default_state = 'REGISTERED'
+    event_registered_state = 'REGISTERED'
+    event_ongoing_state = 'ONGOING'
+    event_completed_state = 'COMPLETED'
+    event_default_state = event_registered_state
     event_possible_states = [
         'REGISTERED',
         'ONGOING',

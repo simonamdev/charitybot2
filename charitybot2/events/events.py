@@ -19,3 +19,14 @@ class Event:
 
     def register_event(self):
         self.db_interface.register_event(event_name=self.config.get_config_value('name'))
+
+    def start_event(self):
+        self.db_interface.change_event_state(
+            event_name=self.config.get_config_value('name'),
+            new_state=storage.EventsDB.event_ongoing_state)
+
+    def stop_event(self):
+        self.db_interface.change_event_state(
+            event_name=self.config.get_config_value('name'),
+            new_state=storage.EventsDB.event_completed_state
+        )
