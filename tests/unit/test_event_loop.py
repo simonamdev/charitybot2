@@ -1,8 +1,7 @@
 import os
-import pytest
-from charitybot2.events.events import EventLoop, Event
-import charitybot2.storage.events_db as events_db
+
 import charitybot2.events.event_config as event_config
+from charitybot2.events.events import Event
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 events_db_path = os.path.join(current_directory, 'db', 'test_events.db')
