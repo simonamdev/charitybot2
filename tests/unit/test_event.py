@@ -16,3 +16,20 @@ class TestEventConfigurationValidity:
 
     def test_valid_config_loads_without_exception(self):
         event = Event(config_path=valid_config_path)
+
+
+class TestEventRetrieve:
+    def test_retrieve_event_name(self):
+        assert False
+
+    def test_retrieve_event_start_time(self):
+        assert False
+
+    def test_retrieve_event_end_time(self):
+        assert False
+
+    def test_retrieve_event_sources(self):
+        assert False
+
+    def test_retrieve_update_tick(self):
+        assert False

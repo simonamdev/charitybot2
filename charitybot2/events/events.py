@@ -14,6 +14,21 @@ class Event:
         self.config = EventConfiguration(file_path=self.config_path)
         self.config.read_config()
 
+    def get_event_name(self):
+        return self.config.get_config_value(value_name='name')
+
+    def get_start_time(self):
+        return self.config.get_config_value(value_name='start_time')
+
+    def get_end_time(self):
+        pass
+
+    def get_sources(self):
+        pass
+
+    def get_update_tick(self):
+        pass
+
 
 class EventLoop:
     def __init__(self, config_file_path, db_path):
