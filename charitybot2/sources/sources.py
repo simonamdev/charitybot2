@@ -1,3 +1,4 @@
-sources_available = [
-    'justgiving'
+source_names_supported = [
+    'justgiving',
+    'btdonate'
 ]

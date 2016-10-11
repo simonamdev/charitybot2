@@ -3,8 +3,10 @@
   "start_time": 0,
   "end_time": 1,
   "sources_required": [
-    "source_1",
-    "source_2"
+    {
+      "name": "sdjijsoijisg",
+      "url_name": "djiojfdio"
+    }
   ],
   "update_tick": 5
 }
