@@ -2,6 +2,6 @@
   "name": "name",
   "start_time": 0,
   "end_time": 1,
-  "source": "www.some-website.org",
+  "source_url": "www.some-website.org",
   "update_tick": 5
 }
