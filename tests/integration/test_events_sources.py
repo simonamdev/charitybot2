@@ -23,3 +23,9 @@ class TestEventSourcesValidity:
         config_sources = ec.get_config_value(value_name='sources_required')
         for source in config_sources:
             assert source['name'] in sources_available
+
+    def test_source_url_names_in_event_config_are_not_empty(self):
+        ec = event_config.EventConfiguration(file_path=good_source_path)
+        config_sources = ec.get_config_value(value_name='sources_required')
+        for source in config_sources:
+            assert not source['url_name'] == ''
