@@ -1,4 +1,3 @@
-import pytest
 import os
 
 from charitybot2.storage.events_db import EventsDB
