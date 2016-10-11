@@ -2,11 +2,6 @@
   "name": "name",
   "start_time": 0,
   "end_time": 1,
-  "sources_required": [
-    {
-      "name": "sdjijsoijisg",
-      "url_name": "djiojfdio"
-    }
-  ],
+  "source": "www.some-website.org",
   "update_tick": 5
 }
