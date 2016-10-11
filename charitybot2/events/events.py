@@ -35,31 +35,25 @@ class Event:
 
 
 class EventLoop:
-    def __init__(self, config_file_path, db_path):
-        self.config_file_path = config_file_path
+    def __init__(self, event, db_path):
+        self.event = event
         self.db_path = db_path
-        self.config = None
         self.db_interface = None
-        self.validate_config()
-
-    def validate_config(self):
-        self.config = event_config.EventConfiguration(file_path=self.config_file_path)
-        self.config.read_config()
 
     def initialise_db_interface(self):
         self.db_interface = storage.EventsDB(db_path=self.db_path)
 
     def register_event(self):
-        self.db_interface.register_event(event_name=self.config.get_config_value('name'))
+        self.db_interface.register_event(event_name=self.event.get_event_name())
 
     def start_event(self):
         self.db_interface.change_event_state(
-            event_name=self.config.get_config_value('name'),
+            event_name=self.event.get_event_name(),
             new_state=storage.EventsDB.event_ongoing_state)
 
     def stop_event(self):
         self.db_interface.change_event_state(
-            event_name=self.config.get_config_value('name'),
+            event_name=self.event.get_event_name(),
             new_state=storage.EventsDB.event_completed_state
         )
 
