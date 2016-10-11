@@ -24,18 +24,21 @@ class TestEventConfigExistence:
 class TestEventConfigValidity:
     def test_empty_event_config(self):
         ec = event_config.EventConfiguration(file_path=get_config_file_path('empty_config'))
-        with pytest.raises(event_config.InvalidEventConfigException):
+        with pytest.raises(event_config.InvalidEventConfigException) as e:
             ec.read_config()
+        print(e.value)
 
     def test_invalid_formatted_event_config(self):
         ec = event_config.EventConfiguration(file_path=get_config_file_path('invalid_json_config'))
-        with pytest.raises(event_config.InvalidEventConfigException):
+        with pytest.raises(event_config.InvalidEventConfigException) as e:
             ec.read_config()
+        print(e.value)
 
     def test_valid_formatted_but_invalid_content_event_config(self):
         ec = event_config.EventConfiguration(file_path=get_config_file_path('invalid_config'))
-        with pytest.raises(event_config.InvalidEventConfigException):
+        with pytest.raises(event_config.InvalidEventConfigException) as e:
             ec.read_config()
+        print(e.value)
 
 
 class TestEventConfigAccess:
