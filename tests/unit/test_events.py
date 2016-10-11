@@ -1,6 +1,6 @@
 import os
 import pytest
-from charitybot2.events.events import Event
+from charitybot2.events.events import EventLoop
 import charitybot2.storage.events_db as events_db
 import charitybot2.events.event_config as event_config
 
@@ -10,12 +10,12 @@ valid_config_path = os.path.join(current_directory, 'configs', 'valid_config' + 
 invalid_config_path = os.path.join(current_directory, 'configs', 'invalid_config' + '.' + event_config.EventConfiguration.config_format)
 
 
-class ValidEvent(Event):
+class ValidEventLoop(EventLoop):
     def __init__(self):
         super().__init__(config_file_path=valid_config_path, db_path=events_db_path)
 
 
-class InvalidEvent(Event):
+class InvalidEventLoop(EventLoop):
     def __init__(self):
         super().__init__(config_file_path=invalid_config_path, db_path=events_db_path)
 
@@ -23,7 +23,7 @@ class InvalidEvent(Event):
 class TestEventConfigurationValidity:
     def test_invalid_config_throws_exception(self):
         with pytest.raises(event_config.InvalidEventConfigException):
-            e = InvalidEvent()
+            e = InvalidEventLoop()
 
     def test_valid_config_loads_without_exception(self):
-        e = ValidEvent()
+        e = ValidEventLoop()
