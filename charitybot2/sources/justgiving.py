@@ -10,13 +10,13 @@ class InvalidFundraiserUrlException(Exception):
 
 
 class JustGivingScraper(Scraper):
-    def __init__(self, fundraiser_name='', verbose=False):
+    def __init__(self, fundraiser_name='', fundraiser_type='fundraising', verbose=False):
         self.fundraiser_name = fundraiser_name
         self.validate_fundraiser_name()
         self.verbose = verbose
         self.soup_data_sources = None
         self.base_url = 'https://www.justgiving.com/'
-        self.fundraiser_url = self.base_url + 'fundraising/' + fundraiser_name
+        self.fundraiser_url = self.base_url + fundraiser_type + '/' + fundraiser_name
         super().__init__(url=self.fundraiser_url, verbose=verbose)
         self.is_valid = False
         self.validate_scraper()
