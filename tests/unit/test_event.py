@@ -30,7 +30,13 @@ class TestEventRetrieve:
         assert valid_event.get_end_time() == 1
 
     def test_retrieve_event_sources(self):
-        assert valid_event.get_sources() == None
+        sources = valid_event.get_sources()
+        assert isinstance(sources, list)
+        assert len(sources) == 2
+        assert sources[0].get_name() == 'justgiving'
+        assert sources[0].get_url_name() == 'Disability-North'
+        assert sources[1].get_name() == 'btdonate'
+        assert sources[1].get_url_name() == 'highgatehasheart'
 
     def test_retrieve_update_tick(self):
         assert valid_event.get_update_tick() == 5

@@ -2,6 +2,7 @@ import charitybot2.events.event_config as event_config
 import charitybot2.storage.events_db as storage
 
 from charitybot2.events.event_config import EventConfiguration
+from charitybot2.sources.sources import Source
 
 
 class Event:
@@ -24,7 +25,10 @@ class Event:
         return self.config.get_config_value(value_name='end_time')
 
     def get_sources(self):
-        return self.config.get_config_value(value_name='sources_required')
+        source_list = []
+        for source in self.config.get_config_value(value_name='sources_required'):
+            source_list.append(Source(name=source['name'], url_name=source['url_name']))
+        return source_list
 
     def get_update_tick(self):
         return self.config.get_config_value(value_name='update_tick')
