@@ -68,7 +68,7 @@ class EventConfiguration:
         same_keys_found = sorted(current_config_keys) == sorted(EventConfiguration.keys_required)
         if not same_keys_found:
             raise InvalidEventConfigException('Event Configuration file is not valid: it has some missing keys')
-        if len(self.config_data['sources_required']) == 0:
+        if len(self.config_data['source_url']) == 0:
             raise InvalidEventConfigException('Event Configuration file has no sources defined')
         if self.config_data['end_time'] <= self.config_data['start_time']:
             raise InvalidEventConfigException('Event end time cannot be after or the same as event start time')

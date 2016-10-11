@@ -75,18 +75,13 @@ class TestEventConfigAccess:
         for value in values:
             assert not isinstance(value, int)
 
-    def test_retrieving_objects_from_sources_list(self):
+    def test_source_url_is_valid_url(self):
+        import re
+        url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
         ec = event_config.EventConfiguration(file_path=get_config_file_path('valid_config'))
-        sources = ec.get_config_value(value_name='sources_required')
-        assert isinstance(sources, list)
-        for source in sources:
-            assert isinstance(source, dict)
-
-    def test_sources_have_required_keys(self):
-        ec = event_config.EventConfiguration(file_path=get_config_file_path('valid_config'))
-        sources = ec.get_config_value(value_name='sources_required')
-        for source in sources:
-            assert sorted(['name', 'url_name']) == sorted(list(source.keys()))
+        source_url = ec.get_config_value(value_name='source_url')
+        urls = re.findall(url_regex, source_url)
+        assert len(urls) == 1
 
 
 class TestEventConfigRetrieve:
