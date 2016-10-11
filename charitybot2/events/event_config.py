@@ -32,10 +32,6 @@ class EventConfiguration:
         'update_tick'
     ]
 
-    list_keys = [
-        'sources_required'
-    ]
-
     def __init__(self, file_path):
         self.file_path = file_path
         if not self.config_exists():

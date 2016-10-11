@@ -90,14 +90,6 @@ class TestEventConfigRetrieve:
         with pytest.raises(event_config.InvalidEventConfigException):
             ec.read_config()
 
-    def test_retrieving_list_when_requesting_lift_key_values(self):
-        ec = event_config.EventConfiguration(file_path=get_config_file_path('valid_config'))
-        values = []
-        for key in ec.list_keys:
-            values.append(ec.get_config_value(value_name=key))
-        for value in values:
-            assert isinstance(value, list)
-
     def test_end_time_smaller_or_equal_to_start_time_rasies_exception(self):
         ec = event_config.EventConfiguration(file_path=get_config_file_path('invalid_time_config'))
         with pytest.raises(event_config.InvalidEventConfigException):
