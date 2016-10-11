@@ -55,5 +55,5 @@ class EventLoop:
             event_name=self.event.get_event_name(),
             new_state=storage.EventsDB.event_completed_state)
 
-    def check_for_donation(self):
+    def get_amount_raised(self):
         pass
