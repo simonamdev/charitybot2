@@ -23,11 +23,8 @@ class Event:
     def get_end_time(self):
         return self.config.get_config_value(value_name='end_time')
 
-    def get_sources(self):
-        source_list = []
-        for source in self.config.get_config_value(value_name='sources_required'):
-            source_list.append(Source(name=source['name'], url_name=source['url_name']))
-        return source_list
+    def get_source_url(self):
+        return self.config.get_config_value(value_name='source_url')
 
     def get_update_tick(self):
         return self.config.get_config_value(value_name='update_tick')
