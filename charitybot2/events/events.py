@@ -53,8 +53,7 @@ class EventLoop:
     def stop_event(self):
         self.db_interface.change_event_state(
             event_name=self.event.get_event_name(),
-            new_state=storage.EventsDB.event_completed_state
-        )
+            new_state=storage.EventsDB.event_completed_state)
 
     def check_for_donation(self):
         pass
