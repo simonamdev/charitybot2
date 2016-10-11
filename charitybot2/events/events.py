@@ -21,13 +21,13 @@ class Event:
         return self.config.get_config_value(value_name='start_time')
 
     def get_end_time(self):
-        pass
+        return self.config.get_config_value(value_name='end_time')
 
     def get_sources(self):
-        pass
+        return self.config.get_config_value(value_name='sources_required')
 
     def get_update_tick(self):
-        pass
+        return self.config.get_config_value(value_name='update_tick')
 
 
 class EventLoop:
