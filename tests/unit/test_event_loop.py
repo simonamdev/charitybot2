@@ -18,12 +18,3 @@ class ValidEventLoop(EventLoop):
 class InvalidEventLoop(EventLoop):
     def __init__(self):
         super().__init__(config_file_path=invalid_config_path, db_path=events_db_path)
-
-
-class TestEventConfigurationValidity:
-    def test_invalid_config_throws_exception(self):
-        with pytest.raises(event_config.InvalidEventConfigException):
-            e = InvalidEventLoop()
-
-    def test_valid_config_loads_without_exception(self):
-        e = ValidEventLoop()

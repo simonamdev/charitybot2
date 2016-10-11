@@ -1,11 +1,18 @@
 import charitybot2.events.event_config as event_config
 import charitybot2.storage.events_db as storage
 
+from charitybot2.events.event_config import EventConfiguration
+
 
 class Event:
     def __init__(self, config_path):
         self.config_path = config_path
         self.config = None
+        self.validate_config()
+
+    def validate_config(self):
+        self.config = EventConfiguration(file_path=self.config_path)
+        self.config.read_config()
 
 
 class EventLoop:
