@@ -10,11 +10,11 @@ valid_config_path = os.path.join(current_directory, 'configs', 'valid_config' + 
 invalid_config_path = os.path.join(current_directory, 'configs', 'invalid_config' + '.' + event_config.EventConfiguration.config_format)
 
 
-class ValidEvent(Event):
+class ValidTestEvent(Event):
     def __init__(self):
         super().__init__(config_path=valid_config_path)
 
 
-class InvalidEvent(Event):
+class InvalidTestEvent(Event):
     def __init__(self):
         super().__init__(config_path=invalid_config_path)

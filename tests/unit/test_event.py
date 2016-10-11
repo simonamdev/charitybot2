@@ -10,6 +10,7 @@ invalid_config_path = os.path.join(current_directory, 'configs', 'invalid_config
 
 valid_event = Event(config_path=valid_config_path)
 
+
 class TestEventConfigurationValidity:
     def test_invalid_config_throws_exception(self):
         with pytest.raises(InvalidEventConfigException):
