@@ -23,21 +23,14 @@ class TestEventLoopValidity:
         with pytest.raises(EventInvalidException):
             el = EventLoop(event=None, db_path=events_db_path)
 
-    def test_initialise_with_valid_event_throws_exception(self):
+    def test_initialise_with_valid_event(self):
         el = EventLoop(event=ValidTestEvent(), db_path=events_db_path)
-        el.initialise_db_interface()
-        el.initialise_scraper()
 
     def test_initialise_not_implemented_btdonate_scraper_throws_exception(self):
         with pytest.raises(NotImplementedError):
             e = Event(config_path=btdonate_config_path)
             el = EventLoop(event=e, db_path=events_db_path)
-            el.initialise_scraper()
 
-    def test_valid_eventloop_scraper_is_of_type_justgivingscraper(self):
+    def test_valid_event_loop_scraper_is_of_type_justgivingscraper(self):
         el = EventLoop(event=ValidTestEvent(), db_path=events_db_path)
-        el.initialise_db_interface()
-        el.initialise_scraper()
         assert isinstance(el.scraper, JustGivingScraper)
-
-

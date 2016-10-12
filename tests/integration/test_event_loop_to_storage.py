@@ -11,7 +11,6 @@ test_db_path = os.path.join(current_directory, 'db', 'test_events.db')
 
 event = Event(config_path=valid_config_path)
 event_loop = EventLoop(event=event, db_path=test_db_path)
-event_loop.initialise_db_interface()
 
 
 class TestEventStateChange:

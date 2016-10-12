@@ -40,6 +40,8 @@ class EventLoop:
         self.db_interface = None
         self.scraper = None
         self.validate_event_loop()
+        self.initialise_db_interface()
+        self.initialise_scraper()
 
     def validate_event_loop(self):
         if self.event is None:
@@ -47,6 +49,13 @@ class EventLoop:
 
     def initialise_db_interface(self):
         self.db_interface = EventsDB(db_path=self.db_path)
+
+    def initialise_scraper(self):
+        source_url = self.event.get_source_url()
+        if 'justgiving' in source_url:
+            self.scraper = JustGivingScraper(url=source_url)
+        elif 'mydonate.bt' in source_url:
+            raise NotImplementedError
 
     def register_event(self):
         self.db_interface.register_event(event_name=self.event.get_event_name())
@@ -60,13 +69,3 @@ class EventLoop:
         self.db_interface.change_event_state(
             event_name=self.event.get_event_name(),
             new_state=EventsDB.event_completed_state)
-
-    def initialise_scraper(self):
-        source_url = self.event.get_source_url()
-        if 'justgiving' in source_url:
-            self.scraper = JustGivingScraper(url=source_url)
-        elif 'mydonate.bt' in source_url:
-            raise NotImplementedError
-
-    def get_amount_raised(self):
-        pass
