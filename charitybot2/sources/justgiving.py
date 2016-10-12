@@ -1,4 +1,4 @@
-from .scraper import Scraper, SoupDataSources
+from .scraper import Scraper, SoupDataSources, SourceUnavailableException
 
 
 class NoFundraiserNameGivenException(Exception):
@@ -10,31 +10,19 @@ class InvalidFundraiserUrlException(Exception):
 
 
 class JustGivingScraper(Scraper):
-    def __init__(self, fundraiser_name='', fundraiser_type='fundraising', verbose=False):
-        self.fundraiser_name = fundraiser_name
-        self.validate_fundraiser_name()
+    def __init__(self, url, verbose=False):
+        self.url = url
         self.verbose = verbose
         self.soup_data_sources = None
-        self.base_url = 'https://www.justgiving.com/'
-        self.fundraiser_url = self.base_url + fundraiser_type + '/' + fundraiser_name
-        super().__init__(url=self.fundraiser_url, verbose=verbose)
-        self.is_valid = False
-        self.validate_scraper()
+        try:
+            super().__init__(url=self.url, verbose=verbose)
+        except SourceUnavailableException:
+            raise InvalidFundraiserUrlException
         self.setup_soup_data_sources()
 
     def print(self, print_string):
         if self.verbose:
             print('[JUSTGIVING] {0}'.format(print_string))
-
-    def validate_fundraiser_name(self):
-        if not self.fundraiser_name:
-            raise NoFundraiserNameGivenException('Cannot start a JustGiving object without a fundraiser name')
-
-    def validate_scraper(self):
-        if not self.url_is_valid:
-            raise InvalidFundraiserUrlException('Fundraiser URL could not be validated. Make sure the name is correct?')
-        self.print('Just Giving Scraper successfully validated')
-        self.is_valid = True
 
     def setup_soup_data_sources(self):
         sds = SoupDataSources()
@@ -58,3 +46,6 @@ class JustGivingScraper(Scraper):
             self.soup_data_sources.get_source_tag(source_name=source_name),
             self.soup_data_sources.get_bs4_find_parameters_dict(source_name=source_name)
         ).text
+
+    def get_amount_raised(self):
+        return self.get_source_value(source_name='amount_raised')

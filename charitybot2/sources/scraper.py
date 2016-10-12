@@ -15,11 +15,11 @@ class Scraper:
         self.url = url
         self.parser = 'lxml'
         self.get = smokesignal.GetRequest(url=url, verbose=verbose)
-        self.url_is_valid = self.check_url_is_valid()
+        self.url_is_valid = self.validate_url()
         self.url_contents = None
         self.url_soup = None
 
-    def check_url_is_valid(self):
+    def validate_url(self):
         try:
             self.get.make_request()
         except smokesignal.exceptions.ConnectionFailedException:
