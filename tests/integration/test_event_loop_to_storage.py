@@ -1,5 +1,7 @@
 import os
 
+import pytest
+
 from charitybot2.storage.events_db import EventsDB
 from charitybot2.events.events import EventLoop, Event
 
@@ -21,6 +23,9 @@ class TestEventStateChange:
         assert 'name' in event_names
         assert event_metadata['name'] == 'name'
         assert event_metadata['state'] == EventsDB.event_default_state
+
+    def test_register_event_already_registered_throws_exception(self):
+        event_loop.register_event()
 
     def test_start_new_event_successfully(self):
         event_loop.start_event()
