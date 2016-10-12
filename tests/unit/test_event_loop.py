@@ -1,7 +1,9 @@
 import os
 
+import pytest
+
 import charitybot2.events.event_config as event_config
-from charitybot2.events.events import Event
+from charitybot2.events.events import Event, EventLoop, EventInvalidException
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 events_db_path = os.path.join(current_directory, 'db', 'test_events.db')
@@ -17,3 +19,9 @@ class ValidTestEvent(Event):
 class InvalidTestEvent(Event):
     def __init__(self):
         super().__init__(config_path=invalid_config_path)
+
+
+class TestEventLoopValidity:
+    def test_initialise_with_bad_event_throws_exception(self):
+        with pytest.raises(EventInvalidException):
+            el = EventLoop(event=None, db_path=events_db_path)
