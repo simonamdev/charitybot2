@@ -1,6 +1,6 @@
 import charitybot2.storage.events_db as storage
 
-from charitybot2.events.event_config import EventConfiguration
+from charitybot2.events.event_config import EventConfiguration, InvalidEventConfigException
 from charitybot2.sources.justgiving import JustGivingScraper
 
 
@@ -44,7 +44,7 @@ class EventLoop:
 
     def validate_event_loop(self):
         if self.event is None:
-            raise EventInvalidException
+            raise EventInvalidException('No Event object passed to Event Loop')
 
     def initialise_db_interface(self):
         self.db_interface = storage.EventsDB(db_path=self.db_path)

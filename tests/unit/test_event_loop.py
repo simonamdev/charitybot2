@@ -16,12 +16,10 @@ class ValidTestEvent(Event):
         super().__init__(config_path=valid_config_path)
 
 
-class InvalidTestEvent(Event):
-    def __init__(self):
-        super().__init__(config_path=invalid_config_path)
-
-
 class TestEventLoopValidity:
     def test_initialise_with_bad_event_throws_exception(self):
         with pytest.raises(EventInvalidException):
             el = EventLoop(event=None, db_path=events_db_path)
+
+    def test_initialise_with_valid_event_throws_exception(self):
+        el = EventLoop(event=ValidTestEvent(), db_path=events_db_path)
