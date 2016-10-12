@@ -2,9 +2,6 @@
   "name": "name",
   "start_time": 1,
   "end_time": 0,
-  "sources_required": [
-    "source_1",
-    "source_2"
-  ],
+  "source_url": "www.test.com",
   "update_tick": 5
 }

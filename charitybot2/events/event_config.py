@@ -22,7 +22,7 @@ class EventConfiguration:
         'name',
         'start_time',
         'end_time',
-        'sources_required',
+        'source_url',
         'update_tick'
     ]
 
@@ -30,10 +30,6 @@ class EventConfiguration:
         'start_time',
         'end_time',
         'update_tick'
-    ]
-
-    list_keys = [
-        'sources_required'
     ]
 
     def __init__(self, file_path):
@@ -65,10 +61,10 @@ class EventConfiguration:
 
     def validate_config_data(self):
         current_config_keys = self.config_data.keys()
-        same_keys_found = collections.Counter(EventConfiguration.keys_required) == collections.Counter(current_config_keys)
+        same_keys_found = sorted(current_config_keys) == sorted(EventConfiguration.keys_required)
         if not same_keys_found:
             raise InvalidEventConfigException('Event Configuration file is not valid: it has some missing keys')
-        if len(self.config_data['sources_required']) == 0:
+        if len(self.config_data['source_url']) == 0:
             raise InvalidEventConfigException('Event Configuration file has no sources defined')
         if self.config_data['end_time'] <= self.config_data['start_time']:
             raise InvalidEventConfigException('Event end time cannot be after or the same as event start time')
