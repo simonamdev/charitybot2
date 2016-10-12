@@ -1,5 +1,4 @@
-import charitybot2.storage.events_db as storage
-
+from charitybot2.storage.events_db import EventsDB
 from charitybot2.events.event_config import EventConfiguration, InvalidEventConfigException
 from charitybot2.sources.justgiving import JustGivingScraper
 
@@ -47,11 +46,7 @@ class EventLoop:
             raise EventInvalidException('No Event object passed to Event Loop')
 
     def initialise_db_interface(self):
-        self.db_interface = storage.EventsDB(db_path=self.db_path)
-
-    def initialise_scraper(self):
-
-        self.scraper = JustGivingScraper()
+        self.db_interface = EventsDB(db_path=self.db_path)
 
     def register_event(self):
         self.db_interface.register_event(event_name=self.event.get_event_name())
@@ -59,12 +54,19 @@ class EventLoop:
     def start_event(self):
         self.db_interface.change_event_state(
             event_name=self.event.get_event_name(),
-            new_state=storage.EventsDB.event_ongoing_state)
+            new_state=EventsDB.event_ongoing_state)
 
     def stop_event(self):
         self.db_interface.change_event_state(
             event_name=self.event.get_event_name(),
-            new_state=storage.EventsDB.event_completed_state)
+            new_state=EventsDB.event_completed_state)
+
+    def initialise_scraper(self):
+        source_url = self.event.get_source_url()
+        if 'justgiving' in source_url:
+            self.scraper = JustGivingScraper(url=source_url)
+        elif 'mydonate.bt' in source_url:
+            raise NotImplementedError
 
     def get_amount_raised(self):
         pass
