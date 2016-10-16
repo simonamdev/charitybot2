@@ -2,3 +2,4 @@
 __pycache__/
 .cache/
 charitybot2.egg-info/
+charitybot2/reporter/twitch_config.py

@@ -1,16 +1,29 @@
 import socket
+import requests
+
+class InvalidTwitchAccountException(Exception):
+    pass
 
 
 class TwitchAccount:
     def __init__(self, name, token):
         self.name = name
         self.token = token
+        self.request_headers = {'Client-ID': self.token}
+        self.channel_api_url = 'https://api.twitch.tv/kraken/channels/'
+        self.validate_twitch_account()
 
     def get_account_name(self):
         return self.name
 
     def get_secret_token(self):
         return self.token
+
+    def validate_twitch_account(self):
+        url = self.channel_api_url + self.name
+        response = requests.get(url=url, headers=self.request_headers)
+        if not response.status_code == 200:
+            raise InvalidTwitchAccountException('Twitch API returned following status code: {}'.format(response.status_code))
 
 
 class TwitchChat:
