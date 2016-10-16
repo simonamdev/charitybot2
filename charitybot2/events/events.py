@@ -21,6 +21,9 @@ class Event:
         self.config = EventConfiguration(file_path=self.config_path)
         self.config.read_config()
 
+    def initialise_db_interface(self):
+        self.db_interface = EventsDB(db_path=self.db_path)
+
     def get_event_name(self):
         return self.config.get_config_value(value_name='name')
 
@@ -61,9 +64,6 @@ class Event:
             event_name=self.get_event_name(),
             new_state=EventsDB.event_completed_state)
 
-    def initialise_db_interface(self):
-        self.db_interface = EventsDB(db_path=self.db_path)
-
 
 class EventLoop:
     def __init__(self, event):
@@ -84,6 +84,9 @@ class EventLoop:
             raise NotImplementedError
         else:
             raise EventInvalidException
+
+    def start_loop(self):
+        pass
 
     def get_current_amount_raised(self):
         self.event.set_amount_raised(amount=self.scraper.get_amount_raised())
