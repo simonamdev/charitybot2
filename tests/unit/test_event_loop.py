@@ -34,3 +34,11 @@ class TestEventLoopValidity:
     def test_valid_event_loop_scraper_is_of_type_justgivingscraper(self):
         el = EventLoop(event=ValidTestEvent(), db_path=events_db_path)
         assert isinstance(el.scraper, JustGivingScraper)
+
+
+class TestEventLoopAmountRetrieve:
+    # Test is definitely flaky
+    def test_event_loop_retrieves_amount_successfully(self):
+        el = EventLoop(event=ValidTestEvent(), db_path=events_db_path)
+        el.get_current_amount_raised()
+        assert el.event.get_amount_raised() == '£35,440'

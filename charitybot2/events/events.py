@@ -70,6 +70,9 @@ class EventLoop:
         elif 'mydonate.bt' in source_url:
             raise NotImplementedError
 
+    def get_current_amount_raised(self):
+        self.event.set_amount_raised(amount=self.scraper.get_amount_raised())
+
     def register_event(self):
         self.db_interface.register_event(event_name=self.event.get_event_name())
 
