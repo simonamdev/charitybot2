@@ -30,6 +30,9 @@ class TestEventRetrieve:
     def test_retrieve_event_end_time(self):
         assert valid_event.get_end_time() == 1
 
+    def test_retrieve_event_target_amount(self):
+        assert valid_event.get_target_amount() == 1000
+
     def test_retrieve_event_sources(self):
         source_url = valid_event.get_source_url()
         assert source_url == 'https://www.justgiving.com/fundraising/alasdair-clift'

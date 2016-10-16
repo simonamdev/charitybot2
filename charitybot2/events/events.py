@@ -26,6 +26,9 @@ class Event:
     def get_end_time(self):
         return self.config.get_config_value(value_name='end_time')
 
+    def get_target_amount(self):
+        return self.config.get_config_value(value_name='target_amount')
+
     def get_source_url(self):
         return self.config.get_config_value(value_name='source_url')
 
