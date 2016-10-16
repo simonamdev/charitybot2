@@ -7,17 +7,18 @@ from charitybot2.events.event_config import EventConfiguration, InvalidEventConf
 current_directory = os.path.dirname(os.path.abspath(__file__))
 valid_config_path = os.path.join(current_directory, 'configs', 'valid_config' + '.' + EventConfiguration.config_format)
 invalid_config_path = os.path.join(current_directory, 'configs', 'invalid_config' + '.' + EventConfiguration.config_format)
+events_db_path = os.path.join(current_directory, 'db', 'test_events.db')
 
-valid_event = Event(config_path=valid_config_path)
+valid_event = Event(config_path=valid_config_path, db_path=events_db_path)
 
 
 class TestEventConfigurationValidity:
     def test_invalid_config_throws_exception(self):
         with pytest.raises(InvalidEventConfigException):
-            event = Event(config_path=invalid_config_path)
+            event = Event(config_path=invalid_config_path, db_path=events_db_path)
 
     def test_valid_config_loads_without_exception(self):
-        event = Event(config_path=valid_config_path)
+        event = Event(config_path=valid_config_path, db_path=events_db_path)
 
 
 class TestEventRetrieve:

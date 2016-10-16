@@ -8,11 +8,14 @@ class EventInvalidException(Exception):
 
 
 class Event:
-    def __init__(self, config_path):
+    def __init__(self, config_path, db_path):
         self.config_path = config_path
+        self.db_path = db_path
+        self.db_interface = None
         self.config = None
-        self.validate_config()
         self.amount_raised = 0
+        self.validate_config()
+        self.initialise_db_interface()
 
     def validate_config(self):
         self.config = EventConfiguration(file_path=self.config_path)
@@ -45,23 +48,33 @@ class Event:
     def get_amount_raised(self):
         return self.amount_raised
 
+    def register_event(self):
+        self.db_interface.register_event(event_name=self.get_event_name())
+
+    def start_event(self):
+        self.db_interface.change_event_state(
+            event_name=self.get_event_name(),
+            new_state=EventsDB.event_ongoing_state)
+
+    def stop_event(self):
+        self.db_interface.change_event_state(
+            event_name=self.get_event_name(),
+            new_state=EventsDB.event_completed_state)
+
+    def initialise_db_interface(self):
+        self.db_interface = EventsDB(db_path=self.db_path)
+
 
 class EventLoop:
-    def __init__(self, event, db_path):
+    def __init__(self, event):
         self.event = event
-        self.db_path = db_path
-        self.db_interface = None
         self.scraper = None
         self.validate_event_loop()
-        self.initialise_db_interface()
         self.initialise_scraper()
 
     def validate_event_loop(self):
         if self.event is None:
             raise EventInvalidException('No Event object passed to Event Loop')
-
-    def initialise_db_interface(self):
-        self.db_interface = EventsDB(db_path=self.db_path)
 
     def initialise_scraper(self):
         source_url = self.event.get_source_url()
@@ -69,19 +82,9 @@ class EventLoop:
             self.scraper = JustGivingScraper(url=source_url)
         elif 'mydonate.bt' in source_url:
             raise NotImplementedError
+        else:
+            raise EventInvalidException
 
     def get_current_amount_raised(self):
         self.event.set_amount_raised(amount=self.scraper.get_amount_raised())
 
-    def register_event(self):
-        self.db_interface.register_event(event_name=self.event.get_event_name())
-
-    def start_event(self):
-        self.db_interface.change_event_state(
-            event_name=self.event.get_event_name(),
-            new_state=EventsDB.event_ongoing_state)
-
-    def stop_event(self):
-        self.db_interface.change_event_state(
-            event_name=self.event.get_event_name(),
-            new_state=EventsDB.event_completed_state)
