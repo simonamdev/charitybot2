@@ -85,7 +85,7 @@ class EventLoop:
         else:
             raise EventInvalidException
 
-    def start_loop(self):
+    def start(self):
         pass
 
     def get_current_amount_raised(self):
