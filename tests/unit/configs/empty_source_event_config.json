@@ -2,7 +2,7 @@
   "name": "name",
   "start_time": 0,
   "end_time": 1,
-  "target": 1000,
+  "target_amount": 1000,
   "source_url": "",
   "update_tick": 5
 }

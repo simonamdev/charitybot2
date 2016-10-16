@@ -22,6 +22,7 @@ class EventConfiguration:
         'name',
         'start_time',
         'end_time',
+        'target_amount',
         'source_url',
         'update_tick'
     ]
@@ -29,6 +30,7 @@ class EventConfiguration:
     number_keys = [
         'start_time',
         'end_time',
+        'target_amount',
         'update_tick'
     ]
 
