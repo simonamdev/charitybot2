@@ -39,3 +39,17 @@ class TestEventRetrieve:
 
     def test_retrieve_update_tick(self):
         assert valid_event.get_update_tick() == 5
+
+    def test_retrieve_amount_raised(self):
+        assert valid_event.get_amount_raised() == 0
+
+
+class TestEventUpdate:
+    def test_setting_amount_raised(self):
+        valid_event.set_amount_raised(amount=100)
+        assert valid_event.get_amount_raised() == 100
+
+    def test_incrementing_amount_raised(self):
+        valid_event.set_amount_raised(amount=200)
+        valid_event.increment_amount_raised(amount_increase=50)
+        assert valid_event.get_amount_raised() == 250

@@ -12,6 +12,7 @@ class Event:
         self.config_path = config_path
         self.config = None
         self.validate_config()
+        self.amount_raised = 0
 
     def validate_config(self):
         self.config = EventConfiguration(file_path=self.config_path)
@@ -34,6 +35,15 @@ class Event:
 
     def get_update_tick(self):
         return self.config.get_config_value(value_name='update_tick')
+
+    def set_amount_raised(self, amount):
+        self.amount_raised = amount
+
+    def increment_amount_raised(self, amount_increase):
+        self.amount_raised += amount_increase
+
+    def get_amount_raised(self):
+        return self.amount_raised
 
 
 class EventLoop:
