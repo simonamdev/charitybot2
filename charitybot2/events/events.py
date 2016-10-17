@@ -113,9 +113,10 @@ class EventLoop:
             self.log('Cycle {}: {} hours remaining in event'.format(
                 self.loop_count,
                 hours_remaining))
+            self.check_current_amount_raised()
             time.sleep(self.event.get_update_tick())
             self.loop_count += 1
         self.event.stop_event()
 
-    def get_current_amount_raised(self):
+    def check_current_amount_raised(self):
         self.event.set_amount_raised(amount=self.scraper.get_amount_raised())
