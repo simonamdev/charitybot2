@@ -114,6 +114,7 @@ class EventLoop:
                 self.loop_count,
                 hours_remaining))
             time.sleep(self.event.get_update_tick())
+            self.loop_count += 1
         self.event.stop_event()
 
     def get_current_amount_raised(self):

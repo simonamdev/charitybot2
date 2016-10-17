@@ -11,18 +11,27 @@ config_path = os.path.join(current_directory, 'data', 'config' + '.' + EventConf
 
 
 class MockEvent(Event):
-    def __init__(self, mock_end_time):
+    def __init__(self, mock_name, mock_end_time):
         super().__init__(config_path=config_path, db_path=db_path)
+        self.mock_name = mock_name
         self.mock_end_time = mock_end_time
+
+    def get_event_name(self):
+        return self.mock_name
 
     def get_end_time(self):
         return self.mock_end_time
 
 
-class TestEvenRunThrough:
+class TestEventRunThrough:
     def test_event_loop_changes_states_when_starting_and_finishing(self):
-        test_event = MockEvent(time.time() + 20)
+        test_event = MockEvent('test_one', time.time() + 20)
         test_event_loop = EventLoop(event=test_event, verbose=True)
         test_event_loop.start()
         assert test_event_loop.event.get_event_current_state() == EventsDB.event_completed_state
 
+    def test_event_cycles_increment_properly(self):
+        test_event = MockEvent('test_two', time.time() + 20)
+        test_event_loop = EventLoop(event=test_event, verbose=True)
+        test_event_loop.start()
+        assert test_event_loop.loop_count == 4
