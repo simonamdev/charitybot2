@@ -60,6 +60,9 @@ class EventsDB:
             'state': row[3]
         }
 
+    def get_event_state(self, event_name):
+        return self.get_event_metadata(event_name=event_name)['state']
+
     def register_event(self, event_name):
         if event_name in self.get_all_event_names():
             raise EventAlreadyRegisteredException('Event with name: {} is already registered'.format(event_name))

@@ -60,6 +60,9 @@ class Event:
     def register_event(self):
         self.db_interface.register_event(event_name=self.get_event_name())
 
+    def get_event_current_state(self):
+        return self.db_interface.get_event_state(event_name=self.get_event_name())
+
     def start_event(self):
         self.db_interface.change_event_state(
             event_name=self.get_event_name(),
@@ -101,6 +104,8 @@ class EventLoop:
             raise EventInvalidException
 
     def start(self):
+        self.log('Registering Event: {}'.format(self.event.get_event_name()))
+        self.event.register_event()
         self.log('Starting Event: {}'.format(self.event.get_event_name()))
         self.event.start_event()
         while time.time() < self.event.get_end_time():
