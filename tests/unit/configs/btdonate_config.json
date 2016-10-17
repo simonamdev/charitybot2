@@ -1,7 +1,7 @@
 {
   "name": "name",
   "start_time": 0,
-  "end_time": 1,
+  "end_time": 9999999999999999,
   "target_amount": 1000,
   "source_url": "https://mydonate.bt.com/fundraisers/acpi",
   "update_tick": 5

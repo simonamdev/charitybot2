@@ -1,9 +1,15 @@
+import time
+
 from charitybot2.storage.events_db import EventsDB
 from charitybot2.events.event_config import EventConfiguration, InvalidEventConfigException
 from charitybot2.sources.justgiving import JustGivingScraper
 
 
 class EventInvalidException(Exception):
+    pass
+
+
+class EventAlreadyFinishedException(Exception):
     pass
 
 
@@ -75,6 +81,8 @@ class EventLoop:
     def validate_event_loop(self):
         if self.event is None:
             raise EventInvalidException('No Event object passed to Event Loop')
+        if time.time() > self.event.get_end_time():
+            raise EventAlreadyFinishedException('Current time: {} Event end time: {}'.format(time.time(), self.event.get_end_time()))
 
     def initialise_scraper(self):
         source_url = self.event.get_source_url()
