@@ -1,5 +1,7 @@
 import pytest
 
+from time import sleep
+
 from selenium import webdriver
 
 from charitybot2.reporter.twitch import TwitchAccount, InvalidTwitchAccountException, TwitchChatBot
@@ -17,7 +19,7 @@ class TestTwitchAccount:
 
 class TestTwitchChat:
     driver = webdriver.Chrome()
-    test_string = 'Hello, I am an automated E2E Test!'
+    test_string = 'Charitybot2 automated E2E test string'
 
     def test_twitch_chat_string_sent_appears(self):
         self.driver.get('https://www.twitch.tv/purrcat259')
@@ -28,8 +30,10 @@ class TestTwitchChat:
             twitch_account=bot_account,
             verbose=True
         )
-        bot.post_in_channel(self.test_string)
+        bot.quick_post_in_channel(self.test_string)
+        sleep(2)
         chat_window = self.driver.find_element_by_class_name('chat-display')
         print(chat_window.text)
         assert self.test_string in chat_window.text
         self.driver.close()
+

@@ -16,11 +16,9 @@ class TwitchAccount:
         self.validate_twitch_account()
 
     def get_account_name(self):
-        return self.name
+        return self.name.lower()
 
     def get_secret_token(self):
-        if 'oauth:' not in self.client_secret:
-            return 'oauth:' + self.client_secret
         return self.client_secret
 
     def validate_twitch_account(self):
@@ -35,7 +33,7 @@ class TwitchChatBot:
     irc_host = 'irc.twitch.tv'
     irc_port = 6667
     buffer_size = 1024
-    initial_buffer_size = 1 * buffer_size
+    initial_buffer_size = 2 * buffer_size
 
     def __init__(self, channel_name, twitch_account, verbose=False):
         self.channel_name = channel_name
@@ -47,8 +45,12 @@ class TwitchChatBot:
         if self.verbose:
             print('[TWITCH] {}'.format(log_string.strip()))
 
+    def initialise_socket(self):
+        self.connection = socket.socket()
+
     def connect(self):
         self.log('Opening socket')
+        self.initialise_socket()
         self.connection.connect((self.irc_host, self.irc_port))
 
     def disconnect(self):
@@ -57,7 +59,7 @@ class TwitchChatBot:
 
     def join_channel(self):
         self.log('Joining channel')
-        self.send('PASS {}'.format(self.account.get_secret_token()))
+        self.send('PASS oauth:{}'.format(self.account.get_secret_token()))
         self.send('NICK {}'.format(self.account.get_account_name()))
         self.send('USER {}'.format(self.account.get_account_name()))
         self.send('JOIN {}'.format(self.channel_name))
@@ -76,12 +78,15 @@ class TwitchChatBot:
         self.log('Received data: {}'.format(data))
         return data
 
-    def post_in_channel(self, chat_string):
+    def quick_post_in_channel(self, chat_string):
         self.connect()
         self.join_channel()
         self.receive()
-        self.send('PRIVMSG #{} :{}'.format(self.channel_name, chat_string))
+        self.post_in_channel(chat_string=chat_string)
         self.disconnect()
+
+    def post_in_channel(self, chat_string):
+        self.send('PRIVMSG #{} :{}'.format(self.channel_name, chat_string))
 
     def send(self, send_string):
         send_string += '\r\n'
