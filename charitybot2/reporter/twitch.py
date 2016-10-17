@@ -92,3 +92,32 @@ class TwitchChatBot:
         send_string += '\r\n'
         self.log('Sending: {}'.format(send_string))
         self.connection.send(send_string.encode('utf-8'))
+
+
+class CharityBot(TwitchChatBot):
+    donation_string = 'A new donation of {}{} has been received!' \
+                      ' A total of {}{} has been raised so far, thank you so much!'
+
+    advert_strings = [
+        '{} is being supported by Charitybot2, a twitch bot designed to supercharge charity streams. More info'
+        'can be found here: TODO: INSERT URL'
+    ]
+
+    def __init__(self, channel_name, twitch_account, fundraiser_name, verbose=False):
+        super().__init__(channel_name=channel_name, twitch_account=twitch_account, verbose=verbose)
+        self.fundraiser_name = fundraiser_name
+        self.current_advert_index = 0
+
+    def post_donation_to_chat(self, donation_currency, donation_amount, total_raised):
+        self.quick_post_in_channel(
+            self.donation_string.format(
+                donation_currency,
+                donation_amount,
+                donation_currency,
+                total_raised))
+
+    def post_advert_to_chat(self):
+        self.quick_post_in_channel(chat_string=self.advert_strings[self.current_advert_index])
+        self.current_advert_index += 1
+        if self.current_advert_index >= len(self.advert_strings):
+            self.current_advert_index = 0
