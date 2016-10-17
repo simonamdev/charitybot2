@@ -29,7 +29,7 @@ class TestEventRetrieve:
         assert valid_event.get_start_time() == 0
 
     def test_retrieve_event_end_time(self):
-        assert valid_event.get_end_time() == 1
+        assert valid_event.get_end_time() == 9999999999999999
 
     def test_retrieve_event_target_amount(self):
         assert valid_event.get_target_amount() == 1000
