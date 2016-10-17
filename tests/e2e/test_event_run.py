@@ -10,4 +10,5 @@ config_path = os.path.join(current_directory, 'data', 'config' + '.' + EventConf
 
 def test_event_cycle_count():
     test_event = Event(config_path=config_path, db_path=db_path)
-    test_event_loop = EventLoop(event=test_event)
+    test_event_loop = EventLoop(event=test_event, verbose=True)
+    test_event_loop.start()

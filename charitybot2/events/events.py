@@ -94,7 +94,7 @@ class EventLoop:
         source_url = self.event.get_source_url()
         if 'justgiving' in source_url:
             self.log('Initialising JustGiving Scraper')
-            self.scraper = JustGivingScraper(url=source_url, verbose=self.verbose)
+            self.scraper = JustGivingScraper(url=source_url)
         elif 'mydonate.bt' in source_url:
             raise NotImplementedError
         else:
@@ -102,11 +102,14 @@ class EventLoop:
 
     def start(self):
         self.log('Starting Event: {}'.format(self.event.get_event_name()))
+        self.event.start_event()
         while time.time() < self.event.get_end_time():
-            minutes_remaining = (time.time() - self.event.get_end_time()) // 60
-            self.log('Cycle {}: {} minutes remaining in event'.format(
+            hours_remaining = int((self.event.get_end_time() - time.time()) / (60 * 60))
+            self.log('Cycle {}: {} hours remaining in event'.format(
                 self.loop_count,
-                minutes_remaining))
+                hours_remaining))
+            time.sleep(self.event.get_update_tick())
+        self.event.stop_event()
 
     def get_current_amount_raised(self):
         self.event.set_amount_raised(amount=self.scraper.get_amount_raised())
