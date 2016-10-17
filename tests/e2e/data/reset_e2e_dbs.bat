@@ -1,0 +1,1 @@
+C:\sqlite3\sqlite3.exe events.db < reset_events.sql

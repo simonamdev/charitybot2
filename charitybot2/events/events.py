@@ -72,11 +72,17 @@ class Event:
 
 
 class EventLoop:
-    def __init__(self, event):
+    def __init__(self, event, verbose=False):
         self.event = event
+        self.verbose = verbose
         self.scraper = None
+        self.loop_count = 0
         self.validate_event_loop()
         self.initialise_scraper()
+
+    def log(self, log_string):
+        if self.verbose:
+            print('[{}] [EL] {}'.format(int(time.time()), log_string))
 
     def validate_event_loop(self):
         if self.event is None:
@@ -87,15 +93,20 @@ class EventLoop:
     def initialise_scraper(self):
         source_url = self.event.get_source_url()
         if 'justgiving' in source_url:
-            self.scraper = JustGivingScraper(url=source_url)
+            self.log('Initialising JustGiving Scraper')
+            self.scraper = JustGivingScraper(url=source_url, verbose=self.verbose)
         elif 'mydonate.bt' in source_url:
             raise NotImplementedError
         else:
             raise EventInvalidException
 
     def start(self):
-        pass
+        self.log('Starting Event: {}'.format(self.event.get_event_name()))
+        while time.time() < self.event.get_end_time():
+            minutes_remaining = (time.time() - self.event.get_end_time()) // 60
+            self.log('Cycle {}: {} minutes remaining in event'.format(
+                self.loop_count,
+                minutes_remaining))
 
     def get_current_amount_raised(self):
         self.event.set_amount_raised(amount=self.scraper.get_amount_raised())
-
