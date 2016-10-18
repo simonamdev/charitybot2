@@ -11,7 +11,7 @@ def justgiving():
     return '<span class="statistics-amount-raised theme-highlight-text-font">{}</span>'.format(amount)
 
 
-@app.route('/reset')
+@app.route('/reset/')
 def justgiving_reset():
     global amount
     amount = 100

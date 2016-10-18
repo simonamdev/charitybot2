@@ -48,6 +48,8 @@ class TestEventRunThrough:
 
     def test_event_amount_raised_changes_each_cycle(self):
         test_event = MockEvent('test_three', time.time() + 5)
+        # first reset the amount on the mocksite so that the amount raised is back to default
+        test_event.reset_mocksite()
         test_event_loop = EventLoop(event=test_event, verbose=True)
         test_event_loop.start()
         assert test_event_loop.event.get_amount_raised() == '200'
