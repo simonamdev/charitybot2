@@ -1,5 +1,6 @@
 import time
 
+from charitybot2.events.donation import Donation
 from charitybot2.storage.events_db import EventsDB
 from charitybot2.events.event_config import EventConfiguration, InvalidEventConfigException
 from charitybot2.sources.justgiving import JustGivingScraper
@@ -122,11 +123,6 @@ class EventLoop:
         current_amount = self.event.get_amount_raised()
         new_amount = self.scraper.get_amount_raised()
         if not new_amount == current_amount:
-            donation_delta = self.convert_donation_string_to_int(new_amount) - self.convert_donation_string_to_int(current_amount)
-            self.log('New Donation of £{} detected'.format(donation_delta))
+            donation = Donation(old_amount=current_amount, new_amount=new_amount)
+            self.log('New Donation of £{} detected'.format(donation.get_donation_amount()))
             self.event.set_amount_raised(amount=new_amount)
-
-    # Add test and convert to static
-    def convert_donation_string_to_int(self, donation_string):
-        donation_string = donation_string.replace('£', '').replace(',', '') if isinstance(donation_string, str) else donation_string
-        return int(float(donation_string))
