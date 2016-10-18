@@ -8,7 +8,7 @@ amount = 100
 def justgiving():
     global amount
     amount += 50
-    return '<span class="statistics-amount-raised theme-highlight-text-font">{}</span>'.format(amount)
+    return '<span class="statistics-amount-raised theme-highlight-text-font">£{}.52</span>'.format(amount)
 
 
 @app.route('/reset/')
@@ -18,4 +18,4 @@ def justgiving_reset():
     return ''
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

@@ -113,10 +113,20 @@ class EventLoop:
             self.log('Cycle {}: {} hours remaining in event'.format(
                 self.loop_count,
                 hours_remaining))
-            self.check_current_amount_raised()
+            self.check_for_donation()
             time.sleep(self.event.get_update_tick())
             self.loop_count += 1
         self.event.stop_event()
 
-    def check_current_amount_raised(self):
-        self.event.set_amount_raised(amount=self.scraper.get_amount_raised())
+    def check_for_donation(self):
+        current_amount = self.event.get_amount_raised()
+        new_amount = self.scraper.get_amount_raised()
+        if not new_amount == current_amount:
+            donation_delta = self.convert_donation_string_to_int(new_amount) - self.convert_donation_string_to_int(current_amount)
+            self.log('New Donation of £{} detected'.format(donation_delta))
+            self.event.set_amount_raised(amount=new_amount)
+
+    # Add test and convert to static
+    def convert_donation_string_to_int(self, donation_string):
+        donation_string = donation_string.replace('£', '').replace(',', '') if isinstance(donation_string, str) else donation_string
+        return int(float(donation_string))
