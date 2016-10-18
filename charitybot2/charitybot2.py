@@ -1,6 +1,8 @@
 class BaseComponent:
-    def __init__(self, verbose=False):
+    def __init__(self, tag, verbose=False):
+        self.tag = tag
         self.verbose = verbose
 
-    def log(self):
-        print('Test')
+    def log(self, log_string):
+        if self.verbose:
+            print('[{0}] {1}'.format(self.tag, log_string))
