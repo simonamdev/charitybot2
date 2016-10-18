@@ -7,7 +7,7 @@ class BaseComponent:
         if self.verbose:
             print('[{0}] {1}'.format(self.tag, log_string))
         if send_to_db:
-            self.send_to_db()
+            self.send_log_to_db()
 
-    def send_to_db(self):
+    def send_log_to_db(self):
         pass
