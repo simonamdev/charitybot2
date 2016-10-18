@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 import charitybot2.sources.scraper as scraper
 
-url = 'https://httpbin.org'
+url = 'https://www.github.com'
 
 
 class TestScraperURLValidity:

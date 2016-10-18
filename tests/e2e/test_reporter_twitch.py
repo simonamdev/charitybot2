@@ -18,12 +18,12 @@ class TestTwitchAccount:
 
 
 class TestTwitchChat:
-    driver = webdriver.Chrome()
     test_string = 'Charitybot2 automated E2E test string'
 
     def test_twitch_chat_string_sent_appears(self):
-        self.driver.get('https://www.twitch.tv/purrcat259')
-        assert 'Purrcat259 - Twitch' == self.driver.title
+        driver = webdriver.Chrome()
+        driver.get('https://www.twitch.tv/purrcat259')
+        assert 'Purrcat259 - Twitch' == driver.title
         bot_account = TwitchAccount(name='purrcat259', client_id=client_id, client_secret=client_secret)
         bot = TwitchChatBot(
             channel_name='purrcat259',
@@ -32,8 +32,8 @@ class TestTwitchChat:
         )
         bot.quick_post_in_channel(self.test_string)
         sleep(2)
-        chat_window = self.driver.find_element_by_class_name('chat-display')
+        chat_window = driver.find_element_by_class_name('chat-display')
         print(chat_window.text)
         assert self.test_string in chat_window.text
-        self.driver.close()
+        driver.close()
 
