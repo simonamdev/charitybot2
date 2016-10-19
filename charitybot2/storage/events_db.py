@@ -1,6 +1,4 @@
 import uuid
-from neopysqlite.neopysqlite import Neopysqlite
-from neopysqlite.neopysqlite import exception as npysql
 
 from charitybot2.storage.base_db import BaseDB
 
