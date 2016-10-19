@@ -31,7 +31,7 @@ class TestTwitchChat:
             verbose=True
         )
         bot.quick_post_in_channel(self.test_string)
-        sleep(2)
+        sleep(4)
         chat_window = driver.find_element_by_class_name('chat-display')
         print(chat_window.text)
         assert self.test_string in chat_window.text
