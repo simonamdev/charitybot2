@@ -17,11 +17,6 @@ class TestEventsDBInitialisation:
     def test_initialising_db(self):
         edb = EventsDB(db_path=dummy_db_path, verbose=True)
 
-    def test_events_db_is_created_when_it_does_not_exist(self):
-        os.remove(dummy_db_path)
-        edb = EventsDB(db_path=dummy_db_path, verbose=True)
-        assert os.path.isfile(dummy_db_path) is True
-
 
 class TestEventDBRetrieve:
     def test_event_exists(self):
