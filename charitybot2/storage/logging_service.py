@@ -16,6 +16,10 @@ def return_db_connection(event_name):
     return LogsDB(db_path=db_path, event_name=event_name)
 
 
+def parse_request(req):
+    return json.loads(request.data.decode('utf-8'))
+
+
 def check_db_connection():
     try:
         return_db_connection(event_name='test')
@@ -32,7 +36,7 @@ def index():
 
 @app.route('/debug', methods=['POST'])
 def debug_mode():
-    debug_db_path = json.loads(request.data.decode('utf-8'))['db_path']
+    debug_db_path = parse_request(request)['db_path']
     if not os.path.isfile(debug_db_path):
         return 'Could not enter debug mode'
     global db_path
@@ -56,10 +60,11 @@ def health():
 
 @app.route('/log', methods=['POST'])
 def log():
-    print(request)
-    db = return_db_connection(event_name=request.event)
-    db.create_log_source_table(log_source=request.source)
-    db.log(source=request.source, level=request.level, message=request.message)
+    # print(parse_request(request))
+    return ''
+    # db = return_db_connection(event_name=request.event)
+    # db.create_log_source_table(log_source=request.source)
+    # db.log(source=request.source, level=request.level, message=request.message)
 
 
 @app.route('/destroy')

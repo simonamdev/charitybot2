@@ -18,7 +18,7 @@ r = requests.post(url=service_full_url + 'debug', json=data)
 assert r.content == b'Successfully entered debug mode'
 
 
-class TestLoggingServiceResponse:
+class TestLoggingServiceBasicResponses:
     def test_service_returns_200_and_responds_with_name_on_base_url(self):
         response = requests.get(url=service_full_url)
         assert 200 == response.status_code
@@ -38,6 +38,12 @@ class TestLoggingServiceDebugMode:
     def test_service_returns_true_on_db_health_check(self):
         response = requests.get(url=service_full_url + 'health')
         assert True is json.loads(response.content.decode('utf-8'))['db']
+
+
+class TestLoggingServiceLogging:
+    def test_log_request_returns_200(self):
+        response = requests.post(url=service_full_url + 'log')
+        assert 200 == response.status_code
 
 
 class TestLoggingServiceStopping:
