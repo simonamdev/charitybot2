@@ -24,19 +24,23 @@ class TestLoggingServiceResponse:
         assert 200 == response.status_code
         assert b'Logging Service' == response.content
 
-    def test_service_is_using_debug_db_path(self):
-        response = requests.get(url=service_full_url + 'db')
-        assert db_path == response.content.decode('utf-8')
-
     def test_service_returns_200_with_health_check(self):
         response = requests.get(url=service_full_url + 'health')
         print(response.content)
         assert 200 == response.status_code
 
+
+class TestLoggingServiceDebugMode:
+    def test_service_is_using_debug_db_path(self):
+        response = requests.get(url=service_full_url + 'db')
+        assert db_path == response.content.decode('utf-8')
+
     def test_service_returns_true_on_db_health_check(self):
         response = requests.get(url=service_full_url + 'health')
         assert True is json.loads(response.content.decode('utf-8'))['db']
 
+
+class TestLoggingServiceStopping:
     def test_destroy_service(self):
         response = requests.get(url=service_full_url + 'destroy')
         assert b'Shutting down service' == response.content
