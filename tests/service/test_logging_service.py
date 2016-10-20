@@ -1,11 +1,13 @@
 import json
 import os
 import random
+from time import sleep
 
 import requests
 
 from charitybot2.storage.logging_service import service_url, service_port
 from charitybot2.storage.logs_db import LogsDB, Log
+from neopysqlite.exceptions import PysqliteTableDoesNotExist
 
 service_full_url = 'http://' + service_url + ':' + str(service_port) + '/'
 print('Microservice URL is: {}'.format(service_full_url))
@@ -77,6 +79,40 @@ class TestLoggingServiceLogging:
         assert logs[-1].get_event() == test_event_name
         assert logs[-1].get_message() == test_message
         assert logs[-1].get_level() == Log.info_level
+
+    def test_several_log_requests_for_same_event_enter_database_correctly(self):
+        message_count_to_log = 20
+        log_delay = 0.05
+        log_messages = []
+        test_event_name = 'flood_test_event'
+        test_source = 'flood_test_source'
+        test_db = LogsDB(db_path=db_path, event_name=test_event_name, verbose=True)
+        try:
+            test_db.db.delete_all_rows(table=test_source)
+        except PysqliteTableDoesNotExist:
+            pass
+        log_levels = [Log.info_level, Log.warning_level, Log.error_level]
+        for i in range(message_count_to_log):
+            message = 'Automated service flood test number {}'.format(i)
+            log_messages.append({
+                'event': test_event_name,
+                'source': test_source,
+                'level': random.choice(log_levels),
+                'message': message
+            })
+        for message in log_messages:
+            print(message)
+            response = requests.post(url=service_full_url + 'log', json=message)
+            print(response.status_code)
+            assert 200 == response.status_code
+            assert b'Logging successful' == response.content
+            sleep(log_delay)
+        logs = test_db.get_all_logs(source=test_source)
+        assert len(logs) == message_count_to_log
+        for i in range(message_count_to_log):
+            assert logs[i].get_event() == log_messages[i]['event']
+            assert logs[i].get_message() == log_messages[i]['message']
+            assert logs[i].get_level() == log_messages[i]['level']
 
 
 class TestLoggingServiceStopping:
