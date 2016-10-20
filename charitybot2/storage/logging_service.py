@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 from charitybot2.storage.logs_db import LogsDB
 
@@ -33,7 +33,7 @@ def health():
     health_info = {
         'db': check_db_connection()
     }
-    return json.loads(health_info)
+    return jsonify(health_info)
 
 
 @app.route('/log', methods=['POST'])
