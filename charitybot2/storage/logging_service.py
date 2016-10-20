@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 service_url = '127.0.0.1'
 service_port = 9000
+service_full_url = 'http://' + service_url + ':' + str(service_port) + '/'
 db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'db', 'logs.db')
 log_keys_required = ['event', 'source', 'level', 'message']
 
