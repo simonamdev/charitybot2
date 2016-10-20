@@ -1,0 +1,1 @@
+C:\sqlite3\sqlite3.exe logs.db < init_logs_db.sql

@@ -2,7 +2,7 @@ import json
 import os
 
 from charitybot2.storage.logs_db import LogsDB
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 
 
 app = Flask(__name__)
@@ -10,10 +10,11 @@ app = Flask(__name__)
 service_url = '127.0.0.1'
 service_port = 9000
 db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'db', 'logs.db')
+log_keys_required = ['event', 'source', 'level', 'message']
 
 
 def return_db_connection(event_name):
-    return LogsDB(db_path=db_path, event_name=event_name)
+    return LogsDB(db_path=db_path, event_name=event_name, verbose=True)
 
 
 def parse_request(req):
@@ -60,11 +61,17 @@ def health():
 
 @app.route('/log', methods=['POST'])
 def log():
-    # print(parse_request(request))
-    return ''
-    # db = return_db_connection(event_name=request.event)
-    # db.create_log_source_table(log_source=request.source)
-    # db.log(source=request.source, level=request.level, message=request.message)
+    request_data = parse_request(request)
+    if not sorted(log_keys_required) == sorted(list(request_data.keys())):
+        print('Missing keys in log request - returning 500')
+        abort(500)
+    if list(request_data.values()) == ['', '', '', '']:
+        return 'Empty Log passed'
+    print(request_data)
+    db = return_db_connection(event_name=request_data['event'])
+    db.create_log_source_table(log_source=request_data['source'])
+    db.log(source=request_data['source'], level=request_data['level'], message=request_data['message'])
+    return 'Logging successful'
 
 
 @app.route('/destroy')
