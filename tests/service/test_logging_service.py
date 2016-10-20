@@ -1,10 +1,9 @@
 import json
 import os
 import random
-from time import sleep
-
 import requests
 
+from time import sleep
 from charitybot2.storage.logging_service import service_url, service_port
 from charitybot2.storage.logs_db import LogsDB, Log
 from neopysqlite.exceptions import PysqliteTableDoesNotExist
