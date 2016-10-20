@@ -1,3 +1,6 @@
+import json
+import os
+
 from charitybot2.storage.logs_db import LogsDB
 from flask import Flask, request, jsonify
 
@@ -6,23 +9,35 @@ app = Flask(__name__)
 
 service_url = '127.0.0.1'
 service_port = 9000
+db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'db', 'logs.db')
 
 
 def return_db_connection(event_name):
-    return LogsDB(db_path='db/logs.db', event_name=event_name)
+    return LogsDB(db_path=db_path, event_name=event_name)
 
 
 def check_db_connection():
     try:
         return_db_connection(event_name='test')
         return True
-    except Exception:
+    except Exception as e:
+        print(e)
         return False
 
 
 @app.route('/')
 def index():
     return 'Logging Service'
+
+
+@app.route('/debug', methods=['POST'])
+def debug_mode():
+    debug_db_path = json.loads(request.data.decode('utf-8'))['db_path']
+    if not os.path.isfile(debug_db_path):
+        return 'Could not enter debug mode'
+    global db_path
+    db_path = debug_db_path
+    return 'Successfully entered debug mode'
 
 
 @app.route('/health')

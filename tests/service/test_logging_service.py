@@ -1,9 +1,21 @@
+import json
+import os
+
 import requests
 
 from charitybot2.storage.logging_service import service_url, service_port
 
 service_full_url = 'http://' + service_url + ':' + str(service_port) + '/'
 print('Microservice URL is: {}'.format(service_full_url))
+
+db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'db', 'logs.db')
+
+# Enter debug mode to override the db path
+data = {
+    'db_path': db_path
+}
+r = requests.post(url=service_full_url + 'debug', json=data)
+assert r.content == b'Successfully entered debug mode'
 
 
 class TestLoggingServiceResponse:
