@@ -1,8 +1,5 @@
-import json
-
-from flask import Flask, request, jsonify
-
 from charitybot2.storage.logs_db import LogsDB
+from flask import Flask, request, jsonify
 
 
 app = Flask(__name__)
@@ -43,5 +40,23 @@ def log():
     db.create_log_source_table(log_source=request.source)
     db.log(source=request.source, level=request.level, message=request.message)
 
-if __name__ == '__main__':
+
+@app.route('/destroy')
+def destroy():
+    shutdown_server()
+    return 'Shutting down service'
+
+
+def start_service():
     app.run(host=service_url, port=service_port, debug=True)
+
+
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+
+if __name__ == '__main__':
+    start_service()
