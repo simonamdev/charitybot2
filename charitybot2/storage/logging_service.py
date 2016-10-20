@@ -40,6 +40,12 @@ def debug_mode():
     return 'Successfully entered debug mode'
 
 
+@app.route('/db')
+def current_db_path():
+    global db_path
+    return db_path
+
+
 @app.route('/health')
 def health():
     health_info = {
@@ -58,7 +64,7 @@ def log():
 
 @app.route('/destroy')
 def destroy():
-    shutdown_server()
+    shutdown_service()
     return 'Shutting down service'
 
 
@@ -66,7 +72,7 @@ def start_service():
     app.run(host=service_url, port=service_port, debug=True)
 
 
-def shutdown_server():
+def shutdown_service():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
