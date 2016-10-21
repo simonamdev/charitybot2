@@ -19,7 +19,7 @@ def return_db_connection(event_name):
 
 
 def parse_request(req):
-    return json.loads(request.data.decode('utf-8'))
+    return json.loads(req.data.decode('utf-8'))
 
 
 def check_db_connection():
