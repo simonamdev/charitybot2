@@ -10,7 +10,8 @@ class ResetDB:
     def __init__(self, db_path, sql_path):
         self.db_path = db_path
         self.sql_path = sql_path
-        self.reset_db()
+        if not db_path == '' and sql_path == '':
+            self.reset_db()
 
     def reset_db(self):
         db = Neopysqlite(database_name='Test DB', db_path=self.db_path, verbose=True)
@@ -27,8 +28,9 @@ class ResetDB:
 
 
 class ServiceTest(ResetDB):
-    def __init__(self, db_path, sql_path, service_path):
+    def __init__(self, service_name, service_path, db_path='', sql_path=''):
         super().__init__(db_path=db_path, sql_path=sql_path)
+        self.service_name = service_name
         self.service_path = service_path
         self.service = None
 

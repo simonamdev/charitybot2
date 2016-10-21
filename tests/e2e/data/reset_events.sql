@@ -5,5 +5,5 @@ CREATE TABLE `events` (
 	`uuid`	TEXT NOT NULL UNIQUE,
 	`state` TEXT NOT NULL DEFAULT `REGISTERED`
 );
-INSERT INTO `events` (id, name, uuid) VALUES (?, 'event_one', 123456);
-INSERT INTO `events` (id, name, uuid) VALUES (?, 'event_two', 123457);
+INSERT INTO `events` (id, name, uuid) VALUES (1, 'event_one', 123456);
+INSERT INTO `events` (id, name, uuid) VALUES (2, 'event_two', 123457);
