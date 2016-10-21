@@ -4,21 +4,37 @@ import random
 import requests
 
 from time import sleep
+from pathlib import Path
 from charitybot2.storage.logging_service import service_url, service_port
 from charitybot2.storage.logs_db import LogsDB, Log
 from neopysqlite.exceptions import PysqliteTableDoesNotExist
+from tests.service.service_test import ServiceTest
 
 service_full_url = 'http://' + service_url + ':' + str(service_port) + '/'
 print('Microservice URL is: {}'.format(service_full_url))
 
-db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'db', 'logs.db')
+current_directory = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(current_directory, 'db', 'logs.db')
+sql_reset_path = os.path.join(current_directory, 'db', 'init_logs_db.sql')
+service_script_path = os.path.join(str(Path(os.path.dirname(__file__)).parents[1]), 'charitybot2', 'storage',
+                                   'logging_service.py')
 
-# Enter debug mode to override the db path
-data = {
-    'db_path': db_path
-}
-r = requests.post(url=service_full_url + 'debug', json=data)
-assert r.content == b'Successfully entered debug mode'
+service_test = ServiceTest(db_path=db_path, sql_reset_file_path=sql_reset_path, service_path=service_script_path)
+
+
+def setup_module():
+    # this can definitely do with its own class to create the paths rather than doing them in each test file
+    service_test.start_service()
+    # Enter debug mode to override the db path
+    data = {
+        'db_path': db_path
+    }
+    r = requests.post(url=service_full_url + 'debug', json=data)
+    assert r.content == b'Successfully entered debug mode'
+
+
+def teardown_module():
+    service_test.stop_service()
 
 
 class TestLoggingServiceBasicResponses:
