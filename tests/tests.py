@@ -10,13 +10,15 @@ class ResetDB:
     def __init__(self, db_path, sql_path):
         self.db_path = db_path
         self.sql_path = sql_path
-        if not db_path == '' and sql_path == '':
+        if not db_path == '' and not sql_path == '':
             self.reset_db()
 
     def reset_db(self):
+        print('Resetting Test Database')
         db = Neopysqlite(database_name='Test DB', db_path=self.db_path, verbose=True)
         commands = self.get_reset_sql_script().split(';')
         for command in commands:
+            print(command)
             db.execute_sql(command + ';')
 
     def get_reset_sql_script(self):

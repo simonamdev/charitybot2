@@ -9,12 +9,12 @@ test_db_path = os.path.join(current_directory, 'db', 'test_events.db')
 events_db_path = os.path.join(current_directory, 'db', 'test_events.db')
 events_db_init_script_path = os.path.join(current_directory, 'db', 'init_test_events.sql')
 
-ResetDB(db_path=test_db_path, sql_path=events_db_init_script_path)
-
 test_events = [
     'event_one',
     'event_two'
 ]
+
+ResetDB(db_path=test_db_path, sql_path=events_db_init_script_path)
 
 
 class TestEventsDBInitialisation:
