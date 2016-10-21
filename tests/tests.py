@@ -14,7 +14,9 @@ class ResetDB:
 
     def reset_db(self):
         db = Neopysqlite(database_name='Test DB', db_path=self.db_path, verbose=True)
-        db.execute_sql(self.get_reset_sql_script())
+        commands = self.get_reset_sql_script().split(';')
+        for command in commands:
+            db.execute_sql(command + ';')
 
     def get_reset_sql_script(self):
         sql_string = ''

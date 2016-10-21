@@ -1,14 +1,18 @@
 import os
+from time import sleep
+
 import pytest
 from charitybot2.events.events import Event
 from charitybot2.events.event_config import EventConfiguration, InvalidEventConfigException
-
+from tests.tests import ResetDB
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 valid_config_path = os.path.join(current_directory, 'configs', 'valid_config' + '.' + EventConfiguration.config_format)
 invalid_config_path = os.path.join(current_directory, 'configs', 'invalid_config' + '.' + EventConfiguration.config_format)
 events_db_path = os.path.join(current_directory, 'db', 'test_events.db')
+events_db_init_script_path = os.path.join(current_directory, 'db', 'init_test_events.sql')
 
+ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
 valid_event = Event(config_path=valid_config_path, db_path=events_db_path)
 
 

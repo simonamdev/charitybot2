@@ -2,10 +2,14 @@ import os
 import pytest
 
 from charitybot2.storage.events_db import EventsDB, EventAlreadyRegisteredException, EventGivenInvalidStateException
+from tests.tests import ResetDB
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
-dummy_db_path = os.path.join(current_directory, 'db', 'dummy_events.db')
 test_db_path = os.path.join(current_directory, 'db', 'test_events.db')
+events_db_path = os.path.join(current_directory, 'db', 'test_events.db')
+events_db_init_script_path = os.path.join(current_directory, 'db', 'init_test_events.sql')
+
+ResetDB(db_path=test_db_path, sql_path=events_db_init_script_path)
 
 test_events = [
     'event_one',
@@ -15,7 +19,7 @@ test_events = [
 
 class TestEventsDBInitialisation:
     def test_initialising_db(self):
-        edb = EventsDB(db_path=dummy_db_path, verbose=True)
+        edb = EventsDB(db_path=test_db_path, verbose=True)
 
 
 class TestEventDBRetrieve:
