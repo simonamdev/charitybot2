@@ -6,6 +6,7 @@ import requests
 
 from charitybot2.events.event_config import EventConfiguration
 from charitybot2.events.events import EventLoop, Event
+from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from charitybot2.storage.events_db import EventsDB
 from tests.tests import ResetDB, ServiceTest
 
@@ -18,7 +19,7 @@ mocksite_path = os.path.join(str(Path(os.path.dirname(__file__)).parents[1]), 'c
 
 
 class MockEvent(Event):
-    mocksite_base_url = 'http://127.0.0.1:5000/'
+    mocksite_base_url = mocksite_full_url
 
     def __init__(self, mock_name, mock_end_time):
         super().__init__(config_path=config_path, db_path=test_db_path)
@@ -43,7 +44,7 @@ service_test = ServiceTest('Donations Mocksite', MockEvent.mocksite_base_url, se
 
 def setup_module():
     service_test.start_service()
-    r = requests.get(url='http://127.0.0.1:5000/reset')
+    r = requests.get(url=mocksite_full_url + 'reset')
     assert 200 == r.status_code
 
 

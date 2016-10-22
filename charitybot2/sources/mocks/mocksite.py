@@ -1,9 +1,9 @@
 from flask import Flask, request
 app = Flask(__name__)
 
-service_url = '127.0.0.1'
-service_port = 9000
-service_full_url = 'http://' + service_url + ':' + str(service_port) + '/'
+mocksite_url = '127.0.0.1'
+mocksite_port = 5000
+mocksite_full_url = 'http://' + mocksite_url + ':' + str(mocksite_port) + '/'
 
 amount = 100
 
@@ -29,7 +29,7 @@ def destroy():
 
 
 def start_service():
-    app.run(host=service_url, port=service_port, debug=True)
+    app.run(host=mocksite_url, port=mocksite_port, debug=True)
 
 
 def shutdown_service():

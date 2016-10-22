@@ -41,6 +41,7 @@ class ServiceTest(ResetDB):
 
     def start_service(self):
         print('Starting Microservice')
+        print(self.service_path)
         args = [sys.executable, self.service_path]
         self.service = subprocess.Popen(args)
         sleep(2)
@@ -52,7 +53,11 @@ class ServiceTest(ResetDB):
             print('Accessed service destroy URL')
         except Exception:
             print('Service already destroyed')
-        print('Attempting to stop process')
+        sleep(2)
+        self.kill_process()
+
+    def kill_process(self):
+        print('Attempting to kill process')
         # Attempt graceful termination
         pid = self.service.pid
         self.service.terminate()

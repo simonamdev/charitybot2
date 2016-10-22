@@ -14,9 +14,9 @@ class Logger:
         self.event = event
         self.source = source
         self.timeout = timeout
-        self.validate()
+        self.check_service_connection()
 
-    def validate(self):
+    def check_service_connection(self):
         response = requests.get(url=service_full_url + 'health')
         if not response.json()['db']:
             raise LoggingFailedException
