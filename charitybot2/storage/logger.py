@@ -1,5 +1,6 @@
 import requests
 from charitybot2.storage.logging_service import service_full_url
+from charitybot2.storage.logs_db import Log
 
 
 class LoggingFailedException(Exception):
@@ -35,3 +36,12 @@ class Logger:
             return False
         except Exception:
             raise LoggingFailedException
+
+    def log_info(self, message):
+        self.log(level=Log.info_level, message=message)
+
+    def log_warning(self, message):
+        self.log(level=Log.warning_level, message=message)
+
+    def log_error(self, message):
+        self.log(level=Log.error_level, message=message)

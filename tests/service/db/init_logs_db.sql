@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS `logger_testing`;
+DROP TABLE IF EXISTS `logger_level_testing`;
 DROP TABLE IF EXISTS `test`;
 DROP TABLE IF EXISTS `test_one`;
 DROP TABLE IF EXISTS `test_two`;
