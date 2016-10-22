@@ -3,6 +3,8 @@ import subprocess
 import sys
 
 from time import sleep
+
+import requests
 from neopysqlite.neopysqlite import Neopysqlite
 
 
@@ -30,8 +32,9 @@ class ResetDB:
 
 
 class ServiceTest(ResetDB):
-    def __init__(self, service_name, service_path, db_path='', sql_path=''):
+    def __init__(self, service_name, service_url, service_path, db_path='', sql_path=''):
         super().__init__(db_path=db_path, sql_path=sql_path)
+        self.service_url = service_url
         self.service_name = service_name
         self.service_path = service_path
         self.service = None
@@ -43,7 +46,13 @@ class ServiceTest(ResetDB):
         sleep(2)
 
     def stop_service(self):
-        print('Stopping Microservice gracefully')
+        print('Stopping Microservice')
+        try:
+            requests.get(self.service_url + 'destroy')
+            print('Accessed service destroy URL')
+        except Exception:
+            print('Service already destroyed')
+        print('Attempting to stop process')
         # Attempt graceful termination
         pid = self.service.pid
         self.service.terminate()
@@ -51,6 +60,6 @@ class ServiceTest(ResetDB):
         try:
             os.kill(pid, 0)
             self.service.kill()
-            print('Killed Forcefully')
+            print('Process killed Forcefully')
         except Exception:
-            print('Killed gracefully')
+            print('Process killed gracefully')

@@ -16,9 +16,6 @@ events_db_init_script_path = os.path.join(current_directory, 'data', 'reset_even
 # this can definitely do with its own class to create the paths rather than doing them in each test file
 mocksite_path = os.path.join(str(Path(os.path.dirname(__file__)).parents[1]), 'charitybot2', 'sources', 'mocks', 'mocksite.py')
 
-ResetDB(db_path=test_db_path, sql_path=events_db_init_script_path)
-service_test = ServiceTest('Donations Mocksite', service_path=mocksite_path)
-
 
 class MockEvent(Event):
     mocksite_base_url = 'http://127.0.0.1:5000/'
@@ -39,6 +36,9 @@ class MockEvent(Event):
 
     def reset_mocksite(self):
         requests.get(url=self.mocksite_base_url + 'reset/')
+
+ResetDB(db_path=test_db_path, sql_path=events_db_init_script_path)
+service_test = ServiceTest('Donations Mocksite', MockEvent.mocksite_base_url, service_path=mocksite_path)
 
 
 def setup_module():
