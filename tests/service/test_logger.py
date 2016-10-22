@@ -46,6 +46,6 @@ class TestLoggerValidity:
         log = Logger(event='test_logger_event', source='logger_testing')
         log.log(level=Log.info_level, message='Hello there!')
         db = Neopysqlite('Log DB', db_path=db_path, verbose=False)
-        print(db.get_table_names())
-        messages = [log.get_message() for log in db.get_all_rows(table='logger_testing')]
+        messages = [log[4] for log in db.get_all_rows(table='logger_testing')]
         assert 'Hello there!' in messages
+
