@@ -1,8 +1,8 @@
+import os
+import subprocess
 import sys
 
-import subprocess
 from time import sleep
-
 from neopysqlite.neopysqlite import Neopysqlite
 
 
@@ -43,5 +43,14 @@ class ServiceTest(ResetDB):
         sleep(2)
 
     def stop_service(self):
-        print('Stopping Microservice')
+        print('Stopping Microservice gracefully')
+        # Attempt graceful termination
+        pid = self.service.pid
         self.service.terminate()
+        # Attempt force termination
+        try:
+            os.kill(pid, 0)
+            self.service.kill()
+            print('Killed Forcefully')
+        except Exception:
+            print('Killed gracefully')

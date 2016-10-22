@@ -10,7 +10,9 @@ app = Flask(__name__)
 service_url = '127.0.0.1'
 service_port = 9000
 service_full_url = 'http://' + service_url + ':' + str(service_port) + '/'
-db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'db', 'logs.db')
+
+current_directory = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(current_directory, 'db', 'logs.db')
 log_keys_required = ['event', 'source', 'level', 'message']
 
 
@@ -27,8 +29,7 @@ def check_db_connection():
         return_db_connection(event_name='test')
         return True
     except Exception as e:
-        print(e)
-        return False
+        raise e
 
 
 @app.route('/')
