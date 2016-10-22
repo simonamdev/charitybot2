@@ -9,9 +9,10 @@ class LoggingFailedException(Exception):
 class Logger:
     logging_service_url = service_full_url
 
-    def __init__(self, event, source):
+    def __init__(self, event, source, timeout=0.3):
         self.event = event
         self.source = source
+        self.timeout = timeout
         self.validate()
 
     def validate(self):
@@ -26,10 +27,11 @@ class Logger:
             'level': level,
             'message': message
         }
-        # try:
-        response = requests.post(url=service_full_url + 'log', json=payload, timeout=0.3)
-        print(response.status_code)
-        print(response.content)
-        #     assert 200 == response.status_code
-        # except Exception:
-        #     raise LoggingFailedException
+        try:
+            response = requests.post(url=service_full_url + 'log', json=payload, timeout=self.timeout)
+            assert 200 == response.status_code
+        except requests.Timeout or requests.ConnectTimeout or requests.ReadTimeout:
+            print('Logger timeout!')
+            return False
+        except Exception:
+            raise LoggingFailedException

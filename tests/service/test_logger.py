@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
+from time import sleep
 
+import pytest
 import requests
-from charitybot2.storage.logger import Logger
+from charitybot2.storage.logger import Logger, LoggingFailedException
 from charitybot2.storage.logging_service import service_full_url
 from charitybot2.storage.logs_db import Log
 from neopysqlite.neopysqlite import Neopysqlite
@@ -31,7 +33,7 @@ def setup_module():
 
 
 def teardown_module():
-    requests.get(url='http://127.0.0.1:9000/destroy')
+    # requests.get(url='http://127.0.0.1:9000/destroy')
     service_test.stop_service()
 
 
@@ -49,3 +51,14 @@ class TestLoggerValidity:
         messages = [log[4] for log in db.get_all_rows(table='logger_testing')]
         assert 'Hello there!' in messages
 
+    def test_logger_timing_out_returns_false(self):
+        log = Logger(event='test_logger_event', source='logger_testing', timeout=0.0001)
+        assert log.log(level=Log.info_level, message='Impossible timeout') is False
+
+    def test_logging_service_unavailable_raises_exception(self):
+        log = Logger(event='test_logger_event', source='logger_testing')
+        sleep(2)
+        requests.get(url='http://127.0.0.1:9000/destroy')
+        # service_test.stop_service()
+        with pytest.raises(LoggingFailedException):
+            log.log(level=1, message='Bla')
