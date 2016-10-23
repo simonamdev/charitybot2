@@ -20,6 +20,10 @@ class TestDonationValidity:
         with pytest.raises(InvalidArgumentException):
             Donation(old_amount='33.3', new_amount='22.2')
 
+    def test_passing_floats_proceses_normally(self):
+        donation = Donation(old_amount=33.3, new_amount=44.4)
+        assert 11.1 == donation.get_donation_amount()
+
 
 class TestDonationProcessing:
     def test_passing_valid_inputs_is_ok(self):
@@ -32,8 +36,8 @@ class TestDonationProcessing:
 
     def test_passing_commas_and_decimal_points_processes_normally(self):
         donation = Donation(old_amount='5000.32', new_amount='7,000.52')
-        assert donation.get_donation_amount() == 2000
+        assert donation.get_donation_amount() == 2000.20
 
     def test_passing_all_symbols_processes_normally(self):
         donation = Donation(old_amount='$3,000.33', new_amount='$30,010.55')
-        assert donation.get_donation_amount() == 27010
+        assert donation.get_donation_amount() == 27010.22
