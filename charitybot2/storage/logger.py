@@ -24,6 +24,15 @@ class Logger:
         if not response.json()['db']:
             raise LoggingFailedException
 
+    def log_info(self, message):
+        self.log(level=Log.info_level, message=message)
+
+    def log_warning(self, message):
+        self.log(level=Log.warning_level, message=message)
+
+    def log_error(self, message):
+        self.log(level=Log.error_level, message=message)
+
     def log(self, level, message):
         self.log_to_console(level=level, message=message)
         if not self.console_only:
@@ -48,12 +57,3 @@ class Logger:
             return False
         except Exception:
             raise LoggingFailedException
-
-    def log_info(self, message):
-        self.log(level=Log.info_level, message=message)
-
-    def log_warning(self, message):
-        self.log(level=Log.warning_level, message=message)
-
-    def log_error(self, message):
-        self.log(level=Log.error_level, message=message)
