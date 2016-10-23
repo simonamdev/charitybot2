@@ -16,6 +16,9 @@ class Donation:
         self.validate_resultant_amounts()
         self.donation_amount = self.new_amount - self.old_amount
 
+    def __str__(self):
+        return 'Donation of {} at {}'.format(self.get_donation_amount(), self.get_timestamp())
+
     def parse_donation_input(self, amount):
         if amount == '':
             raise InvalidArgumentException

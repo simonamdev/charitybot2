@@ -18,10 +18,12 @@ class DonationsDB(BaseDB):
 
     def confirm_event_exists(self, event):
         if event not in self.db.get_table_names():
+            self.logger.log_info('Creating table for event: {}'.format(event))
             self.db.execute_sql(self.event_table_create_statement.format(event))
 
     def record_donation(self, event, donation):
         self.confirm_event_exists(event=event)
+        self.logger.log_info('Inserting donation: {} into donations database'.format(donation))
         self.db.insert_row(
             table=event,
             row_string='(NULL, ?, ?, ?)',
