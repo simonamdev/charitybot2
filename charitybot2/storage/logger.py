@@ -1,4 +1,5 @@
 import requests
+import time
 from charitybot2.storage.logging_service import service_full_url
 from charitybot2.storage.logs_db import Log
 
@@ -10,11 +11,13 @@ class LoggingFailedException(Exception):
 class Logger:
     logging_service_url = service_full_url
 
-    def __init__(self, event, source, timeout=0.3):
+    def __init__(self, event, source, timeout=0.3, console_only=False):
         self.event = event
         self.source = source
         self.timeout = timeout
-        self.check_service_connection()
+        self.console_only = console_only
+        if not self.console_only:
+            self.check_service_connection()
 
     def check_service_connection(self):
         response = requests.get(url=service_full_url + 'health')
@@ -22,6 +25,15 @@ class Logger:
             raise LoggingFailedException
 
     def log(self, level, message):
+        self.log_to_console(level=level, message=message)
+        if not self.console_only:
+            return self.log_to_service(level=level, message=message)
+
+    def log_to_console(self, level, message):
+        console_log = Log(source=self.source, event=self.event, timestamp=int(time.time()), level=level, message=message)
+        print(console_log)
+
+    def log_to_service(self, level, message):
         payload = {
             'event': self.event,
             'source': self.source,

@@ -74,3 +74,10 @@ class TestLoggerValidity:
         # service_test.stop_service()
         with pytest.raises(LoggingFailedException):
             log.log(level=1, message='Bla')
+
+    def test_logging_to_console_only_does_not_store_in_db(self):
+        log = Logger(event='test_console_only', source='console_only_testing', console_only=True)
+        log.log(level=Log.info_level, message='This should not be in the DB')
+        db = Neopysqlite('Log DB', db_path=db_path, verbose=False)
+        messages = [log[4] for log in db.get_all_rows(table='logger_testing')]
+        assert 'This should not be in the DB!' not in messages
