@@ -52,8 +52,3 @@ class TestDonationProcessing:
         current_time_float = time.time()
         donation = Donation(old_amount=0, new_amount=1, timestamp=current_time_float)
         assert int(current_time_float) == donation.get_timestamp()
-
-    def test_not_passing_timestamp_returns_same_or_close_timestamp(self):
-        current_time = int(time.time())
-        donation = Donation(old_amount=0, new_amount=1)
-        assert current_time == donation.get_timestamp() or current_time == donation.get_timestamp() + 1
