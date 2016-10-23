@@ -20,7 +20,7 @@ class TestDonationValidity:
         with pytest.raises(InvalidArgumentException):
             Donation(old_amount='33.3', new_amount='22.2')
 
-    def test_passing_floats_proceses_normally(self):
+    def test_passing_floats_processes_normally(self):
         donation = Donation(old_amount=33.3, new_amount=44.4)
         assert 11.1 == donation.get_donation_amount()
 
