@@ -1,4 +1,5 @@
 import pytest
+import time
 
 from charitybot2.events.donation import Donation, InvalidArgumentException
 
@@ -41,3 +42,18 @@ class TestDonationProcessing:
     def test_passing_all_symbols_processes_normally(self):
         donation = Donation(old_amount='$3,000.33', new_amount='$30,010.55')
         assert donation.get_donation_amount() == 27010.22
+
+    def test_passing_current_time_returns_correctly(self):
+        current_time = int(time.time())
+        donation = Donation(old_amount='$3,000.33', new_amount='$30,010.55', timestamp=current_time)
+        assert current_time == donation.get_timestamp()
+
+    def test_passing_non_integer_time_returns_as_integer(self):
+        current_time_float = time.time()
+        donation = Donation(old_amount=0, new_amount=1, timestamp=current_time_float)
+        assert int(current_time_float) == donation.get_timestamp()
+
+    def test_not_passing_timestamp_returns_same_or_close_timestamp(self):
+        current_time = int(time.time())
+        donation = Donation(old_amount=0, new_amount=1)
+        assert current_time == donation.get_timestamp() or current_time == donation.get_timestamp() + 1
