@@ -9,8 +9,7 @@ class LoggingFailedException(Exception):
 
 
 class Logger:
-    def __init__(self, event, source, debug_db_path='', console_only=False):
-        self.event = event
+    def __init__(self, source, debug_db_path='', console_only=False):
         self.source = source
         self.debug_db_path = debug_db_path
         self.console_only = console_only
