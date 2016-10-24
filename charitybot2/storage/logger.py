@@ -1,6 +1,5 @@
 import requests
 import time
-from charitybot2.storage.logging_service import service_full_url
 from charitybot2.storage.logs_db import Log
 
 
@@ -9,8 +8,6 @@ class LoggingFailedException(Exception):
 
 
 class Logger:
-    logging_service_url = service_full_url
-
     def __init__(self, event, source, timeout=0.3, console_only=False):
         self.event = event
         self.source = source
