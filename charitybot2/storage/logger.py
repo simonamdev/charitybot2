@@ -1,6 +1,7 @@
-import requests
 import time
-from charitybot2.storage.logs_db import Log
+
+from charitybot2.paths import logs_db_path
+from charitybot2.storage.logs_db import Log, LogsDB
 
 
 class LoggingFailedException(Exception):
@@ -8,18 +9,21 @@ class LoggingFailedException(Exception):
 
 
 class Logger:
-    def __init__(self, event, source, timeout=0.3, console_only=False):
+    def __init__(self, event, source, debug_db_path='', console_only=False):
         self.event = event
         self.source = source
-        self.timeout = timeout
+        self.debug_db_path = debug_db_path
         self.console_only = console_only
+        self.db = None
         if not self.console_only:
-            self.check_service_connection()
+            self.initialise_db_connection()
 
-    def check_service_connection(self):
-        response = requests.get(url=service_full_url + 'health')
-        if not response.json()['db']:
-            raise LoggingFailedException
+    def initialise_db_connection(self):
+        db_path = logs_db_path
+        if self.debug_db_path is not '':
+            db_path = self.debug_db_path
+        self.db = LogsDB(db_path=db_path, event_name=self.event, verbose=False)
+        self.db.create_log_source_table(log_source=self.source)
 
     def log_info(self, message):
         self.log(level=Log.info_level, message=message)
@@ -33,24 +37,11 @@ class Logger:
     def log(self, level, message):
         self.log_to_console(level=level, message=message)
         if not self.console_only:
-            return self.log_to_service(level=level, message=message)
+            return self.log_to_db(level=level, message=message)
 
     def log_to_console(self, level, message):
         console_log = Log(source=self.source, event=self.event, timestamp=int(time.time()), level=level, message=message)
         print(console_log)
 
-    def log_to_service(self, level, message):
-        payload = {
-            'event': self.event,
-            'source': self.source,
-            'level': level,
-            'message': message
-        }
-        try:
-            response = requests.post(url=service_full_url + 'log', json=payload, timeout=self.timeout)
-            assert 200 == response.status_code
-        except requests.Timeout or requests.ConnectTimeout or requests.ReadTimeout:
-            print('Logger timeout!')
-            return False
-        except Exception:
-            raise LoggingFailedException
+    def log_to_db(self, level, message):
+        self.db.log(source=self.source, level=level, message=message)
