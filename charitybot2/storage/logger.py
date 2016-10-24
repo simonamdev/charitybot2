@@ -1,6 +1,6 @@
 import time
 
-from charitybot2.paths import logs_db_path
+from charitybot2.paths import production_logs_db_path
 from charitybot2.storage.logs_db import Log, LogsDB
 
 
@@ -19,7 +19,7 @@ class Logger:
             self.initialise_db_connection()
 
     def initialise_db_connection(self):
-        db_path = logs_db_path
+        db_path = production_logs_db_path
         if self.debug_db_path is not '':
             db_path = self.debug_db_path
         self.db = LogsDB(db_path=db_path, event_name=self.event, verbose=False)
