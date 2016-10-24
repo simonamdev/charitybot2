@@ -13,8 +13,7 @@ class DonationsDB(BaseDB):
 
     def __init__(self, db_path, debug=False):
         super().__init__(file_path=db_path, db_name='Donations DB', verbose=debug)
-        # TODO: Refactor logger to not require event
-        self.logger = Logger(event='???', source='Donations DB', console_only=debug)
+        self.logger = Logger(source='Donations DB', console_only=debug)
 
     def confirm_event_exists(self, event):
         if event not in self.db.get_table_names():
