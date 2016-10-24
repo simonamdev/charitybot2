@@ -22,7 +22,7 @@ class Logger:
         db_path = production_logs_db_path
         if self.debug_db_path is not '':
             db_path = self.debug_db_path
-        self.db = LogsDB(db_path=db_path, event_name=self.event, verbose=False)
+        self.db = LogsDB(db_path=db_path, verbose=False)
         self.db.create_log_source_table(log_source=self.source)
 
     def log_info(self, message):
@@ -40,7 +40,7 @@ class Logger:
             return self.log_to_db(level=level, message=message)
 
     def log_to_console(self, level, message):
-        console_log = Log(source=self.source, event=self.event, timestamp=int(time.time()), level=level, message=message)
+        console_log = Log(source=self.source, timestamp=int(time.time()), level=level, message=message)
         print(console_log)
 
     def log_to_db(self, level, message):
