@@ -4,6 +4,7 @@ from charitybot2.events.donation import Donation
 from charitybot2.storage.events_db import EventsDB
 from charitybot2.events.event_config import EventConfiguration, InvalidEventConfigException
 from charitybot2.sources.justgiving import JustGivingScraper
+from charitybot2.storage.logger import Logger
 
 
 class EventInvalidException(Exception):
@@ -76,17 +77,14 @@ class Event:
 
 
 class EventLoop:
-    def __init__(self, event, verbose=False):
+    def __init__(self, event, debug=False):
         self.event = event
-        self.verbose = verbose
+        self.debug = debug
         self.scraper = None
         self.loop_count = 0
+        self.logger = Logger(source='EventLoop', console_only=debug)
         self.validate_event_loop()
         self.initialise_scraper()
-
-    def log(self, log_string):
-        if self.verbose:
-            print('[{}] [EL] {}'.format(int(time.time()), log_string))
 
     def validate_event_loop(self):
         if self.event is None:
@@ -97,7 +95,7 @@ class EventLoop:
     def initialise_scraper(self):
         source_url = self.event.get_source_url()
         if 'justgiving' in source_url:
-            self.log('Initialising JustGiving Scraper')
+            self.logger.log_info('Initialising JustGiving Scraper')
             self.scraper = JustGivingScraper(url=source_url)
         elif 'mydonate.bt' in source_url:
             raise NotImplementedError
@@ -105,13 +103,13 @@ class EventLoop:
             raise EventInvalidException
 
     def start(self):
-        self.log('Registering Event: {}'.format(self.event.get_event_name()))
+        self.logger.log_info('Registering Event: {}'.format(self.event.get_event_name()))
         self.event.register_event()
-        self.log('Starting Event: {}'.format(self.event.get_event_name()))
+        self.logger.log_info('Starting Event: {}'.format(self.event.get_event_name()))
         self.event.start_event()
         while time.time() < self.event.get_end_time():
             hours_remaining = int((self.event.get_end_time() - time.time()) / (60 * 60))
-            self.log('Cycle {}: {} hours remaining in event'.format(
+            self.logger.log_info('Cycle {}: {} hours remaining in event'.format(
                 self.loop_count,
                 hours_remaining))
             self.check_for_donation()
@@ -124,5 +122,5 @@ class EventLoop:
         new_amount = self.scraper.get_amount_raised()
         if not new_amount == current_amount:
             donation = Donation(old_amount=current_amount, new_amount=new_amount)
-            self.log('New Donation of £{} detected'.format(donation.get_donation_amount()))
+            self.logger.log_info('New Donation of £{} detected'.format(donation.get_donation_amount()))
             self.event.set_amount_raised(amount=new_amount)

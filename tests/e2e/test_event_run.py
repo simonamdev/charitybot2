@@ -55,13 +55,13 @@ def teardown_module():
 class TestEventRunThrough:
     def test_event_loop_changes_states_when_starting_and_finishing(self):
         test_event = MockEvent('test_one', time.time() + 20)
-        test_event_loop = EventLoop(event=test_event, verbose=True)
+        test_event_loop = EventLoop(event=test_event, debug=True)
         test_event_loop.start()
         assert test_event_loop.event.get_event_current_state() == EventsDB.event_completed_state
 
     def test_event_cycles_increment_properly(self):
         test_event = MockEvent('test_two', time.time() + 20)
-        test_event_loop = EventLoop(event=test_event, verbose=True)
+        test_event_loop = EventLoop(event=test_event, debug=True)
         test_event_loop.start()
         assert test_event_loop.loop_count == 4
 
@@ -69,11 +69,11 @@ class TestEventRunThrough:
         test_event = MockEvent('test_three', time.time() + 5)
         # first reset the amount on the mocksite so that the amount raised is back to default
         test_event.reset_mocksite()
-        test_event_loop = EventLoop(event=test_event, verbose=True)
+        test_event_loop = EventLoop(event=test_event, debug=True)
         test_event_loop.start()
         assert test_event_loop.event.get_amount_raised() == '£200.52'
 
     def test_donation_message_appears_every_cycle(self):
         test_event = MockEvent('test_three', time.time() + 10)
         test_event.reset_mocksite()
-        test_event_loop = EventLoop(event=test_event, verbose=True)
+        test_event_loop = EventLoop(event=test_event, debug=True)
