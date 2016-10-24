@@ -1,9 +1,6 @@
 import os
-from time import sleep
 
-import pytest
-import requests
-from charitybot2.storage.logger import Logger, LoggingFailedException
+from charitybot2.storage.logger import Logger
 from charitybot2.storage.logs_db import Log
 from neopysqlite.neopysqlite import Neopysqlite
 from tests.tests import ResetDB
