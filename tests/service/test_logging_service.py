@@ -5,13 +5,12 @@ from pathlib import Path
 from time import sleep
 
 import requests
-from charitybot2.storage.logging_service import service_url, service_port
+from charitybot2.storage.logging_service import service_full_url
 from charitybot2.storage.logs_db import LogsDB, Log
 from neopysqlite.exceptions import PysqliteTableDoesNotExist
 from tests.tests import ServiceTest
 
-service_full_url = 'http://' + service_url + ':' + str(service_port) + '/'
-print('Microservice URL is: {}'.format(service_full_url))
+print('Logging microservice URL is: {}'.format(service_full_url))
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(current_directory, 'db', 'logs.db')
