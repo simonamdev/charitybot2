@@ -74,7 +74,7 @@ class TestEventRunThrough:
         test_event.reset_mocksite()
         test_event_loop = EventLoop(event=test_event, debug=True)
         test_event_loop.start()
-        assert test_event_loop.event.get_amount_raised() == '£200.52'
+        assert test_event_loop.event.get_amount_raised() == 200.52
 
     def test_donation_message_appears_every_cycle(self):
         test_event = MockEvent('test_three', time.time() + 10)

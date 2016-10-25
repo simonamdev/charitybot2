@@ -6,14 +6,14 @@ from charitybot2.storage.logger import Logger
 class DonationsDB(BaseDB):
     event_table_create_statement = 'CREATE TABLE `{}` (' \
                                    '`id`	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' \
-                                   '`timestamp`	INTEGER NOT NULL UNIQUE,' \
-                                   '`amount`	REAL NOT NULL UNIQUE,' \
-                                   '`delta`	    REAL NOT NULL UNIQUE' \
+                                   '`timestamp`	INTEGER NOT NULL,' \
+                                   '`amount`	REAL NOT NULL,' \
+                                   '`delta`	    REAL NOT NULL' \
                                    ');'
 
     def __init__(self, db_path, debug=False):
         super().__init__(file_path=db_path, db_name='Donations DB', verbose=debug)
-        self.logger = Logger(source='Donations DB', console_only=debug)
+        self.logger = Logger(source='Donations_DB', console_only=debug)
 
     def confirm_event_exists(self, event_name):
         if event_name not in self.db.get_table_names():

@@ -36,6 +36,7 @@ class ResetDB:
         for command in commands:
             print(command)
             db.execute_sql(command + ';')
+        db.commit_changes()
 
     def get_reset_sql_script(self):
         sql_string = ''
