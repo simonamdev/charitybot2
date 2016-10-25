@@ -1,0 +1,8 @@
+{
+  "name": "name",
+  "start_time": 0,
+  "end_time": 9999999999999999,
+  "target_amount": 1000,
+  "source_url": "www.some-website.org",
+  "update_tick": 5
+}

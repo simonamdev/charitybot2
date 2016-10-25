@@ -8,6 +8,20 @@ import requests
 from neopysqlite.neopysqlite import Neopysqlite
 
 
+class TestFilePath:
+    def __init__(self):
+        self.current_dir = os.path.dirname(os.path.abspath(__file__))
+        self.base_dir = os.path.join(self.current_dir, 'data')
+        self.db_dir = os.path.join(self.base_dir, 'db')
+        self.config_dir = os.path.join(self.base_dir, 'config')
+
+    def get_db_path(self, file_name):
+        return os.path.join(self.db_dir, file_name)
+
+    def get_config_path(self, file_name):
+        return os.path.join(self.config_dir, file_name)
+
+
 class ResetDB:
     def __init__(self, db_path, sql_path):
         self.db_path = db_path

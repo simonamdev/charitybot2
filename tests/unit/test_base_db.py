@@ -1,12 +1,9 @@
-import os
-
 import pytest
 
 from charitybot2.storage.base_db import DatabaseDoesNotExistException, BaseDB
+from tests.tests import TestFilePath
 
-
-current_directory = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(current_directory, 'db', 'test_events.db')
+db_path = TestFilePath().get_db_path('events.db')
 
 
 class TestBaseDBExistence:
