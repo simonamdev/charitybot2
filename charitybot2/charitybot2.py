@@ -57,3 +57,6 @@ class EventLoop:
         self.logger.log_info('New Donation of £{} detected'.format(donation.get_donation_amount()))
         self.event.set_amount_raised(amount=donation.get_new_amount())
         self.event.db_handler.get_donations_db().record_donation(event_name=self.event.get_event_name(), donation=donation)
+
+    def report_new_donation(self, donation):
+        pass
