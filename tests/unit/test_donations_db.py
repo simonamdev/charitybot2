@@ -18,7 +18,7 @@ class TestDonationsDBRecording:
     def test_recording_donation_records_in_db(self):
         ddb = DonationsDB(db_path=donations_db_path, debug=True)
         donation = Donation(old_amount=533.3, new_amount=545.7)
-        ddb.record_donation(event='test_event', donation=donation)
+        ddb.record_donation(event_name='test_event', donation=donation)
         db = Neopysqlite(database_name='Donations test DB', db_path=donations_db_path, verbose=True)
         all_donations = db.get_all_rows(table='test_event')
         assert len(all_donations) == 1

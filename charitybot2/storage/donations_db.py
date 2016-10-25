@@ -15,16 +15,16 @@ class DonationsDB(BaseDB):
         super().__init__(file_path=db_path, db_name='Donations DB', verbose=debug)
         self.logger = Logger(source='Donations DB', console_only=debug)
 
-    def confirm_event_exists(self, event):
-        if event not in self.db.get_table_names():
-            self.logger.log_info('Creating table for event: {}'.format(event))
-            self.db.execute_sql(self.event_table_create_statement.format(event))
+    def confirm_event_exists(self, event_name):
+        if event_name not in self.db.get_table_names():
+            self.logger.log_info('Creating table for event: {}'.format(event_name))
+            self.db.execute_sql(self.event_table_create_statement.format(event_name))
 
-    def record_donation(self, event, donation):
-        self.confirm_event_exists(event=event)
+    def record_donation(self, event_name, donation):
+        self.confirm_event_exists(event_name=event_name)
         self.logger.log_info('Inserting donation: {} into donations database'.format(donation))
         self.db.insert_row(
-            table=event,
+            table=event_name,
             row_string='(NULL, ?, ?, ?)',
             row_data=(int(time.time()), donation.get_new_amount(), donation.get_donation_amount()))
 
