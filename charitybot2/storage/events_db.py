@@ -24,8 +24,8 @@ class EventsDB(BaseDB):
         'COMPLETED'
     ]
 
-    def __init__(self, db_path=events_db_file_name, verbose=False):
-        super().__init__(file_path=db_path, db_name='Events DB', verbose=verbose)
+    def __init__(self, db_path=events_db_file_name, debug=False):
+        super().__init__(file_path=db_path, db_name='Events DB', verbose=debug)
 
     def print(self, print_string):
         if self.verbose:
