@@ -4,10 +4,10 @@ import pytest
 from charitybot2.storage.db_handler import DBCouldNotBeFoundException, DBHandler
 from charitybot2.storage.donations_db import DonationsDB
 from charitybot2.storage.events_db import EventsDB
+from tests.tests import TestFilePath
 
-current_directory = os.path.dirname(os.path.abspath(__file__))
-test_event_db_path = os.path.join(current_directory, 'db', 'test_events.db')
-test_donations_db_path = os.path.join(current_directory, 'db', 'test_donations.db')
+test_event_db_path = TestFilePath().get_db_path('events.db')
+test_donations_db_path = TestFilePath().get_db_path('donations.db')
 
 
 class TestDBHandlerValidity:

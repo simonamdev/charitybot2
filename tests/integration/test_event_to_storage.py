@@ -1,18 +1,16 @@
-import os
 import pytest
-from charitybot2.storage.db_handler import DBHandler
 
-from charitybot2.storage.events_db import EventsDB, EventAlreadyRegisteredException
-from charitybot2.events.event import Event
 from charitybot2.charitybot2 import EventLoop
-from tests.tests import ResetDB
+from charitybot2.events.event import Event
+from charitybot2.storage.db_handler import DBHandler
+from charitybot2.storage.events_db import EventsDB, EventAlreadyRegisteredException
+from tests.tests import ResetDB, TestFilePath
 
-current_directory = os.path.dirname(os.path.abspath(__file__))
-valid_config_path = os.path.join(current_directory, 'configs', 'good_source_event_config.json')
-events_db_path = os.path.join(current_directory, 'db', 'test_events.db')
-events_db_init_script_path = os.path.join(current_directory, 'db', 'init_test_events.sql')
-donations_db_path = os.path.join(current_directory, 'db', 'test_donations.db')
-donations_db_init_script_path = os.path.join(current_directory, 'db', 'init_test_donations.sql')
+valid_config_path = TestFilePath().get_config_path('good_source_event_config.json')
+events_db_path = TestFilePath().get_db_path('events.db')
+events_db_init_script_path = TestFilePath().get_db_path('events.sql')
+donations_db_path = TestFilePath().get_db_path('donations.db')
+donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 
 ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
 ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)

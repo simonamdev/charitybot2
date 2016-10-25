@@ -1,23 +1,22 @@
-import os
-
 import pytest
-
 import charitybot2.events.event_config as event_config
+
 from charitybot2.events.event import Event, EventInvalidException, EventAlreadyFinishedException
 from charitybot2.charitybot2 import EventLoop
 from charitybot2.sources.justgiving import JustGivingScraper
 from charitybot2.storage.db_handler import DBHandler
-from tests.tests import ResetDB
+from tests.tests import ResetDB, TestFilePath
 
-current_directory = os.path.dirname(os.path.abspath(__file__))
-valid_config_path = os.path.join(current_directory, 'configs', 'valid_config' + '.' + event_config.EventConfiguration.config_format)
-btdonate_config_path = os.path.join(current_directory, 'configs', 'btdonate_config' + '.' + event_config.EventConfiguration.config_format)
-invalid_config_path = os.path.join(current_directory, 'configs', 'invalid_config' + '.' + event_config.EventConfiguration.config_format)
-already_finished_config_path = os.path.join(current_directory, 'configs', 'already_finished_event_config' + '.' + event_config.EventConfiguration.config_format)
-events_db_path = os.path.join(current_directory, 'db', 'test_events.db')
-events_db_init_script_path = os.path.join(current_directory, 'db', 'init_test_events.sql')
-donations_db_path = os.path.join(current_directory, 'db', 'test_donations.db')
-donations_db_init_script_path = os.path.join(current_directory, 'db', 'init_test_donations.sql')
+valid_config_path = TestFilePath().get_config_path('valid_config' + '.' + event_config.EventConfiguration.config_format)
+btdonate_config_path = TestFilePath().get_config_path('btdonate_config' + '.' + event_config.EventConfiguration.config_format)
+invalid_config_path = TestFilePath().get_config_path('invalid_config' + '.' + event_config.EventConfiguration.config_format)
+already_finished_config_path = TestFilePath().get_config_path('already_finished_event_config' + '.' + event_config.EventConfiguration.config_format)
+
+events_db_path = TestFilePath().get_db_path('events.db')
+events_db_init_script_path = TestFilePath().get_db_path('events.sql')
+donations_db_path = TestFilePath().get_db_path('donations.db')
+donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
+
 
 ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
 ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)

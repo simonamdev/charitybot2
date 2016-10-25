@@ -1,1 +1,0 @@
-C:\sqlite3\sqlite3.exe test_events.db < init_test_events.sql
