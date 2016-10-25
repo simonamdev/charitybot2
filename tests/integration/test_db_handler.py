@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from charitybot2.events.db_handler import DBCouldNotBeFoundException, DBHandler
+from charitybot2.storage.db_handler import DBCouldNotBeFoundException, DBHandler
 from charitybot2.storage.donations_db import DonationsDB
 from charitybot2.storage.events_db import EventsDB
 
