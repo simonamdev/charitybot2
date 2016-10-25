@@ -1,14 +1,12 @@
-import os
 import pytest
 from charitybot2.events.event_config import EventConfiguration, EventConfigFileDoesNotExistException, EventConfigFieldDoesNotExistException, InvalidEventConfigException
 from time import sleep
 
-
-current_directory = os.path.dirname(os.path.abspath(__file__))
+from tests.tests import TestFilePath
 
 
 def get_config_file_path(config_name):
-    return os.path.join(current_directory, 'configs', config_name + '.' + EventConfiguration.config_format)
+    return TestFilePath().get_config_path(config_name + '.' + EventConfiguration.config_format)
 
 
 class TestEventConfigExistence:
