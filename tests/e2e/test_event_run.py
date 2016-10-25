@@ -1,12 +1,10 @@
-import os
 import time
-from pathlib import Path
-
 import requests
 
 from charitybot2.events.event_config import EventConfiguration
 from charitybot2.events.event import Event
 from charitybot2.charitybot2 import EventLoop
+from charitybot2.paths import mocksite_path
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from charitybot2.storage.db_handler import DBHandler
 from charitybot2.storage.events_db import EventsDB
@@ -16,18 +14,18 @@ config_path = TestFilePath().get_config_path('config' + '.' + EventConfiguration
 events_db_path = TestFilePath().get_db_path('events.db')
 events_db_init_script_path = TestFilePath().get_db_path('events.sql')
 donations_db_path = TestFilePath().get_db_path('donations.db')
-# this can definitely do with its own class to create the paths rather than doing them in each test file
-mocksite_path = os.path.join(str(Path(os.path.dirname(__file__)).parents[1]), 'charitybot2', 'sources', 'mocks', 'mocksite.py')
+donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 
 
 ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
+ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
 
 
 class MockEvent(Event):
     mocksite_base_url = mocksite_full_url
 
     def __init__(self, mock_name, mock_end_time):
-        super().__init__(config_path=config_path, db_handler=DBHandler(events_db_path=events_db_path, donations_db_path=donations_db_path))
+        super().__init__(config_path=config_path, db_handler=DBHandler(events_db_path=events_db_path, donations_db_path=donations_db_path, debug=True))
         self.mock_name = mock_name
         self.mock_end_time = mock_end_time
 
