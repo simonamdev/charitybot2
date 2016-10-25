@@ -1,7 +1,6 @@
 import os
-from time import sleep
-
 import pytest
+
 from charitybot2.events.event import Event
 from charitybot2.events.event_config import EventConfiguration, InvalidEventConfigException
 from charitybot2.storage.db_handler import DBHandler
