@@ -1,3 +1,3 @@
-from charitybot2.events.events import EventLoop
+from charitybot2.charitybot2 import EventLoop
 
 

@@ -3,7 +3,8 @@ import os
 import pytest
 
 from charitybot2.storage.events_db import EventsDB, EventAlreadyRegisteredException
-from charitybot2.events.events import EventLoop, Event
+from charitybot2.events.event import Event
+from charitybot2.charitybot2 import EventLoop
 from tests.tests import ResetDB
 
 current_directory = os.path.dirname(os.path.abspath(__file__))

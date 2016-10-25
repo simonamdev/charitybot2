@@ -5,7 +5,8 @@ from pathlib import Path
 import requests
 
 from charitybot2.events.event_config import EventConfiguration
-from charitybot2.events.events import EventLoop, Event
+from charitybot2.events.event import Event
+from charitybot2.charitybot2 import EventLoop
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from charitybot2.storage.events_db import EventsDB
 from tests.tests import ResetDB, ServiceTest

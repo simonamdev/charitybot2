@@ -3,7 +3,8 @@ import os
 import pytest
 
 import charitybot2.events.event_config as event_config
-from charitybot2.events.events import Event, EventLoop, EventInvalidException, EventAlreadyFinishedException
+from charitybot2.events.event import Event, EventInvalidException, EventAlreadyFinishedException
+from charitybot2.charitybot2 import EventLoop
 from charitybot2.sources.justgiving import JustGivingScraper
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
