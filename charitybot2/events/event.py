@@ -11,21 +11,16 @@ class EventAlreadyFinishedException(Exception):
 
 
 class Event:
-    def __init__(self, config_path, db_path):
+    def __init__(self, config_path, db_handler):
         self.config_path = config_path
-        self.db_path = db_path
-        self.db_interface = None
+        self.db_handler = db_handler
         self.config = None
         self.amount_raised = 0
         self.validate_config()
-        self.initialise_db_interface()
 
     def validate_config(self):
         self.config = EventConfiguration(file_path=self.config_path)
         self.config.read_config()
-
-    def initialise_db_interface(self):
-        self.db_interface = EventsDB(db_path=self.db_path)
 
     def get_event_name(self):
         return self.config.get_config_value(value_name='name')
@@ -55,17 +50,17 @@ class Event:
         return self.amount_raised
 
     def register_event(self):
-        self.db_interface.register_event(event_name=self.get_event_name())
+        self.db_handler.get_events_db().register_event(event_name=self.get_event_name())
 
     def get_event_current_state(self):
-        return self.db_interface.get_event_state(event_name=self.get_event_name())
+        return self.db_handler.get_events_db().get_event_state(event_name=self.get_event_name())
 
     def start_event(self):
-        self.db_interface.change_event_state(
+        self.db_handler.get_events_db().change_event_state(
             event_name=self.get_event_name(),
             new_state=EventsDB.event_ongoing_state)
 
     def stop_event(self):
-        self.db_interface.change_event_state(
+        self.db_handler.get_events_db().change_event_state(
             event_name=self.get_event_name(),
             new_state=EventsDB.event_completed_state)
