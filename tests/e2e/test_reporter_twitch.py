@@ -1,20 +1,8 @@
-import pytest
-
 from time import sleep
-
 from selenium import webdriver
 
-from charitybot2.reporter.twitch import TwitchAccount, InvalidTwitchAccountException, TwitchChatBot
+from charitybot2.reporter.twitch import TwitchAccount, TwitchChatBot
 from charitybot2.reporter.twitch_config import client_id, client_secret
-
-
-class TestTwitchAccount:
-    def test_invalid_twitch_account_throws_exception(self):
-        with pytest.raises(InvalidTwitchAccountException):
-            TwitchAccount(name='osdfjoidsfjiuosdfjiosfdjio', client_id=client_id, client_secret='bla')
-
-    def test_twitch_account_exists(self):
-        purrcat = TwitchAccount(name='purrcat259', client_id=client_id, client_secret='bla')
 
 
 class TestTwitchChat:
