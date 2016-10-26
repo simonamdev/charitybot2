@@ -8,21 +8,20 @@ class InvalidTwitchAccountException(Exception):
 
 
 class TwitchAccount:
-    def __init__(self, name, twitch_config):
-        self.name = name
+    def __init__(self, twitch_config):
         self.twitch_config = twitch_config
         self.request_headers = {'Client-ID': self.twitch_config.get_client_id()}
         self.channel_api_url = 'https://api.twitch.tv/kraken/channels/'
         self.validate_twitch_account()
 
     def get_account_name(self):
-        return self.name.lower()
+        return self.twitch_config.get_account_name().lower()
 
     def get_secret_token(self):
         return self.twitch_config.get_client_secret()
 
     def validate_twitch_account(self):
-        url = self.channel_api_url + self.name
+        url = self.channel_api_url + self.twitch_config.get_account_name()
         response = requests.get(url=url, headers=self.request_headers)
         if not response.status_code == 200:
             print(response.content)

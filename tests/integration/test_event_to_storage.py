@@ -16,7 +16,7 @@ ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
 ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
 db_handler = DBHandler(events_db_path=events_db_path, donations_db_path=donations_db_path)
 event = Event(config_path=valid_config_path, db_handler=db_handler)
-event_loop = EventLoop(event=event)
+event_loop = EventLoop(event=event, twitch_account=None)
 
 
 class TestEventStateChange:

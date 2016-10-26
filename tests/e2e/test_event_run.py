@@ -5,6 +5,9 @@ from charitybot2.events.event_config import EventConfiguration
 from charitybot2.events.event import Event
 from charitybot2.charitybot2 import EventLoop
 from charitybot2.paths import mocksite_path
+from charitybot2.reporter.purrbot_config import purrbot_config
+from charitybot2.reporter.twitch import TwitchAccount
+from charitybot2.reporter.twitch_config import TwitchConfig
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from charitybot2.storage.db_handler import DBHandler
 from charitybot2.storage.events_db import EventsDB
@@ -19,6 +22,8 @@ donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 
 ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
 ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
+
+purrbot = TwitchAccount(twitch_config=purrbot_config)
 
 
 class MockEvent(Event):
@@ -58,13 +63,13 @@ def teardown_module():
 class TestEventRunThrough:
     def test_event_loop_changes_states_when_starting_and_finishing(self):
         test_event = MockEvent('test_one', time.time() + 20)
-        test_event_loop = EventLoop(event=test_event, debug=True)
+        test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         assert test_event_loop.event.get_event_current_state() == EventsDB.event_completed_state
 
     def test_event_cycles_increment_properly(self):
         test_event = MockEvent('test_two', time.time() + 20)
-        test_event_loop = EventLoop(event=test_event, debug=True)
+        test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         assert test_event_loop.loop_count == 4
 
@@ -72,11 +77,11 @@ class TestEventRunThrough:
         test_event = MockEvent('test_three', time.time() + 5)
         # first reset the amount on the mocksite so that the amount raised is back to default
         test_event.reset_mocksite()
-        test_event_loop = EventLoop(event=test_event, debug=True)
+        test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         assert test_event_loop.event.get_amount_raised() == 200.52
 
     def test_donation_message_appears_every_cycle(self):
         test_event = MockEvent('test_three', time.time() + 10)
         test_event.reset_mocksite()
-        test_event_loop = EventLoop(event=test_event, debug=True)
+        test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)

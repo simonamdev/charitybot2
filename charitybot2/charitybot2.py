@@ -7,7 +7,7 @@ from charitybot2.storage.logger import Logger
 
 
 class EventLoop:
-    def __init__(self, event, debug=False):
+    def __init__(self, event, twitch_account, debug=False):
         self.event = event
         self.debug = debug
         self.scraper = None
@@ -31,6 +31,9 @@ class EventLoop:
             raise NotImplementedError
         else:
             raise EventInvalidException
+
+    def initialise_reporter(self):
+        pass
 
     def start(self):
         self.logger.log_info('Registering Event: {}'.format(self.event.get_event_name()))

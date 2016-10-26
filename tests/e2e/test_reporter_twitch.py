@@ -1,8 +1,8 @@
 from time import sleep
-from selenium import webdriver
 
+from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount, TwitchChatBot
-from charitybot2.reporter.twitch_config import client_id, client_secret
+from selenium import webdriver
 
 
 class TestTwitchChat:
@@ -12,7 +12,7 @@ class TestTwitchChat:
         driver = webdriver.Chrome()
         driver.get('https://www.twitch.tv/purrcat259')
         assert 'Purrcat259 - Twitch' == driver.title
-        bot_account = TwitchAccount(name='purrcat259', client_id=client_id, client_secret=client_secret)
+        bot_account = TwitchAccount(twitch_config=purrbot_config)
         bot = TwitchChatBot(
             channel_name='purrcat259',
             twitch_account=bot_account,
