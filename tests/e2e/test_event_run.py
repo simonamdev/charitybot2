@@ -1,13 +1,12 @@
 import time
 import requests
 
-from charitybot2.events.event_config import EventConfiguration
-from charitybot2.events.event import Event
 from charitybot2.charitybot2 import EventLoop
+from charitybot2.events.event import Event
+from charitybot2.events.event_config import EventConfiguration
 from charitybot2.paths import mocksite_path
 from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount
-from charitybot2.reporter.twitch_config import TwitchConfig
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from charitybot2.storage.db_handler import DBHandler
 from charitybot2.storage.events_db import EventsDB
