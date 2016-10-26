@@ -2,6 +2,8 @@ import pytest
 
 from charitybot2.charitybot2 import EventLoop
 from charitybot2.events.event import Event
+from charitybot2.reporter.purrbot_config import purrbot_config
+from charitybot2.reporter.twitch import TwitchAccount
 from charitybot2.storage.db_handler import DBHandler
 from charitybot2.storage.events_db import EventsDB, EventAlreadyRegisteredException
 from tests.tests import ResetDB, TestFilePath
@@ -16,7 +18,8 @@ ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
 ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
 db_handler = DBHandler(events_db_path=events_db_path, donations_db_path=donations_db_path)
 event = Event(config_path=valid_config_path, db_handler=db_handler)
-event_loop = EventLoop(event=event, twitch_account=None)
+valid_twitch_account = TwitchAccount(twitch_config=purrbot_config)
+event_loop = EventLoop(event=event, twitch_account=valid_twitch_account)
 
 
 class TestEventStateChange:
