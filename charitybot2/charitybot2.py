@@ -9,17 +9,22 @@ from charitybot2.storage.logger import Logger
 class EventLoop:
     def __init__(self, event, twitch_account, debug=False):
         self.event = event
+        self.twitch_account = twitch_account
         self.debug = debug
         self.scraper = None
         self.loop_count = 0
         self.logger = Logger(source='EventLoop', console_only=debug)
         self.validate_event_loop()
         self.initialise_scraper()
+        self.initialise_reporter()
 
     def validate_event_loop(self):
+        self.logger.log_info('Validating Event Loop')
         if self.event is None:
+            self.logger.log_error('Event object was not passed to EventLoop')
             raise EventInvalidException('No Event object passed to Event Loop')
         if time.time() > self.event.get_end_time():
+            self.logger.log_error('Event has already finished')
             raise EventAlreadyFinishedException('Current time: {} Event end time: {}'.format(time.time(), self.event.get_end_time()))
 
     def initialise_scraper(self):
@@ -28,12 +33,14 @@ class EventLoop:
             self.logger.log_info('Initialising JustGiving Scraper')
             self.scraper = JustGivingScraper(url=source_url)
         elif 'mydonate.bt' in source_url:
+            self.logger.log_error('BTDonate scraper has not been implemented yet')
             raise NotImplementedError
         else:
             raise EventInvalidException
 
     def initialise_reporter(self):
-        pass
+        self.logger.log_info('Initialising Reporter')
+        self.twitch_account.validate_twitch_account()
 
     def start(self):
         self.logger.log_info('Registering Event: {}'.format(self.event.get_event_name()))
