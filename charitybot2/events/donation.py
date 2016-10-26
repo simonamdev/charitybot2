@@ -5,12 +5,18 @@ class InvalidArgumentException(Exception):
     pass
 
 
-class Donation:
-    currency_symbols = ['$', '£', '€']
+class Currency:
+    GBP = '£'
+    USD = '$'
+    EUR = '€'
+    symbols = [GBP, USD, EUR]
 
-    def __init__(self, old_amount, new_amount, timestamp=int(time.time()), rounding=2):
+
+class Donation:
+    def __init__(self, old_amount, new_amount, currency=Currency.GBP, timestamp=int(time.time()), rounding=2):
         self.rounding = rounding
         self.timestamp = timestamp
+        self.currency = currency
         self.old_amount = self.parse_donation_input(old_amount)
         self.new_amount = self.parse_donation_input(new_amount)
         self.validate_resultant_amounts()
@@ -24,7 +30,7 @@ class Donation:
             raise InvalidArgumentException
         if isinstance(amount, str):
             amount = amount.replace(',', '')
-            for symbol in self.currency_symbols:
+            for symbol in Currency.symbols:
                 amount = amount.replace(symbol, '')
         return round(float(amount), self.rounding)
 
@@ -34,6 +40,9 @@ class Donation:
 
     def get_donation_amount(self):
         return round(self.donation_amount, self.rounding)
+
+    def get_donation_currency(self):
+        return self.currency
 
     def get_new_amount(self):
         return round(self.new_amount, self.rounding)
