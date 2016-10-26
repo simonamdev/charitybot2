@@ -46,6 +46,14 @@ class MockEvent(Event):
         requests.get(url=self.mocksite_base_url + 'reset/')
 
 
+class NonReportingLoop(EventLoop):
+    def __init__(self, event, twitch_account, debug=False):
+        super().__init__(event, twitch_account, debug)
+
+    def report_new_donation(self, donation):
+        pass
+
+
 service_test = ServiceTest('Donations Mocksite', MockEvent.mocksite_base_url, service_path=mocksite_path)
 
 
@@ -62,13 +70,13 @@ def teardown_module():
 class TestEventRunThrough:
     def test_event_loop_changes_states_when_starting_and_finishing(self):
         test_event = MockEvent('test_one', time.time() + 5)
-        test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
+        test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         assert test_event_loop.event.get_event_current_state() == EventsDB.event_completed_state
 
     def test_event_cycles_increment_properly(self):
         test_event = MockEvent('test_two', time.time() + 5)
-        test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
+        test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         assert test_event_loop.loop_count == 1
 
@@ -76,11 +84,11 @@ class TestEventRunThrough:
         test_event = MockEvent('test_three', time.time() + 5)
         # first reset the amount on the mocksite so that the amount raised is back to default
         test_event.reset_mocksite()
-        test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
+        test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         assert test_event_loop.event.get_amount_raised() == 200.52
 
     def test_donation_message_appears_every_cycle(self):
         test_event = MockEvent('test_three', time.time() + 10)
         test_event.reset_mocksite()
-        test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
+        test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
