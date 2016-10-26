@@ -62,16 +62,16 @@ def teardown_module():
 
 class TestEventRunThrough:
     def test_event_loop_changes_states_when_starting_and_finishing(self):
-        test_event = MockEvent('test_one', time.time() + 20)
+        test_event = MockEvent('test_one', time.time() + 5)
         test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         assert test_event_loop.event.get_event_current_state() == EventsDB.event_completed_state
 
     def test_event_cycles_increment_properly(self):
-        test_event = MockEvent('test_two', time.time() + 20)
+        test_event = MockEvent('test_two', time.time() + 5)
         test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
-        assert test_event_loop.loop_count == 4
+        assert test_event_loop.loop_count == 1
 
     def test_event_amount_raised_changes_each_cycle(self):
         test_event = MockEvent('test_three', time.time() + 5)
