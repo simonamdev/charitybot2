@@ -5,6 +5,10 @@ from charitybot2.storage.base_db import BaseDB
 from charitybot2.storage.logger import Logger
 
 
+def convert_row_to_donation(row):
+    return Donation(old_amount=(row[2] - row[3]), new_amount=row[2])
+
+
 class DonationsDB(BaseDB):
     event_table_create_statement = 'CREATE TABLE `{}` (' \
                                    '`id`	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' \
@@ -32,4 +36,4 @@ class DonationsDB(BaseDB):
 
     def get_all_donations(self, event_name):
         donation_rows = self.db.get_all_rows(table=event_name)
-        return [Donation(old_amount=(row[2] - row[3]), new_amount=row[2]) for row in donation_rows]
+        return [convert_row_to_donation(row) for row in donation_rows]
