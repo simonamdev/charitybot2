@@ -1,4 +1,6 @@
 import time
+
+from charitybot2.events.donation import Donation
 from charitybot2.storage.base_db import BaseDB
 from charitybot2.storage.logger import Logger
 
@@ -28,4 +30,6 @@ class DonationsDB(BaseDB):
             row_string='(NULL, ?, ?, ?)',
             row_data=(int(time.time()), donation.get_new_amount(), donation.get_donation_amount()))
 
-
+    def get_all_donations(self, event_name):
+        donation_rows = self.db.get_all_rows(table=event_name)
+        return [Donation(old_amount=(row[2] - row[3]), new_amount=row[2]) for row in donation_rows]

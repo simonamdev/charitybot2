@@ -25,3 +25,28 @@ class TestDonationsDBRecording:
         assert all_donations[0][2] == 545.7
         delta = round(545.7 - 533.3, 2)
         assert all_donations[0][3] == delta
+
+
+class TestDonationsDBRetrieve:
+    def test_getting_all_donations_after_recording_one(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        ddb.record_donation(event_name='test_event_two', donation=Donation(old_amount=500, new_amount=1000.1))
+        recorded_donation = ddb.get_all_donations(event_name='test_event_two')[0]
+        assert isinstance(recorded_donation, Donation)
+        assert recorded_donation.get_donation_amount() == 500.1
+        assert recorded_donation.get_new_amount() == 1000.1
+
+    def test_getting_all_donations_after_recording_ten(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        event_name = 'test_event_three'
+        old_amount = 0
+        amount_increase = 50.34
+        for i in range(10):
+            ddb.record_donation(event_name=event_name, donation=Donation(old_amount=old_amount, new_amount=old_amount + amount_increase))
+            old_amount += amount_increase
+        new_amount = amount_increase
+        all_donations = ddb.get_all_donations(event_name=event_name)
+        for donation in all_donations:
+            assert donation.get_donation_amount() == amount_increase
+            assert donation.get_new_amount() == round(new_amount, 2)
+            new_amount += amount_increase
