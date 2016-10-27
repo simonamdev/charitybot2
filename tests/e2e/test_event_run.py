@@ -9,7 +9,7 @@ from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from charitybot2.storage.db_handler import DBHandler
-from charitybot2.storage.events_db import EventsDB
+from charitybot2.storage.events_db import EventsDB, EventMetadata
 from tests.tests import ResetDB, ServiceTest, TestFilePath
 
 config_path = TestFilePath().get_config_path('config' + '.' + EventConfiguration.config_format)
@@ -72,13 +72,13 @@ class TestEventRunThrough:
         test_event = MockEvent('test_one', time.time() + 5)
         test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
-        assert test_event_loop.event.get_event_current_state() == EventsDB.event_completed_state
+        assert EventMetadata.completed_state == test_event_loop.event.get_event_current_state()
 
     def test_event_cycles_increment_properly(self):
         test_event = MockEvent('test_two', time.time() + 5)
         test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
-        assert test_event_loop.loop_count == 1
+        assert 1 == test_event_loop.loop_count
 
     def test_event_amount_raised_changes_each_cycle(self):
         test_event = MockEvent('test_three', time.time() + 5)
@@ -86,7 +86,7 @@ class TestEventRunThrough:
         test_event.reset_mocksite()
         test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
-        assert test_event_loop.event.get_amount_raised() == 200.52
+        assert 200.52 == test_event_loop.event.get_amount_raised()
 
     def test_donation_message_appears_every_cycle(self):
         test_event = MockEvent('test_three', time.time() + 10)
