@@ -1,6 +1,7 @@
 import pytest
 
-from charitybot2.storage.events_db import EventsDB, EventAlreadyRegisteredException, EventGivenInvalidStateException
+from charitybot2.storage.events_db import EventsDB, EventAlreadyRegisteredException, EventGivenInvalidStateException, \
+    EventMetadata
 from tests.tests import ResetDB, TestFilePath
 
 events_db_path = TestFilePath().get_db_path('events.db')
@@ -40,11 +41,8 @@ class TestEventDBRetrieve:
 
     def test_get_event_metadata(self):
         edb = EventsDB(db_path=events_db_path, debug=True)
-        data = edb.get_event_metadata(event_name='event_two')
-        assert data == {
-            'name': 'event_two',
-            'state': EventsDB.event_default_state
-        }
+        metadata = edb.get_event_metadata(event_name='event_two')
+        assert isinstance(metadata, EventMetadata)
 
 
 class TestEventDBCreate:
@@ -61,14 +59,14 @@ class TestEventDBCreate:
     def test_new_events_default_state_is_correct(self):
         edb = EventsDB(db_path=events_db_path, debug=True)
         edb.register_event(event_name='new_event_two')
-        data = edb.get_event_metadata(event_name='new_event_two')
-        assert data['state'] == EventsDB.event_default_state
+        metadata = edb.get_event_metadata(event_name='new_event_two')
+        assert EventMetadata.default_state == metadata.get_state()
 
     def test_successful_event_state_change(self):
         edb = EventsDB(db_path=events_db_path, debug=True)
         edb.change_event_state(event_name='event_one', new_state='ONGOING')
-        data = edb.get_event_metadata(event_name='event_one')
-        assert data['state'] == 'ONGOING'
+        metadata = edb.get_event_metadata(event_name='event_one')
+        assert EventMetadata.ongoing_state == metadata.get_state()
 
     def test_event_state_change_to_nonexistent_throws_exception(self):
         edb = EventsDB(db_path=events_db_path, debug=True)
