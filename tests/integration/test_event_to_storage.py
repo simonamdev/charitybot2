@@ -5,7 +5,7 @@ from charitybot2.events.event import Event
 from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount
 from charitybot2.storage.db_handler import DBHandler
-from charitybot2.storage.events_db import EventsDB, EventAlreadyRegisteredException
+from charitybot2.storage.events_db import EventsDB, EventAlreadyRegisteredException, EventMetadata
 from tests.tests import ResetDB, TestFilePath
 
 valid_config_path = TestFilePath().get_config_path('good_source_event_config.json')
@@ -29,8 +29,8 @@ class TestEventStateChange:
         event_names = edb.get_all_event_names()
         event_metadata = edb.get_event_metadata(event_name='name')
         assert 'name' in event_names
-        assert event_metadata['name'] == 'name'
-        assert event_metadata['state'] == EventsDB.event_default_state
+        assert 'name' == event_metadata.get_name()
+        assert EventMetadata.default_state == event_metadata.get_state()
 
     def test_register_event_already_registered_throws_exception(self):
         with pytest.raises(EventAlreadyRegisteredException):
@@ -40,10 +40,10 @@ class TestEventStateChange:
         event.start_event()
         edb = EventsDB(db_path=events_db_path)
         event_metadata = edb.get_event_metadata(event_name='name')
-        assert event_metadata['state'] == EventsDB.event_ongoing_state
+        assert EventMetadata.ongoing_state == event_metadata.get_state()
 
     def test_complete_new_event_successfully(self):
         event.stop_event()
         edb = EventsDB(db_path=events_db_path)
         event_metadata = edb.get_event_metadata(event_name='name')
-        assert event_metadata['state'] == EventsDB.event_completed_state
+        assert EventMetadata.completed_state == event_metadata.get_state()

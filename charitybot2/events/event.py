@@ -1,5 +1,5 @@
 from charitybot2.events.event_config import EventConfiguration
-from charitybot2.storage.events_db import EventsDB
+from charitybot2.storage.events_db import EventsDB, EventMetadata
 
 
 class EventInvalidException(Exception):
@@ -58,9 +58,9 @@ class Event:
     def start_event(self):
         self.db_handler.get_events_db().change_event_state(
             event_name=self.get_event_name(),
-            new_state=EventsDB.event_ongoing_state)
+            new_state=EventMetadata.ongoing_state)
 
     def stop_event(self):
         self.db_handler.get_events_db().change_event_state(
             event_name=self.get_event_name(),
-            new_state=EventsDB.event_completed_state)
+            new_state=EventMetadata.completed_state)
