@@ -2,6 +2,7 @@ import time
 
 from charitybot2.events.donation import Donation
 from charitybot2.events.event import EventInvalidException, EventAlreadyFinishedException
+from charitybot2.reporter.twitch import CharityBot
 from charitybot2.sources.justgiving import JustGivingScraper
 from charitybot2.storage.logger import Logger
 
@@ -12,6 +13,7 @@ class EventLoop:
         self.twitch_account = twitch_account
         self.debug = debug
         self.scraper = None
+        self.reporter = None
         self.loop_count = 0
         self.logger = Logger(source='EventLoop', console_only=debug)
         self.validate_event_loop()
@@ -41,6 +43,10 @@ class EventLoop:
     def initialise_reporter(self):
         self.logger.log_info('Initialising Reporter')
         self.twitch_account.validate_twitch_account()
+        self.reporter = CharityBot(channel_name='?',
+                                   twitch_account=self.twitch_account,
+                                   fundraiser_name=self.event.get_event_name(),
+                                   debug=self.debug)
 
     def start(self):
         self.logger.log_info('Registering Event: {}'.format(self.event.get_event_name()))
@@ -69,4 +75,4 @@ class EventLoop:
         self.event.db_handler.get_donations_db().record_donation(event_name=self.event.get_event_name(), donation=donation)
 
     def report_new_donation(self, donation):
-        pass
+        self.reporter.post_donation_to_chat()
