@@ -6,3 +6,6 @@ class StatusHandler:
 
     def get_events(self, state):
         return [row for row in self.events_db.get_data_for_all_events() if row.get_state() == state]
+
+    def get_donations(self, event):
+        return
