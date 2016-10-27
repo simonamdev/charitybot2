@@ -16,6 +16,11 @@ test_event_data = [
     (2, 'event_two', 'REGISTERED')
 ]
 
+test_event_metadata_list = [
+    EventMetadata('event_one', 'REGISTERED'),
+    EventMetadata('event_two', 'REGISTERED')
+]
+
 ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
 
 
@@ -30,6 +35,11 @@ class TestEventDBRetrieve:
         assert edb.event_exists(event_name='event_one') is True
         assert edb.event_exists(event_name='dfjojsfdi') is False
 
+    def test_event_row_to_event_metadata_conversion(self):
+        edb = EventsDB(db_path=events_db_path, debug=True)
+        metadata = edb.convert_to_event_metadata(event_db_row=test_event_data[0])
+        assert isinstance(metadata, EventMetadata)
+
     def test_get_all_event_names(self):
         edb = EventsDB(db_path=events_db_path, debug=True)
         assert sorted(test_events) == sorted(edb.get_all_event_names())
@@ -37,12 +47,20 @@ class TestEventDBRetrieve:
     def test_get_all_event_data(self):
         edb = EventsDB(db_path=events_db_path, debug=True)
         data = edb.get_data_for_all_events()
-        assert test_event_data == data
+        assert test_event_metadata_list[0].get_name() == data[0].get_name()
+        assert test_event_metadata_list[1].get_name() == data[1].get_name()
+        assert test_event_metadata_list[0].get_state() == data[0].get_state()
+        assert test_event_metadata_list[1].get_state() == data[1].get_state()
 
     def test_get_event_metadata(self):
         edb = EventsDB(db_path=events_db_path, debug=True)
         metadata = edb.get_event_metadata(event_name='event_two')
         assert isinstance(metadata, EventMetadata)
+
+    def test_get_event_state(self):
+        edb = EventsDB(db_path=events_db_path, debug=True)
+        state = edb.get_event_state(event_name='event_two')
+        assert state == EventMetadata.default_state
 
 
 class TestEventDBCreate:

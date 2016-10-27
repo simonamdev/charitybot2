@@ -1,6 +1,7 @@
 import uuid
 
 from charitybot2.storage.base_db import BaseDB
+from charitybot2.storage.logger import Logger
 
 events_db_file_name = 'events.db'
 
@@ -34,26 +35,28 @@ class EventMetadata:
 class EventsDB(BaseDB):
     def __init__(self, db_path=events_db_file_name, debug=False):
         super().__init__(file_path=db_path, db_name='Events DB', verbose=debug)
-
-    def print(self, print_string):
-        if self.verbose:
-            print('[EDB] ' + print_string)
+        self.logger = Logger(source='EventsDB', console_only=debug)
 
     def event_exists(self, event_name):
         return event_name in self.get_all_event_names()
 
     def get_all_event_names(self):
+        self.logger.log_info('Retrieving all event names')
         return [row[1] for row in self.db.get_all_rows(table='events')]
 
     def get_data_for_all_events(self):
-        return self.db.get_all_rows(table='events')
+        self.logger.log_info('Retrieving data for all events')
+        return [self.convert_to_event_metadata(row) for row in self.db.get_all_rows(table='events')]
+
+    def convert_to_event_metadata(self, event_db_row):
+        return EventMetadata(name=event_db_row[1], state=event_db_row[2])
 
     def get_event_metadata(self, event_name):
         row = self.db.get_specific_rows(table='events', filter_string='name = \'{}\''.format(event_name))[0]
-        return EventMetadata(name=row[1], state=row[2])
+        return self.convert_to_event_metadata(row)
 
     def get_event_state(self, event_name):
-        return self.get_event_metadata(event_name=event_name)['state']
+        return self.get_event_metadata(event_name=event_name).get_state()
 
     def register_event(self, event_name):
         if event_name in self.get_all_event_names():
