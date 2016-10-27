@@ -11,14 +11,16 @@ donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
 ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
 db_handler = DBHandler(events_db_path=events_db_path, donations_db_path=donations_db_path, debug=True)
+status_handler = StatusHandler(db_handler=db_handler)
 
 
-class TestStatusHandlerValidity:
-    def test_initialise_with_valid_handler_starts_ok(self):
-        status_handler = StatusHandler(db_handler=db_handler)
-
+class TestStatusHandlerRetrieve:
     def test_retrieving_registered_event_metadata(self):
-        status_handler = StatusHandler(db_handler=db_handler)
-        running_events = status_handler.get_running_events()
+        running_events = status_handler.get_events(state=EventMetadata.registered_state)
+        for metadata in running_events:
+            assert EventMetadata.registered_state == metadata.get_state()
+
+    def test_retrieving_ongoing_event_metadata(self):
+        running_events = status_handler.get_events(state=EventMetadata.ongoing_state)
         for metadata in running_events:
             assert EventMetadata.ongoing_state == metadata.get_state()
