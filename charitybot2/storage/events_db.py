@@ -37,6 +37,9 @@ class EventsDB(BaseDB):
     def get_all_event_names(self):
         return [row[1] for row in self.db.get_all_rows(table='events')]
 
+    def get_data_for_all_events(self):
+        return self.db.get_all_rows(table='events')
+
     def get_event_metadata(self, event_name):
         row = self.db.get_specific_rows(table='events', filter_string='name = \'{}\''.format(event_name))[0]
         return {

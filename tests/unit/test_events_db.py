@@ -10,6 +10,11 @@ test_events = [
     'event_two'
 ]
 
+test_event_data = [
+    (1, 'event_one', '123456', 'REGISTERED'),
+    (2, 'event_two', '123457', 'REGISTERED')
+]
+
 ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
 
 
@@ -27,6 +32,11 @@ class TestEventDBRetrieve:
     def test_get_all_event_names(self):
         edb = EventsDB(db_path=events_db_path, debug=True)
         assert sorted(test_events) == sorted(edb.get_all_event_names())
+
+    def test_get_all_event_data(self):
+        edb = EventsDB(db_path=events_db_path, debug=True)
+        data = edb.get_data_for_all_events()
+        assert test_event_data == data
 
     def test_get_event_metadata(self):
         edb = EventsDB(db_path=events_db_path, debug=True)
