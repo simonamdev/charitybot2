@@ -44,8 +44,7 @@ class EventsDB(BaseDB):
         row = self.db.get_specific_rows(table='events', filter_string='name = \'{}\''.format(event_name))[0]
         return {
             'name': row[1],
-            'uuid': row[2],
-            'state': row[3]
+            'state': row[2]
         }
 
     def get_event_state(self, event_name):
@@ -54,8 +53,7 @@ class EventsDB(BaseDB):
     def register_event(self, event_name):
         if event_name in self.get_all_event_names():
             raise EventAlreadyRegisteredException('Event with name: {} is already registered'.format(event_name))
-        event_uuid = uuid.uuid4().bytes
-        self.db.insert_row(table='events', row_string='(NULL, ?, ?, ?)', row_data=(event_name, event_uuid, EventsDB.event_default_state))
+        self.db.insert_row(table='events', row_string='(NULL, ?, ?)', row_data=(event_name, EventsDB.event_default_state))
 
     def change_event_state(self, event_name, new_state):
         if new_state not in EventsDB.event_possible_states:

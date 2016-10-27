@@ -11,8 +11,8 @@ test_events = [
 ]
 
 test_event_data = [
-    (1, 'event_one', '123456', 'REGISTERED'),
-    (2, 'event_two', '123457', 'REGISTERED')
+    (1, 'event_one', 'REGISTERED'),
+    (2, 'event_two', 'REGISTERED')
 ]
 
 ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
@@ -43,7 +43,6 @@ class TestEventDBRetrieve:
         data = edb.get_event_metadata(event_name='event_two')
         assert data == {
             'name': 'event_two',
-            'uuid': '123457',
             'state': EventsDB.event_default_state
         }
 
