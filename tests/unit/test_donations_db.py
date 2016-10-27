@@ -52,3 +52,11 @@ class TestDonationsDBRetrieve:
             assert donation.get_new_amount() == round(new_amount, 2)
             new_amount += amount_increase
 
+    def test_getting_last_donation(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        event_name = 'test_event_two'
+        ddb.record_donation(event_name=event_name, donation=Donation(old_amount=300, new_amount=500))
+        ddb.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=600))
+        last_donation = ddb.get_last_donation(event_name=event_name)
+        assert 100 == last_donation.get_donation_amount()
+        assert 600 == last_donation.get_new_amount()
