@@ -24,6 +24,6 @@ def teardown_module():
 
 class TestServiceBasicResponses:
     def test_index_page_returns_service_name(self):
-        response = requests.get(service_full_url)
+        response = requests.get(service_full_url + 'identity')
         assert 200 == response.status_code
         assert b'Status Service' == response.content

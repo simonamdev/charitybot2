@@ -1,3 +1,5 @@
+from charitybot2.paths import production_donations_db_path
+from charitybot2.storage.db_handler import DBHandler
 from flask import Flask, request, json
 
 app = Flask(__name__)
@@ -8,6 +10,9 @@ service_url = 'http://' + service_address
 service_full_url = service_url + ':' + str(service_port) + '/'
 service_debug_mode = False
 
+db_handler = DBHandler(donations_db_path=production_donations_db_path)
+donations_db = db_handler.get_donations_db()
+
 
 def parse_request(req):
     return json.loads(req.data.decode('utf-8'))
@@ -15,6 +20,11 @@ def parse_request(req):
 
 @app.route('/')
 def index():
+    return 'Index TO DO'
+
+
+@app.route('/identity')
+def identity():
     return 'Status Service'
 
 
