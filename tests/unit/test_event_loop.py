@@ -9,10 +9,10 @@ from charitybot2.sources.justgiving import JustGivingScraper
 from charitybot2.storage.db_handler import DBHandler
 from tests.tests import ResetDB, TestFilePath
 
-valid_config_path = TestFilePath().get_config_path('event', 'valid_config' + '.' + event_config.EventConfiguration.config_format)
-btdonate_config_path = TestFilePath().get_config_path('event', 'btdonate_config' + '.' + event_config.EventConfiguration.config_format)
-invalid_config_path = TestFilePath().get_config_path('event', 'invalid_config' + '.' + event_config.EventConfiguration.config_format)
-already_finished_config_path = TestFilePath().get_config_path('event', 'already_finished_event_config' + '.' + event_config.EventConfiguration.config_format)
+valid_config_path = TestFilePath().get_config_path('event', 'valid_config' + '.json')
+btdonate_config_path = TestFilePath().get_config_path('event', 'btdonate_config' + '.json')
+invalid_config_path = TestFilePath().get_config_path('event', 'invalid_config' + '.json')
+already_finished_config_path = TestFilePath().get_config_path('event', 'already_finished_event_config' + '.json')
 
 donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')

@@ -5,6 +5,7 @@ from tests.tests import TestFilePath
 def get_config_file_path(config_name):
     return TestFilePath().get_config_path('event', config_name + '.json')
 
+
 class TestEventConfigExistence:
     def test_event_config_does_exist(self):
         ec = EventConfiguration(file_path=get_config_file_path('valid_config'))
