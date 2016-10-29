@@ -68,7 +68,7 @@ class ServiceTest(ResetDB):
             print('Accessed service destroy URL')
         except Exception:
             print('Service already destroyed')
-        sleep(2)
+        sleep(1)
         self.kill_process()
 
     def kill_process(self):
