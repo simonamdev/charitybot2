@@ -21,7 +21,7 @@ class TestEventConfigRetrieve:
         urls = re.findall(url_regex, source_url)
         assert len(urls) == 1
 
-    def test(self):
+    def test_retrieve_integers_when_getting_integer_related_keys(self):
         ec = EventConfiguration(file_path=get_config_file_path('valid_config'))
         for key in EventConfiguration.number_keys:
             assert isinstance(ec.get_value(key), int)
