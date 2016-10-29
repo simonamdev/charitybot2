@@ -22,22 +22,22 @@ class Event:
         self.config.read_config()
 
     def get_event_name(self):
-        return self.config.get_config_value(value_name='name')
+        return self.config.get_value('name')
 
     def get_start_time(self):
-        return self.config.get_config_value(value_name='start_time')
+        return self.config.get_value('start_time')
 
     def get_end_time(self):
-        return self.config.get_config_value(value_name='end_time')
+        return self.config.get_value('end_time')
 
     def get_target_amount(self):
-        return self.config.get_config_value(value_name='target_amount')
+        return self.config.get_value('target_amount')
 
     def get_source_url(self):
-        return self.config.get_config_value(value_name='source_url')
+        return self.config.get_value('source_url')
 
     def get_update_tick(self):
-        return self.config.get_config_value(value_name='update_tick')
+        return self.config.get_value('update_tick')
 
     def set_amount_raised(self, amount):
         self.amount_raised = amount
