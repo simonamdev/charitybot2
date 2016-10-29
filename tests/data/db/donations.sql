@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS `test`;
 DROP TABLE IF EXISTS `test_event`;
 DROP TABLE IF EXISTS `test_event_two`;
 DROP TABLE IF EXISTS `test_event_three`;
+DROP TABLE IF EXISTS `test_event_four`;
 DROP TABLE IF EXISTS `test_one`;
 DROP TABLE IF EXISTS `test_two`;
 DROP TABLE IF EXISTS `test_three`;

@@ -24,6 +24,12 @@ class TestDonationsDBRetrieve:
         assert recorded_donation.get_donation_amount() == 500.1
         assert recorded_donation.get_new_amount() == 1000.1
 
+    def test_event_existence_of_existing_event(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        event_name = 'test_event_four'
+        ddb.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=1000.1))
+        assert True is ddb.event_exists(event_name=event_name)
+
     def test_getting_all_donations_after_recording_several(self):
         ddb = DonationsDB(db_path=donations_db_path, debug=True)
         event_name = 'test_event_three'
