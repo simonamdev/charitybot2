@@ -2,9 +2,10 @@ from flask import Flask, request, json
 
 app = Flask(__name__)
 
-service_url = '127.0.0.1'
+service_address = '127.0.0.1'
 service_port = 9000
-service_full_url = 'http://' + service_url + ':' + str(service_port) + '/'
+service_url = 'http://' + service_address
+service_full_url = service_url + ':' + str(service_port) + '/'
 service_debug_mode = False
 
 
@@ -24,7 +25,7 @@ def destroy():
 
 
 def start_service():
-    app.run(host=service_url, port=service_port, debug=True)
+    app.run(host=service_address, port=service_port, debug=True)
 
 
 def shutdown_service():
