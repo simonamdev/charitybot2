@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS `test`;
+DROP TABLE IF EXISTS `name`;
 DROP TABLE IF EXISTS `test_event`;
 DROP TABLE IF EXISTS `test_event_two`;
 DROP TABLE IF EXISTS `test_event_three`;

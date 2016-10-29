@@ -56,7 +56,8 @@ class TestDonationsDBRetrieve:
 
     def test_getting_event_names(self):
         ddb = DonationsDB(db_path=donations_db_path, debug=True)
-        event_names = ('test_event_two', 'test_event_three', 'test_event_four')
+        event_names = ('test', 'test_event_two', 'test_event_three', 'test_event_four')
+        print(ddb.get_event_names())
         assert sorted(event_names) == sorted(ddb.get_event_names())
 
 
