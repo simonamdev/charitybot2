@@ -18,6 +18,11 @@ def index():
     return 'Status Service'
 
 
+@app.route('/event/<event_name>')
+def event(event_name):
+    return event_name
+
+
 @app.route('/destroy')
 def destroy():
     shutdown_service()
