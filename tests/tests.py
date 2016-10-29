@@ -18,8 +18,8 @@ class TestFilePath:
     def get_db_path(self, file_name):
         return os.path.join(self.db_dir, file_name)
 
-    def get_config_path(self, file_name):
-        return os.path.join(self.config_dir, file_name)
+    def get_config_path(self, sub_directory, file_name):
+        return os.path.join(self.config_dir, sub_directory, file_name)
 
 
 class ResetDB:
