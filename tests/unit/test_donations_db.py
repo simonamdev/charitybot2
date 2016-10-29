@@ -14,19 +14,6 @@ class TestDonationsDBInitialisation:
         ddb = DonationsDB(db_path=donations_db_path, debug=True)
 
 
-class TestDonationsDBRecording:
-    def test_recording_donation_records_in_db(self):
-        ddb = DonationsDB(db_path=donations_db_path, debug=True)
-        donation = Donation(old_amount=533.3, new_amount=545.7)
-        ddb.record_donation(event_name='test_event', donation=donation)
-        db = Neopysqlite(database_name='Donations test DB', db_path=donations_db_path, verbose=True)
-        all_donations = db.get_all_rows(table='test_event')
-        assert len(all_donations) == 1
-        assert all_donations[0][2] == 545.7
-        delta = round(545.7 - 533.3, 2)
-        assert all_donations[0][3] == delta
-
-
 class TestDonationsDBRetrieve:
     def test_getting_all_donations_after_recording_one(self):
         ddb = DonationsDB(db_path=donations_db_path, debug=True)
@@ -60,3 +47,18 @@ class TestDonationsDBRetrieve:
         last_donation = ddb.get_last_donation(event_name=event_name)
         assert 100 == last_donation.get_donation_amount()
         assert 600 == last_donation.get_new_amount()
+
+
+class TestDonationsDBRecording:
+    def test_recording_donation_records_in_db(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        donation = Donation(old_amount=533.3, new_amount=545.7)
+        ddb.record_donation(event_name='test_event', donation=donation)
+        db = Neopysqlite(database_name='Donations test DB', db_path=donations_db_path, verbose=True)
+        all_donations = db.get_all_rows(table='test_event')
+        assert len(all_donations) == 1
+        assert all_donations[0][2] == 545.7
+        delta = round(545.7 - 533.3, 2)
+        assert all_donations[0][3] == delta
+
+
