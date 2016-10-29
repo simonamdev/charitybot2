@@ -1,5 +1,5 @@
 import pytest
-from charitybot2.json_config import ConfigurationFileDoesNotExistException, JSONConfigurationFile, InvalidConfigurationException, \
+from charitybot2.config.json_config import ConfigurationFileDoesNotExistException, JSONConfigurationFile, InvalidConfigurationException, \
     ConfigurationFieldDoesNotExistException
 from tests.tests import TestFilePath
 

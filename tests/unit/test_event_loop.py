@@ -1,4 +1,4 @@
-import charitybot2.events.event_config as event_config
+import charitybot2.config.event_config as event_config
 import pytest
 
 from charitybot2.charitybot2 import EventLoop

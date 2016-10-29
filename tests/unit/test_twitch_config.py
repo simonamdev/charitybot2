@@ -1,5 +1,5 @@
 import pytest
-from charitybot2.reporter.twitch_config import TwitchAccountConfiguration, TwitchAccountConfigurationFileDoesNotExistException
+from charitybot2.config.twitch_config import TwitchAccountConfiguration, TwitchAccountConfigurationFileDoesNotExistException
 from tests.tests import TestFilePath
 
 
