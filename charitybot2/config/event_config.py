@@ -2,7 +2,6 @@ from charitybot2.config.json_config import JSONConfigurationFile
 
 
 class EventConfiguration(JSONConfigurationFile):
-    config_format = 'JSON'
     keys_required = (
         'name',
         'start_time',
