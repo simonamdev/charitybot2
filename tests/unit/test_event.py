@@ -1,11 +1,11 @@
 import pytest
-from charitybot2.config.event_config import EventConfiguration, InvalidEventConfigException
+from charitybot2.config.json_config import InvalidConfigurationException
 from charitybot2.events.event import Event
 from charitybot2.storage.db_handler import DBHandler
 from tests.tests import ResetDB, TestFilePath
 
-valid_config_path = TestFilePath().get_config_path('', 'valid_config' + '.' + EventConfiguration.config_format)
-invalid_config_path = TestFilePath().get_config_path('', 'invalid_config' + '.' + EventConfiguration.config_format)
+valid_config_path = TestFilePath().get_config_path('event', 'valid_config.json')
+invalid_config_path = TestFilePath().get_config_path('event', 'invalid_config.json')
 donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 
@@ -16,7 +16,7 @@ valid_event = Event(config_path=valid_config_path, db_handler=db_handler)
 
 class TestEventConfigurationValidity:
     def test_invalid_config_throws_exception(self):
-        with pytest.raises(InvalidEventConfigException):
+        with pytest.raises(InvalidConfigurationException):
             event = Event(config_path=invalid_config_path, db_handler=db_handler)
 
     def test_valid_config_loads_without_exception(self):
