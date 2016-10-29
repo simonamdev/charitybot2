@@ -54,6 +54,11 @@ class TestDonationsDBRetrieve:
         assert 100 == last_donation.get_donation_amount()
         assert 600 == last_donation.get_new_amount()
 
+    def test_getting_event_names(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        event_names = ('test_event_two', 'test_event_three', 'test_event_four')
+        assert sorted(event_names) == sorted(ddb.get_event_names())
+
 
 class TestDonationsDBRecording:
     def test_recording_donation_records_in_db(self):

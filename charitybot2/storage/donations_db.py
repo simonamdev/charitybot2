@@ -44,3 +44,7 @@ class DonationsDB(BaseDB):
     def get_last_donation(self, event_name):
         # Need to implement get last row in neopysqlite, luckily performance isn't such an issue
         return self.get_all_donations(event_name=event_name)[-1]
+
+    def get_event_names(self):
+        names_to_remove = ('test', 'sqlite_sequence')
+        return [name for name in self.db.get_table_names() if name not in names_to_remove]

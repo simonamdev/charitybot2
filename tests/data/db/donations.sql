@@ -6,6 +6,9 @@ DROP TABLE IF EXISTS `test_event_four`;
 DROP TABLE IF EXISTS `test_one`;
 DROP TABLE IF EXISTS `test_two`;
 DROP TABLE IF EXISTS `test_three`;
+DROP TABLE IF EXISTS `name_one`;
+DROP TABLE IF EXISTS `name_two`;
+DROP TABLE IF EXISTS `name_three`;
 CREATE TABLE `test` (
 	`id`	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	`timestamp`	INTEGER NOT NULL,
