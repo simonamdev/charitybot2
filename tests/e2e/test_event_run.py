@@ -9,7 +9,6 @@ from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from charitybot2.storage.db_handler import DBHandler
-from charitybot2.storage.events_db import EventsDB, EventMetadata
 from tests.tests import ResetDB, ServiceTest, TestFilePath
 
 config_path = TestFilePath().get_config_path('config' + '.' + EventConfiguration.config_format)
@@ -19,7 +18,6 @@ donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 
 
-ResetDB(db_path=events_db_path, sql_path=events_db_init_script_path)
 ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
 
 purrbot = TwitchAccount(twitch_config=purrbot_config)
@@ -29,7 +27,7 @@ class MockEvent(Event):
     mocksite_base_url = mocksite_full_url
 
     def __init__(self, mock_name, mock_end_time):
-        super().__init__(config_path=config_path, db_handler=DBHandler(events_db_path=events_db_path, donations_db_path=donations_db_path, debug=True))
+        super().__init__(config_path=config_path, db_handler=DBHandler(donations_db_path=donations_db_path, debug=True))
         self.mock_name = mock_name
         self.mock_end_time = mock_end_time
 
@@ -68,12 +66,6 @@ def teardown_module():
 
 
 class TestEventRunThrough:
-    def test_event_loop_changes_states_when_starting_and_finishing(self):
-        test_event = MockEvent('test_one', time.time() + 5)
-        test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
-        test_event_loop.start()
-        assert EventMetadata.completed_state == test_event_loop.event.get_event_current_state()
-
     def test_event_cycles_increment_properly(self):
         test_event = MockEvent('test_two', time.time() + 5)
         test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
@@ -88,7 +80,7 @@ class TestEventRunThrough:
         test_event_loop.start()
         assert 200.52 == test_event_loop.event.get_amount_raised()
 
-    def test_donation_message_appears_every_cycle(self):
-        test_event = MockEvent('test_three', time.time() + 10)
-        test_event.reset_mocksite()
-        test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
+    # def test_donation_message_appears_every_cycle(self):
+    #     test_event = MockEvent('test_three', time.time() + 10)
+    #     test_event.reset_mocksite()
+    #     test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)

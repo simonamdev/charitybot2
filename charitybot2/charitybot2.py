@@ -49,10 +49,7 @@ class EventLoop:
                                    debug=self.debug)
 
     def start(self):
-        self.logger.log_info('Registering Event: {}'.format(self.event.get_event_name()))
-        self.event.register_event()
         self.logger.log_info('Starting Event: {}'.format(self.event.get_event_name()))
-        self.event.start_event()
         while time.time() < self.event.get_end_time():
             hours_remaining = int((self.event.get_end_time() - time.time()) / (60 * 60))
             self.logger.log_info('Cycle {}: {} hours remaining in event'.format(
@@ -61,7 +58,6 @@ class EventLoop:
             self.check_for_donation()
             time.sleep(self.event.get_update_tick())
             self.loop_count += 1
-        self.event.stop_event()
 
     def check_for_donation(self):
         current_amount = self.event.get_amount_raised()
