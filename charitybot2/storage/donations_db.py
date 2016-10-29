@@ -46,5 +46,5 @@ class DonationsDB(BaseDB):
         return self.get_all_donations(event_name=event_name)[-1]
 
     def get_event_names(self):
-        names_to_remove = ('test', 'sqlite_sequence')
+        names_to_remove = ('sqlite_sequence')
         return [name for name in self.db.get_table_names() if name not in names_to_remove]

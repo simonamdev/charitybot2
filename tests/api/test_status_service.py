@@ -2,6 +2,7 @@ import requests
 from charitybot2.paths import status_service_path
 from charitybot2.reporter.status_service.status_service import service_full_url
 from tests.tests import TestFilePath, ServiceTest
+from bs4 import BeautifulSoup
 
 donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
@@ -16,6 +17,9 @@ status_service = ServiceTest(
 
 def setup_module():
     status_service.start_service()
+    # enter debug mode
+    response = requests.get(service_full_url + 'debug')
+    assert 200 == response.status_code
 
 
 def teardown_module():
@@ -27,3 +31,11 @@ class TestServiceBasicResponses:
         response = requests.get(service_full_url + 'identity')
         assert 200 == response.status_code
         assert b'Status Service' == response.content
+
+    def test_event_name_comes_up_on_index_page(self):
+        response = requests.get(service_full_url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        event_name_div = soup.find('div', {'id': 'event_names'})
+        names = event_name_div.find_all('li')
+        assert len(names) == 1
+        assert 'test' == names[0].text

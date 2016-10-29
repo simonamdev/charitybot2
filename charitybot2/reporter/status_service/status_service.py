@@ -1,6 +1,7 @@
 from charitybot2.paths import production_donations_db_path
 from charitybot2.storage.db_handler import DBHandler
-from flask import Flask, request, json
+from flask import Flask, request, json, render_template
+from tests.tests import TestFilePath
 
 app = Flask(__name__)
 
@@ -20,7 +21,17 @@ def parse_request(req):
 
 @app.route('/')
 def index():
-    return 'Index TO DO'
+    return render_template('index.html', event_names=donations_db.get_event_names())
+
+
+@app.route('/debug')
+def debug():
+    donations_db_test_path = TestFilePath().get_db_path('donations.db')
+    global db_handler
+    global donations_db
+    db_handler = DBHandler(donations_db_path=donations_db_test_path)
+    donations_db = db_handler.get_donations_db()
+    return 'Entered debug mode'
 
 
 @app.route('/identity')
