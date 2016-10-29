@@ -3,3 +3,4 @@ __pycache__/
 .cache/
 charitybot2.egg-info/
 charitybot2/reporter/purrbot_config.py
+tests/data/config/twitch/valid_twitch_config.json
