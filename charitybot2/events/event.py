@@ -1,4 +1,4 @@
-from charitybot2.events.event_config import EventConfiguration
+from charitybot2.config.event_config import EventConfiguration
 
 
 class EventInvalidException(Exception):

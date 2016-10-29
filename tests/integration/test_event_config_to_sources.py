@@ -1,9 +1,9 @@
-from charitybot2.events.event_config import EventConfiguration
+from charitybot2.config.event_config import EventConfiguration
 from charitybot2.sources.sources import source_names_supported
 from tests.tests import TestFilePath
 
-good_source_config_path = TestFilePath().get_config_path('good_source_event_config.json')
-bad_source_config_path = TestFilePath().get_config_path('bad_source_event_config.json')
+good_source_config_path = TestFilePath().get_config_path('', 'good_source_event_config.json')
+bad_source_config_path = TestFilePath().get_config_path('', 'bad_source_event_config.json')
 
 
 class TestEventSourcesValidity:

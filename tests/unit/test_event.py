@@ -1,12 +1,11 @@
 import pytest
-
+from charitybot2.config.event_config import EventConfiguration, InvalidEventConfigException
 from charitybot2.events.event import Event
-from charitybot2.events.event_config import EventConfiguration, InvalidEventConfigException
 from charitybot2.storage.db_handler import DBHandler
 from tests.tests import ResetDB, TestFilePath
 
-valid_config_path = TestFilePath().get_config_path('valid_config' + '.' + EventConfiguration.config_format)
-invalid_config_path = TestFilePath().get_config_path('invalid_config' + '.' + EventConfiguration.config_format)
+valid_config_path = TestFilePath().get_config_path('', 'valid_config' + '.' + EventConfiguration.config_format)
+invalid_config_path = TestFilePath().get_config_path('', 'invalid_config' + '.' + EventConfiguration.config_format)
 donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 

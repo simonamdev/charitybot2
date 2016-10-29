@@ -1,9 +1,9 @@
 import time
-import requests
 
+import requests
 from charitybot2.charitybot2 import EventLoop
+from charitybot2.config.event_config import EventConfiguration
 from charitybot2.events.event import Event
-from charitybot2.events.event_config import EventConfiguration
 from charitybot2.paths import mocksite_path
 from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount
@@ -11,7 +11,7 @@ from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from charitybot2.storage.db_handler import DBHandler
 from tests.tests import ResetDB, ServiceTest, TestFilePath
 
-config_path = TestFilePath().get_config_path('config' + '.' + EventConfiguration.config_format)
+config_path = TestFilePath().get_config_path('', 'config' + '.' + EventConfiguration.config_format)
 events_db_path = TestFilePath().get_db_path('events.db')
 events_db_init_script_path = TestFilePath().get_db_path('events.sql')
 donations_db_path = TestFilePath().get_db_path('donations.db')
