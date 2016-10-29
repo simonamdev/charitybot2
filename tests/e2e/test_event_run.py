@@ -11,7 +11,7 @@ from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from charitybot2.storage.db_handler import DBHandler
 from tests.tests import ResetDB, ServiceTest, TestFilePath
 
-config_path = TestFilePath().get_config_path('', 'config' + '.' + EventConfiguration.config_format)
+config_path = TestFilePath().get_config_path('event', 'config.json')
 events_db_path = TestFilePath().get_db_path('events.db')
 events_db_init_script_path = TestFilePath().get_db_path('events.sql')
 donations_db_path = TestFilePath().get_db_path('donations.db')
