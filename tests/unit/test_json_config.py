@@ -1,5 +1,6 @@
 import pytest
-from charitybot2.json_config import ConfigurationFileDoesNotExistException, JSONConfigurationFile, InvalidConfigurationException
+from charitybot2.json_config import ConfigurationFileDoesNotExistException, JSONConfigurationFile, InvalidConfigurationException, \
+    ConfigurationFieldDoesNotExistException
 from tests.tests import TestFilePath
 
 valid_config_keys = ("key1", "key2", "key3")
@@ -32,3 +33,14 @@ class TestConfigValidity:
     def test_valid_formatted_but_invalid_content_config_throws_exception(self):
         with pytest.raises(InvalidConfigurationException):
             conf = JSONConfigurationFile(file_path=get_config_file_path('invalid_config'), keys_required=invalid_config_keys)
+
+
+class TestConfigRetrieve:
+    def test_retrieving_non_existent_field_throws_exception(self):
+        conf = JSONConfigurationFile(file_path=get_config_file_path('valid_config'), keys_required=valid_config_keys)
+        with pytest.raises(ConfigurationFieldDoesNotExistException):
+            conf.get_value('test')
+
+    def test_retrieving_existent_field_returns_expected_value(self):
+        conf = JSONConfigurationFile(file_path=get_config_file_path('valid_config'), keys_required=valid_config_keys)
+        assert 'value1' == conf.get_value('key1')

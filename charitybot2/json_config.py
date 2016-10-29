@@ -10,6 +10,10 @@ class InvalidConfigurationException(Exception):
     pass
 
 
+class ConfigurationFieldDoesNotExistException(Exception):
+    pass
+
+
 class JSONConfigurationFile:
     def __init__(self, file_path, keys_required):
         self.file_path = file_path
@@ -52,7 +56,14 @@ class JSONConfigurationFile:
         # Such as checking that a URL is not empty and not a number
         pass
 
-
     def read_config(self):
         with open(self.file_path, 'r') as config_file:
             self.config_raw_data = config_file.read()
+
+    def get_value(self, key_name):
+        if not self.key_exists(key_name=key_name):
+            raise ConfigurationFieldDoesNotExistException('The key {} is non-existent'.format(key_name))
+        return self.config_data[key_name]
+
+    def key_exists(self, key_name):
+        return key_name in self.config_data.keys()
