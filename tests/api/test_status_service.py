@@ -16,6 +16,12 @@ status_service = ServiceTest(
     sql_path=donations_db_init_script_path)
 
 
+def get_tag_soup(url, tag_type, tag_params):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    return soup.find(tag_type, tag_params)
+
+
 def setup_module():
     status_service.start_service()
 
@@ -30,10 +36,16 @@ class TestServiceBasicResponses:
         assert 200 == response.status_code
         assert b'Status Service' == response.content
 
+
+class TestIndexPageContents:
     def test_event_name_comes_up_on_index_page(self):
-        response = requests.get(service_full_url)
-        soup = BeautifulSoup(response.content, 'html.parser')
-        event_name_div = soup.find('div', {'id': 'event_names'})
-        names = event_name_div.find_all('li')
+        names = get_tag_soup(service_full_url, 'div', {'id': 'event_names'}).find_all('li')
         assert len(names) == 1
         assert 'test' == names[0].text
+
+
+class TestEventPageContents:
+    def test_event_name_is_in_header(self):
+        url = service_full_url + 'event/test'
+        event_name = get_tag_soup(url, 'h1', {'id': 'event_name'})
+        assert 'test' == event_name.text.strip()

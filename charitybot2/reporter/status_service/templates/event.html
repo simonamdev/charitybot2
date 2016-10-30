@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="header">
+        <h1 id="event_name">
+            {{ event_data['name'] }}
+        </h1>
+    </div>
+    <div class="overview">
+        <span id="donation_count"></span>
+    </div>
+{% endblock %}

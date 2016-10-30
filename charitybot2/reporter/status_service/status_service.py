@@ -41,7 +41,11 @@ def identity():
 
 @app.route('/event/<event_name>')
 def event(event_name):
-    return event_name
+    event_data = {
+        'name': event_name,
+        'donation_count': len(donations_db.get_all_donations(event_name=event_name))
+    }
+    return render_template('event.html', event_data=event_data)
 
 
 @app.route('/destroy')
