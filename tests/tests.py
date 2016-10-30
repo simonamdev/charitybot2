@@ -47,11 +47,12 @@ class ResetDB:
 
 
 class ServiceTest(ResetDB):
-    def __init__(self, service_name, service_url, service_path, db_path='', sql_path=''):
+    def __init__(self, service_name, service_url, service_path, enter_debug=True, db_path='', sql_path=''):
         super().__init__(db_path=db_path, sql_path=sql_path)
         self.service_url = service_url
         self.service_name = service_name
         self.service_path = service_path
+        self.enter_debug = enter_debug
         self.service = None
 
     def start_service(self):
@@ -59,7 +60,10 @@ class ServiceTest(ResetDB):
         print(self.service_path)
         args = [sys.executable, self.service_path]
         self.service = subprocess.Popen(args)
-        sleep(2)
+        if self.enter_debug:
+            response = requests.get(self.service_url + 'debug')
+            assert 200 == response.status_code
+            print('Entered debug mode for microservice')
 
     def stop_service(self):
         print('Stopping Microservice')

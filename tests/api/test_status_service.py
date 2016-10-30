@@ -11,15 +11,13 @@ status_service = ServiceTest(
     service_name='Status Service',
     service_url=service_full_url,
     service_path=status_service_path,
+    enter_debug=True,
     db_path=donations_db_path,
     sql_path=donations_db_init_script_path)
 
 
 def setup_module():
     status_service.start_service()
-    # enter debug mode
-    response = requests.get(service_full_url + 'debug')
-    assert 200 == response.status_code
 
 
 def teardown_module():
