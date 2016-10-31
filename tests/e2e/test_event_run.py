@@ -52,7 +52,11 @@ class NonReportingLoop(EventLoop):
         pass
 
 
-service_test = ServiceTest('Donations Mocksite', MockEvent.mocksite_base_url, service_path=mocksite_path)
+service_test = ServiceTest(
+    service_name='Donations Mocksite',
+    service_url=MockEvent.mocksite_base_url,
+    service_path=mocksite_path,
+    enter_debug=False)
 
 
 def setup_module():
