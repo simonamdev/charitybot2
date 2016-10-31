@@ -45,7 +45,12 @@ class TestIndexPageContents:
 
 
 class TestEventPageContents:
+    event_page_url = service_full_url + 'event/test'
+
     def test_event_name_is_in_header(self):
-        url = service_full_url + 'event/test'
-        event_name = get_tag_soup(url, 'h1', {'id': 'event_name'})
+        event_name = get_tag_soup(self.event_page_url, 'h1', {'id': 'event_name'})
         assert 'test' == event_name.text.strip()
+
+    def test_donation_count_is_correct(self):
+        donation_count = get_tag_soup(self.event_page_url, 'span', {'id': 'donation_count'})
+        assert 4 == int(donation_count.text.strip())
