@@ -45,6 +45,11 @@ class DonationsDB(BaseDB):
         # Need to implement get last row in neopysqlite, luckily performance isn't such an issue
         return self.get_all_donations(event_name=event_name)[-1]
 
+    def get_average_donation(self, event_name):
+        donations = self.get_all_donations(event_name=event_name)
+        donation_deltas = [donation.get_donation_amount() for donation in donations]
+        return round(sum(donation_deltas) / len(donation_deltas), 2)
+
     def get_event_names(self):
         names_to_remove = ('sqlite_sequence')
         return [name for name in self.db.get_table_names() if name not in names_to_remove]
