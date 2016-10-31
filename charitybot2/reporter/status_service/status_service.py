@@ -43,7 +43,8 @@ def identity():
 def event(event_name):
     event_data = {
         'name': event_name,
-        'donation_count': len(donations_db.get_all_donations(event_name=event_name))
+        'donation_count': len(donations_db.get_all_donations(event_name=event_name)),
+        'donation_average': donations_db.get_average_donation(event_name=event_name)
     }
     return render_template('event.html', event_data=event_data)
 

@@ -54,3 +54,8 @@ class TestEventPageContents:
     def test_donation_count_is_correct(self):
         donation_count = get_tag_soup(self.event_page_url, 'span', {'id': 'donation_count'})
         assert 4 == int(donation_count.text.strip())
+
+    def test_donation_average_is_correct(self):
+        donation_average = get_tag_soup(self.event_page_url, 'span', {'id': 'donation_average'})
+        assert 3.31 == round(float(donation_average.text.strip()), 2)
+
