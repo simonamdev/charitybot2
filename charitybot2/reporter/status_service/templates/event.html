@@ -6,11 +6,13 @@
         </h1>
     </div>
     <div class="overview">
-        <span id="donation_count">
-            {{ event_data['donation_count'] }}
-        </span>
-        <span id="donation_average">
-            {{ event_data['donation_average'] }}
-        </span>
+        <ul>
+            <li>
+                Number of donations: <span id="donation_count">{{ event_data['donation_count'] }}</span>
+            </li>
+            <li>
+                Average donation amount: <span id="donation_average">{{ event_data['donation_average'] }}</span>
+            </li>
+        </ul>
     </div>
 {% endblock %}
