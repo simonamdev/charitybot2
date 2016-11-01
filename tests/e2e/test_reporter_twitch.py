@@ -29,4 +29,3 @@ class TestTwitchChat:
         print(chat_window.text)
         assert test_string in chat_window.text
         driver.close()
-

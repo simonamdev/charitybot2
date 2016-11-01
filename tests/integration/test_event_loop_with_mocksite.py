@@ -18,11 +18,6 @@ donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 
 
-ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
-
-purrbot = TwitchAccount(twitch_config=purrbot_config)
-
-
 class MockEvent(Event):
     mocksite_base_url = mocksite_full_url
 
@@ -58,8 +53,11 @@ service_test = ServiceTest(
     service_path=mocksite_path,
     enter_debug=False)
 
+purrbot = TwitchAccount(twitch_config=purrbot_config)
+
 
 def setup_module():
+    ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
     service_test.start_service()
     r = requests.get(url=mocksite_full_url + 'reset')
     assert 200 == r.status_code
@@ -83,8 +81,3 @@ class TestEventRunThrough:
         test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         assert 200.52 == test_event_loop.event.get_amount_raised()
-
-    # def test_donation_message_appears_every_cycle(self):
-    #     test_event = MockEvent('test_three', time.time() + 10)
-    #     test_event.reset_mocksite()
-    #     test_event_loop = NonReportingLoop(event=test_event, twitch_account=purrbot, debug=True)
