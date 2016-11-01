@@ -1,7 +1,8 @@
 import pytest
 import time
 
-from charitybot2.events.donation import Donation, InvalidArgumentException, Currency
+from charitybot2.events.donation import Donation, InvalidArgumentException
+from charitybot2.events.currency import Currency
 
 
 class TestDonationValidity:

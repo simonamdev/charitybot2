@@ -1,15 +1,10 @@
 import time
 
+from charitybot2.events.currency import Currency
+
 
 class InvalidArgumentException(Exception):
     pass
-
-
-class Currency:
-    GBP = '£'
-    USD = '$'
-    EUR = '€'
-    symbols = [GBP, USD, EUR]
 
 
 class Donation:
