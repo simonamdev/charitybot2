@@ -53,7 +53,3 @@ class TestDonationProcessing:
         current_time_float = time.time()
         donation = Donation(old_amount=0, new_amount=1, timestamp=current_time_float)
         assert int(current_time_float) == donation.get_timestamp()
-
-    def test_default_currency_is_gbp(self):
-        donation = Donation(old_amount=0, new_amount=1)
-        assert Currency.GBP is donation.get_donation_currency().get_symbol()

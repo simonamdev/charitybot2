@@ -36,7 +36,8 @@ class TestDonationsDBRetrieve:
         old_amount = 0
         amount_increase = 50.34
         for i in range(5):
-            ddb.record_donation(event_name=event_name, donation=Donation(old_amount=old_amount, new_amount=old_amount + amount_increase))
+            ddb.record_donation(event_name=event_name, donation=Donation(old_amount=old_amount,
+                                                                         new_amount=old_amount + amount_increase))
             old_amount += amount_increase
         new_amount = amount_increase
         all_donations = ddb.get_all_donations(event_name=event_name)

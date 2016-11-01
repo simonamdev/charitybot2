@@ -8,10 +8,9 @@ class InvalidArgumentException(Exception):
 
 
 class Donation:
-    def __init__(self, old_amount, new_amount, currency=Currency(), timestamp=int(time.time()), rounding=2):
+    def __init__(self, old_amount, new_amount, timestamp=int(time.time()), rounding=2):
         self.rounding = rounding
         self.timestamp = timestamp
-        self.currency = currency
         self.old_amount = self.parse_donation_input(old_amount)
         self.new_amount = self.parse_donation_input(new_amount)
         self.validate_resultant_amounts()
@@ -35,9 +34,6 @@ class Donation:
 
     def get_donation_amount(self):
         return round(self.donation_amount, self.rounding)
-
-    def get_donation_currency(self):
-        return self.currency
 
     def get_new_amount(self):
         return round(self.new_amount, self.rounding)
