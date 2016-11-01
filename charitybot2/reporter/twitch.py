@@ -103,18 +103,18 @@ class CharityBot(TwitchChatBot):
         'can be found here: {}'
     ]
 
-    def __init__(self, channel_name, twitch_account, fundraiser_name, debug=False):
+    def __init__(self, channel_name, twitch_account, event, debug=False):
         super().__init__(channel_name=channel_name, twitch_account=twitch_account, verbose=debug)
-        self.fundraiser_name = fundraiser_name
+        self.event = event
+        self.currency_symbol = self.event.get_currency().get_symbol()
         self.current_advert_index = 0
 
-    # TODO: Fix currency here
     def post_donation_to_chat(self, donation):
         self.quick_post_in_channel(
             self.donation_string.format(
-                donation.get_donation_currency(),
+                self.currency_symbol,
                 donation.get_donation_amount(),
-                donation.get_donation_currency(),
+                self.currency_symbol,
                 donation.get_new_amount(),
                 self.charity_bot_url))
 

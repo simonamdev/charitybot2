@@ -43,10 +43,7 @@ class EventLoop:
     def initialise_reporter(self):
         self.logger.log_info('Initialising Reporter')
         self.twitch_account.validate_twitch_account()
-        self.reporter = CharityBot(channel_name='?',
-                                   twitch_account=self.twitch_account,
-                                   fundraiser_name=self.event.get_event_name(),
-                                   debug=self.debug)
+        self.reporter = CharityBot(channel_name='?', twitch_account=self.twitch_account, event=self.event, debug=self.debug)
 
     def start(self):
         self.logger.log_info('Starting Event: {}'.format(self.event.get_event_name()))
@@ -66,7 +63,9 @@ class EventLoop:
             self.record_new_donation(Donation(current_amount, new_amount))
 
     def record_new_donation(self, donation):
-        self.logger.log_info('New Donation of £{} detected'.format(donation.get_donation_amount()))
+        self.logger.log_info('New Donation of {}{} detected'.format(
+            self.event.get_currency().get_symbol(),
+            donation.get_donation_amount()))
         self.event.set_amount_raised(amount=donation.get_new_amount())
         self.event.db_handler.get_donations_db().record_donation(event_name=self.event.get_event_name(), donation=donation)
 
