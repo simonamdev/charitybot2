@@ -1,5 +1,6 @@
 {
-  "name": "E2E Test Charity Event",
+  "event_name": "E2E Test Charity Event",
+  "channel_name": "purrcat259",
   "start_time": 0,
   "end_time": 9999999999,
   "target_amount": 1000,

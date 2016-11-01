@@ -1,5 +1,6 @@
 {
-  "name": "name",
+  "event_name": "name",
+  "channel_name": "channel",
   "start_time": 1,
   "end_time": 0,
   "target_amount": 1000,

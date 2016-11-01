@@ -4,7 +4,8 @@ from charitybot2.events.currency import InvalidCurrencyException
 
 class EventConfiguration(JSONConfigurationFile):
     keys_required = (
-        'name',
+        'event_name',
+        'channel_name',
         'start_time',
         'end_time',
         'target_amount',
