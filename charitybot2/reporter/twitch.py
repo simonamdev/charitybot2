@@ -104,7 +104,7 @@ class CharityBot(TwitchChatBot):
     ]
 
     def __init__(self, twitch_account, event, debug=False):
-        super().__init__(twitch_account=twitch_account, verbose=debug)
+        super().__init__(channel_name=self.event.get_channel_name(), twitch_account=twitch_account, verbose=debug)
         self.event = event
         self.currency_symbol = self.event.get_currency().get_symbol()
         self.current_advert_index = 0
