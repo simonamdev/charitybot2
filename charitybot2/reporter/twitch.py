@@ -108,6 +108,7 @@ class CharityBot(TwitchChatBot):
         self.fundraiser_name = fundraiser_name
         self.current_advert_index = 0
 
+    # TODO: Fix currency here
     def post_donation_to_chat(self, donation):
         self.quick_post_in_channel(
             self.donation_string.format(
