@@ -103,8 +103,8 @@ class CharityBot(TwitchChatBot):
         'can be found here: {}'
     ]
 
-    def __init__(self, channel_name, twitch_account, event, debug=False):
-        super().__init__(channel_name=channel_name, twitch_account=twitch_account, verbose=debug)
+    def __init__(self, twitch_account, event, debug=False):
+        super().__init__(twitch_account=twitch_account, verbose=debug)
         self.event = event
         self.currency_symbol = self.event.get_currency().get_symbol()
         self.current_advert_index = 0
@@ -119,7 +119,11 @@ class CharityBot(TwitchChatBot):
                 self.charity_bot_url))
 
     def post_advert_to_chat(self):
-        self.quick_post_in_channel(chat_string=self.advert_strings[self.current_advert_index])
+        advert_string = self.advert_strings[self.current_advert_index]
+        advert_string = advert_string.format(
+            self.event.get_event_name(),
+            self.charity_bot_url)
+        self.quick_post_in_channel(chat_string=advert_string)
         self.current_advert_index += 1
         if self.current_advert_index >= len(self.advert_strings):
             self.current_advert_index = 0

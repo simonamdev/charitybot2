@@ -43,7 +43,10 @@ class EventLoop:
     def initialise_reporter(self):
         self.logger.log_info('Initialising Reporter')
         self.twitch_account.validate_twitch_account()
-        self.reporter = CharityBot(channel_name='?', twitch_account=self.twitch_account, event=self.event, debug=self.debug)
+        self.reporter = CharityBot(
+            twitch_account=self.twitch_account,
+            event=self.event,
+            debug=self.debug)
 
     def start(self):
         self.logger.log_info('Starting Event: {}'.format(self.event.get_event_name()))
