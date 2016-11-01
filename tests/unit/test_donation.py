@@ -56,4 +56,4 @@ class TestDonationProcessing:
 
     def test_default_currency_is_gbp(self):
         donation = Donation(old_amount=0, new_amount=1)
-        assert Currency.GBP is donation.get_donation_currency()
+        assert Currency.GBP is donation.get_donation_currency().get_symbol()

@@ -8,7 +8,7 @@ class InvalidArgumentException(Exception):
 
 
 class Donation:
-    def __init__(self, old_amount, new_amount, currency=Currency.GBP, timestamp=int(time.time()), rounding=2):
+    def __init__(self, old_amount, new_amount, currency=Currency(), timestamp=int(time.time()), rounding=2):
         self.rounding = rounding
         self.timestamp = timestamp
         self.currency = currency
