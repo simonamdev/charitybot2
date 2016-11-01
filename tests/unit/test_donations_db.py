@@ -6,7 +6,9 @@ from tests.tests import ResetDB, TestFilePath
 donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 
-ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
+
+def setup_module():
+    ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
 
 
 class TestDonationsDBInitialisation:
