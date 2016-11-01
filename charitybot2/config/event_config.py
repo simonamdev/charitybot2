@@ -1,8 +1,5 @@
 from charitybot2.config.json_config import JSONConfigurationFile
-
-
-class InvalidCurrencyException(Exception):
-    pass
+from charitybot2.events.currency import InvalidCurrencyException
 
 
 class EventConfiguration(JSONConfigurationFile):
