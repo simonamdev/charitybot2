@@ -23,7 +23,10 @@ class Event:
         self.config.read_config()
 
     def get_event_name(self):
-        return self.config.get_value('name')
+        return self.config.get_value('event_name')
+
+    def get_channel_name(self):
+        return self.config.get_value('channel_name')
 
     def get_start_time(self):
         return self.config.get_value('start_time')

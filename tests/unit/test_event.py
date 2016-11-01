@@ -9,9 +9,12 @@ invalid_config_path = TestFilePath().get_config_path('event', 'invalid_config.js
 donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 
-ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
 db_handler = DBHandler(donations_db_path=donations_db_path)
 valid_event = Event(config_path=valid_config_path, db_handler=db_handler)
+
+
+def setup_module():
+    ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
 
 
 class TestEventConfigurationValidity:
@@ -26,6 +29,9 @@ class TestEventConfigurationValidity:
 class TestEventRetrieve:
     def test_retrieve_event_name(self):
         assert valid_event.get_event_name() == 'name'
+
+    def test_retrieve_channel_name(self):
+        assert valid_event.get_channel_name() == 'channel'
 
     def test_retrieve_event_start_time(self):
         assert valid_event.get_start_time() == 0
