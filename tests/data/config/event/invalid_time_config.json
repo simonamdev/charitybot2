@@ -3,6 +3,7 @@
   "start_time": 1,
   "end_time": 0,
   "target_amount": 1000,
+  "currency": "GBP",
   "source_url": "www.test.com",
   "update_tick": 5
 }

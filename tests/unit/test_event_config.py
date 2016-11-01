@@ -1,4 +1,5 @@
-from charitybot2.config.event_config import EventConfiguration
+import pytest
+from charitybot2.config.event_config import EventConfiguration, InvalidCurrencyException
 from tests.tests import TestFilePath
 
 
@@ -25,3 +26,11 @@ class TestEventConfigRetrieve:
         ec = EventConfiguration(file_path=get_config_file_path('valid_config'))
         for key in EventConfiguration.number_keys:
             assert isinstance(ec.get_value(key), int)
+
+    def test_currency_is_of_expected_type(self):
+        ec = EventConfiguration(file_path=get_config_file_path('valid_config'))
+        assert 'GBP' == ec.get_value('currency')
+
+    def test_passing_wrong_currency_throws_exception(self):
+        with pytest.raises(InvalidCurrencyException):
+            ec = EventConfiguration(file_path=get_config_file_path('bad_currency'))

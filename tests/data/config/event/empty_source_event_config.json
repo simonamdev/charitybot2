@@ -3,6 +3,7 @@
   "start_time": 0,
   "end_time": 1,
   "target_amount": 1000,
+  "currency": "GBP",
   "source_url": "",
   "update_tick": 5
 }

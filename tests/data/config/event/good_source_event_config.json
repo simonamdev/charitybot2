@@ -3,6 +3,7 @@
   "start_time": 0,
   "end_time": 9999999999999999,
   "target_amount": 1000,
+  "currency": "GBP",
   "source_url": "https://www.justgiving.com/fundraising/alasdair-clift",
   "update_tick": 5
 }
