@@ -47,9 +47,3 @@ class Event:
 
     def get_amount_raised(self):
         return self.amount_raised
-
-    def register_event(self):
-        self.db_handler.get_events_db().register_event(event_name=self.get_event_name())
-
-    def get_event_current_state(self):
-        return self.db_handler.get_events_db().get_event_state(event_name=self.get_event_name())
