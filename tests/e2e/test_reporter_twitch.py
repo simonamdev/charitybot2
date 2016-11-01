@@ -1,9 +1,14 @@
 import uuid
-from time import sleep
+import time
 
+from charitybot2.charitybot2 import EventLoop
+from charitybot2.events.currency import Currency
+from charitybot2.paths import mocksite_path
 from charitybot2.reporter.purrbot_config import purrbot_config
-from charitybot2.reporter.twitch import TwitchAccount, TwitchChatBot
+from charitybot2.reporter.twitch import TwitchAccount, TwitchChatBot, CharityBot
 from selenium import webdriver
+from tests.integration.test_event_loop_with_mocksite import MockEvent
+from tests.tests import ServiceTest
 
 
 def return_unique_test_string():
@@ -11,31 +16,56 @@ def return_unique_test_string():
     return base_string.format(str(uuid.uuid4()))
 
 driver = None
+purrbot = TwitchAccount(twitch_config=purrbot_config)
+service_test = ServiceTest(
+    service_name='Donations Mocksite',
+    service_url=MockEvent.mocksite_base_url,
+    service_path=mocksite_path,
+    enter_debug=False)
 
 
 def setup_module():
+    service_test.start_service()
     global driver
     driver = webdriver.Chrome()
+    driver.implicitly_wait(5)
 
 
 def teardown_module():
+    service_test.stop_service()
     global driver
     driver.close()
 
 
+def get_twitch_chat_box_contents():
+    return driver.find_element_by_class_name('chat-display').text
+
+
+def navigate_to_twitch_channel():
+    global driver
+    driver.get('https://www.twitch.tv/purrcat259')
+    assert 'Purrcat259 - Twitch' == driver.title
+    time.sleep(2)
+
+
 class TestTwitchChat:
     def test_twitch_chat_string_sent_appears(self):
+        navigate_to_twitch_channel()
         test_string = return_unique_test_string()
-        driver.get('https://www.twitch.tv/purrcat259')
-        assert 'Purrcat259 - Twitch' == driver.title
-        bot_account = TwitchAccount(twitch_config=purrbot_config)
         bot = TwitchChatBot(
             channel_name='purrcat259',
-            twitch_account=bot_account,
+            twitch_account=purrbot,
             verbose=True
         )
         bot.quick_post_in_channel(test_string)
-        sleep(4)
-        chat_window = driver.find_element_by_class_name('chat-display')
-        print(chat_window.text)
-        assert test_string in chat_window.text
+        time.sleep(4)
+        assert test_string in get_twitch_chat_box_contents()
+
+    def test_twitch_chat_donations_appear(self):
+        navigate_to_twitch_channel()
+        test_event = MockEvent('test_one', time.time() + 10)
+        test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
+        test_event_loop.start()
+        time.sleep(4)
+        expected_string = CharityBot.donation_string.format(Currency.GBP, 50.0, Currency.GBP, 250.52)
+        assert expected_string in get_twitch_chat_box_contents()
