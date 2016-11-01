@@ -34,6 +34,6 @@ class EventConfiguration(JSONConfigurationFile):
 
     def run_extra_validation(self):
         if self.config_data['currency'] not in self.currencies:
-            raise InvalidCurrencyException('Provided currency is not supported.'
+            raise InvalidCurrencyException('Provided currency is invalid.'
                                            ' Please use any of the following: {}'.format(self.currencies))
 
