@@ -1,4 +1,5 @@
 from charitybot2.config.event_config import EventConfiguration
+from charitybot2.events.currency import Currency
 
 
 class EventInvalidException(Exception):
@@ -47,3 +48,6 @@ class Event:
 
     def get_amount_raised(self):
         return self.amount_raised
+
+    def get_currency(self):
+        return Currency(self.config.get_value('currency'))
