@@ -6,6 +6,7 @@
         </h1>
     </div>
     <div class="overview">
+        <h1>Event overview</h1>
         <ul>
             <li>
                 Number of donations: <span id="donation_count">{{ event_data['donation_count'] }}</span>
@@ -13,6 +14,17 @@
             <li>
                 Average donation amount: <span id="donation_average">{{ event_data['donation_average'] }}</span>
             </li>
+            <li>
+                Largest donation: <span id="largest_donation">{{ event_data['largest_donation'] }}</span>
+            </li>
+        </ul>
+    </div>
+    <div class="recent">
+        <h1>Recent Donations</h1>
+        <ul>
+            {% for recent_donation in event_data['recent_donations'] %}
+                <li>{{ recent_donation }}</li>
+            {% endfor %}
         </ul>
     </div>
 {% endblock %}
