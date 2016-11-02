@@ -39,3 +39,23 @@ class TestGET:
         content = json.loads(response.content)
         assert sorted(paths) == sorted(content['paths'])
 
+    def test_events_route_returns_event_names(self):
+        response = requests.get(api_full_url + 'events')
+        content = json.loads(response.content)
+        assert ['test'] == content
+
+    def test_getting_nonexistent_event_returns_404(self):
+        response = requests.get(api_full_url + 'event/bla')
+        content = json.loads(response.content)
+        assert 404 == response.status_code
+        assert content['error'] == 'Not found'
+
+    def test_getting_event_info(self):
+        response = requests.get(api_full_url + 'event/test')
+        content = json.loads(response.content)
+        assert 200 == response.status_code
+        assert isinstance(content, dict)
+        assert 'test' == content['name']
+        assert 4 == content['donation_count']
+        assert 3.31 == content['donation_average']
+        assert 11.45 == content['largest_donation']
