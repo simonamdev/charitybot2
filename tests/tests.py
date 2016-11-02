@@ -64,6 +64,7 @@ class ServiceTest(ResetDB):
             response = requests.get(self.service_url + 'debug')
             assert 200 == response.status_code
             print('Entered debug mode for microservice')
+        sleep(1)
 
     def stop_service(self):
         print('Stopping Microservice')
@@ -72,7 +73,7 @@ class ServiceTest(ResetDB):
             print('Accessed service destroy URL')
         except Exception:
             print('Service already destroyed')
-        sleep(1)
+        sleep(2)
         self.kill_process()
 
     def kill_process(self):
