@@ -9,8 +9,9 @@ api_address = '127.0.0.1'
 api_port = 9000
 api_url = 'http://' + api_address
 api_full_url = api_url + ':' + str(api_port) + '/'
+debug_mode = False
 
-donations_db = DonationsDB(db_path=production_donations_db_path, debug=False)
+donations_db = DonationsDB(db_path=production_donations_db_path, debug=debug_mode)
 
 
 @app.errorhandler(404)
@@ -49,16 +50,21 @@ def event_details(event_name):
 @app.route('/debug')
 def debug():
     donations_db_test_path = TestFilePath().get_db_path('donations.db')
+    global debug_mode
+    debug_mode = True
     global donations_db
-    donations_db = DonationsDB(db_path=donations_db_test_path, debug=False)
+    donations_db = DonationsDB(db_path=donations_db_test_path, debug=debug_mode)
     return 'Entered debug mode'
 
 
 # TODO: Enable destruction only in debug mode
 @app.route('/destroy')
 def destroy():
-    shutdown_service()
-    return 'Shutting down service'
+    global debug_mode
+    if debug_mode:
+        shutdown_service()
+        return 'Shutting down service'
+    return 'Not in debug mode - shutting down in unavailable'
 
 
 def start_service():
