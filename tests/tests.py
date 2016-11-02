@@ -60,11 +60,11 @@ class ServiceTest(ResetDB):
         print(self.service_path)
         args = [sys.executable, self.service_path]
         self.service = subprocess.Popen(args)
+        sleep(4)
         if self.enter_debug:
             response = requests.get(self.service_url + 'debug')
             assert 200 == response.status_code
             print('Entered debug mode for microservice')
-        sleep(1)
 
     def stop_service(self):
         print('Stopping Microservice')
