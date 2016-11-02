@@ -9,7 +9,7 @@ api_address = '127.0.0.1'
 api_port = 9000
 api_url = 'http://' + api_address
 api_full_url = api_url + ':' + str(api_port) + '/'
-debug_mode = False
+debug_mode = True
 
 donations_db = DonationsDB(db_path=production_donations_db_path, debug=debug_mode)
 
@@ -67,7 +67,7 @@ def destroy():
 
 
 def start_service():
-    app.run(host=api_address, port=api_port, debug=False)
+    app.run(host=api_address, port=api_port, debug=debug_mode)
 
 
 def shutdown_service():

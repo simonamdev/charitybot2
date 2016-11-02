@@ -9,7 +9,7 @@ service_address = '127.0.0.1'
 service_port = 9000
 service_url = 'http://' + service_address
 service_full_url = service_url + ':' + str(service_port) + '/'
-service_debug_mode = False
+service_debug_mode = True
 
 db_handler = DBHandler(donations_db_path=production_donations_db_path)
 donations_db = db_handler.get_donations_db()
@@ -62,7 +62,7 @@ def destroy():
 
 
 def start_service():
-    app.run(host=service_address, port=service_port, debug=True)
+    app.run(host=service_address, port=service_port, debug=service_debug_mode)
 
 
 def shutdown_service():
