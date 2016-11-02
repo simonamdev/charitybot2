@@ -62,11 +62,9 @@ class TestDonationsDBRetrieve:
         event_name = 'test_event_two'
         assert 266.7 == ddb.get_average_donation(event_name=event_name)
 
-
     def test_getting_event_names(self):
         ddb = DonationsDB(db_path=donations_db_path, debug=True)
         event_names = ('test', 'test_event_two', 'test_event_three', 'test_event_four')
-        print(ddb.get_event_names())
         assert sorted(event_names) == sorted(ddb.get_event_names())
 
 
