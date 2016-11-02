@@ -57,7 +57,6 @@ def debug():
     return 'Entered debug mode'
 
 
-# TODO: Enable destruction only in debug mode
 @app.route('/destroy')
 def destroy():
     global debug_mode
