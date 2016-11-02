@@ -71,6 +71,7 @@ class EventLoop:
             donation.get_donation_amount()))
         self.event.set_amount_raised(amount=donation.get_new_amount())
         self.event.db_handler.get_donations_db().record_donation(event_name=self.event.get_event_name(), donation=donation)
+        self.report_new_donation(donation=donation)
 
     def report_new_donation(self, donation):
-        self.reporter.post_donation_to_chat()
+        self.reporter.post_donation_to_chat(donation=donation)
