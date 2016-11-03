@@ -72,3 +72,10 @@ class TestGET:
         assert isinstance(content, list)
         assert 11.45 == content[0]['amount']
         assert 33.2 == content[0]['total_raised']
+
+    def test_getting_donation_data_with_limit(self):
+        response = requests.get(api_full_url + 'event/test/donations?limit=2')
+        content = json.loads(response.content)
+        assert 200 == response.status_code
+        assert isinstance(content, list)
+        assert 2 == len(content)
