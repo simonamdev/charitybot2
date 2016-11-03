@@ -1,3 +1,7 @@
+function sortNumber(a,b) {
+    return a - b;
+}
+
 class API {
     constructor(url) {
         this._url = url;
@@ -35,13 +39,16 @@ class API {
 
     drawDonationsCharts(data) {
         console.log(data);
+        this.drawAmountRaisedChart(data);
+        this.drawAmountHistogram(data);
+    }
+
+    drawAmountRaisedChart(data) {
         var labels = [];
         $.each(data, (index, object) => {
             var time = new Date(object['timestamp'] * 1000).toISOString().substring(11, 19);
             labels.push(time);
         });
-        console.log('Labels:');
-        console.log(labels);
         var values = [];
         $.each(data, (index, object) => {
             values.push(object['total_raised']);
@@ -67,5 +74,14 @@ class API {
                 responsive: false
             }
         });
+    }
+
+    drawAmountHistogram(data) {
+        var roundedAmounts = [];
+        $.each(data, (index, object) => {
+            roundedAmounts.push(Math.ceil(object['total_raised']));
+        });
+        roundedAmounts.sort(sortNumber);
+        console.log(roundedAmounts);
     }
 };
