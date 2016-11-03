@@ -14,13 +14,58 @@ class API {
     }
 
     showEventInformation(eventName) {
-        var api_url = this._url + 'event/' + eventName;
-        $.getJSON(api_url, (data)=> {
+        var eventUrl = this._url + 'event/' + eventName;
+        var donationsUrl = eventUrl + '/donations'
+        $.getJSON(eventUrl, (data) => {
             console.log(data);
-            $('#event_name').text(data['name']);
-            $('#donation_count').text(data['donation_count']);
-            $('#donation_average').text(data['donation_average']);
-            $('#largest_donation').text(data['largest_donation']);
+            this.writeEventDataToPage(data);
+        });
+        $.getJSON(donationsUrl, (data) => {
+            console.log(data);
+            this.drawDonationsCharts(data);
+        });
+    }
+
+    writeEventDataToPage(data) {
+        $('#event_name').text(data['name']);
+        $('#donation_count').text(data['donation_count']);
+        $('#donation_average').text(data['donation_average']);
+        $('#largest_donation').text(data['largest_donation']);
+    }
+
+    drawDonationsCharts(data) {
+        console.log(data);
+        var labels = [];
+        $.each(data, (index, object) => {
+            var time = new Date(object['timestamp'] * 1000).toISOString().substring(11, 19);
+            labels.push(time);
+        });
+        console.log('Labels:');
+        console.log(labels);
+        var values = [];
+        $.each(data, (index, object) => {
+            values.push(object['total_raised']);
+        });
+        var ctx =  $("#donationsChart");
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Total Amount Raised',
+                        lineTension: 0.05,
+                        fill: true,
+                        data: values,
+                        borderColor: 'rgba(75,192,192,1)',
+                        backgroundColor: 'rgba(75,192,192,0.3)'
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: true,
+                responsive: false
+            }
         });
     }
 };

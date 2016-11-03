@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Charitybot2 Status</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
     <link rel="stylesheet" type="text/css" href="css/spinner.css">
     <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.js"></script>
@@ -18,6 +19,9 @@
             <li>Average donation: <span id="donation_average"></span></li>
             <li>Largest donation: <span id="largest_donation"></span></li>
         </ul>
+        <div class="charts">
+            <canvas id="donationsChart" width="400" height="400"></canvas>
+        </div>
     </div>
 </body>
 <script>
