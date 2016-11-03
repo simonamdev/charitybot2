@@ -108,7 +108,7 @@ class API {
             },
             options: {
                 maintainAspectRatio: false,
-                responsive: true,   
+                responsive: true,
                 scales: {
                     yAxes: [{
                         ticks: {
