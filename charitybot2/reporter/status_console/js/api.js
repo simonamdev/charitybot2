@@ -1,10 +1,19 @@
 class API {
     constructor(url) {
         this._url = url;
+        this._eventInfo = {};
     }
 
-    setupEventInformation(eventName) {
+    testRun() {
         showLoader();
+        var api_call = this.showEventInformation('test');
+        $.when(api_call).then(() => {
+            hideLoader();
+        });
+
+    }
+
+    showEventInformation(eventName) {
         var api_url = this._url + 'event/' + eventName;
         $.getJSON(api_url, (data)=> {
             console.log(data);
@@ -12,7 +21,6 @@ class API {
             $('#donation_count').text(data['donation_count']);
             $('#donation_average').text(data['donation_average']);
             $('#largest_donation').text(data['largest_donation']);
-            hideLoader();
         });
     }
 };
