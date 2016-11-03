@@ -5,6 +5,7 @@
     <title>Charitybot2 Status</title>
     <link rel="stylesheet" type="text/css" href="css/spinner.css">
     <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/api.js"></script>
 </head>
@@ -22,7 +23,7 @@
 <script>
     $(document).ready(() => {
         var api = new API('http://127.0.0.1:9000/');
-        api.setupEventInformation('test');
+        api.testRun();
     });
 </script>
 </html>
