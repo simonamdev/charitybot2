@@ -53,12 +53,12 @@ class TestEventPageContents:
 
     def test_donation_count_is_correct(self):
         donation_count = get_tag_soup(self.event_page_url, 'span', {'id': 'donation_count'})
-        assert 4 == int(donation_count.text.strip())
+        assert 15 == int(donation_count.text.strip())
 
     def test_donation_average_is_correct(self):
         donation_average = get_tag_soup(self.event_page_url, 'span', {'id': 'donation_average'})
-        assert 3.31 == round(float(donation_average.text.strip()), 2)
+        assert 13.92 == round(float(donation_average.text.strip()), 2)
 
     def test_largest_donation_amount_is_correct(self):
         donation_maximum = get_tag_soup(self.event_page_url, 'span', {'id': 'largest_donation'})
-        assert 11.45 == round(float(donation_maximum.text.strip()), 2)
+        assert 42.0 == round(float(donation_maximum.text.strip()), 2)

@@ -57,9 +57,9 @@ class TestGET:
         assert 200 == response.status_code
         assert isinstance(content, dict)
         assert 'test' == content['name']
-        assert 4 == content['donation_count']
-        assert 3.31 == content['donation_average']
-        assert 11.45 == content['largest_donation']
+        assert 15 == content['donation_count']
+        assert 13.92 == content['donation_average']
+        assert 42.0 == content['largest_donation']
 
     def test_getting_donations_of_non_existent_event_returns_404(self):
         response = requests.get(api_full_url + 'event/bla/donations')
