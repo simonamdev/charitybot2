@@ -70,8 +70,8 @@ class API {
                 ]
             },
             options: {
-                maintainAspectRatio: true,
-                responsive: false
+                maintainAspectRatio: false,
+                responsive: true
             }
         });
     }
@@ -107,8 +107,8 @@ class API {
                 ]
             },
             options: {
-                maintainAspectRatio: true,
-                responsive: false,
+                maintainAspectRatio: false,
+                responsive: true,   
                 scales: {
                     yAxes: [{
                         ticks: {
