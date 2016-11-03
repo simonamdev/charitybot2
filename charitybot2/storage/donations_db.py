@@ -6,7 +6,7 @@ from charitybot2.storage.logger import Logger
 
 
 def convert_row_to_donation(row):
-    return Donation(old_amount=(row[2] - row[3]), new_amount=row[2])
+    return Donation(old_amount=(row[2] - row[3]), new_amount=row[2], timestamp=row[1])
 
 
 class DonationsDB(BaseDB):
