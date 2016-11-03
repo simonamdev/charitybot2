@@ -79,7 +79,7 @@ class API {
     drawAmountHistogram(data) {
         var roundedAmounts = [];
         $.each(data, (index, object) => {
-            roundedAmounts.push(Math.ceil(object['total_raised']));
+            roundedAmounts.push(Math.ceil(object['amount']));
         });
         roundedAmounts.sort(sortNumber);
         var counts = {};
@@ -90,11 +90,12 @@ class API {
                 counts[amount] = 1;
             }
         });
+        console.log(counts);
         var ctx =  $("#amountDistributionChart");
         var myBarChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: roundedAmounts,
+                labels: Object.keys(counts),
                 datasets: [
                     {
                         label: 'Donation Amount Distribution',
@@ -111,7 +112,14 @@ class API {
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            stepSize: 1
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            type: 'linear',
+                            fixedStepSize: 1
                         }
                     }]
                 }
