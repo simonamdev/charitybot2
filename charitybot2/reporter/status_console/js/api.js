@@ -53,7 +53,7 @@ class API {
         $.each(data, (index, object) => {
             values.push(object['total_raised']);
         });
-        var ctx =  $("#donationsChart");
+        var ctx =  $("#amountRaisedChart");
         var myChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -82,6 +82,40 @@ class API {
             roundedAmounts.push(Math.ceil(object['total_raised']));
         });
         roundedAmounts.sort(sortNumber);
-        console.log(roundedAmounts);
+        var counts = {};
+        $.each(roundedAmounts, (index, amount) => {
+            if (amount in counts) {
+                counts[amount] += 1
+            } else {
+                counts[amount] = 1;
+            }
+        });
+        var ctx =  $("#amountDistributionChart");
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: roundedAmounts,
+                datasets: [
+                    {
+                        label: 'Donation Amount Distribution',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255,99,132,1)',
+                        borderWidth: 1,
+                        data: Object.values(counts)
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: true,
+                responsive: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
     }
 };
