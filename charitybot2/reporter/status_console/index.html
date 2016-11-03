@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Charitybot2 Status</title>
+    <link rel="stylesheet" type="text/css" href="css/spinner.css">
     <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+    <script src="js/ui.js"></script>
     <script src="js/api.js"></script>
 </head>
 <body>
-    <h1 id="event_name"></h1>
-    <ul>
-        <li>Donation count: <span id="donation_count"></span></li>
-        <li>Average donation: <span id="donation_average"></span></li>
-        <li>Largest donation: <span id="largest_donation"></span></li>
-    </ul>
+    <div class="sk-rotating-plane" id="loader"></div>
+    <div id="content">
+        <h1 id="event_name"></h1>
+        <ul>
+            <li>Donation count: <span id="donation_count"></span></li>
+            <li>Average donation: <span id="donation_average"></span></li>
+            <li>Largest donation: <span id="largest_donation"></span></li>
+        </ul>
+    </div>
 </body>
 <script>
     $(document).ready(() => {
