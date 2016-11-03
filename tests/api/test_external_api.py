@@ -1,4 +1,5 @@
 import requests
+import time
 from charitybot2.paths import external_api_path
 from charitybot2.reporter.external_api import api_full_url
 from flask import json
@@ -59,3 +60,15 @@ class TestGET:
         assert 4 == content['donation_count']
         assert 3.31 == content['donation_average']
         assert 11.45 == content['largest_donation']
+
+    def test_getting_donations_of_non_existent_event_returns_404(self):
+        response = requests.get(api_full_url + 'event/bla/donations')
+        assert 404 == response.status_code
+
+    def test_get_donation_data(self):
+        response = requests.get(api_full_url + 'event/test/donations')
+        content = json.loads(response.content)
+        assert 200 == response.status_code
+        assert isinstance(content, list)
+        assert 11.45 == content[0]['amount']
+        assert 33.2 == content[0]['total_raised']

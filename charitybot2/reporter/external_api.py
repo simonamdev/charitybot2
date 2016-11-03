@@ -49,6 +49,21 @@ def event_details(event_name):
     return jsonify(event_data)
 
 
+@app.route('/event/<event_name>/donations')
+def event_donations(event_name):
+    if event_name not in donations_db.get_event_names():
+        abort(404)
+    all_donations = donations_db.get_all_donations(event_name=event_name)
+    donation_objects = [
+        {
+            'amount': donation.get_donation_amount(),
+            'total_raised': donation.get_new_amount(),
+            'timestamp': donation.get_timestamp()
+        } for donation in all_donations
+    ]
+    return jsonify(donation_objects)
+
+
 # TODO: Enable entering debug mode only when providing some sort of auth
 @app.route('/debug')
 def debug():
