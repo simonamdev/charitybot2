@@ -1,5 +1,5 @@
 import requests
-import time
+from bs4 import BeautifulSoup
 from charitybot2.paths import external_api_path
 from charitybot2.reporter.external_api import api_full_url
 from flask import json
@@ -42,7 +42,7 @@ class TestGET:
 
     def test_events_route_returns_event_names(self):
         response = requests.get(api_full_url + 'events')
-        content = json.loads(response.content)
+        content = json.loads(response.content)['events']
         assert ['test'] == content
 
     def test_getting_nonexistent_event_returns_404(self):
@@ -67,7 +67,7 @@ class TestGET:
 
     def test_get_donation_data(self):
         response = requests.get(api_full_url + 'event/test/donations')
-        content = json.loads(response.content)
+        content = json.loads(response.content)['donations']
         assert 200 == response.status_code
         assert isinstance(content, list)
         assert 11.45 == content[0]['amount']
@@ -75,7 +75,14 @@ class TestGET:
 
     def test_getting_donation_data_with_limit(self):
         response = requests.get(api_full_url + 'event/test/donations?limit=2')
-        content = json.loads(response.content)
+        content = json.loads(response.content)['donations']
         assert 200 == response.status_code
-        assert isinstance(content, list)
         assert 2 == len(content)
+
+    def test_get_amount_raised_for_overlay(self):
+        response = requests.get(api_full_url + 'event/test/overlay')
+        assert 200 == response.status_code
+        assert '<!DOCTYPE html>' in response.content.decode('utf-8')
+        soup = BeautifulSoup(response.content, 'html.parser')
+        amount_raised = soup.find('div', {'id': 'amount_raised'}).text.strip()
+        assert 230.5 == round(float(amount_raised), 2)

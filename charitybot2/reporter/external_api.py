@@ -1,6 +1,7 @@
 from charitybot2.paths import production_donations_db_path
 from charitybot2.storage.donations_db import DonationsDB
 from flask import Flask, request, jsonify, make_response, abort
+from flask import render_template
 from flask_cors import CORS, cross_origin
 from tests.tests import TestFilePath
 
@@ -32,7 +33,7 @@ def events():
     event_names = donations_db.get_event_names()
     if len(event_names) == 0:
         abort(404)
-    return jsonify(event_names)
+    return jsonify(events=event_names)
 
 
 @app.route('/event/<event_name>', methods=['GET'])
@@ -66,7 +67,15 @@ def event_donations(event_name):
             'timestamp': donation.get_timestamp()
         } for donation in all_donations
     ]
-    return jsonify(donation_objects)
+    return jsonify(donations=donation_objects)
+
+
+@app.route('/event/<event_name>/overlay')
+def amount_raised(event_name):
+    if event_name not in donations_db.get_event_names():
+        abort(404)
+    last_donation = donations_db.get_last_donation(event_name=event_name)
+    return render_template('overlay.html', amount_raised=last_donation.get_new_amount())
 
 
 # TODO: Enable entering debug mode only when providing some sort of auth
