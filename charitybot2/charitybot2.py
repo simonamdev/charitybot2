@@ -74,4 +74,9 @@ class EventLoop:
         self.report_new_donation(donation=donation)
 
     def report_new_donation(self, donation):
+        pass
+
+
+class ReportingEventLoop(EventLoop):
+    def report_new_donation(self, donation):
         self.reporter.post_donation_to_chat(donation=donation)
