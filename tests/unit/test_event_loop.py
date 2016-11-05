@@ -32,29 +32,29 @@ class ValidTestEvent(Event):
 class TestEventLoopValidity:
     def test_initialise_with_bad_event_throws_exception(self):
         with pytest.raises(EventInvalidException):
-            el = EventLoop(event=None, twitch_account=valid_twitch_account)
+            el = EventLoop(event=None)
 
     def test_initialise_with_valid_event(self):
-        el = EventLoop(event=ValidTestEvent(), twitch_account=valid_twitch_account)
+        el = EventLoop(event=ValidTestEvent())
 
     def test_initialise_not_implemented_btdonate_scraper_throws_exception(self):
         with pytest.raises(NotImplementedError):
             e = Event(config_path=btdonate_config_path, db_handler=db_handler)
-            el = EventLoop(event=e, twitch_account=None)
+            el = EventLoop(event=e)
 
     def test_valid_event_loop_scraper_is_of_type_justgivingscraper(self):
-        el = EventLoop(event=ValidTestEvent(), twitch_account=valid_twitch_account)
+        el = EventLoop(event=ValidTestEvent())
         assert isinstance(el.scraper, JustGivingScraper)
 
     def test_starting_already_complete_event_throws_exception(self):
         with pytest.raises(EventAlreadyFinishedException):
             e = Event(config_path=already_finished_config_path, db_handler=db_handler)
-            el = EventLoop(event=e, twitch_account=valid_twitch_account)
+            el = EventLoop(event=e)
 
 
 class TestEventLoopAmountRetrieve:
     # Test is definitely flaky
     def test_event_loop_retrieves_amount_successfully(self):
-        el = EventLoop(event=ValidTestEvent(), twitch_account=valid_twitch_account, debug=True)
+        el = EventLoop(event=ValidTestEvent(), debug=True)
         el.check_for_donation()
         assert el.event.get_amount_raised() == 35487.0

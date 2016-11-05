@@ -8,9 +8,8 @@ from charitybot2.storage.logger import Logger
 
 
 class EventLoop:
-    def __init__(self, event, twitch_account, debug=False):
+    def __init__(self, event, debug=False):
         self.event = event
-        self.twitch_account = twitch_account
         self.debug = debug
         self.scraper = None
         self.reporter = None
@@ -18,7 +17,6 @@ class EventLoop:
         self.logger = Logger(source='EventLoop', console_only=debug)
         self.validate_event_loop()
         self.initialise_scraper()
-        self.initialise_reporter()
 
     def validate_event_loop(self):
         self.logger.log_info('Validating Event Loop')
@@ -39,14 +37,6 @@ class EventLoop:
             raise NotImplementedError
         else:
             raise EventInvalidException
-
-    def initialise_reporter(self):
-        self.logger.log_info('Initialising Reporter')
-        self.twitch_account.validate_twitch_account()
-        self.reporter = CharityBot(
-            twitch_account=self.twitch_account,
-            event=self.event,
-            debug=self.debug)
 
     def start(self):
         self.logger.log_info('Starting Event: {}'.format(self.event.get_event_name()))
@@ -78,5 +68,17 @@ class EventLoop:
 
 
 class ReportingEventLoop(EventLoop):
+    def __init__(self, event, twitch_account, debug=False):
+        super().__init__(event=event, debug=debug)
+        self.twitch_account = twitch_account
+        self.initialise_reporter()
+
+    def initialise_reporter(self):
+        self.twitch_account.validate_twitch_account()
+        self.reporter = CharityBot(
+            twitch_account=self.twitch_account,
+            event=self.event,
+            debug=self.debug)
+
     def report_new_donation(self, donation):
         self.reporter.post_donation_to_chat(donation=donation)

@@ -2,11 +2,8 @@ import time
 
 import requests
 from charitybot2.charitybot2 import EventLoop
-from charitybot2.config.event_config import EventConfiguration
 from charitybot2.events.event import Event
 from charitybot2.paths import mocksite_path
-from charitybot2.reporter.purrbot_config import purrbot_config
-from charitybot2.reporter.twitch import TwitchAccount
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from charitybot2.storage.db_handler import DBHandler
 from tests.tests import ResetDB, ServiceTest, TestFilePath
@@ -44,8 +41,6 @@ service_test = ServiceTest(
     service_path=mocksite_path,
     enter_debug=False)
 
-purrbot = TwitchAccount(twitch_config=purrbot_config)
-
 
 def setup_module():
     ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
@@ -61,7 +56,7 @@ def teardown_module():
 class TestEventRunThrough:
     def test_event_cycles_increment_properly(self):
         test_event = MockEvent('test_two', time.time() + 5)
-        test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
+        test_event_loop = EventLoop(event=test_event, debug=True)
         test_event_loop.start()
         assert 1 == test_event_loop.loop_count
 
@@ -69,6 +64,6 @@ class TestEventRunThrough:
         test_event = MockEvent('test_three', time.time() + 5)
         # first reset the amount on the mocksite so that the amount raised is back to default
         test_event.reset_mocksite()
-        test_event_loop = EventLoop(event=test_event, twitch_account=purrbot, debug=True)
+        test_event_loop = EventLoop(event=test_event, debug=True)
         test_event_loop.start()
         assert 200.52 == test_event_loop.event.get_amount_raised()

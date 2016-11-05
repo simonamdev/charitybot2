@@ -55,8 +55,7 @@ class TestTwitchChat:
         bot = TwitchChatBot(
             channel_name='purrcat259',
             twitch_account=purrbot,
-            verbose=True
-        )
+            verbose=True)
         bot.quick_post_in_channel(test_string)
         time.sleep(4)
         assert test_string in get_twitch_chat_box_contents()
