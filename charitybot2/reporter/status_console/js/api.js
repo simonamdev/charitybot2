@@ -38,9 +38,8 @@ class API {
     }
 
     drawDonationsCharts(data) {
-        console.log(data);
-        this.drawAmountRaisedChart(data);
-        this.drawAmountHistogram(data);
+        this.drawAmountRaisedChart(data['donations']);
+        this.drawAmountHistogram(data['donations']);
     }
 
     drawAmountRaisedChart(data) {
@@ -90,7 +89,6 @@ class API {
                 counts[amount] = 1;
             }
         });
-        console.log(counts);
         var ctx =  $("#amountDistributionChart");
         var myBarChart = new Chart(ctx, {
             type: 'bar',
