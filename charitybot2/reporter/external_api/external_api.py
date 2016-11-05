@@ -57,7 +57,6 @@ def event_donations(event_name):
     all_donations = donations_db.get_all_donations(event_name=event_name)
     # TODO: Add option to limit via Neopysqlite and not slicing after the fact
     limit = request.args.get('limit')
-    print(limit)
     if limit is not None:
         all_donations = all_donations[-int(limit):]
     donation_objects = [
