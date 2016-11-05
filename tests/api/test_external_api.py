@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from charitybot2.paths import external_api_path
-from charitybot2.reporter.external_api import api_full_url
+from charitybot2.reporter.external_api.external_api import api_full_url
 from flask import json
 from tests.tests import TestFilePath, ServiceTest
 
