@@ -30,7 +30,7 @@ charity streamer focus on what they do best: entertaining viewers in aid of a go
 ## How to run
 
 - Clone the repository
-- 
+- TODO
 
 ## Known Issues
 
