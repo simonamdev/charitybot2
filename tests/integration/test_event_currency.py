@@ -8,7 +8,7 @@ donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 
 ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
-db_handler = DBHandler(donations_db_path=donations_db_path)
+db_handler = DBHandler(donations_db_path=donations_db_path, debug=True)
 valid_event = Event(config_path=valid_config_path, db_handler=db_handler)
 
 
