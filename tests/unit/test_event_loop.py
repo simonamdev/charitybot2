@@ -32,24 +32,24 @@ class ValidTestEvent(Event):
 class TestEventLoopValidity:
     def test_initialise_with_bad_event_throws_exception(self):
         with pytest.raises(EventInvalidException):
-            el = EventLoop(event=None)
+            el = EventLoop(event=None, debug=True)
 
     def test_initialise_with_valid_event(self):
-        el = EventLoop(event=ValidTestEvent())
+        el = EventLoop(event=ValidTestEvent(), debug=True)
 
     def test_initialise_not_implemented_btdonate_scraper_throws_exception(self):
         with pytest.raises(NotImplementedError):
             e = Event(config_path=btdonate_config_path, db_handler=db_handler)
-            el = EventLoop(event=e)
+            el = EventLoop(event=e, debug=True)
 
     def test_valid_event_loop_scraper_is_of_type_justgivingscraper(self):
-        el = EventLoop(event=ValidTestEvent())
+        el = EventLoop(event=ValidTestEvent(), debug=True)
         assert isinstance(el.scraper, JustGivingScraper)
 
     def test_starting_already_complete_event_throws_exception(self):
         with pytest.raises(EventAlreadyFinishedException):
             e = Event(config_path=already_finished_config_path, db_handler=db_handler)
-            el = EventLoop(event=e)
+            el = EventLoop(event=e, debug=True)
 
 
 class TestEventLoopAmountRetrieve:
