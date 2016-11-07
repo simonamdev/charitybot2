@@ -16,7 +16,7 @@ already_finished_config_path = TestFilePath().get_config_path('event', 'already_
 donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 
-db_handler = DBHandler(donations_db_path=donations_db_path)
+db_handler = DBHandler(donations_db_path=donations_db_path, debug=True)
 valid_twitch_account = TwitchAccount(twitch_config=purrbot_config)
 
 
