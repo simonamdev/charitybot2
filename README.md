@@ -13,5 +13,6 @@ charity streamer focus on what they do best: entertaining viewers in aid of a go
 
 ## Upcoming features
 
-
-[ ] Asynchronous posting to twitch chat to avoid needing an account per event
+- New donation CSS animation on reload
+- Play audio on new donation on overlay
+- Asynchronous posting to twitch chats to avoid needing an account per event (Useful for several events running at the same time)
