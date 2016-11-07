@@ -14,5 +14,4 @@ charity streamer focus on what they do best: entertaining viewers in aid of a go
 ## Upcoming features
 
 
-- [ ] Asynchronous posting to twitch chat to avoid needing an account per event
-- 
+[ ] Asynchronous posting to twitch chat to avoid needing an account per event
