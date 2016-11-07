@@ -1,25 +1,17 @@
-import os
 import pytest
 
-from time import sleep
 from charitybot2.storage.logs_db import LogsDB, LogSourceDoesNotExistException, Log
-from tests.tests import TestFilePath
+from tests.tests import TestFilePath, ResetDB
 
 logs_db_path = TestFilePath().get_db_path('logs.db')
+logs_sql_path = TestFilePath().get_db_path('logs.sql')
 
 
 def setup_module():
-    if os.path.isfile(logs_db_path):
-        os.remove(logs_db_path)
-    sleep(0.5)
-    open(logs_db_path, 'w')
+    ResetDB(db_path=logs_db_path, sql_path=logs_sql_path)
 
 
 class TestLogsDatabaseTableCRUD:
-    def test_db_resetting_for_tests(self):
-        db = LogsDB(db_path=logs_db_path, verbose=True)
-        assert db.get_available_log_sources() == []
-
     def test_log_source_table_creation(self):
         db = LogsDB(db_path=logs_db_path, verbose=True)
         db.create_log_source_table(log_source='test_one')
