@@ -16,3 +16,24 @@ charity streamer focus on what they do best: entertaining viewers in aid of a go
 - New donation CSS animation on reload
 - Play audio on new donation on overlay
 - Asynchronous posting to twitch chats to avoid needing an account per event (Useful for several events running at the same time)
+
+## Charitybot Requirements
+
+- Python 3.x+
+- SQLite
+- Chromedriver (for E2E tests)
+
+## Streamer requirements
+
+- OBS with the CLR plugin installed
+
+## How to run
+
+- Clone the repository
+- 
+
+## Known Issues
+
+## Contributions
+
+## Licence
