@@ -1,12 +1,14 @@
 import os
 
+from charitybot2 import paths
+
 
 class MissingRequiredFolderException(Exception):
     pass
 
 
 class BotStartupValidator:
-    def __init__(self, db_directory, config_directory):
+    def __init__(self, db_directory=paths.db_folder, config_directory=paths.config_folder):
         self.db_directory = db_directory
         self.config_directory = config_directory
         self.confirm_directories_exist()

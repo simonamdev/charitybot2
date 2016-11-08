@@ -11,3 +11,6 @@ class TestStartupValidation:
             validator = BotStartupValidator(db_directory=TestFilePath().db_dir, config_directory='car')
         with pytest.raises(MissingRequiredFolderException):
             validator = BotStartupValidator(db_directory='coo', config_directory=TestFilePath().config_dir)
+
+    def test_default_directories_do_not_throw_exception(self):
+        validator = BotStartupValidator()
