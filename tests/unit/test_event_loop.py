@@ -1,6 +1,6 @@
 import pytest
 
-from charitybot2.charitybot2 import EventLoop
+from charitybot2.events.event_loop import EventLoop
 from charitybot2.events.event import Event, EventInvalidException, EventAlreadyFinishedException
 from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount

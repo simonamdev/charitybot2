@@ -1,7 +1,7 @@
 import time
 
 import requests
-from charitybot2.charitybot2 import EventLoop
+from charitybot2.events.event_loop import EventLoop
 from charitybot2.events.event import Event
 from charitybot2.paths import mocksite_path
 from charitybot2.sources.mocks.mocksite import mocksite_full_url

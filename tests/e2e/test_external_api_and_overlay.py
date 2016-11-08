@@ -2,7 +2,7 @@ import time
 
 import requests
 from bs4 import BeautifulSoup
-from charitybot2.charitybot2 import EventLoop
+from charitybot2.events.event_loop import EventLoop
 from charitybot2.paths import mocksite_path, external_api_path
 from charitybot2.reporter.external_api.external_api import api_full_url
 from charitybot2.sources.mocks.mocksite import mocksite_full_url

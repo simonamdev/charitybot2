@@ -1,7 +1,7 @@
 import uuid
 import time
 
-from charitybot2.charitybot2 import ReportingEventLoop
+from charitybot2.events.event_loop import ReportingEventLoop
 from charitybot2.events.currency import Currency
 from charitybot2.paths import mocksite_path
 from charitybot2.reporter.purrbot_config import purrbot_config
