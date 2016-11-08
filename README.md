@@ -34,6 +34,6 @@ charity streamer focus on what they do best: entertaining viewers in aid of a go
 
 ## Known Issues
 
-## Contributions
-
 ## Licence
+
+MIT Licence
