@@ -1,9 +1,9 @@
 import pytest
-from charitybot2.charitybot2 import BotStartupValidator, MissingRequiredFolderException
+from charitybot2.charitybot2 import BotStartupValidator, MissingRequiredFolderException, MissingRequiredFileException
 from tests.tests import TestFilePath
 
 
-class TestStartupValidation:
+class TestDirectoryValidation:
     def test_checking_folder_that_does_not_exist_throws_exception(self):
         with pytest.raises(MissingRequiredFolderException):
             validator = BotStartupValidator(db_directory='bla', config_directory='foo')
@@ -14,3 +14,14 @@ class TestStartupValidation:
 
     def test_default_directories_do_not_throw_exception(self):
         validator = BotStartupValidator()
+
+
+class TestFileValidation:
+    validator = BotStartupValidator(db_directory=TestFilePath().db_dir, config_directory=TestFilePath().config_dir)
+
+    def test_given_existing_config_name_exists(self):
+        self.validator.confirm_config_exists(config_type='base', file_name='empty_config.json')
+
+    def test_given_non_existing_file_name_throws_exception(self):
+        with pytest.raises(MissingRequiredFileException):
+            self.validator.confirm_config_exists(config_type='meow', file_name='hiss')
