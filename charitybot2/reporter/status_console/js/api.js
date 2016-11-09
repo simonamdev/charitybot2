@@ -23,11 +23,16 @@ class API {
         $.getJSON(eventUrl, (data) => {
             console.log(data);
             this.writeEventDataToPage(data);
+            this.writeCurrencySymbols(data['currency_symbol']);
         });
         $.getJSON(donationsUrl, (data) => {
             console.log(data);
             this.drawDonationsCharts(data);
         });
+    }
+
+    writeCurrencySymbols(currencySymbol) {
+        $('.currency_symbol').text(currencySymbol);
     }
 
     writeEventDataToPage(data) {
