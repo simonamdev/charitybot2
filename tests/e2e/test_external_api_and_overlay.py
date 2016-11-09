@@ -45,4 +45,4 @@ class TestOverlay:
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
         soup = BeautifulSoup(response.content, 'html.parser')
         amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
-        assert 250.52 == round(float(amount_raised), 2)
+        assert '£250.52' == amount_raised

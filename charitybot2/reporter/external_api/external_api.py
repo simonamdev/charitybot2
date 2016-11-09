@@ -18,6 +18,9 @@ debug_mode = True
 
 donations_db = DonationsDB(db_path=production_donations_db_path, debug=debug_mode)
 
+def get_currency_symbol(event_name):
+    return Currency(key=donations_db.get_event_currency_key(event_name=event_name)).get_symbol()
+
 
 @app.errorhandler(404)
 def not_found(error):
@@ -47,7 +50,7 @@ def event_details(event_name):
         'donation_count': len(all_donations),
         'donation_average': donations_db.get_average_donation(event_name=event_name),
         'largest_donation': max(donation.get_donation_amount() for donation in all_donations),
-        'currency_symbol': Currency(key=donations_db.get_event_currency_key(event_name=event_name)).get_symbol()
+        'currency_symbol': get_currency_symbol(event_name=event_name)
     }
     return jsonify(event_data)
 
@@ -76,7 +79,9 @@ def amount_raised(event_name):
     if event_name not in donations_db.get_event_names():
         abort(404)
     last_donation = donations_db.get_last_donation(event_name=event_name)
-    return render_template('overlay.html', amount_raised=last_donation.get_new_amount())
+    return render_template('overlay.html',
+                           amount_raised=last_donation.get_new_amount(),
+                           currency_symbol=get_currency_symbol(event_name=event_name))
 
 
 # TODO: Enable entering debug mode only when providing some sort of auth
