@@ -24,6 +24,8 @@ class API {
             console.log(data);
             this.writeEventDataToPage(data);
             this.writeCurrencySymbols(data['currency_symbol']);
+        }).fail(() => {
+            console.log('foobar');
         });
         $.getJSON(donationsUrl, (data) => {
             console.log(data);
