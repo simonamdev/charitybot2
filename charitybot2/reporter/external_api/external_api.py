@@ -1,3 +1,4 @@
+from charitybot2.events.currency import Currency
 from charitybot2.paths import production_donations_db_path
 from charitybot2.storage.donations_db import DonationsDB
 from flask import Flask, request, jsonify, make_response, abort
@@ -45,7 +46,8 @@ def event_details(event_name):
         'name': event_name,
         'donation_count': len(all_donations),
         'donation_average': donations_db.get_average_donation(event_name=event_name),
-        'largest_donation': max(donation.get_donation_amount() for donation in all_donations)
+        'largest_donation': max(donation.get_donation_amount() for donation in all_donations),
+        'currency_symbol': Currency(key=donations_db.get_event_currency_key(event_name=event_name)).get_symbol()
     }
     return jsonify(event_data)
 

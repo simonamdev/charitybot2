@@ -60,6 +60,7 @@ class TestGET:
         assert 15 == content['donation_count']
         assert 13.92 == content['donation_average']
         assert 42.0 == content['largest_donation']
+        assert '£' == content['currency_symbol']
 
     def test_getting_donations_of_non_existent_event_returns_404(self):
         response = requests.get(api_full_url + 'event/bla/donations')
