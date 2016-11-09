@@ -18,6 +18,7 @@ debug_mode = True
 
 donations_db = DonationsDB(db_path=production_donations_db_path, debug=debug_mode)
 
+
 def get_currency_symbol(event_name):
     return Currency(key=donations_db.get_event_currency_key(event_name=event_name)).get_symbol()
 
