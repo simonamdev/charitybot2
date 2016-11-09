@@ -36,7 +36,7 @@ def teardown_module():
 
 
 class TestOverlay:
-    def test_getting_last_donation(self):
+    def test_getting_last_donation_amount_on_overlay(self):
         test_event = MockEvent('test', time.time() + 10)
         test_event_loop = EventLoop(event=test_event, debug=True)
         test_event_loop.start()
@@ -44,5 +44,5 @@ class TestOverlay:
         assert 200 == response.status_code
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
         soup = BeautifulSoup(response.content, 'html.parser')
-        amount_raised = soup.find('div', {'id': 'amount_raised'}).text.strip()
+        amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
         assert 250.52 == round(float(amount_raised), 2)
