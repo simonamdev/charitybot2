@@ -85,5 +85,5 @@ class TestGET:
         assert 200 == response.status_code
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
         soup = BeautifulSoup(response.content, 'html.parser')
-        amount_raised = soup.find('div', {'id': 'amount_raised'}).text.strip()
-        assert 230.5 == round(float(amount_raised), 2)
+        amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
+        assert '£230.5' == amount_raised
