@@ -21,7 +21,7 @@ class DonationsDB(BaseDB):
         super().__init__(file_path=db_path, db_name='Donations DB', verbose=debug)
         self.logger = Logger(source='Donations_DB', console_only=debug)
 
-    def record_donation(self, event_name, donation):
+    def record_donation(self, event_name, donation, currency_key='GBP'):
         self.create_event_table_if_not_exists(event_name=event_name)
         self.logger.log_info('Inserting donation: {} into donations database'.format(donation))
         self.db.insert_row(
@@ -36,6 +36,9 @@ class DonationsDB(BaseDB):
 
     def event_exists(self, event_name):
         return event_name in self.db.get_table_names()
+
+    def currency_is_set(self, event_name):
+        return event_name in [row[1] for row in self.db.get_all_rows(table='currency')]
 
     def get_all_donations(self, event_name):
         donation_rows = self.db.get_all_rows(table=event_name)

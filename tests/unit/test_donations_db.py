@@ -38,8 +38,7 @@ class TestDonationsDBRetrieve:
         old_amount = 0
         amount_increase = 50.34
         for i in range(5):
-            ddb.record_donation(event_name=event_name, donation=Donation(old_amount=old_amount,
-                                                                         new_amount=old_amount + amount_increase))
+            ddb.record_donation(event_name=event_name, donation=Donation(old_amount=old_amount, new_amount=old_amount + amount_increase))
             old_amount += amount_increase
         new_amount = amount_increase
         all_donations = ddb.get_all_donations(event_name=event_name)
@@ -76,6 +75,10 @@ class TestDonationsDBRetrieve:
         currency_key = ddb.get_event_currency_key(event_name='test')
         assert 'GBP' == currency_key
 
+    def test_currency_is_set(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        assert True is ddb.currency_is_set(event_name='test')
+
 
 class TestDonationsDBRecording:
     def test_recording_donation_records_in_db(self):
@@ -96,3 +99,10 @@ class TestDonationsDBRecording:
         all_currencies = db.get_all_rows(table='currency')
         assert 2 == len(all_currencies)
         assert 'USD' == all_currencies[1][2]
+
+    def test_default_currency_is_gbp(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        ddb.set_event_currency_key(event_name='test_event_two', currency_key='GBP')
+        db = Neopysqlite(database_name='Donations test DB', db_path=donations_db_path, verbose=True)
+        all_currencies = db.get_all_rows(table='currency')
+        assert 'GBP' == all_currencies[2][2]
