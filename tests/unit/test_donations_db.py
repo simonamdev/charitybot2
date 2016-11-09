@@ -67,6 +67,15 @@ class TestDonationsDBRetrieve:
         event_names = ('test', 'test_event_two', 'test_event_three', 'test_event_four')
         assert sorted(event_names) == sorted(ddb.get_event_names())
 
+    def test_currency_table_exists(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        assert 'currency' in ddb.db.get_table_names()
+
+    def test_getting_event_currency(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        currency_key = ddb.get_event_currency_key(event_name='test')
+        assert 'GBP' == currency_key
+
 
 class TestDonationsDBRecording:
     def test_recording_donation_records_in_db(self):
@@ -80,4 +89,10 @@ class TestDonationsDBRecording:
         delta = round(545.7 - 533.3, 2)
         assert all_donations[0][3] == delta
 
-
+    def test_recording_currency_records_in_db(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        ddb.set_event_currency_key(event_name='test_event', currency_key='USD')
+        db = Neopysqlite(database_name='Donations test DB', db_path=donations_db_path, verbose=True)
+        all_currencies = db.get_all_rows(table='currency')
+        assert 2 == len(all_currencies)
+        assert 'USD' == all_currencies[1][2]

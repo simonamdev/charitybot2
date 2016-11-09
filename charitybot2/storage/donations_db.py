@@ -51,5 +51,12 @@ class DonationsDB(BaseDB):
         return round(sum(donation_deltas) / len(donation_deltas), 2)
 
     def get_event_names(self):
-        names_to_remove = ('sqlite_sequence')
+        names_to_remove = ('sqlite_sequence', 'currency')
         return [name for name in self.db.get_table_names() if name not in names_to_remove]
+
+    def get_event_currency_key(self, event_name):
+        currency_key = self.db.get_specific_rows(table='currency', filter_string='event = \'{}\''.format(event_name))
+        return currency_key[0][2]
+
+    def set_event_currency_key(self, event_name, currency_key):
+        self.db.insert_row(table='currency', row_string='(NULL, ?, ?)', row_data=(event_name, currency_key))
