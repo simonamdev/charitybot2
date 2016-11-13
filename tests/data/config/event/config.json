@@ -1,10 +1,10 @@
 {
-  "event_name": "E2E Test Charity Event",
+  "event_name": "E2E_Test_Charity_Event",
   "channel_name": "purrcat259",
   "start_time": 0,
   "end_time": 9999999999,
   "target_amount": 1000,
   "currency": "GBP",
-  "source_url": "https://www.justgiving.com/fundraising/alasdair-clift",
+  "source_url": "http://127.0.0.1:5000",
   "update_tick": 5
 }
