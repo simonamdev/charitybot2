@@ -27,7 +27,7 @@ def teardown_module():
 
 class TestFullTwitchEvent:
     navigate_to_twitch_channel()
-    
+
 
 
 class TestFullAPIEvent:

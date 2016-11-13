@@ -1,6 +1,5 @@
 import pytest
-from charitybot2.charitybot2 import MissingRequiredFileException
-from charitybot2.start_bot import CharityBot, create_parser, IllegalArgumentException
+from charitybot2.charitybot2 import MissingRequiredFileException, CharityBot, create_parser, IllegalArgumentException
 
 
 class TestParserRequiredArguments:
