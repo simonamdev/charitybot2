@@ -67,7 +67,7 @@ class EventLoop:
         pass
 
 
-class ReportingEventLoop(EventLoop):
+class TwitchEventLoop(EventLoop):
     def __init__(self, event, twitch_account, debug=False):
         super().__init__(event=event, debug=debug)
         self.twitch_account = twitch_account

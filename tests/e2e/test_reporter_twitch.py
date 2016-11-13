@@ -1,7 +1,7 @@
 import uuid
 import time
 
-from charitybot2.events.event_loop import ReportingEventLoop
+from charitybot2.events.event_loop import TwitchEventLoop
 from charitybot2.events.currency import Currency
 from charitybot2.paths import mocksite_path
 from charitybot2.reporter.purrbot_config import purrbot_config
@@ -63,7 +63,7 @@ class TestTwitchChat:
     def test_twitch_chat_donations_appear(self):
         navigate_to_twitch_channel()
         test_event = MockEvent('test_one', time.time() + 10)
-        test_event_loop = ReportingEventLoop(event=test_event, twitch_account=purrbot, debug=True)
+        test_event_loop = TwitchEventLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         time.sleep(4)
         expected_string = ChatBot.donation_string.format(Currency.GBP, 50.0, Currency.GBP, 250.52)
