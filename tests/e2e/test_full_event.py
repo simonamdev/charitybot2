@@ -72,6 +72,8 @@ class TestFullTwitchEvent:
 
 class TestFullAPIEvent:
     def test_full_event(self):
+        response = requests.get(MockEvent.mocksite_base_url + 'reset/')
+        assert 200 == response.status_code
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 10)
         args = parser.parse_args(['config', '--debug'])
         bot = CharityBot(args=args)
