@@ -16,3 +16,6 @@ class TestEventCurrency:
     def test_event_returns_expected_currency(self):
         assert isinstance(valid_event.get_currency(), Currency)
         assert '£' == valid_event.get_currency().get_symbol()
+
+    def test_event_currency_registration(self):
+        valid_event.register_currency_key()

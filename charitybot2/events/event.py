@@ -54,3 +54,9 @@ class Event:
 
     def get_currency(self):
         return Currency(self.config.get_value('currency'))
+
+    def register_currency_key(self):
+        if not self.db_handler.get_donations_db().currency_is_set(event_name=self.get_event_name()):
+            self.db_handler.get_donations_db().set_event_currency_key(
+                event_name=self.get_event_name(),
+                currency_key=self.get_currency().get_key())

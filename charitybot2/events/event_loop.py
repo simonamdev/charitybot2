@@ -40,6 +40,7 @@ class EventLoop:
 
     def start(self):
         self.logger.log_info('Starting Event: {}'.format(self.event.get_event_name()))
+        self.event.register_currency_key()
         while time.time() < self.event.get_end_time():
             hours_remaining = int((self.event.get_end_time() - time.time()) / (60 * 60))
             self.logger.log_info('Cycle {}: {} hours remaining in event'.format(
