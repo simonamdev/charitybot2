@@ -4,14 +4,19 @@ from charitybot2.start_bot import Startup, create_parser, IllegalArgumentExcepti
 
 
 class TestParserRequiredArguments:
+    parser = create_parser()
+
     def test_passing_empty_event_name_throws_exception(self):
-        parser = create_parser()
-        args = parser.parse_args(['', '--debug'])
+        args = self.parser.parse_args(['', '--debug'])
         with pytest.raises(IllegalArgumentException):
             Startup(args=args)
 
     def test_passing_non_existent_event_configs_throws_exception(self):
-        parser = create_parser()
-        args = parser.parse_args(['test', '--debug'])
+        args = self.parser.parse_args(['test', '--debug'])
+        with pytest.raises(MissingRequiredFileException):
+            Startup(args=args)
+
+    def test_passing_non_existent_twitch_config_in_twitch_mode_throws_exception(self):
+        args = self.parser.parse_args(['config', '--debug', '--twitch-config', 'bla'])
         with pytest.raises(MissingRequiredFileException):
             Startup(args=args)

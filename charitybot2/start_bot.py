@@ -19,18 +19,19 @@ def create_parser():
 class Startup:
     def __init__(self, args):
         self.args = args
-        self.validate_bot()
         self.debug = True if self.args.debug is not None else False
         self.twitch_mode = True if self.args.twitch_config else False
+        self.validate_bot()
 
     def validate_bot(self):
         if self.args.event == '':
             raise IllegalArgumentException('Empty event config file name passed')
-        validator = BotStartupValidator(db_directory=TestFilePath().db_dir, config_directory=TestFilePath().config_dir) if self.args.debug else BotStartupValidator()
+        validator = BotStartupValidator(db_directory=TestFilePath().db_dir, config_directory=TestFilePath().config_dir) if self.debug else BotStartupValidator()
         validator.confirm_config_exists('event', self.args.event + '.json')
+        if self.twitch_mode:
+            validator.confirm_config_exists('twitch', self.args.twitch_config + '.json')
 
 
 if __name__ == '__main__':
-    parser = create_parser()
-    args = parser.parse_args()
+    args = create_parser().parse_args()
     Startup(args=args)
