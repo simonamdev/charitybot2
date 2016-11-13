@@ -57,4 +57,4 @@ class TestEventLoopAmountRetrieve:
     def test_event_loop_retrieves_amount_successfully(self):
         el = EventLoop(event=ValidTestEvent(), debug=True)
         el.check_for_donation()
-        assert el.event.get_amount_raised() == 35487.0
+        assert 35517.0 == el.event.get_amount_raised()
