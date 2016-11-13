@@ -16,7 +16,7 @@ def create_parser():
     return parser
 
 
-class Startup:
+class CharityBot:
     def __init__(self, args):
         self.args = args
         self.debug = True if self.args.debug is not None else False
@@ -31,7 +31,10 @@ class Startup:
         if self.twitch_mode:
             validator.confirm_config_exists('twitch', self.args.twitch_config + '.json')
 
+    def start_bot(self):
+        pass
+
 
 if __name__ == '__main__':
     args = create_parser().parse_args()
-    Startup(args=args)
+    CharityBot(args=args)
