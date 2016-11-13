@@ -49,7 +49,7 @@ class TestFullTwitchEvent:
         bot.initialise_bot()
         bot.start_bot()
         time.sleep(4)
-        expected_string = ChatBot.donation_string.format(Currency.GBP, 50.0, Currency.GBP, 250.52)
+        expected_string = ChatBot.donation_string.format(Currency.GBP, 35517.0, Currency.GBP, 35517.0)
         assert expected_string in get_twitch_chat_box_contents()
 
 
