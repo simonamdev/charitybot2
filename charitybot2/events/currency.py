@@ -24,3 +24,6 @@ class Currency:
 
     def get_symbol(self):
         return self.symbol_map[self.key]
+
+    def get_key(self):
+        return self.key

@@ -10,3 +10,7 @@ class TestInitialiseCurrency:
     def test_default_currency_is_gbp(self):
         currency = Currency()
         assert Currency.GBP == currency.get_symbol()
+
+    def test_return_given_key(self):
+        currency = Currency(key='USD')
+        assert 'USD' == currency.get_key()
