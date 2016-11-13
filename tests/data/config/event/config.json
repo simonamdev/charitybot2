@@ -5,6 +5,6 @@
   "end_time": 9999999999,
   "target_amount": 1000,
   "currency": "GBP",
-  "source_url": "http://127.0.0.1:5000",
+  "source_url": "http://127.0.0.1:5000/justgiving/",
   "update_tick": 5
 }
