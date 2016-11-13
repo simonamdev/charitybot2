@@ -2,7 +2,7 @@ import time
 
 from charitybot2.events.donation import Donation
 from charitybot2.events.event import EventInvalidException, EventAlreadyFinishedException
-from charitybot2.reporter.twitch import CharityBot
+from charitybot2.reporter.twitch import ChatBot
 from charitybot2.sources.justgiving import JustGivingScraper
 from charitybot2.storage.logger import Logger
 
@@ -75,7 +75,7 @@ class ReportingEventLoop(EventLoop):
 
     def initialise_reporter(self):
         self.twitch_account.validate_twitch_account()
-        self.reporter = CharityBot(
+        self.reporter = ChatBot(
             twitch_account=self.twitch_account,
             event=self.event,
             debug=self.debug)

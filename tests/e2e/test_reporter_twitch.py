@@ -5,7 +5,7 @@ from charitybot2.events.event_loop import ReportingEventLoop
 from charitybot2.events.currency import Currency
 from charitybot2.paths import mocksite_path
 from charitybot2.reporter.purrbot_config import purrbot_config
-from charitybot2.reporter.twitch import TwitchAccount, TwitchChatBot, CharityBot
+from charitybot2.reporter.twitch import TwitchAccount, TwitchChatBot, ChatBot
 from selenium import webdriver
 from tests.integration.test_event_loop_with_mocksite import MockEvent
 from tests.tests import ServiceTest
@@ -66,5 +66,5 @@ class TestTwitchChat:
         test_event_loop = ReportingEventLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         time.sleep(4)
-        expected_string = CharityBot.donation_string.format(Currency.GBP, 50.0, Currency.GBP, 250.52)
+        expected_string = ChatBot.donation_string.format(Currency.GBP, 50.0, Currency.GBP, 250.52)
         assert expected_string in get_twitch_chat_box_contents()

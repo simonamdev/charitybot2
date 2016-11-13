@@ -93,7 +93,7 @@ class TwitchChatBot:
         self.connection.send(send_string.encode('utf-8'))
 
 
-class CharityBot(TwitchChatBot):
+class ChatBot(TwitchChatBot):
     charity_bot_url = 'TODO'
     donation_string = 'A new donation of {}{} has been received!' \
                       ' A total of {}{} has been raised so far, thank you so much!'
