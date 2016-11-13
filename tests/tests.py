@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import sys
@@ -88,3 +89,22 @@ class ServiceTest(ResetDB):
             print('Process killed Forcefully')
         except Exception:
             print('Process killed gracefully')
+
+
+class AdjustTestConfig:
+    def __init__(self, config_path):
+        self.config_path = config_path
+        self.data = None
+        self.read_data()
+
+    def read_data(self):
+        with open(self.config_path, 'r') as config_file:
+            self.data = json.loads(config_file.read())
+
+    def change_value(self, key, value):
+        self.data[key] = value
+        self.write_data()
+
+    def write_data(self):
+        with open(self.config_path, 'w') as config_file:
+            json.dump(self.data, config_file)
