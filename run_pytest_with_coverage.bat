@@ -1,1 +1,1 @@
-py.test --cov-report html --cov=charitybot2 tests/
+py.test --cov-report html --cov-config .coveragerc --cov=charitybot2 tests/

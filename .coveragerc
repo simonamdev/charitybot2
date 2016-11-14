@@ -1,0 +1,3 @@
+[run]
+omit = tests/*
+omit = charitybot2/sources/mocks/*
