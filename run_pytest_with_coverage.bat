@@ -1,0 +1,1 @@
+py.test --cov-report html --cov=charitybot2 tests/
