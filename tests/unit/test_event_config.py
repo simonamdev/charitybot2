@@ -1,5 +1,5 @@
 import pytest
-from charitybot2.config.event_config import EventConfiguration
+from charitybot2.config.event_config import EventConfiguration, InvalidEventNameException
 from charitybot2.events.currency import InvalidCurrencyException
 from tests.tests import TestFilePath
 
@@ -32,6 +32,12 @@ class TestEventConfigRetrieve:
         ec = EventConfiguration(file_path=get_config_file_path('valid_config'))
         assert 'GBP' == ec.get_value('currency')
 
+
+class TestEventConfigValidity:
     def test_passing_wrong_currency_throws_exception(self):
         with pytest.raises(InvalidCurrencyException):
             ec = EventConfiguration(file_path=get_config_file_path('bad_currency'))
+
+    def test_passing_event_name_with_spaces_throws_exception(self):
+        with pytest.raises(InvalidEventNameException):
+            ec = EventConfiguration(file_path=get_config_file_path('name_with_spaces'))

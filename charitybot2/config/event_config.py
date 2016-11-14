@@ -2,6 +2,10 @@ from charitybot2.config.json_config import JSONConfigurationFile
 from charitybot2.events.currency import InvalidCurrencyException
 
 
+class InvalidEventNameException(Exception):
+    pass
+
+
 class EventConfiguration(JSONConfigurationFile):
     keys_required = (
         'event_name',
@@ -34,4 +38,6 @@ class EventConfiguration(JSONConfigurationFile):
         if self.config_data['currency'] not in self.currencies:
             raise InvalidCurrencyException('Provided currency is invalid.'
                                            ' Please use any of the following: {}'.format(self.currencies))
+        if ' ' in self.config_data['event_name']:
+            raise InvalidEventNameException('Event names cannot have spaces within them. Use underscores instead!')
 
