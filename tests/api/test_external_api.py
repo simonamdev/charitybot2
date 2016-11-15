@@ -95,4 +95,4 @@ class TestGET:
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
         soup = BeautifulSoup(response.content, 'html.parser')
         amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
-        assert '£230.5' == amount_raised
+        assert '230.5' == amount_raised
