@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from charitybot2.paths import external_api_path
-from charitybot2.reporter.external_api.external_api import api_full_url
+from charitybot2.reporter.external_api.external_api import api_full_url, api_paths
 from flask import json
 from tests.tests import TestFilePath, ServiceTest
 
@@ -25,9 +25,6 @@ def teardown_module():
     status_service.stop_service()
 
 
-paths = ['events']
-
-
 class TestGET:
     def test_index_route_returns_information_object(self):
         response = requests.get(api_full_url)
@@ -38,7 +35,7 @@ class TestGET:
     def test_information_object_contains_all_paths(self):
         response = requests.get(api_full_url)
         content = json.loads(response.content)
-        assert sorted(paths) == sorted(content['paths'])
+        assert sorted(api_paths) == sorted(content['paths'])
 
     def test_events_route_returns_event_names(self):
         response = requests.get(api_full_url + 'events')

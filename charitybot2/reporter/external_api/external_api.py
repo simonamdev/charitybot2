@@ -16,6 +16,14 @@ api_url = 'http://' + api_address
 api_full_url = api_url + ':' + str(api_port) + '/'
 debug_mode = True
 
+api_paths = [
+    'events',
+    'event/:event_name',
+    'event/:event_name/donations',
+    'event/:event_name/donations?limit=:limit',
+    'event/:event_name/donations/last'
+]
+
 donations_db = DonationsDB(db_path=production_donations_db_path, debug=debug_mode)
 
 
@@ -30,7 +38,7 @@ def not_found(error):
 
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({'paths': ['events']})
+    return jsonify({'paths': api_paths})
 
 
 @app.route('/events', methods=['GET'])
@@ -71,7 +79,7 @@ def event_donations(event_name):
             'total_raised': donation.get_new_amount(),
             'timestamp': donation.get_timestamp()
         } for donation in all_donations
-    ]
+        ]
     return jsonify(donations=donation_objects)
 
 
