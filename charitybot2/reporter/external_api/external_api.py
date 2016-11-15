@@ -75,6 +75,20 @@ def event_donations(event_name):
     return jsonify(donations=donation_objects)
 
 
+@app.route('/event/<event_name>/donations/last')
+def last_event_donation(event_name):
+    if event_name not in donations_db.get_event_names():
+        abort(404)
+    last_donation = donations_db.get_last_donation(event_name=event_name)
+    return jsonify(
+        {
+            'amount': last_donation.get_donation_amount(),
+            'total_raised': last_donation.get_new_amount(),
+            'timestamp': last_donation.get_timestamp()
+        }
+    )
+
+
 @app.route('/event/<event_name>/overlay')
 def amount_raised(event_name):
     if event_name not in donations_db.get_event_names():

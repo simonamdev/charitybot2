@@ -65,6 +65,8 @@ class TestGET:
     def test_getting_donations_of_non_existent_event_returns_404(self):
         response = requests.get(api_full_url + 'event/bla/donations')
         assert 404 == response.status_code
+        response = requests.get(api_full_url + 'event/bla/donations/last')
+        assert 404 == response.status_code
 
     def test_get_donation_data(self):
         response = requests.get(api_full_url + 'event/test/donations')
@@ -79,6 +81,13 @@ class TestGET:
         content = json.loads(response.content)['donations']
         assert 200 == response.status_code
         assert 2 == len(content)
+
+    def test_getting_last_donation_only(self):
+        response = requests.get(api_full_url + 'event/test/donations/last')
+        content = json.loads(response.content)
+        assert 200 == response.status_code
+        assert 8.5 == content['amount']
+        assert 230.5 == content['total_raised']
 
     def test_get_amount_raised_for_overlay(self):
         response = requests.get(api_full_url + 'event/test/overlay')
