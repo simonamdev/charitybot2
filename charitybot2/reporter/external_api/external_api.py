@@ -92,9 +92,13 @@ def last_event_donation(event_name):
 @app.route('/event/<event_name>/overlay')
 def amount_raised(event_name):
     if event_name not in donations_db.get_event_names():
-        abort(404)
+        return render_template('overlay.html',
+                               event_name=event_name,
+                               amount_raised='ERROR',
+                               currency_symbol='')
     last_donation = donations_db.get_last_donation(event_name=event_name)
     return render_template('overlay.html',
+                           event_name=event_name,
                            amount_raised=last_donation.get_new_amount(),
                            currency_symbol=get_currency_symbol(event_name=event_name))
 
