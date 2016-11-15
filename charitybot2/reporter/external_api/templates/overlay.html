@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Charitybot2 Overlay</title>
-    <script src="{{ url_for('static', filename='jquery-3.1.1.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-3.1.1.js') }}"></script>
     <!-- Avoid caching on all browsers -->
     <!-- Reference: https://stackoverflow.com/questions/49547/making-sure-a-web-page-is-not-cached-across-all-browsers -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -13,7 +13,7 @@
 <body>
     <span>{{ currency_symbol }}</span><span id="amount_raised">{{ amount_raised }}</span>
 </body>
-<script src="{{ url_for('static', filename='update.js') }}"></script>
+<script src="{{ url_for('static', filename='js/update.js') }}"></script>
 <script>
     overlayUpdate = new OverlayUpdate("{{ event_name }}");
     overlayUpdate.setupLoop();
