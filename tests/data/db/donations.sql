@@ -40,3 +40,4 @@ CREATE TABLE `currency` (
 	`currency`	TEXT NOT NULL
 );
 INSERT INTO `currency` (id, event, currency) VALUES (1, 'test', 'GBP');
+INSERT INTO `currency` (id, event, currency) VALUES (2, 'test_two', 'USD');

@@ -37,8 +37,6 @@ def reset_mocksite():
 
 
 def setup_module():
-    global driver
-    driver = webdriver.Chrome()
     mocksite.start_service()
     external_api.start_service()
 
@@ -57,23 +55,26 @@ class TestOverlay:
         reset_mocksite()
         time.sleep(2)
         event_name = 'test'
-        test_event = MockEvent(event_name, time.time() + 10)
-        test_event_loop = EventLoop(event=test_event, debug=True)
-        test_event_loop.start()
+        EventLoop(event=MockEvent(event_name, time.time() + 10), debug=True).start()
         response = requests.get(url=self.overlay_url.format(event_name))
         assert 200 == response.status_code
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
         soup = BeautifulSoup(response.content, 'html.parser')
         amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
         assert '250.52' == amount_raised
+        overlay_text = soup.find('div', {'id': 'overlay_text'}).text.strip().replace('\n', '')
+        print(overlay_text)
+        assert '£250.52' == overlay_text
 
     def test_overlay_amount_updates_automagically(self):
+        global driver
+        driver = webdriver.Chrome()
         reset_mocksite()
         time.sleep(2)
         event_name = 'test_two'
         driver.get(self.overlay_url.format(event_name))
-        test_event = MockEvent(event_name, time.time() + 25)
-        test_event_loop = EventLoop(event=test_event, debug=True)
-        test_event_loop.start()
+        EventLoop(event=MockEvent(event_name, time.time() + 25), debug=True).start()
         soup = BeautifulSoup(driver.find_element_by_id('amount_raised').text.strip(), 'html.parser')
         assert '400.52' == soup.text
+        soup = BeautifulSoup(driver.find_element_by_id('overlay_text').text.strip(), 'html.parser')
+        assert '$400.52' == soup.text
