@@ -3,17 +3,17 @@
     Charitybot2 Event Status Console
 {% endblock %}
 {% block js %}
-    <script src="js/Chart.bundle.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/api.js"></script>
+    <script src="{{ url_for('static', filename='js/Chart.bundle.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
 {% endblock %}
 {% block css %}
-    <link rel="stylesheet" type="text/css" href="css/spinner.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/spinner.css') }}    ">
 {% endblock %}
 {% block body %}
     <div class="sk-rotating-plane" id="loader"></div>
     <div id="content">
-        <h1 id="event_name"></h1>
+        <h1 id="event_name">{{ event_name }}</h1>
         <ul>
             <li>Donation count: <span class="currency_symbol"></span><span id="donation_count"></span></li>
             <li>Average donation: <span class="currency_symbol"></span><span id="donation_average"></span></li>
@@ -26,5 +26,5 @@
     </div>
 {% endblock %}
 {% block afterbody %}
-    <script src="js/page.js"></script>
+    <script src="{{ url_for('static', filename='js/page.js') }}"></script>
 {% endblock %}
