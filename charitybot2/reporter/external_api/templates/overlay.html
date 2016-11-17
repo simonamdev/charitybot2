@@ -1,22 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Charitybot2 Overlay</title>
-    <script src="{{ url_for('static', filename='js/jquery-3.1.1.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
-    <!-- Avoid caching on all browsers -->
-    <!-- Reference: https://stackoverflow.com/questions/49547/making-sure-a-web-page-is-not-cached-across-all-browsers -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-</head>
-<body>
-    <span id="currency_symbol" class="pending">{{ currency_symbol }}</span><span id="amount_raised" class="pending">{{ amount_raised }}</span>
-</body>
-<script src="{{ url_for('static', filename='js/update.js') }}"></script>
-<script>
-    overlayUpdate = new OverlayUpdate("{{ event_name }}");
-    overlayUpdate.setupLoop();
-</script>
-</html>
+{% extends 'layout.html' %}
+{% block title %}
+    Charitybot2 Overlay
+{% endblock %}
+{% block body %}
+    <div id="overlay_text">
+        <span id="currency_symbol" class="pending">{{ currency_symbol }}</span><span id="amount_raised" class="pending">{{ amount_raised }}</span>
+    </div>
+{% endblock %}
+{% block afterbody %}
+    <script src="{{ url_for('static', filename='js/update.js') }}"></script>
+    <script>
+        overlayUpdate = new OverlayUpdate("{{ event_name }}");
+        overlayUpdate.setupLoop();
+    </script>
+{% endblock %}
