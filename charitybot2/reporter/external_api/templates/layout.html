@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+            Charitybot2
+        {% endblock %}
+    </title>
+    {% block nocache %}
+        <!-- Avoid caching on all browsers -->
+        <!-- Reference: https://stackoverflow.com/questions/49547/making-sure-a-web-page-is-not-cached-across-all-browsers -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+    {% endblock %}
+    <script src="{{ url_for('static', filename='js/jquery-3.1.1.js') }}"></script>
+    {% block js %}
+    {% endblock %}
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    {% block css %}
+    {% endblock %}
+</head>
+<body>
+    {% block body %}
+    {% endblock %}
+</body>
+{% block afterbody %}
+{% endblock %}
+</html>
