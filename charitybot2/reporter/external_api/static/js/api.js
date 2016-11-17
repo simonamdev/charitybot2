@@ -38,7 +38,6 @@ class API {
     }
 
     writeEventDataToPage(data) {
-        $('#event_name').text(data['name']);
         $('#donation_count').text(data['donation_count']);
         $('#donation_average').text(data['donation_average']);
         $('#largest_donation').text(data['largest_donation']);

@@ -68,7 +68,7 @@ def event_details(event_name):
 def status_console(event_name):
     if event_name not in donations_db.get_event_names():
         abort(404)
-    return render_template('console.html')
+    return render_template('console.html', event_name=event_name)
 
 
 @app.route('/event/<event_name>/donations')
