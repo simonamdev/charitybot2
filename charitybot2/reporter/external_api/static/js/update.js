@@ -8,11 +8,12 @@ class OverlayUpdate {
         $.getJSON(eventDetailsUrl, (data) => {
             $('#currency_symbol').text(data['currency_symbol']);
         }).fail((data) => {
-            console.error(data['error']);
+            console.error('Unable to set currency');
         })
     }
 
     runUpdateCycle() {
+        this.setCurrency();
         var lastDonationUrl = 'http://127.0.0.1:9000/event/' + this._eventName + '/donations/last';
         this.setPendingCSS();
         $.getJSON(lastDonationUrl, (data) => {
@@ -41,7 +42,6 @@ class OverlayUpdate {
     }
 
     setupLoop() {
-        this.setCurrency();
         setInterval(() => {
             this.runUpdateCycle();
         }, 4000);
