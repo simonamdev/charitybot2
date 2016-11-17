@@ -97,7 +97,7 @@ class TestDonationsDBRecording:
         ddb.set_event_currency_key(event_name='test_event', currency_key='USD')
         db = Neopysqlite(database_name='Donations test DB', db_path=donations_db_path, verbose=True)
         all_currencies = db.get_all_rows(table='currency')
-        assert 2 == len(all_currencies)
+        assert 3 == len(all_currencies)
         assert 'USD' == all_currencies[1][2]
 
     def test_default_currency_is_gbp(self):
@@ -105,4 +105,4 @@ class TestDonationsDBRecording:
         ddb.set_event_currency_key(event_name='test_event_two', currency_key='GBP')
         db = Neopysqlite(database_name='Donations test DB', db_path=donations_db_path, verbose=True)
         all_currencies = db.get_all_rows(table='currency')
-        assert 'GBP' == all_currencies[2][2]
+        assert 'GBP' == all_currencies[-1][2]
