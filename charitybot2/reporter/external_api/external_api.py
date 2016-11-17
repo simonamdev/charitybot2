@@ -64,6 +64,13 @@ def event_details(event_name):
     return jsonify(event_data)
 
 
+@app.route('/event/<event_name>/status', methods=['GET'])
+def status_console(event_name):
+    if event_name not in donations_db.get_event_names():
+        abort(404)
+    return render_template('console.html')
+
+
 @app.route('/event/<event_name>/donations')
 def event_donations(event_name):
     if event_name not in donations_db.get_event_names():

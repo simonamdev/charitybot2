@@ -93,3 +93,11 @@ class TestGET:
         soup = BeautifulSoup(response.content, 'html.parser')
         amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
         assert '230.5' == amount_raised
+
+    def test_status_console_returns_200(self):
+        response = requests.get(api_full_url + 'event/test/status')
+        assert 200 == response.status_code
+
+    def test_accessing_status_console_of_non_existent_event_returns_404(self):
+        response = requests.get(api_full_url + 'event/foobar/status')
+        assert 404 == response.status_code
