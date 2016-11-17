@@ -1,29 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Charitybot2 Status</title>
-        <script src="js/jquery-3.1.1.js"></script>
-        <script src="js/Chart.bundle.js"></script>
-        <script src="js/ui.js"></script>
-        <script src="js/api.js"></script>
-        <link rel="stylesheet" type="text/css" href="css/main.css">
-        <link rel="stylesheet" type="text/css" href="css/spinner.css">
-    </head>
-    <body>
-        <div class="sk-rotating-plane" id="loader"></div>
-        <div id="content">
-            <h1 id="event_name"></h1>
-            <ul>
-                <li>Donation count: <span class="currency_symbol"></span><span id="donation_count"></span></li>
-                <li>Average donation: <span class="currency_symbol"></span><span id="donation_average"></span></li>
-                <li>Largest donation: <span class="currency_symbol"></span><span id="largest_donation"></span></li>
-            </ul>
-            <div class="charts">
-                <canvas id="amountRaisedChart" width="1024" height="400"></canvas>
-                <canvas id="amountDistributionChart" width="1024" height="400"></canvas>
-            </div>
+{% extends 'layout.html' %}
+{% block title %}
+    Charitybot2 Event Status Console
+{% endblock %}
+{% block js %}
+    <script src="js/Chart.bundle.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/api.js"></script>
+{% endblock %}
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="css/spinner.css">
+{% endblock %}
+{% block body %}
+    <div class="sk-rotating-plane" id="loader"></div>
+    <div id="content">
+        <h1 id="event_name"></h1>
+        <ul>
+            <li>Donation count: <span class="currency_symbol"></span><span id="donation_count"></span></li>
+            <li>Average donation: <span class="currency_symbol"></span><span id="donation_average"></span></li>
+            <li>Largest donation: <span class="currency_symbol"></span><span id="largest_donation"></span></li>
+        </ul>
+        <div class="charts">
+            <canvas id="amountRaisedChart" width="1024" height="400"></canvas>
+            <canvas id="amountDistributionChart" width="1024" height="400"></canvas>
         </div>
-    </body>
+    </div>
+{% endblock %}
+{% block afterbody %}
     <script src="js/page.js"></script>
-</html>
+{% endblock %}
