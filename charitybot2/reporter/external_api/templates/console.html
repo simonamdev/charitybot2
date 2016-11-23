@@ -8,20 +8,33 @@
     <script src="{{ url_for('static', filename='js/api.js') }}"></script>
 {% endblock %}
 {% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/spinner.css') }}    ">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/spinner.css') }}">
 {% endblock %}
 {% block body %}
-    <div class="sk-rotating-plane" id="loader"></div>
-    <div id="content">
-        <h1 id="event_name">{{ event_name }}</h1>
-        <ul>
-            <li>Donation count: <span class="currency_symbol"></span><span id="donation_count"></span></li>
-            <li>Average donation: <span class="currency_symbol"></span><span id="donation_average"></span></li>
-            <li>Largest donation: <span class="currency_symbol"></span><span id="largest_donation"></span></li>
-        </ul>
-        <div class="charts">
-            <canvas id="amountRaisedChart" width="1024" height="400"></canvas>
-            <canvas id="amountDistributionChart" width="1024" height="400"></canvas>
+    <div class="container-fluid">
+        <div class="row col-md-12">
+            <h1 class="text-center">CharityBot2 Event</h1>
+            <h1 id="event_name" class="text-center">{{ event_name }}</h1>
+            <div class="sk-rotating-plane" id="loader"></div>
+        </div>
+        <div class="row donation-text">
+            <div class="col-md-6 col-md-offset-3 text-center info-row">
+                <div class="col-md-4">
+                    </span><span id="donation_count"></span> donations so far
+                </div>
+                <div class="col-md-4">
+                    Average donation: <span class="currency_symbol"></span><span id="donation_average"></span>
+                </div>
+                <div class="col-md-4">
+                    Largest donation: <span class="currency_symbol"></span><span id="largest_donation"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row info-row">
+            <canvas id="amountRaisedChart" width="1280" height="300" class="col-md-4 col-md-offset-2"></canvas>
+        </div>
+        <div class="row info-row">
+            <canvas id="amountDistributionChart" width="1280" height="300" class="col-md-4 col-md-offset-2"></canvas>
         </div>
     </div>
 {% endblock %}
