@@ -8,7 +8,7 @@
     </div>
 {% endblock %}
 {% block afterbody %}
-    <script src="{{ url_for('static', filename='js/update.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/overlay_update.js') }}"></script>
     <script>
         setInterval(() => {
             setCurrency("{{ event_name }}");
