@@ -10,7 +10,9 @@
 {% block afterbody %}
     <script src="{{ url_for('static', filename='js/update.js') }}"></script>
     <script>
-        overlayUpdate = new OverlayUpdate("{{ event_name }}");
-        overlayUpdate.setupLoop();
+        setInterval(() => {
+            setCurrency("{{ event_name }}");
+            setDonationAmount("{{ event_name }}");
+        }, 4000);
     </script>
 {% endblock %}
