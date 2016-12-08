@@ -5,7 +5,7 @@ function setCurrency(eventName) {
         $('#currency_symbol').text(data['currency_symbol']);
     }).fail((data) => {
         console.error('Unable to set currency');
-    })
+    });
 }
 
 function setDonationAmount(eventName) {
@@ -15,5 +15,5 @@ function setDonationAmount(eventName) {
         $('#amount_raised').text(data['total_raised']);
     }).fail((data) => {
         console.error('Unable to set amount raised');
-    })
+    });
 }
