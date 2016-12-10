@@ -1,7 +1,7 @@
 import os
 import argparse
 
-from charitybot2.config.twitch_config import TwitchAccountConfiguration
+from charitybot2.botconfig.twitch_config import TwitchAccountConfiguration
 from charitybot2.events.event import Event
 from charitybot2.events.event_loop import TwitchEventLoop, EventLoop
 from charitybot2.reporter.twitch import TwitchAccount
@@ -79,6 +79,4 @@ class CharityBot:
         self.event_loop.start()
 
 
-if __name__ == '__main__':
-    args = create_parser().parse_args()
-    CharityBot(args=args)
+
