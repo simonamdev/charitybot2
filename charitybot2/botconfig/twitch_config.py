@@ -1,4 +1,4 @@
-from charitybot2.config.json_config import JSONConfigurationFile
+from .json_config import JSONConfigurationFile
 
 
 class TwitchAccountConfiguration(JSONConfigurationFile):
