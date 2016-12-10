@@ -30,7 +30,7 @@ class BotStartupValidator:
 
     def confirm_config_exists(self, config_type, file_name):
         if not os.path.isfile(os.path.join(self.config_directory, config_type, file_name)):
-            raise MissingRequiredFileException
+            raise MissingRequiredFileException('Configuration file with name: {} does not exist'.format(file_name))
 
 
 class IllegalArgumentException(Exception):
