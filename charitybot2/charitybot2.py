@@ -29,8 +29,9 @@ class BotStartupValidator:
             raise MissingRequiredFolderException('Either config or DB directories are missing')
 
     def confirm_config_exists(self, config_type, file_name):
-        if not os.path.isfile(os.path.join(self.config_directory, config_type, file_name)):
-            raise MissingRequiredFileException('Configuration file with name: {} does not exist'.format(file_name))
+        config_path = os.path.join(self.config_directory, config_type, file_name)
+        if not os.path.isfile(config_path):
+            raise MissingRequiredFileException('Configuration file does not exist: {}'.format(config_path))
 
 
 class IllegalArgumentException(Exception):
@@ -49,7 +50,7 @@ class CharityBot:
     def __init__(self, args):
         self.args = args
         self.event_config_path = None
-        self.debug = True if self.args.debug is not None else False
+        self.debug = self.args.debug
         self.db_dir = TestFilePath().db_dir if self.debug else paths.db_folder
         self.donations_db_path = os.path.join(self.db_dir, 'donations.db')
         self.config_dir = TestFilePath().config_dir if self.debug else paths.config_folder
