@@ -1,5 +1,5 @@
 import pytest
-from charitybot2.config.json_config import InvalidConfigurationException
+from charitybot2.botconfig.json_config import InvalidConfigurationException
 from charitybot2.events.event import Event
 from charitybot2.storage.db_handler import DBHandler
 from tests.tests import ResetDB, TestFilePath

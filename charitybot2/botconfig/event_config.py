@@ -1,4 +1,4 @@
-from charitybot2.config.json_config import JSONConfigurationFile
+from charitybot2.botconfig.json_config import JSONConfigurationFile
 from charitybot2.events.currency import InvalidCurrencyException
 
 
