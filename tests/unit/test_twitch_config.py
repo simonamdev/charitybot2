@@ -1,4 +1,4 @@
-from charitybot2.config.twitch_config import TwitchAccountConfiguration
+from charitybot2.botconfig.twitch_config import TwitchAccountConfiguration
 from tests.tests import TestFilePath
 
 

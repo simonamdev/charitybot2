@@ -1,5 +1,5 @@
 import pytest
-from charitybot2.config.event_config import EventConfiguration, InvalidEventNameException
+from charitybot2.botconfig.event_config import EventConfiguration, InvalidEventNameException
 from charitybot2.events.currency import InvalidCurrencyException
 from tests.tests import TestFilePath
 
