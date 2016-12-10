@@ -6,3 +6,4 @@ charitybot2/reporter/purrbot_config.py
 tests/data/config/twitch/valid_twitch_config.json
 charitybot2/data/config/twitch/purrcat259.json
 tests/data/config/twitch/purrcat259.json
+tests/data/config/event/fdevtest16.json
