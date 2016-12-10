@@ -1,4 +1,4 @@
-from charitybot2.config.event_config import EventConfiguration
+from charitybot2.botconfig.event_config import EventConfiguration
 from charitybot2.events.currency import Currency
 
 
