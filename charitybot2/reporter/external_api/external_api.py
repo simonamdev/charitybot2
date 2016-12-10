@@ -11,10 +11,10 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 api_address = '127.0.0.1'
-api_port = 9000
+api_port = 8000
 api_url = 'http://' + api_address
 api_full_url = api_url + ':' + str(api_port) + '/'
-debug_mode = True
+debug_mode = False
 
 api_paths = [
     'events',
