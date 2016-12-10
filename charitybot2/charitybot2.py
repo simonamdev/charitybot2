@@ -10,7 +10,6 @@ from tests.tests import TestFilePath
 from charitybot2 import paths
 
 
-
 class MissingRequiredFolderException(Exception):
     pass
 
