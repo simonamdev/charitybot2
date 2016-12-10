@@ -6,7 +6,7 @@ import sys
 from time import sleep
 
 import requests
-from neopysqlite.neopysqlite import Neopysqlite
+from neopysqlite import neopysqlite
 
 
 class TestFilePath:
@@ -32,7 +32,7 @@ class ResetDB:
 
     def reset_db(self):
         print('Resetting Test Database')
-        db = Neopysqlite(database_name='Test DB', db_path=self.db_path, verbose=True)
+        db = neopysqlite.Neopysqlite(database_name='Test DB', db_path=self.db_path, verbose=True)
         commands = self.get_reset_sql_script().split(';')
         for command in commands:
             print(command)

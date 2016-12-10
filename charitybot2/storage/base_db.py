@@ -1,5 +1,5 @@
-from neopysqlite.exceptions import PysqliteCannotAccessException
-from neopysqlite.neopysqlite import Neopysqlite
+# from neopysqlite.exceptions import PysqliteCannotAccessException
+from neopysqlite import neopysqlite
 
 
 class DatabaseDoesNotExistException(Exception):
@@ -16,8 +16,8 @@ class BaseDB:
 
     def initialise(self):
         try:
-            self.db = Neopysqlite(database_name=self.db_name, db_path=self.db_path, verbose=self.verbose)
-        except PysqliteCannotAccessException:
+            self.db = neopysqlite.Neopysqlite(database_name=self.db_name, db_path=self.db_path, verbose=self.verbose)
+        except neopysqlite.exception.PysqliteCannotAccessException:
             raise DatabaseDoesNotExistException('Database {} could not be found at path: {}'.format(
                 self.db_name,
                 self.db_path))
