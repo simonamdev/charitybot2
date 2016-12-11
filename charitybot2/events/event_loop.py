@@ -10,6 +10,7 @@ from charitybot2.storage.logger import Logger
 class EventLoop:
     def __init__(self, event, debug=False):
         self.event = event
+        self.first_start = None
         self.debug = debug
         self.scraper = None
         self.reporter = None
@@ -26,6 +27,7 @@ class EventLoop:
         if time.time() > self.event.get_end_time():
             self.logger.log_error('Event has already finished')
             raise EventAlreadyFinishedException('Current time: {} Event end time: {}'.format(time.time(), self.event.get_end_time()))
+        self.first_start = not self.check_if_donation_already_stored()
 
     def initialise_scraper(self):
         source_url = self.event.get_source_url()
@@ -50,6 +52,10 @@ class EventLoop:
             self.logger.log_info('Holding until cycle: {}'.format(self.loop_count + 1))
             time.sleep(self.event.get_update_tick())
             self.loop_count += 1
+        self.logger.log_info('Event has exceeded its end time')
+
+    def check_if_donation_already_stored(self):
+        return self.event.db_handler.get_donations_db().event_exists(event_name=self.event.get_event_name())
 
     def check_for_donation(self):
         current_amount = self.event.get_amount_raised()
@@ -57,9 +63,13 @@ class EventLoop:
         new_amount = self.scraper.get_amount_raised()
         # quick fix to format new_amount as a float
         new_amount = float(new_amount.replace(',', '').replace('£', '').replace('$', '').replace('€', ''))
-        if not new_amount == current_amount:
+        print(new_amount == current_amount)
+        if not new_amount == current_amount and not self.loop_count == 0:
             new_donation = Donation(old_amount=current_amount, new_amount=new_amount, timestamp=int(time.time()))
             self.record_new_donation(new_donation)
+        else:
+            # TODO: Clean this up :(
+            self.event.set_amount_raised(amount=new_amount)
 
     def record_new_donation(self, donation):
         self.logger.log_info('New Donation of {} {} detected'.format(
