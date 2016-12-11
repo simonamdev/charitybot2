@@ -8,6 +8,12 @@ function resizeCanvasToWindowWidth(canvasID) {
     canvas.width($(window).width());
 }
 
+// Reference:
+// https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 class API {
     constructor(url, eventName) {
         this._url = url;
@@ -59,7 +65,8 @@ class API {
     }
 
     writeAmountRaised(data) {
-        $('#amount_raised').text(data[data.length - 1]['total_raised']);
+        var prettyNumber = numberWithCommas(data[data.length - 1]['total_raised']);
+        $('#amount_raised').text(prettyNumber);
     }
 
     drawAmountRaisedChart(data) {
