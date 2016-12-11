@@ -2,6 +2,12 @@ function sortNumber(a,b) {
     return a - b;
 }
 
+// TODO: Move this to another file, for the sake of SRP
+function resizeCanvasToWindowWidth(canvasID) {
+    var canvas = $(canvasID);
+    canvas.width($(window).width());
+}
+
 class API {
     constructor(url, eventName) {
         this._url = url;
@@ -47,8 +53,13 @@ class API {
     }
 
     drawDonationsCharts(data) {
+        this.writeAmountRaised(data['donations']);
         this.drawAmountRaisedChart(data['donations']);
         this.drawAmountHistogram(data['donations']);
+    }
+
+    writeAmountRaised(data) {
+        $('#amount_raised').text(data[data.length - 1]['total_raised']);
     }
 
     drawAmountRaisedChart(data) {
@@ -79,10 +90,12 @@ class API {
             },
             options: {
                 scaleOverride: true,
-                responsive: false,
+                responsive: true,
                 maintainAspectRatio: false
             }
         });
+        // resizeCanvasToWindowWidth('#amountRaisedChart');
+        // myChart.update();
     }
 
     drawAmountHistogram(data) {
@@ -115,7 +128,7 @@ class API {
                 ]
             },
             options: {
-                responsive: false,
+                responsive: true,
                 maintainAspectRatio: false,
                 scales: {
                     yAxes: [{
@@ -133,5 +146,6 @@ class API {
                 }
             }
         });
+        // resizeCanvasToWindowWidth('#amountDistributionChart');
     }
 };
