@@ -8,3 +8,5 @@ charitybot2/data/config/twitch/purrcat259.json
 tests/data/config/twitch/purrcat259.json
 tests/data/config/event/fdevtest16.json
 charitybot2/storage/test_pysqlite.py
+fdevchristmas16.json
+fdevtest16.json
