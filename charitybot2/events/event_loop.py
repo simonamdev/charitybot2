@@ -47,18 +47,23 @@ class EventLoop:
                 self.loop_count,
                 hours_remaining))
             self.check_for_donation()
+            self.logger.log_info('Holding until cycle: {}'.format(self.loop_count + 1))
             time.sleep(self.event.get_update_tick())
             self.loop_count += 1
 
     def check_for_donation(self):
         current_amount = self.event.get_amount_raised()
+        current_amount = float(current_amount)
         new_amount = self.scraper.get_amount_raised()
+        # quick fix to format new_amount as a float
+        new_amount = float(new_amount.replace(',', '').replace('£', '').replace('$', '').replace('€', ''))
         if not new_amount == current_amount:
-            self.record_new_donation(Donation(current_amount, new_amount))
+            new_donation = Donation(old_amount=current_amount, new_amount=new_amount, timestamp=int(time.time()))
+            self.record_new_donation(new_donation)
 
     def record_new_donation(self, donation):
-        self.logger.log_info('New Donation of {}{} detected'.format(
-            self.event.get_currency().get_symbol(),
+        self.logger.log_info('New Donation of {} {} detected'.format(
+            self.event.get_currency().get_key(),
             donation.get_donation_amount()))
         self.event.set_amount_raised(amount=donation.get_new_amount())
         self.event.db_handler.get_donations_db().record_donation(event_name=self.event.get_event_name(), donation=donation)
