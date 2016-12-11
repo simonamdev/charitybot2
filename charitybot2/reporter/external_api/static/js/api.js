@@ -3,33 +3,36 @@ function sortNumber(a,b) {
 }
 
 class API {
-    constructor(url) {
+    constructor(url, eventName) {
         this._url = url;
-        this._eventInfo = {};
+        this._eventName = eventName;
     }
 
-    testRun() {
+    startLoop() {
         showLoader();
-        var api_call = this.showEventInformation('test');
+        var api_call = this.showEventInformation(this._eventName);
         $.when(api_call).then(() => {
             hideLoader();
         });
-
     }
 
-    showEventInformation(eventName) {
-        var eventUrl = this._url + 'event/' + eventName;
+    showEventInformation() {
+        var eventUrl = this._url + 'event/' + this._eventName;
+        console.log(eventUrl);
         var donationsUrl = eventUrl + '/donations'
+        console.log(donationsUrl);
         $.getJSON(eventUrl, (data) => {
             console.log(data);
             this.writeEventDataToPage(data);
             this.writeCurrencySymbols(data['currency_symbol']);
         }).fail(() => {
-            console.log('foobar');
+            console.log('Could not get event data');
         });
         $.getJSON(donationsUrl, (data) => {
             console.log(data);
             this.drawDonationsCharts(data);
+        }).fail(() => {
+            console.log('Could not get donations data');
         });
     }
 

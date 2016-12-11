@@ -36,8 +36,35 @@
         <div class="row info-row">
             <canvas id="amountDistributionChart" width="1280" height="300" class="col-md-4 col-md-offset-2"></canvas>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn" onclick="switchMode()">Switch to test mode</button>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block afterbody %}
-    <script src="{{ url_for('static', filename='js/page.js') }}"></script>
+    <script>
+        var api;
+        var test_mode = false;
+        var api_url = 'http://www.charitybot.net/'
+        var test_url = 'http://127.0.0.1:8000/'
+
+        function switchMode() {
+            test_mode = !test_mode;
+            var new_url;
+            if (test_mode) {
+                new_url = test_url;
+            } else {
+                new_url = api_url;
+            }
+            api = new API(new_url, "{{ event_name }}");
+            api.startLoop();
+        }
+
+        $(document).ready(() => {
+            api = new API(api_url, "{{ event_name }}");
+            api.startLoop();
+        });
+    </script>
 {% endblock %}
