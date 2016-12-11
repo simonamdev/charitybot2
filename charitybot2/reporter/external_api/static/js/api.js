@@ -18,18 +18,18 @@ class API {
 
     showEventInformation() {
         var eventUrl = this._url + 'event/' + this._eventName;
-        console.log(eventUrl);
+        // console.log(eventUrl);
         var donationsUrl = eventUrl + '/donations'
-        console.log(donationsUrl);
+        // console.log(donationsUrl);
         $.getJSON(eventUrl, (data) => {
-            console.log(data);
+            // console.log(data);
             this.writeEventDataToPage(data);
             this.writeCurrencySymbols(data['currency_symbol']);
         }).fail(() => {
             console.log('Could not get event data');
         });
         $.getJSON(donationsUrl, (data) => {
-            console.log(data);
+            // console.log(data);
             this.drawDonationsCharts(data);
         }).fail(() => {
             console.log('Could not get donations data');
