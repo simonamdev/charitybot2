@@ -63,7 +63,6 @@ class EventLoop:
         new_amount = self.scraper.get_amount_raised()
         # quick fix to format new_amount as a float
         new_amount = float(new_amount.replace(',', '').replace('£', '').replace('$', '').replace('€', ''))
-        print(new_amount == current_amount)
         if not new_amount == current_amount and not self.loop_count == 0:
             new_donation = Donation(old_amount=current_amount, new_amount=new_amount, timestamp=int(time.time()))
             self.record_new_donation(new_donation)
