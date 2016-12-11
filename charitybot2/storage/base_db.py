@@ -17,6 +17,6 @@ class BaseDB:
         try:
             self.db = neopysqlite.Neopysqlite(database_name=self.db_name, db_path=self.db_path, verbose=self.verbose)
         except Exception:
-            raise DatabaseDoesNotExistException('Database {} could not be found at path: {}'.format(
+            raise DatabaseDoesNotExistException('Database with name: "{}" could not be found at path: {} or could not be accessed'.format(
                 self.db_name,
                 self.db_path))
