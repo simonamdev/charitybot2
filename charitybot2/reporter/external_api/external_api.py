@@ -14,7 +14,7 @@ api_address = '127.0.0.1'
 api_port = 8000
 api_url = 'http://' + api_address
 api_full_url = api_url + ':' + str(api_port) + '/'
-debug_mode = False
+debug_mode = True
 
 api_paths = [
     'events',
@@ -138,7 +138,12 @@ def destroy():
     return 'Not in debug mode - shutting down in unavailable'
 
 
-def start_service():
+def start_api():
+    if not debug_mode:
+        global api_address
+        api_address = 'www.charitybot.net'
+        global api_full_url
+        api_full_url = 'http://' + api_address + '/'
     app.run(host=api_address, port=api_port, debug=debug_mode)
 
 
@@ -150,4 +155,4 @@ def shutdown_service():
 
 
 if __name__ == '__main__':
-    start_service()
+    start_api()
