@@ -144,7 +144,7 @@ def start_api():
         api_address = 'www.charitybot.net'
         global api_full_url
         api_full_url = 'http://' + api_address + '/'
-    app.run(host=api_address, port=api_port, debug=debug_mode)
+    app.run(host=api_address, port=api_port, debug=False)
 
 
 def shutdown_service():
