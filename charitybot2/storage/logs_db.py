@@ -1,4 +1,5 @@
 import time
+import datetime
 
 from charitybot2.storage.base_db import BaseDB
 
@@ -20,7 +21,7 @@ class Log:
 
     def __str__(self):
         return '[{}] [{}] [{}] [{}]'.format(
-            self.timestamp,
+            datetime.datetime.fromtimestamp(self.timestamp).strftime('%H:%M:%S'),
             self.level,
             self.source,
             self.message
