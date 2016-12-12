@@ -3,7 +3,7 @@ from charitybot2.paths import production_donations_db_path
 from charitybot2.storage.donations_db import DonationsDB
 from flask import Flask, request, jsonify, make_response, abort
 from flask import render_template
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from tests.tests import TestFilePath
 
 app = Flask(__name__)
