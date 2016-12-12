@@ -61,10 +61,10 @@ class TestOverlay:
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
         soup = BeautifulSoup(response.content, 'html.parser')
         amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
-        assert '250.52' == amount_raised
+        assert '250' == amount_raised
         overlay_text = soup.find('div', {'id': 'overlay-text'}).text.strip().replace('\n', '')
         print(overlay_text)
-        assert '£250.52' == overlay_text
+        assert '£250' == overlay_text
 
     def test_overlay_amount_updates_automagically(self):
         global driver
@@ -75,6 +75,6 @@ class TestOverlay:
         driver.get(self.overlay_url.format(event_name))
         EventLoop(event=MockEvent(event_name, time.time() + 25), debug=True).start()
         soup = BeautifulSoup(driver.find_element_by_id('amount_raised').text.strip(), 'html.parser')
-        assert '400.52' == soup.text
+        assert '400' == soup.text
         soup = BeautifulSoup(driver.find_element_by_id('overlay-text').text.strip(), 'html.parser')
-        assert '$400.52' == soup.text
+        assert '$400' == soup.text
