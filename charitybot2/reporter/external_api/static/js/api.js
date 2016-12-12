@@ -56,6 +56,7 @@ class API {
         $('#donation_count').text(data['donation_count']);
         $('#donation_average').text(data['donation_average']);
         $('#largest_donation').text(data['largest_donation']);
+        $('#last_hour_donation_count').text(data['last_hour_donation_count']);
     }
 
     drawDonationsCharts(data) {

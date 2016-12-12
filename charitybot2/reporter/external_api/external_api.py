@@ -1,3 +1,5 @@
+import time
+
 from charitybot2.events.currency import Currency
 from charitybot2.paths import production_donations_db_path
 from charitybot2.storage.donations_db import DonationsDB
@@ -54,12 +56,15 @@ def event_details(event_name):
     if event_name not in donations_db.get_event_names():
         abort(404)
     all_donations = donations_db.get_all_donations(event_name=event_name)
+    current_time_minus_an_hour = int(time.time()) - 3600
+    last_hour_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
     event_data = {
         'name': event_name,
         'donation_count': len(all_donations),
         'donation_average': donations_db.get_average_donation(event_name=event_name),
         'largest_donation': max(donation.get_donation_amount() for donation in all_donations),
-        'currency_symbol': get_currency_symbol(event_name=event_name)
+        'currency_symbol': get_currency_symbol(event_name=event_name),
+        'last_hour_donation_count': last_hour_donation_count
     }
     return jsonify(event_data)
 
