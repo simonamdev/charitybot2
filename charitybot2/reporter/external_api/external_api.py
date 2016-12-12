@@ -112,9 +112,11 @@ def amount_raised(event_name):
                                amount_raised='ERROR',
                                currency_symbol='')
     last_donation = donations_db.get_last_donation(event_name=event_name)
+    # Remove decimal point and add thousands separators
+    pretty_number = format(int(last_donation.get_new_amount()), ',d')
     return render_template('overlay.html',
                            event_name=event_name,
-                           amount_raised=last_donation.get_new_amount(),
+                           amount_raised=pretty_number,
                            currency_symbol=get_currency_symbol(event_name=event_name))
 
 
