@@ -1,6 +1,6 @@
 import time
 
-from charitybot2.events.donation import Donation
+from charitybot2.events.donation import Donation, InvalidArgumentException
 from charitybot2.events.event import EventInvalidException, EventAlreadyFinishedException
 from charitybot2.reporter.twitch import ChatBot
 from charitybot2.sources.justgiving import JustGivingScraper
@@ -63,9 +63,14 @@ class EventLoop:
         new_amount = self.scraper.get_amount_raised()
         # quick fix to format new_amount as a float
         new_amount = float(new_amount.replace(',', '').replace('£', '').replace('$', '').replace('€', ''))
+        self.logger.log_info('Current Amount: {}, New Amount: {}'.format(current_amount, new_amount))
         if not new_amount == current_amount and not self.loop_count == 0:
-            new_donation = Donation(old_amount=current_amount, new_amount=new_amount, timestamp=int(time.time()))
-            self.record_new_donation(new_donation)
+            try:
+                new_donation = Donation(old_amount=current_amount, new_amount=new_amount, timestamp=int(time.time()))
+            except InvalidArgumentException:
+                self.logger.log_info('Current Amount: {}, New Amount: {}'.format(current_amount, new_amount))
+            else:
+                self.record_new_donation(new_donation)
         else:
             # TODO: Clean this up :(
             self.event.set_amount_raised(amount=new_amount)
