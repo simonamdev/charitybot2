@@ -55,7 +55,6 @@ class TestEventLoopValidity:
 class TestEventLoopAmountRetrieve:
     # Test is definitely flaky
     # TODO: Convert test to use mocksite
-    def test_event_loop_retrieves_amount_successfully(self):
+    def test_event_loop_retrieving_formatted_new_amount(self):
         el = EventLoop(event=ValidTestEvent(), debug=True)
-        el.check_for_donation()
-        assert 35632.0 == el.event.get_amount_raised()
+        assert 35632.0 == el.get_new_amount()
