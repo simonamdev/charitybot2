@@ -30,9 +30,6 @@ class API {
 
     showEventInformation() {
         var eventUrl = this._url + 'event/' + this._eventName;
-        // console.log(eventUrl);
-        var donationsUrl = eventUrl + '/donations'
-        // console.log(donationsUrl);
         $.getJSON(eventUrl, (data) => {
             // console.log(data);
             this.writeEventDataToPage(data);
@@ -40,6 +37,7 @@ class API {
         }).fail(() => {
             console.log('Could not get event data');
         });
+        var donationsUrl = eventUrl + '/donations';
         $.getJSON(donationsUrl, (data) => {
             // console.log(data);
             this.drawDonationsCharts(data);
