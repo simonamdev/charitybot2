@@ -40,9 +40,15 @@ class API {
         var donationsUrl = eventUrl + '/donations';
         $.getJSON(donationsUrl, (data) => {
             // console.log(data);
-            this.drawDonationsCharts(data);
+            this.writeAmountRaised(data['donations']);
+            this.drawAmountRaisedChart(data['donations']);
+
         }).fail(() => {
             console.log('Could not get donations data');
+        });
+        var donationsDistributionUrl = donationsUrl + '/distribution';
+        $.getJSON(donationsDistributionUrl, (data) => {
+            this.drawDonationsDistributionChart(data['donations_distribution']);
         });
         var lastDonationUrl = donationsUrl + '/last';
         $.getJSON(lastDonationUrl, (data) => {
@@ -61,12 +67,6 @@ class API {
         $('#donation_average').text(data['donation_average']);
         $('#largest_donation').text(data['largest_donation']);
         $('#last_hour_donation_count').text(data['last_hour_donation_count']);
-    }
-
-    drawDonationsCharts(data) {
-        this.writeAmountRaised(data['donations']);
-        this.drawAmountRaisedChart(data['donations']);
-        this.drawAmountHistogram(data['donations']);
     }
 
     writeLastDonationAmount(data) {
@@ -114,32 +114,33 @@ class API {
         // myChart.update();
     }
 
-    drawAmountHistogram(data) {
-        var roundedAmounts = [];
-        $.each(data, (index, object) => {
-            roundedAmounts.push(Math.ceil(object['amount']));
+    drawDonationsDistributionChart(data) {
+        var sortedDistributions = [];
+        // take out the unsortable key
+        var largestCount = data['100-10000'];
+        delete data['100-10000'];
+        // place data in separate arrays
+        var keys = [];
+        var values = [];
+        $.each(data, (key, count) => {
+            keys.push(key);
+            values.push(count);
         });
-        roundedAmounts.sort(sortNumber);
-        var counts = {};
-        $.each(roundedAmounts, (index, amount) => {
-            if (amount in counts) {
-                counts[amount] += 1
-            } else {
-                counts[amount] = 1;
-            }
-        });
+        // replace the unsortable key
+        keys.push('100+');
+        values.push(largestCount);
         var ctx =  $("#amountDistributionChart");
         var myBarChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: Object.keys(counts),
+                labels: keys,
                 datasets: [
                     {
                         label: 'Donation Amount Distribution',
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
                         borderColor: 'rgba(255,99,132,1)',
                         borderWidth: 1,
-                        data: Object.values(counts)
+                        data: values
                     }
                 ]
             },

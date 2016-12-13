@@ -102,3 +102,20 @@ class TestGET:
     def test_accessing_status_console_of_non_existent_event_returns_404(self):
         response = requests.get(api_full_url + 'event/foobar/status')
         assert 404 == response.status_code
+
+    def test_getting_donations_distribution(self):
+        response = requests.get(api_full_url + 'event/test/donations/distribution')
+        assert 200 == response.status_code
+        content = json.loads(response.content)['donations_distribution']
+        assert isinstance(content, dict)
+        expected_distribution = {
+            '0-9': 8,
+            '10-19': 2,
+            '20-29': 2,
+            '30-39': 2,
+            '40-49': 1,
+            '50-75': 0,
+            '76-99': 0,
+            '100-10000': 0
+        }
+        assert expected_distribution == content

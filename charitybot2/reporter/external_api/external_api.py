@@ -91,8 +91,33 @@ def event_donations(event_name):
             'total_raised': donation.get_new_amount(),
             'timestamp': donation.get_timestamp()
         } for donation in all_donations
-        ]
+    ]
     return jsonify(donations=donation_objects)
+
+
+@app.route('/event/<event_name>/donations/distribution')
+def event_donations_distribution(event_name):
+    if event_name not in donations_db.get_event_names():
+        abort(404)
+    all_donations = donations_db.get_all_donations(event_name=event_name)
+    distribution = {
+        '0-9': 0,
+        '10-19': 0,
+        '20-29': 0,
+        '30-39': 0,
+        '40-49': 0,
+        '50-75': 0,
+        '76-99': 0,
+        '100-10000': 0
+    }
+    for donation in all_donations:
+        for bound_string, count in distribution.items():
+            bounds = bound_string.split('-')
+            lower_bound = int(bounds[0])
+            upper_bound = int(bounds[1])
+            if lower_bound <= donation.get_donation_amount() <= upper_bound:
+                distribution[bound_string] += 1
+    return jsonify(donations_distribution=distribution)
 
 
 @app.route('/event/<event_name>/donations/last')
