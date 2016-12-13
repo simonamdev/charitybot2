@@ -4,6 +4,7 @@ from charitybot2.events.donation import Donation, InvalidArgumentException
 from charitybot2.events.event import EventInvalidException, EventAlreadyFinishedException
 from charitybot2.reporter.twitch import ChatBot
 from charitybot2.sources.justgiving import JustGivingScraper
+from charitybot2.sources.scraper import SourceUnavailableException
 from charitybot2.storage.logger import Logger
 
 
@@ -58,9 +59,13 @@ class EventLoop:
         return self.event.db_handler.get_donations_db().event_exists(event_name=self.event.get_event_name())
 
     def check_for_donation(self):
-        current_amount = self.event.get_amount_raised()
+        try:
+            current_amount = self.event.get_amount_raised()
+            new_amount = self.scraper.get_amount_raised()
+        except SourceUnavailableException:
+            self.logger.log_error('Unable to connect to donation website')
+            return
         current_amount = float(current_amount)
-        new_amount = self.scraper.get_amount_raised()
         # quick fix to format new_amount as a float
         new_amount = float(new_amount.replace(',', '').replace('£', '').replace('$', '').replace('€', ''))
         self.logger.log_info('Current Amount: {}, New Amount: {}'.format(current_amount, new_amount))

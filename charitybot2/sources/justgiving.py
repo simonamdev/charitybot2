@@ -1,3 +1,5 @@
+from smokesignal.exceptions import ConnectionFailedException
+
 from .scraper import Scraper, SoupDataSources, SourceUnavailableException
 
 
@@ -41,7 +43,10 @@ class JustGivingScraper(Scraper):
             print(value)
 
     def get_source_value(self, source_name):
-        self.get_soup_from_url()
+        try:
+            self.get_soup_from_url()
+        except ConnectionFailedException:
+            raise SourceUnavailableException('Unable to connect to the source')
         return self.url_soup.find(
             self.soup_data_sources.get_source_tag(source_name=source_name),
             self.soup_data_sources.get_bs4_find_parameters_dict(source_name=source_name)
