@@ -44,6 +44,12 @@ class API {
         }).fail(() => {
             console.log('Could not get donations data');
         });
+        var lastDonationUrl = donationsUrl + '/last';
+        $.getJSON(lastDonationUrl, (data) => {
+            this.writeLastDonationAmount(data);
+        }).fail(() => {
+            console.log('Could not get last donation data');
+        })
     }
 
     writeCurrencySymbols(currencySymbol) {
@@ -61,6 +67,10 @@ class API {
         this.writeAmountRaised(data['donations']);
         this.drawAmountRaisedChart(data['donations']);
         this.drawAmountHistogram(data['donations']);
+    }
+
+    writeLastDonationAmount(data) {
+        $('#last_donation').text(data['amount']);
     }
 
     writeAmountRaised(data) {
