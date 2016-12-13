@@ -20,7 +20,7 @@ class API {
         this._eventName = eventName;
     }
 
-    startLoop() {
+    makeApiCalls() {
         showLoader();
         var api_call = this.showEventInformation(this._eventName);
         $.when(api_call).then(() => {
@@ -49,6 +49,8 @@ class API {
         var donationsDistributionUrl = donationsUrl + '/distribution';
         $.getJSON(donationsDistributionUrl, (data) => {
             this.drawDonationsDistributionChart(data['donations_distribution']);
+        }).fail(() => {
+            console.log('Could not get donation distribution data');
         });
         var lastDonationUrl = donationsUrl + '/last';
         $.getJSON(lastDonationUrl, (data) => {
@@ -110,8 +112,6 @@ class API {
                 maintainAspectRatio: false
             }
         });
-        // resizeCanvasToWindowWidth('#amountRaisedChart');
-        // myChart.update();
     }
 
     drawDonationsDistributionChart(data) {
@@ -163,6 +163,5 @@ class API {
                 }
             }
         });
-        // resizeCanvasToWindowWidth('#amountDistributionChart');
     }
 };

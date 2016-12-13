@@ -88,16 +88,8 @@
 
         $(document).ready(() => {
             api = new API(api_url, "{{ event_name }}");
-            api.startLoop();
-            // resizeCanvasToWindowWidth('#amountRaisedChart');
-            // resizeCanvasToWindowWidth('#amountDistributionChart');
+            api.makeApiCalls();
             console.log('Refreshing in 30 seconds');
-        });
-
-        $(window).on('resize', () => {
-            // console.log('Resizing charts');
-            // resizeCanvasToWindowWidth('#amountRaisedChart');
-            // resizeCanvasToWindowWidth('#amountDistributionChart');
         });
     </script>
 {% endblock %}
