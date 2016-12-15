@@ -56,7 +56,7 @@ def teardown_module():
 
 class TestFullTwitchEvent:
     def test_full_twitch_event(self):
-        config_adjustment.change_value(key='end_time', value=int(time.time()) + 20)
+        config_adjustment.change_value(key='end_time', value=int(time.time()) + 30)
         navigate_to_twitch_channel()
         args = parser.parse_args(['config', '--debug', '--twitch-config', 'purrcat259'])
         bot = CharityBot(args=args)
@@ -84,4 +84,4 @@ class TestFullAPIEvent:
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
         soup = BeautifulSoup(response.content, 'html.parser')
         amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
-        assert '250.52' == amount_raised
+        assert '250' == amount_raised

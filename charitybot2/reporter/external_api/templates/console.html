@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block nocache %}
-    <!-- Disable caching by emptying the block -->
+    <!-- Disable nocache by emptying the block -->
 {% endblock %}
 
 {% block extrahead %}
@@ -24,16 +24,21 @@
 {% block body %}
     <div class="container-fluid">
         <div class="row col-md-12">
-            <h1 class="text-center">CharityBot2 Event</h1>
+            <h1 class="text-center">Charitybot Event</h1>
             <h1 id="event_name" class="text-center">{{ event_name }}</h1>
             <div class="sk-rotating-plane" id="loader"></div>
         </div>
         <div class="row donation-text">
-            <div class="col-md-3 col-md-offset-3 text-center info-row">
-                Amount Raised: <span class="currency_symbol"></span><span id="amount_raised"></span>
-            </div>
-            <div class="col-md-3 text-center info-row">
-                <span id="last_hour_donation_count"></span> donations in the last hour
+            <div class="col-md-6 col-md-offset-3 text-center">
+                <div class="col-md-4 info-row">
+                    Amount Raised: <span class="currency_symbol"></span><span id="amount_raised"></span>
+                </div>
+                <div class="col-md-4 info-row">
+                    <span id="last_hour_donation_count"></span> donations in the last hour
+                </div>
+                <div class="col-md-4 info-row">
+                    Last donation: <span class="currency_symbol"></span><span id="last_donation"></span>
+                </div>
             </div>
         </div>
         <div class="row donation-text">
@@ -83,16 +88,8 @@
 
         $(document).ready(() => {
             api = new API(api_url, "{{ event_name }}");
-            api.startLoop();
-            // resizeCanvasToWindowWidth('#amountRaisedChart');
-            // resizeCanvasToWindowWidth('#amountDistributionChart');
+            api.makeApiCalls();
             console.log('Refreshing in 30 seconds');
-        });
-
-        $(window).on('resize', () => {
-            // console.log('Resizing charts');
-            // resizeCanvasToWindowWidth('#amountRaisedChart');
-            // resizeCanvasToWindowWidth('#amountDistributionChart');
         });
     </script>
 {% endblock %}

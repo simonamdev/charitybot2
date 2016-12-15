@@ -11,14 +11,15 @@ from charitybot2.storage.logger import Logger
 class EventLoop:
     def __init__(self, event, debug=False):
         self.event = event
-        self.first_start = None
         self.debug = debug
         self.scraper = None
         self.reporter = None
         self.loop_count = 0
         self.logger = Logger(source='EventLoop', console_only=debug)
         self.validate_event_loop()
+        self.first_start = not self.check_if_donation_already_stored()
         self.initialise_scraper()
+        self.set_initial_amount_raised()
 
     def validate_event_loop(self):
         self.logger.log_info('Validating Event Loop')
@@ -28,7 +29,6 @@ class EventLoop:
         if time.time() > self.event.get_end_time():
             self.logger.log_error('Event has already finished')
             raise EventAlreadyFinishedException('Current time: {} Event end time: {}'.format(time.time(), self.event.get_end_time()))
-        self.first_start = not self.check_if_donation_already_stored()
 
     def initialise_scraper(self):
         source_url = self.event.get_source_url()
@@ -58,35 +58,42 @@ class EventLoop:
     def check_if_donation_already_stored(self):
         return self.event.db_handler.get_donations_db().event_exists(event_name=self.event.get_event_name())
 
-    def check_for_donation(self):
+    def set_initial_amount_raised(self):
+        if not self.first_start:
+            self.logger.log_info('Setting initial amount since there are already donations recorded')
+            self.event.set_amount_raised(amount=self.get_new_amount())
+
+    def get_new_amount(self):
         try:
-            current_amount = self.event.get_amount_raised()
             new_amount = self.scraper.get_amount_raised()
         except SourceUnavailableException:
             self.logger.log_error('Unable to connect to donation website')
-            return
-        current_amount = float(current_amount)
-        # quick fix to format new_amount as a float
-        new_amount = float(new_amount.replace(',', '').replace('£', '').replace('$', '').replace('€', ''))
+            return ''
+        # convert the string to a float, removing any currency symbols and commas
+        return float(new_amount.replace(',', '').replace('£', '').replace('$', '').replace('€', ''))
+
+    def check_for_donation(self):
+        current_amount = float(self.event.get_amount_raised())
+        new_amount = self.get_new_amount()
+        if new_amount == '':
+            self.logger.log_error('Could not check for donation, skipping cycle')
         self.logger.log_info('Current Amount: {}, New Amount: {}'.format(current_amount, new_amount))
-        if not new_amount == current_amount and not self.loop_count == 0:
+        new_donation_detected = not new_amount == current_amount
+        if new_donation_detected and not self.loop_count == 0:
             try:
                 new_donation = Donation(old_amount=current_amount, new_amount=new_amount, timestamp=int(time.time()))
             except InvalidArgumentException:
-                self.logger.log_info('Current Amount: {}, New Amount: {}'.format(current_amount, new_amount))
+                self.logger.log_error('These do not match: Current Amount: {}, New Amount: {}'.format(current_amount, new_amount))
             else:
+                self.event.set_amount_raised(amount=new_donation.get_new_amount())
                 self.record_new_donation(new_donation)
-        else:
-            # TODO: Clean this up :(
-            self.event.set_amount_raised(amount=new_amount)
+                self.report_new_donation(new_donation)
 
     def record_new_donation(self, donation):
         self.logger.log_info('New Donation of {} {} detected'.format(
             self.event.get_currency().get_key(),
             donation.get_donation_amount()))
-        self.event.set_amount_raised(amount=donation.get_new_amount())
         self.event.db_handler.get_donations_db().record_donation(event_name=self.event.get_event_name(), donation=donation)
-        self.report_new_donation(donation=donation)
 
     def report_new_donation(self, donation):
         pass
