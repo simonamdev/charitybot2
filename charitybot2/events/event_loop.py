@@ -18,8 +18,8 @@ class EventLoop:
         self.logger = Logger(source='EventLoop', console_only=debug)
         self.validate_event_loop()
         self.first_start = not self.check_if_donation_already_stored()
-        self.set_initial_amount_raised()
         self.initialise_scraper()
+        self.set_initial_amount_raised()
 
     def validate_event_loop(self):
         self.logger.log_info('Validating Event Loop')
@@ -66,6 +66,8 @@ class EventLoop:
     def get_new_amount(self):
         try:
             new_amount = self.scraper.get_amount_raised()
+            if new_amount == '':
+                raise SourceUnavailableException('Unable to get donation amount from website')
         except SourceUnavailableException:
             self.logger.log_error('Unable to connect to donation website')
             return
