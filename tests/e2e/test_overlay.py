@@ -61,10 +61,10 @@ class TestOverlay:
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
         soup = BeautifulSoup(response.content, 'html.parser')
         amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
-        assert '250' == amount_raised
+        assert '300' == amount_raised
         overlay_text = soup.find('div', {'id': 'overlay-text'}).text.strip().replace('\n', '')
         print(overlay_text)
-        assert '£250' == overlay_text
+        assert '£300' == overlay_text
 
     def test_overlay_amount_updates_automagically(self):
         global driver
