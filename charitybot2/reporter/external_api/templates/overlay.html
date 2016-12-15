@@ -9,28 +9,11 @@
 {% endblock %}
 {% block body %}
     <div id="overlay-text">
-        <span id="currency_symbol" class="pending">{{ currency_symbol }}</span><span id="amount_raised" class="pending">{{ amount_raised }}</span>
+        <span id="currency_symbol">{{ currency_symbol }}</span><span id="amount_raised">{{ amount_raised }}</span>
     </div>
 {% endblock %}
 {% block afterbody %}
     <script>
         console.log('Refreshing in 5 seconds');
     </script>
-    <!--<script src="{{ url_for('static', filename='js/overlay_update.js') }}"></script>-->
-    <!--<script>-->
-        <!--var eventDetailsUrl = 'http://127.0.0.1:9000/event/' + '{{ event_name }}';-->
-        <!--var lastDonationUrl = 'http://127.0.0.1:9000/event/' + '{{ event_name }}' + '/donations/last';-->
-        <!--$.getJSON(eventDetailsUrl, (data) => {-->
-            <!--console.log(data);-->
-            <!--$('#currency_symbol').text(data['currency_symbol']);-->
-        <!--}).fail((data) => {-->
-            <!--console.error('Unable to set currency');-->
-        <!--});-->
-        <!--$.getJSON(lastDonationUrl, (data) => {-->
-            <!--console.log(data);-->
-            <!--$('#amount_raised').text(data['total_raised']);-->
-        <!--}).fail((data) => {-->
-            <!--console.error('Unable to set amount raised');-->
-        <!--});-->
-    <!--</script>-->
 {% endblock %}
