@@ -56,7 +56,7 @@ def teardown_module():
 
 class TestFullTwitchEvent:
     def test_full_twitch_event(self):
-        config_adjustment.change_value(key='end_time', value=int(time.time()) + 20)
+        config_adjustment.change_value(key='end_time', value=int(time.time()) + 30)
         navigate_to_twitch_channel()
         args = parser.parse_args(['config', '--debug', '--twitch-config', 'purrcat259'])
         bot = CharityBot(args=args)
