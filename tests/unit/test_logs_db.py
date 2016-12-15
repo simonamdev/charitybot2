@@ -25,3 +25,11 @@ class TestLogsDatabaseTableCRUD:
         logs = logs_db.get_all_logs()
         assert 1 == len(logs)
         assert isinstance(logs[0], Log)
+
+    def test_getting_logs_filtered_by_level(self):
+        logs_db.log(source='info source', event='info event', level=Log.info_level, message='info message')
+        logs_db.log(source='error source', event='error event', level=Log.error_level, message='error message 1')
+        logs_db.log(source='error source', event='error event', level=Log.error_level, message='error message 2')
+        error_logs = logs_db.get_specific_logs(level=Log.error_level)
+        assert 2 == len(error_logs)
+        assert 'error message 1' == error_logs[0].get_message()

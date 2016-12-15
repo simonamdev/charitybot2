@@ -60,7 +60,27 @@ class LogsDB(BaseDB):
             row_data=(int(time.time()), level, source, event, message)
         )
 
+    def convert_row_to_log(self, row):
+        return Log(source=row[3], timestamp=row[1], level=row[2], message=row[5], event=row[4])
+
     def get_all_logs(self):
         return [
-            Log(source=log[3], timestamp=log[1], level=log[2], message=log[4], event=log[5]) for log in self.db.get_all_rows(table='logs')
+            self.convert_row_to_log(log) for log in self.db.get_all_rows(table='logs')
+        ]
+
+    def get_specific_logs(self, time='', level='', source='', event=''):
+        # build filter string
+        filter_string = ''
+        if not time == '':
+            filter_string += 'time = {} AND '.format(time)
+        if not level == '':
+            filter_string += 'level = {} AND '.format(level)
+        if not source == '':
+            filter_string += 'source = {} AND '.format(source)
+        if not event == '':
+            filter_string += 'event = {} AND '.format(event)
+        filter_string += 'id NOT NULL;'
+        filtered_logs = self.db.get_specific_rows(table='logs', filter_string=filter_string)
+        return [
+            self.convert_row_to_log(log) for log in filtered_logs
         ]
