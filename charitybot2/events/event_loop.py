@@ -66,17 +66,17 @@ class EventLoop:
     def get_new_amount(self):
         try:
             new_amount = self.scraper.get_amount_raised()
-            if new_amount == '':
-                raise SourceUnavailableException('Unable to get donation amount from website')
         except SourceUnavailableException:
             self.logger.log_error('Unable to connect to donation website')
-            return
+            return ''
         # convert the string to a float, removing any currency symbols and commas
         return float(new_amount.replace(',', '').replace('£', '').replace('$', '').replace('€', ''))
 
     def check_for_donation(self):
         current_amount = float(self.event.get_amount_raised())
         new_amount = self.get_new_amount()
+        if new_amount == '':
+            self.logger.log_error('Could not check for donation, skipping cycle')
         self.logger.log_info('Current Amount: {}, New Amount: {}'.format(current_amount, new_amount))
         new_donation_detected = not new_amount == current_amount
         if new_donation_detected and not self.loop_count == 0:

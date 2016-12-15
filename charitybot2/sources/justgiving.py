@@ -53,8 +53,7 @@ class JustGivingScraper(Scraper):
                 self.soup_data_sources.get_bs4_find_parameters_dict(source_name=source_name)
             ).text
         except AttributeError:
-            print('Unable to find amount raised on JustGiving website')
-            return ''
+            raise SourceUnavailableException('Unable to find amount raised on JustGiving website')
         return source_value
 
     def get_amount_raised(self):
