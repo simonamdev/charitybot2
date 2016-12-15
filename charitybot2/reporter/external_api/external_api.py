@@ -139,7 +139,7 @@ def amount_raised(event_name):
     if event_name not in donations_db.get_event_names():
         return render_template('overlay.html',
                                event_name=event_name,
-                               amount_raised='ERROR',
+                               amount_raised='...',
                                currency_symbol='')
     last_donation = donations_db.get_last_donation(event_name=event_name)
     # Remove decimal point and add thousands separators
