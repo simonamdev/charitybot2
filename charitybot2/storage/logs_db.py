@@ -4,10 +4,15 @@ import datetime
 from charitybot2.storage.base_db import BaseDB
 
 
+def convert_row_to_log(row):
+    return Log(source=row[3], timestamp=row[1], level=row[2], message=row[5], event=row[4])
+
+
 class Log:
-    info_level = 0
-    warning_level = 1
-    error_level = 2
+    verbose_level = 0
+    info_level = 1
+    warning_level = 2
+    error_level = 3
 
     def __init__(self, source, timestamp, level, event, message):
         self.source = source
@@ -66,19 +71,16 @@ class LogsDB(BaseDB):
             row_data=(int(time.time()), level, source, event, message)
         )
 
-    def convert_row_to_log(self, row):
-        return Log(source=row[3], timestamp=row[1], level=row[2], message=row[5], event=row[4])
-
     def get_all_logs(self):
         return [
-            self.convert_row_to_log(log) for log in self.db.get_all_rows(table='logs')
+            convert_row_to_log(log) for log in self.db.get_all_rows(table='logs')
         ]
 
-    def get_specific_logs(self, time='', level='', source='', event=''):
+    def get_specific_logs(self, timestamp='', level='', source='', event=''):
         # build filter string
         filter_string = ''
-        if not time == '':
-            filter_string += 'time > {} AND '.format(time)
+        if not timestamp == '':
+            filter_string += 'time > {} AND '.format(timestamp)
         if not level == '':
             filter_string += 'level = {} AND '.format(level)
         if not source == '':
@@ -89,5 +91,5 @@ class LogsDB(BaseDB):
         # filtered_logs = self.db.get_specific_rows(table='logs', filter_string=filter_string)
         filtered_logs = self.db.get_specific_rows(table='logs', filter_string=filter_string)
         return [
-            self.convert_row_to_log(log) for log in filtered_logs
+            convert_row_to_log(log) for log in filtered_logs
         ]
