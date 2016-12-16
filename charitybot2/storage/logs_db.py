@@ -78,7 +78,7 @@ class LogsDB(BaseDB):
         # build filter string
         filter_string = ''
         if not time == '':
-            filter_string += 'time = {} AND '.format(time)
+            filter_string += 'time > {} AND '.format(time)
         if not level == '':
             filter_string += 'level = {} AND '.format(level)
         if not source == '':

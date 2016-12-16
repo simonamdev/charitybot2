@@ -1,3 +1,4 @@
+import time
 from charitybot2.storage.logs_db import LogsDB, Log
 from tests.tests import TestFilePath, ResetDB
 
@@ -53,3 +54,14 @@ class TestLogsDatabaseTableCRUD:
         assert 3 == len(filtered_logs)
         for log in filtered_logs:
             assert 'test_source_filter' == log.get_message()
+
+    def test_get_logs_filtered_by_time(self):
+        # space out from last test
+        time.sleep(3)
+        logs_db.log(source='time_filter', event='time_filter', level=Log.info_level, message='time_filter')
+        logs_db.log(source='time_filter', event='time_filter', level=Log.warning_level, message='time_filter')
+        logs_db.log(source='time_filter', event='time_filter', level=Log.error_level, message='time_filter')
+        filtered_logs = logs_db.get_specific_logs(time=int(time.time()) - 3)
+        assert 3 == len(filtered_logs)
+        for log in filtered_logs:
+            assert 'time_filter' == log.get_message()
