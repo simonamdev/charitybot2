@@ -34,6 +34,12 @@ class Log:
     def get_level(self):
         return self.level
 
+    def get_source(self):
+        return self.source
+
+    def get_event(self):
+        return self.event
+
 
 class LogsDB(BaseDB):
     logs_table_create_statement = 'CREATE TABLE IF NOT EXISTS `logs` (' \
@@ -76,10 +82,11 @@ class LogsDB(BaseDB):
         if not level == '':
             filter_string += 'level = {} AND '.format(level)
         if not source == '':
-            filter_string += 'source = {} AND '.format(source)
+            filter_string += 'source = "{}" AND '.format(source)
         if not event == '':
-            filter_string += 'event = {} AND '.format(event)
-        filter_string += 'id NOT NULL;'
+            filter_string += 'event = "{}" AND '.format(event)
+        filter_string += 'id IS NOT NULL;'
+        # filtered_logs = self.db.get_specific_rows(table='logs', filter_string=filter_string)
         filtered_logs = self.db.get_specific_rows(table='logs', filter_string=filter_string)
         return [
             self.convert_row_to_log(log) for log in filtered_logs
