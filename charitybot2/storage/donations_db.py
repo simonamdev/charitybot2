@@ -19,7 +19,7 @@ class DonationsDB(BaseDB):
 
     def __init__(self, db_path, debug=False):
         super().__init__(file_path=db_path, db_name='Donations DB', verbose=debug)
-        self.logger = Logger(source='Donations_DB', console_only=debug)
+        self.logger = Logger(source='Donations_DB', event='', console_only=debug)
 
     def record_donation(self, event_name, donation, currency_key='GBP'):
         self.create_event_table_if_not_exists(event_name=event_name)

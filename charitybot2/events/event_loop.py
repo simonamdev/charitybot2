@@ -15,19 +15,16 @@ class EventLoop:
         self.scraper = None
         self.reporter = None
         self.loop_count = 0
-        self.logger = Logger(source='EventLoop', console_only=debug)
         self.validate_event_loop()
+        self.logger = Logger(source='EventLoop', event=self.event.get_event_name(), console_only=debug)
         self.first_start = not self.check_if_donation_already_stored()
         self.initialise_scraper()
         self.set_initial_amount_raised()
 
     def validate_event_loop(self):
-        self.logger.log_info('Validating Event Loop')
         if self.event is None:
-            self.logger.log_error('Event object was not passed to EventLoop')
             raise EventInvalidException('No Event object passed to Event Loop')
         if time.time() > self.event.get_end_time():
-            self.logger.log_error('Event has already finished')
             raise EventAlreadyFinishedException('Current time: {} Event end time: {}'.format(time.time(), self.event.get_end_time()))
 
     def initialise_scraper(self):
