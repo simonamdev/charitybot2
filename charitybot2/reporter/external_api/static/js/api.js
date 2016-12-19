@@ -107,9 +107,15 @@ class API {
                 ]
             },
             options: {
-                scaleOverride: true,
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: false
+                        }
+                    }]
+                }
             }
         });
     }
@@ -150,8 +156,7 @@ class API {
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true,
-                            stepSize: 1
+                            beginAtZero: true
                         }
                     }],
                     xAxes: [{
