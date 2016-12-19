@@ -9,11 +9,12 @@ class LoggingFailedException(Exception):
 
 
 class Logger:
-    def __init__(self, source, debug_db_path='', console_only=False):
+    def __init__(self, source, event, debug_db_path='', console_only=False):
         self.source = source
+        self.event = event
         self.debug_db_path = debug_db_path
         self.console_only = console_only
-        self.db = None
+        self.logs_db = None
         if not self.console_only:
             self.initialise_db_connection()
 
@@ -21,8 +22,10 @@ class Logger:
         db_path = production_logs_db_path
         if self.debug_db_path is not '':
             db_path = self.debug_db_path
-        self.db = LogsDB(db_path=db_path, verbose=False)
-        self.db.create_log_source_table(log_source=self.source)
+        self.logs_db = LogsDB(db_path=db_path, verbose=False)
+
+    def log_verbose(self, message):
+        self.log(level=Log.verbose_level, message=message)
 
     def log_info(self, message):
         self.log(level=Log.info_level, message=message)
@@ -39,8 +42,8 @@ class Logger:
             return self.log_to_db(level=level, message=message)
 
     def log_to_console(self, level, message):
-        console_log = Log(source=self.source, timestamp=int(time.time()), level=level, message=message)
+        console_log = Log(source=self.source, event=self.event, timestamp=int(time.time()), level=level, message=message)
         print(console_log)
 
     def log_to_db(self, level, message):
-        self.db.log(source=self.source, level=level, message=message)
+        self.logs_db.log(source=self.source, event=self.event, level=level, message=message)

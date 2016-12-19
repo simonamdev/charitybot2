@@ -63,8 +63,8 @@ class TestFullTwitchEvent:
         bot.initialise_bot()
         bot.start_bot()
         time.sleep(4)
-        expected_string = 'Purrcat259 : ' + ChatBot.donation_string.format(Currency.GBP, 200.52, Currency.GBP, 200.52)
-        expected_string_two = 'Purrcat259 : ' + ChatBot.donation_string.format(Currency.GBP, 50.0, Currency.GBP, 250.52)
+        expected_string = 'Purrcat259 : ' + ChatBot.donation_string.format(Currency.GBP, 250.52, Currency.GBP, 250.52)
+        expected_string_two = 'Purrcat259 : ' + ChatBot.donation_string.format(Currency.GBP, 50.0, Currency.GBP, 300.52)
         chat_box_contents = get_twitch_chat_box_contents()
         assert expected_string in chat_box_contents
         assert expected_string_two in chat_box_contents
@@ -84,4 +84,4 @@ class TestFullAPIEvent:
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
         soup = BeautifulSoup(response.content, 'html.parser')
         amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
-        assert '250' == amount_raised
+        assert '300' == amount_raised
