@@ -66,7 +66,7 @@ class API {
     }
 
     writeCurrencySymbols(currencySymbol) {
-        $('.currency_symbol').text(currencySymbol);
+        $('.currency-symbol').text(currencySymbol);
     }
 
     writeEventDetailsToPage(data) {
@@ -82,6 +82,19 @@ class API {
         $('#event-length').text(numberWithCommas(eventLength));
         $('#event-remaining').text(numberWithCommas(eventRemaining));
         $('#event-progress').css('width', eventPercentageComplete + '%').attr('aria-valuenow', eventPercentageComplete).text(eventPercentageComplete + '%');
+        if (eventPercentageComplete >= 100) {
+            $('#event-progress').toggleClass('progress-bar-success');
+        }
+        // Amount Raised Data
+        $('#amount-raised').text(numberWithCommas(data['amount_raised']));
+        $('#target-amount').text(numberWithCommas(data['target_amount']));
+        var amountPercentageComplete = (data['amount_raised'] / data['target_amount']) * 100;
+        amountPercentageComplete = Math.round(amountPercentageComplete * 100) / 100;
+        console.log(amountPercentageComplete);
+        $('#amount-progress').css('width', amountPercentageComplete + '%').attr('aria-valuenow', amountPercentageComplete).text(amountPercentageComplete + '%');
+        if (amountPercentageComplete >= 100) {
+            $('#amount-progress').toggleClass('progress-bar-success');
+        }
         // Event Donation Data
         $('#donation_count').text(data['donation_count']);
         $('#donation_average').text(data['donation_average']);
