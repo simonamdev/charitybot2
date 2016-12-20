@@ -34,8 +34,8 @@ api_paths = [
 donations_db = DonationsDB(db_path=test_donations_db_path, debug=True)
 
 
-def get_currency_symbol(event_name):
-    return Currency(key=donations_db.get_event_currency_key(event_name=event_name)).get_symbol()
+def get_currency_symbol(currency_key):
+    return Currency(key=currency_key).get_symbol()
 
 
 def get_event_config(event_name):
@@ -87,13 +87,13 @@ def event_details(event_name):
     all_donations = donations_db.get_all_donations(event_name=event_name)
     current_time_minus_an_hour = int(time.time()) - 3600
     last_hour_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
-    start_time, end_time = get_event_config_values(event_name=event_name, keys_required=('start_time', 'end_time'))
+    start_time, end_time, currency_key = get_event_config_values(event_name=event_name, keys_required=('start_time', 'end_time', 'currency'))
     event_data = {
         'name': event_name,
         'donation_count': len(all_donations),
         'donation_average': donations_db.get_average_donation(event_name=event_name),
         'largest_donation': max(donation.get_donation_amount() for donation in all_donations),
-        'currency_symbol': get_currency_symbol(event_name=event_name),
+        'currency_symbol': get_currency_symbol(currency_key=currency_key),
         'last_hour_donation_count': last_hour_donation_count,
         'start_time': start_time,
         'end_time': end_time
@@ -179,7 +179,7 @@ def amount_raised(event_name):
     return render_template('overlay.html',
                            event_name=event_name,
                            amount_raised=pretty_number,
-                           currency_symbol=get_currency_symbol(event_name=event_name))
+                           currency_symbol=get_event_config_value(event_name=event_name, key_required='currency'))
 
 
 @app.route('/debug')
