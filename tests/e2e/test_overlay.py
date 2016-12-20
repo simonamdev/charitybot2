@@ -23,10 +23,11 @@ mocksite = ServiceTest(
 
 
 external_api = ServiceTest(
-    service_name='External_API',
+    service_name='External API',
     service_url=api_full_url,
     service_path=external_api_cli_path,
     enter_debug=True,
+    extra_args=['--debug'],
     db_path=donations_db_path,
     sql_path=donations_db_init_script_path)
 
