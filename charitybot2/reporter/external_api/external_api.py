@@ -43,7 +43,12 @@ def not_found(error):
 
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({'paths': api_paths, 'debug_allowed': str(cli_debug_mode), 'debug': str(debug_mode)})
+    return jsonify(
+        {
+            'paths': api_paths,
+            'debug_allowed': cli_debug_mode,
+            'debug': debug_mode
+        })
 
 
 @app.route('/events', methods=['GET'])
