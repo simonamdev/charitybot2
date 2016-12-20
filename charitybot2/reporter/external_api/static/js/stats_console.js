@@ -14,6 +14,11 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function convertToTimestamp(unixTimestamp){
+  var d = new Date(unixTimestamp * 1000);
+  return d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+}
+
 class API {
     constructor(url, eventName) {
         this._url = url;
@@ -22,17 +27,17 @@ class API {
 
     makeApiCalls() {
         showLoader();
-        var api_call = this.showEventInformation(this._eventName);
+        var api_call = this.writeAllDataToPage(this._eventName);
         $.when(api_call).then(() => {
             hideLoader();
         });
     }
 
-    showEventInformation() {
+    writeAllDataToPage() {
         var eventUrl = this._url + 'event/' + this._eventName;
         $.getJSON(eventUrl, (data) => {
             // console.log(data);
-            this.writeEventDataToPage(data);
+            this.writeEventDetailsToPage(data);
             this.writeCurrencySymbols(data['currency_symbol']);
         }).fail(() => {
             console.log('Could not get event data');
@@ -64,7 +69,15 @@ class API {
         $('.currency_symbol').text(currencySymbol);
     }
 
-    writeEventDataToPage(data) {
+    writeEventDetailsToPage(data) {
+        console.log(data);
+        $('#event-start').text(convertToTimestamp(data['start_time']));
+        $('#event-end').text(convertToTimestamp(data['end_time']));
+        var eventLength = Math.round(((data['end_time'] - data['start_time']) / (60 * 60)) * 100) / 100;
+        $('#event-length').text(eventLength);
+        var currentTime = Math.floor(Date.now() / 1000);
+        var eventRemaining = Math.round((data['end_time'] - currentTime) * 100) / 100;
+        $('#event-remaining').text(eventRemaining);
         $('#donation_count').text(data['donation_count']);
         $('#donation_average').text(data['donation_average']);
         $('#largest_donation').text(data['largest_donation']);
