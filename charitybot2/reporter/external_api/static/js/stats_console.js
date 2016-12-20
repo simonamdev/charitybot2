@@ -45,7 +45,6 @@ class API {
         var donationsUrl = eventUrl + '/donations';
         $.getJSON(donationsUrl, (data) => {
             // console.log(data);
-            this.writeAmountRaised(data['donations']);
             this.drawAmountRaisedChart(data['donations']);
 
         }).fail(() => {
@@ -104,11 +103,6 @@ class API {
 
     writeLastDonationAmount(data) {
         $('#last_donation').text(data['amount']);
-    }
-
-    writeAmountRaised(data) {
-        var prettyNumber = numberWithCommas(data[data.length - 1]['total_raised']);
-        $('#amount_raised').text(prettyNumber);
     }
 
     drawAmountRaisedChart(data) {
