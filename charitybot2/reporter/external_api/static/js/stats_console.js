@@ -71,13 +71,18 @@ class API {
 
     writeEventDetailsToPage(data) {
         console.log(data);
+        // Event Length Data
         $('#event-start').text(convertToTimestamp(data['start_time']));
         $('#event-end').text(convertToTimestamp(data['end_time']));
         var eventLength = Math.round(((data['end_time'] - data['start_time']) / (60 * 60)) * 100) / 100;
-        $('#event-length').text(eventLength);
         var currentTime = Math.floor(Date.now() / 1000);
         var eventRemaining = Math.round((data['end_time'] - currentTime) * 100) / 100;
-        $('#event-remaining').text(eventRemaining);
+        var eventPercentageComplete = ((data['end_time'] - currentTime) / (data['end_time'] - data['start_time'])) * 100;
+        eventPercentageComplete = Math.abs(Math.round(eventPercentageComplete * 100) / 100);
+        $('#event-length').text(numberWithCommas(eventLength));
+        $('#event-remaining').text(numberWithCommas(eventRemaining));
+        $('#event-progress').css('width', eventPercentageComplete + '%').attr('aria-valuenow', eventPercentageComplete).text(eventPercentageComplete + '%');
+        // Event Donation Data
         $('#donation_count').text(data['donation_count']);
         $('#donation_average').text(data['donation_average']);
         $('#largest_donation').text(data['largest_donation']);

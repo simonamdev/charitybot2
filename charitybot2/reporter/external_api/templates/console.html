@@ -30,7 +30,6 @@
         </div>
         <!-- Event Details -->
         <div class="row text-center">
-
             <div class="col-md-2 col-md-offset-2">
                 Event Start Time: <span id="event-start"></span>
             </div>
@@ -42,6 +41,13 @@
             </div>
             <div class="col-md-2">
                 Event Length: <span id="event-remaining"></span> hours
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 ">
+                <div class="progress">
+                    <div id="event-progress" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div>
+                </div>
             </div>
         </div>
         <div class="row donation-text">
@@ -60,7 +66,7 @@
         <div class="row donation-text">
             <div class="col-md-6 col-md-offset-3 text-center">
                 <div class="col-md-4">
-                    </span><span id="donation_count"></span> donations so far
+                    <span id="donation_count"></span> donations so far
                 </div>
                 <div class="col-md-4">
                     Average donation: <span class="currency_symbol"></span><span id="donation_average"></span>
