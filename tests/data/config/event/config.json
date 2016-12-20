@@ -1,10 +1,1 @@
-{
-  "event_name": "E2E_Test_Charity_Event",
-  "channel_name": "purrcat259",
-  "start_time": 0,
-  "end_time": 9999999999,
-  "target_amount": 1000,
-  "currency": "GBP",
-  "source_url": "http://127.0.0.1:5000/justgiving/",
-  "update_tick": 5
-}
+{"end_time": 1482241639, "source_url": "http://127.0.0.1:5000/justgiving/", "start_time": 0, "target_amount": 1000, "currency": "GBP", "event_name": "E2E_Test_Charity_Event", "channel_name": "purrcat259", "update_tick": 5}

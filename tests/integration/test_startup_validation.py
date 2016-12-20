@@ -11,7 +11,7 @@ class TestParserRequiredArguments:
             CharityBot(args=args)
 
     def test_passing_non_existent_event_config_throws_exception(self):
-        args = self.parser.parse_args(['test', '--debug'])
+        args = self.parser.parse_args(['this_totally_does_not_exist', '--debug'])
         with pytest.raises(MissingRequiredFileException):
             CharityBot(args=args)
 

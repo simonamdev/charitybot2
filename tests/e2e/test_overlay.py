@@ -50,7 +50,7 @@ def teardown_module():
 
 
 class TestOverlay:
-    overlay_url = api_full_url + 'event/{}/overlay'
+    overlay_url = api_full_url + 'overlay/{}'
 
     def test_getting_last_donation_amount_on_overlay(self):
         reset_mocksite()
@@ -72,10 +72,10 @@ class TestOverlay:
         driver = webdriver.Chrome()
         reset_mocksite()
         time.sleep(2)
-        event_name = 'test_two'
+        event_name = 'config'
         driver.get(self.overlay_url.format(event_name))
         EventLoop(event=MockEvent(event_name, time.time() + 25), debug=True).start()
         soup = BeautifulSoup(driver.find_element_by_id('amount_raised').text.strip(), 'html.parser')
         assert '400' == soup.text
         soup = BeautifulSoup(driver.find_element_by_id('overlay-text').text.strip(), 'html.parser')
-        assert '$400' == soup.text
+        assert '£400' == soup.text

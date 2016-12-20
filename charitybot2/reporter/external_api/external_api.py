@@ -1,8 +1,11 @@
 import argparse
+import os
 import time
 
+from charitybot2.botconfig.event_config import EventConfiguration
+from charitybot2.botconfig.json_config import ConfigurationFileDoesNotExistException
 from charitybot2.events.currency import Currency
-from charitybot2.paths import production_donations_db_path
+from charitybot2.paths import production_donations_db_path, event_config_folder
 from charitybot2.storage.donations_db import DonationsDB
 from flask import Flask, request, jsonify, make_response, abort
 from flask import render_template
@@ -21,19 +24,59 @@ api_full_url = api_url + ':' + str(api_port) + '/'
 debug_mode = False
 cli_debug_mode = False
 
-api_paths = [
-    'events',
-    'event/:event_name',
-    'event/:event_name/donations',
-    'event/:event_name/donations?limit=:limit',
-    'event/:event_name/donations/last'
-]
+api_paths = {
+    'api': {
+        'v1': [
+            'events',
+            'event/:event_name',
+            'event/:event_name/donations',
+            'event/:event_name/donations?limit=:limit',
+            'event/:event_name/donations/last',
+            'event/:event_name/donations/distribution'
+        ]
+    },
+    'stats': [
+        ':event_name'
+    ],
+    'overlay': [
+        ':event_name'
+    ]
+}
 
 donations_db = DonationsDB(db_path=test_donations_db_path, debug=True)
 
 
-def get_currency_symbol(event_name):
-    return Currency(key=donations_db.get_event_currency_key(event_name=event_name)).get_symbol()
+def get_currency_symbol(currency_key):
+    return Currency(key=currency_key).get_symbol()
+
+
+def get_event_config(event_name):
+    file_path = os.path.join(event_config_folder, event_name + '.json')
+    if debug_mode:
+        file_path = TestFilePath().get_config_path('event', event_name + '.json')
+    event_config = None
+    try:
+        event_config = EventConfiguration(file_path=file_path)
+    except ConfigurationFileDoesNotExistException:
+        abort(400)
+    return event_config
+
+
+def get_event_config_value(event_name, key_required):
+    return get_event_config(event_name=event_name).get_value(key_name=key_required)
+
+
+def get_event_config_values(event_name, keys_required=()):
+    event_config = get_event_config(event_name=event_name)
+    return_values = []
+    for key in keys_required:
+        return_values.append(event_config.get_value(key_name=key))
+    return return_values
+
+
+@app.errorhandler(400)
+def bad_request(error):
+    return make_response(jsonify({'error': 'Configuration file missing'}), 400)
 
 
 @app.errorhandler(404)
@@ -41,7 +84,7 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.route('/', methods=['GET'])
+@app.route('/api/v1/', methods=['GET'])
 def index():
     return jsonify(
         {
@@ -51,7 +94,7 @@ def index():
         })
 
 
-@app.route('/events', methods=['GET'])
+@app.route('/api/v1/events', methods=['GET'])
 def events():
     event_names = donations_db.get_event_names()
     if len(event_names) == 0:
@@ -59,32 +102,28 @@ def events():
     return jsonify(events=event_names)
 
 
-@app.route('/event/<event_name>', methods=['GET'])
+@app.route('/api/v1/event/<event_name>', methods=['GET'])
 def event_details(event_name):
     if event_name not in donations_db.get_event_names():
         abort(404)
     all_donations = donations_db.get_all_donations(event_name=event_name)
     current_time_minus_an_hour = int(time.time()) - 3600
     last_hour_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
+    start_time, end_time, currency_key = get_event_config_values(event_name=event_name, keys_required=('start_time', 'end_time', 'currency'))
     event_data = {
         'name': event_name,
         'donation_count': len(all_donations),
         'donation_average': donations_db.get_average_donation(event_name=event_name),
         'largest_donation': max(donation.get_donation_amount() for donation in all_donations),
-        'currency_symbol': get_currency_symbol(event_name=event_name),
-        'last_hour_donation_count': last_hour_donation_count
+        'currency_symbol': get_currency_symbol(currency_key=currency_key),
+        'last_hour_donation_count': last_hour_donation_count,
+        'start_time': start_time,
+        'end_time': end_time
     }
     return jsonify(event_data)
 
 
-@app.route('/event/<event_name>/status', methods=['GET'])
-def status_console(event_name):
-    if event_name not in donations_db.get_event_names():
-        abort(404)
-    return render_template('console.html', event_name=event_name, debug_mode=str(debug_mode).lower())
-
-
-@app.route('/event/<event_name>/donations')
+@app.route('/api/v1/event/<event_name>/donations')
 def event_donations(event_name):
     if event_name not in donations_db.get_event_names():
         abort(404)
@@ -103,7 +142,21 @@ def event_donations(event_name):
     return jsonify(donations=donation_objects)
 
 
-@app.route('/event/<event_name>/donations/distribution')
+@app.route('/api/v1/event/<event_name>/donations/last')
+def last_event_donation(event_name):
+    if event_name not in donations_db.get_event_names():
+        abort(404)
+    last_donation = donations_db.get_last_donation(event_name=event_name)
+    return jsonify(
+        {
+            'amount': last_donation.get_donation_amount(),
+            'total_raised': last_donation.get_new_amount(),
+            'timestamp': last_donation.get_timestamp()
+        }
+    )
+
+
+@app.route('/api/v1/event/<event_name>/donations/distribution')
 def event_donations_distribution(event_name):
     if event_name not in donations_db.get_event_names():
         abort(404)
@@ -128,23 +181,9 @@ def event_donations_distribution(event_name):
     return jsonify(donations_distribution=distribution)
 
 
-@app.route('/event/<event_name>/donations/last')
-def last_event_donation(event_name):
-    if event_name not in donations_db.get_event_names():
-        abort(404)
-    last_donation = donations_db.get_last_donation(event_name=event_name)
-    return jsonify(
-        {
-            'amount': last_donation.get_donation_amount(),
-            'total_raised': last_donation.get_new_amount(),
-            'timestamp': last_donation.get_timestamp()
-        }
-    )
-
-
-@app.route('/event/<event_name>/overlay')
+@app.route('/overlay/<event_name>')
 def amount_raised(event_name):
-    if event_name not in donations_db.get_event_names():
+    if not donations_db.event_exists(event_name=event_name):
         return render_template('overlay.html',
                                event_name=event_name,
                                amount_raised='...',
@@ -152,10 +191,19 @@ def amount_raised(event_name):
     last_donation = donations_db.get_last_donation(event_name=event_name)
     # Remove decimal point and add thousands separators
     pretty_number = format(int(last_donation.get_new_amount()), ',d')
+    currency_key = get_event_config_value(event_name=event_name, key_required='currency')
+    currency_symbol = get_currency_symbol(currency_key=currency_key)
     return render_template('overlay.html',
                            event_name=event_name,
                            amount_raised=pretty_number,
-                           currency_symbol=get_currency_symbol(event_name=event_name))
+                           currency_symbol=currency_symbol)
+
+
+@app.route('/stats/<event_name>', methods=['GET'])
+def status_console(event_name):
+    if event_name not in donations_db.get_event_names():
+        abort(404)
+    return render_template('console.html', event_name=event_name, debug_mode=str(debug_mode).lower())
 
 
 @app.route('/debug')
