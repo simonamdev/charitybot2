@@ -2,9 +2,9 @@ import time
 
 import requests
 from bs4 import BeautifulSoup
-from charitybot2.charitybot2 import CharityBot, create_parser
+from charitybot2.charitybot2 import CharityBot, create_cb_process_parser
 from charitybot2.events.currency import Currency
-from charitybot2.paths import mocksite_path, external_api_path
+from charitybot2.paths import mocksite_path, external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
 from charitybot2.reporter.twitch import ChatBot
 from selenium import webdriver
@@ -12,7 +12,7 @@ from tests.integration.test_event_loop_with_mocksite import MockEvent
 from tests.tests import ServiceTest, AdjustTestConfig, TestFilePath
 
 driver = None
-parser = create_parser()
+parser = create_cb_process_parser()
 config_adjustment = AdjustTestConfig(config_path=TestFilePath().get_config_path('event', 'config.json'))
 service_test = ServiceTest(
     service_name='Donations Mocksite',
@@ -23,7 +23,7 @@ service_test = ServiceTest(
 external_api = ServiceTest(
     service_name='External_API',
     service_url=api_full_url,
-    service_path=external_api_path,
+    service_path=external_api_cli_path,
     enter_debug=True)
 
 

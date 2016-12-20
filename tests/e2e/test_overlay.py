@@ -3,7 +3,7 @@ import requests
 
 from bs4 import BeautifulSoup
 from charitybot2.events.event_loop import EventLoop
-from charitybot2.paths import mocksite_path, external_api_path
+from charitybot2.paths import mocksite_path, external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from selenium import webdriver
@@ -25,7 +25,7 @@ mocksite = ServiceTest(
 external_api = ServiceTest(
     service_name='External_API',
     service_url=api_full_url,
-    service_path=external_api_path,
+    service_path=external_api_cli_path,
     db_path=donations_db_path,
     sql_path=donations_db_init_script_path,
     enter_debug=True)

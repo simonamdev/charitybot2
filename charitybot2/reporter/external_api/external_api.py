@@ -1,3 +1,4 @@
+import argparse
 import time
 
 from charitybot2.events.currency import Currency
@@ -16,7 +17,7 @@ api_address = '127.0.0.1'
 api_port = 8000
 api_url = 'http://' + api_address
 api_full_url = api_url + ':' + str(api_port) + '/'
-debug_mode = True
+debug_mode = False
 
 api_paths = [
     'events',
@@ -26,7 +27,7 @@ api_paths = [
     'event/:event_name/donations/last'
 ]
 
-donations_db = DonationsDB(db_path=production_donations_db_path, debug=debug_mode)
+donations_db = None
 
 
 def get_currency_symbol(event_name):
@@ -170,13 +171,21 @@ def destroy():
     return 'Not in debug mode - shutting down in unavailable'
 
 
-def start_api():
-    if not debug_mode:
-        global api_address
-        api_address = 'www.charitybot.net'
-        global api_full_url
-        api_full_url = 'http://' + api_address + '/'
-    app.run(host=api_address, port=api_port, debug=False)
+def create_api_process_parser():
+    parser = argparse.ArgumentParser(description='Charitybot API')
+    parser.add_argument('--debug', dest='debug', help='Run Charitybot API in debug mode', action='store_true')
+    return parser
+
+
+def start_api(args):
+    global debug_mode
+    global donations_db
+    debug_mode = args.debug
+    donations_db = DonationsDB(db_path=production_donations_db_path, debug=debug_mode)
+    if debug_mode:
+        donations_db_test_path = TestFilePath().get_db_path('donations.db')
+        donations_db = DonationsDB(db_path=donations_db_test_path, debug=debug_mode)
+    app.run(host=api_address, port=api_port, debug=debug_mode)
 
 
 def shutdown_service():
@@ -185,6 +194,3 @@ def shutdown_service():
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
 
-
-if __name__ == '__main__':
-    start_api()
