@@ -53,11 +53,7 @@ class TestEventGET:
         assert 200 == response.status_code
         assert isinstance(content, dict)
         assert 'test' == content['name']
-        assert 15 == content['donation_count']
-        assert 13.92 == content['donation_average']
-        assert 42.0 == content['largest_donation']
         assert '£' == content['currency_symbol']
-        assert 0 == content['last_hour_donation_count']  # technically doesn't test if it works
         assert 0 == content['start_time']
         assert 9999999999 == content['end_time']
         assert 230.5 == content['amount_raised']
@@ -70,6 +66,17 @@ class TestDonationsGET:
         assert 404 == response.status_code
         response = requests.get(api_v1_base_url + 'event/bla/donations/last')
         assert 404 == response.status_code
+
+    def test_getting_donations_info(self):
+        response = requests.get(api_v1_base_url + 'event/test/donations/info')
+        content = json.loads(response.content.decode('utf-8'))['donations_info']
+        assert 200 == response.status_code
+        assert isinstance(content, dict)
+        assert 15 == content['count']
+        assert 13.92 == content['average']
+        assert 42.0 == content['largest']
+        assert 0 == content['last_hour_count']  # technically doesn't test if it works
+
 
     def test_get_donation_data(self):
         response = requests.get(api_v1_base_url + 'event/test/donations')

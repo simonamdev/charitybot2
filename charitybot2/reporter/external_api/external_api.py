@@ -107,19 +107,12 @@ def event_details(event_name):
     if event_name not in donations_db.get_event_names():
         abort(404)
     all_donations = donations_db.get_all_donations(event_name=event_name)
-    current_time_minus_an_hour = int(time.time()) - 3600
-    # TODO: Do this in the donations DB module, not here!
-    last_hour_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
     start_time, end_time, currency_key, target_amount = get_event_config_values(
         event_name=event_name,
         keys_required=('start_time', 'end_time', 'currency', 'target_amount'))
     event_data = {
         'name': event_name,
-        'donation_count': len(all_donations),
-        'donation_average': donations_db.get_average_donation(event_name=event_name),
-        'largest_donation': max(donation.get_donation_amount() for donation in all_donations),
         'currency_symbol': get_currency_symbol(currency_key=currency_key),
-        'last_hour_donation_count': last_hour_donation_count,
         'start_time': start_time,
         'end_time': end_time,
         'amount_raised': all_donations[-1].get_new_amount(),
@@ -130,7 +123,7 @@ def event_details(event_name):
 
 @app.route('/api/v1/event/<event_name>/donations')
 def event_donations(event_name):
-    if event_name not in donations_db.get_event_names():
+    if not donations_db.event_exists(event_name=event_name):
         abort(404)
     all_donations = donations_db.get_all_donations(event_name=event_name)
     # TODO: Add option to limit via Neopysqlite and not slicing after the fact
@@ -145,6 +138,23 @@ def event_donations(event_name):
         } for donation in all_donations
     ]
     return jsonify(donations=donation_objects)
+
+
+@app.route('/api/v1/event/<event_name>/donations/info')
+def donations_info(event_name):
+    if not donations_db.event_exists(event_name=event_name):
+        abort(404)
+    all_donations = donations_db.get_all_donations(event_name=event_name)
+    current_time_minus_an_hour = int(time.time()) - 3600
+    # TODO: Do this in the donations DB module, not here!
+    last_hour_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
+    donations_info_object = {
+        'count': len(all_donations),
+        'average': donations_db.get_average_donation(event_name=event_name),  # TODO: Do properly via SQL AVG() function
+        'largest': max(donation.get_donation_amount() for donation in all_donations),
+        'last_hour_count': last_hour_donation_count,
+    }
+    return jsonify(donations_info=donations_info_object)
 
 
 @app.route('/api/v1/event/<event_name>/donations/last')
