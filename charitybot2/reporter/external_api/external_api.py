@@ -1,8 +1,10 @@
 import argparse
+import os
 import time
 
+from charitybot2.botconfig.event_config import EventConfiguration
 from charitybot2.events.currency import Currency
-from charitybot2.paths import production_donations_db_path
+from charitybot2.paths import production_donations_db_path, event_config_folder
 from charitybot2.storage.donations_db import DonationsDB
 from flask import Flask, request, jsonify, make_response, abort
 from flask import render_template
@@ -36,6 +38,25 @@ def get_currency_symbol(event_name):
     return Currency(key=donations_db.get_event_currency_key(event_name=event_name)).get_symbol()
 
 
+def get_event_config(event_name):
+    file_path = os.path.join(event_config_folder, event_name + '.json')
+    if debug_mode:
+        file_path = TestFilePath().get_config_path('event', event_name + '.json')
+    return EventConfiguration(file_path=file_path)
+
+
+def get_event_config_value(event_name, key_required):
+    return get_event_config(event_name=event_name).get_value(key_name=key_required)
+
+
+def get_event_config_values(event_name, keys_required=()):
+    event_config = get_event_config(event_name=event_name)
+    return_values = []
+    for key in keys_required:
+        return_values.append(event_config.get_value(key_name=key))
+    return return_values
+
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
@@ -66,13 +87,16 @@ def event_details(event_name):
     all_donations = donations_db.get_all_donations(event_name=event_name)
     current_time_minus_an_hour = int(time.time()) - 3600
     last_hour_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
+    start_time, end_time = get_event_config_values(event_name=event_name, keys_required=('start_time', 'end_time'))
     event_data = {
         'name': event_name,
         'donation_count': len(all_donations),
         'donation_average': donations_db.get_average_donation(event_name=event_name),
         'largest_donation': max(donation.get_donation_amount() for donation in all_donations),
         'currency_symbol': get_currency_symbol(event_name=event_name),
-        'last_hour_donation_count': last_hour_donation_count
+        'last_hour_donation_count': last_hour_donation_count,
+        'start_time': start_time,
+        'end_time': end_time
     }
     return jsonify(event_data)
 

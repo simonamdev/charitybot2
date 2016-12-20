@@ -56,6 +56,8 @@ class TestGET:
         assert 42.0 == content['largest_donation']
         assert '£' == content['currency_symbol']
         assert 0 == content['last_hour_donation_count']  # technically doesn't test if it works
+        assert 0 == content['start_time']
+        assert 9999999999 == content['end_time']
 
     def test_getting_donations_of_non_existent_event_returns_404(self):
         response = requests.get(api_full_url + 'event/bla/donations')
