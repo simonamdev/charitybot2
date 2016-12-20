@@ -13,6 +13,7 @@ status_service = ServiceTest(
     service_url=api_full_url,
     service_path=external_api_cli_path,
     enter_debug=True,
+    extra_args=['--debug'],
     db_path=donations_db_path,
     sql_path=donations_db_init_script_path)
 
@@ -26,15 +27,11 @@ def teardown_module():
 
 
 class TestGET:
-    def test_index_route_returns_information_object(self):
+    def test_index_route_returns_paths(self):
         response = requests.get(api_full_url)
         content = json.loads(response.content)
         assert 200 == response.status_code
         assert isinstance(content['paths'], list)
-
-    def test_information_object_contains_all_paths(self):
-        response = requests.get(api_full_url)
-        content = json.loads(response.content)
         assert sorted(api_paths) == sorted(content['paths'])
 
     def test_events_route_returns_event_names(self):

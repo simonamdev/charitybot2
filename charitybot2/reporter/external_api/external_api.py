@@ -12,12 +12,14 @@ from tests.tests import TestFilePath
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+test_donations_db_path = TestFilePath().get_db_path('donations.db')
 
 api_address = '127.0.0.1'
 api_port = 8000
 api_url = 'http://' + api_address
 api_full_url = api_url + ':' + str(api_port) + '/'
 debug_mode = False
+cli_debug_mode = False
 
 api_paths = [
     'events',
@@ -27,7 +29,7 @@ api_paths = [
     'event/:event_name/donations/last'
 ]
 
-donations_db = None
+donations_db = DonationsDB(db_path=test_donations_db_path, debug=True)
 
 
 def get_currency_symbol(event_name):
@@ -41,7 +43,7 @@ def not_found(error):
 
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({'paths': api_paths})
+    return jsonify({'paths': api_paths, 'debug_allowed': str(cli_debug_mode), 'debug': str(debug_mode)})
 
 
 @app.route('/events', methods=['GET'])
@@ -151,15 +153,16 @@ def amount_raised(event_name):
                            currency_symbol=get_currency_symbol(event_name=event_name))
 
 
-# TODO: Enable entering debug mode only when providing some sort of auth
 @app.route('/debug')
 def debug():
-    donations_db_test_path = TestFilePath().get_db_path('donations.db')
-    global debug_mode
-    debug_mode = True
-    global donations_db
-    donations_db = DonationsDB(db_path=donations_db_test_path, debug=debug_mode)
-    return 'Entered debug mode'
+    if cli_debug_mode:
+        global debug_mode
+        debug_mode = True
+        global donations_db
+        donations_db = DonationsDB(db_path=test_donations_db_path, debug=debug_mode)
+        return 'Entered API debug mode'
+    else:
+        return 'Entering API debug mode is not allowed'
 
 
 @app.route('/destroy')
@@ -178,14 +181,16 @@ def create_api_process_parser():
 
 
 def start_api(args):
-    global debug_mode
+    global cli_debug_mode
+    cli_debug_mode = args.debug
     global donations_db
-    debug_mode = args.debug
-    donations_db = DonationsDB(db_path=production_donations_db_path, debug=debug_mode)
-    if debug_mode:
-        donations_db_test_path = TestFilePath().get_db_path('donations.db')
-        donations_db = DonationsDB(db_path=donations_db_test_path, debug=debug_mode)
-    app.run(host=api_address, port=api_port, debug=debug_mode)
+    if cli_debug_mode:
+        print('--- Starting in debug mode ---')
+        donations_db = DonationsDB(db_path=test_donations_db_path, debug=True)
+    else:
+        print('--- Starting in production mode ---')
+        donations_db = DonationsDB(db_path=production_donations_db_path, debug=True)
+    app.run(host=api_address, port=api_port, debug=cli_debug_mode)
 
 
 def shutdown_service():
@@ -194,3 +199,7 @@ def shutdown_service():
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
 
+if __name__ == '__main__':
+    args = create_api_process_parser().parse_args(['--debug'])
+    print(args)
+    start_api(args=args)
