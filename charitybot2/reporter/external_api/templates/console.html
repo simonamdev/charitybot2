@@ -55,10 +55,16 @@
             </div>
         </div>
         <div class="row info-row">
-            <canvas id="amountRaisedChart" height="300"></canvas>
+            <div class="col-md-6">
+            </div>
         </div>
         <div class="row info-row">
-            <canvas id="amountDistributionChart" height="300"></canvas>
+            <div class="col-md-6">
+                <canvas id="amountRaisedChart"></canvas>
+            </div>
+            <div class="col-md-6">
+                <canvas id="amountDistributionChart"></canvas>
+            </div>
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -70,12 +76,14 @@
 {% block afterbody %}
     <script>
         var api;
-        var test_mode = false;
+        var test_mode = {{ debug_mode }};
+        console.log('Test mode: ' + test_mode);
         var api_url = 'http://www.charitybot.net/'
         var test_url = 'http://127.0.0.1:8000/'
 
         function switchMode() {
             test_mode = !test_mode;
+            console.log('Test mode: ' + test_mode);
             var new_url;
             if (test_mode) {
                 new_url = test_url;
@@ -83,7 +91,7 @@
                 new_url = api_url;
             }
             api = new API(new_url, "{{ event_name }}");
-            api.startLoop();
+            api.makeApiCalls();
         }
 
         $(document).ready(() => {
