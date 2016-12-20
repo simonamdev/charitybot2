@@ -3,6 +3,7 @@ import os
 import time
 
 from charitybot2.botconfig.event_config import EventConfiguration
+from charitybot2.botconfig.json_config import ConfigurationFileDoesNotExistException
 from charitybot2.events.currency import Currency
 from charitybot2.paths import production_donations_db_path, event_config_folder
 from charitybot2.storage.donations_db import DonationsDB
@@ -53,7 +54,12 @@ def get_event_config(event_name):
     file_path = os.path.join(event_config_folder, event_name + '.json')
     if debug_mode:
         file_path = TestFilePath().get_config_path('event', event_name + '.json')
-    return EventConfiguration(file_path=file_path)
+    event_config = None
+    try:
+        event_config = EventConfiguration(file_path=file_path)
+    except ConfigurationFileDoesNotExistException:
+        abort(400)
+    return event_config
 
 
 def get_event_config_value(event_name, key_required):
@@ -66,6 +72,11 @@ def get_event_config_values(event_name, keys_required=()):
     for key in keys_required:
         return_values.append(event_config.get_value(key_name=key))
     return return_values
+
+
+@app.errorhandler(400)
+def bad_request(error):
+    return make_response(jsonify({'error': 'Configuration file missing'}), 400)
 
 
 @app.errorhandler(404)
@@ -172,7 +183,7 @@ def event_donations_distribution(event_name):
 
 @app.route('/overlay/<event_name>')
 def amount_raised(event_name):
-    if event_name not in donations_db.get_event_names():
+    if not donations_db.event_exists(event_name=event_name):
         return render_template('overlay.html',
                                event_name=event_name,
                                amount_raised='...',
@@ -180,10 +191,12 @@ def amount_raised(event_name):
     last_donation = donations_db.get_last_donation(event_name=event_name)
     # Remove decimal point and add thousands separators
     pretty_number = format(int(last_donation.get_new_amount()), ',d')
+    currency_key = get_event_config_value(event_name=event_name, key_required='currency')
+    currency_symbol = get_currency_symbol(currency_key=currency_key)
     return render_template('overlay.html',
                            event_name=event_name,
                            amount_raised=pretty_number,
-                           currency_symbol=get_event_config_value(event_name=event_name, key_required='currency'))
+                           currency_symbol=currency_symbol)
 
 
 @app.route('/stats/<event_name>', methods=['GET'])
