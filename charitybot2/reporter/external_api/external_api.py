@@ -23,13 +23,24 @@ api_full_url = api_url + ':' + str(api_port) + '/'
 debug_mode = False
 cli_debug_mode = False
 
-api_paths = [
-    'events',
-    'event/:event_name',
-    'event/:event_name/donations',
-    'event/:event_name/donations?limit=:limit',
-    'event/:event_name/donations/last'
-]
+api_paths = {
+    'api': {
+        'v1': [
+            'events',
+            'event/:event_name',
+            'event/:event_name/donations',
+            'event/:event_name/donations?limit=:limit',
+            'event/:event_name/donations/last',
+            'event/:event_name/donations/distribution'
+        ]
+    },
+    'stats': [
+        ':event_name'
+    ],
+    'overlay': [
+        ':event_name'
+    ]
+}
 
 donations_db = DonationsDB(db_path=test_donations_db_path, debug=True)
 
@@ -62,7 +73,7 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.route('/', methods=['GET'])
+@app.route('/api/v1/', methods=['GET'])
 def index():
     return jsonify(
         {
@@ -72,7 +83,7 @@ def index():
         })
 
 
-@app.route('/events', methods=['GET'])
+@app.route('/api/v1/events', methods=['GET'])
 def events():
     event_names = donations_db.get_event_names()
     if len(event_names) == 0:
@@ -80,7 +91,7 @@ def events():
     return jsonify(events=event_names)
 
 
-@app.route('/event/<event_name>', methods=['GET'])
+@app.route('/api/v1/event/<event_name>', methods=['GET'])
 def event_details(event_name):
     if event_name not in donations_db.get_event_names():
         abort(404)
@@ -101,14 +112,7 @@ def event_details(event_name):
     return jsonify(event_data)
 
 
-@app.route('/event/<event_name>/status', methods=['GET'])
-def status_console(event_name):
-    if event_name not in donations_db.get_event_names():
-        abort(404)
-    return render_template('console.html', event_name=event_name, debug_mode=str(debug_mode).lower())
-
-
-@app.route('/event/<event_name>/donations')
+@app.route('/api/v1/event/<event_name>/donations')
 def event_donations(event_name):
     if event_name not in donations_db.get_event_names():
         abort(404)
@@ -127,7 +131,21 @@ def event_donations(event_name):
     return jsonify(donations=donation_objects)
 
 
-@app.route('/event/<event_name>/donations/distribution')
+@app.route('/api/v1/event/<event_name>/donations/last')
+def last_event_donation(event_name):
+    if event_name not in donations_db.get_event_names():
+        abort(404)
+    last_donation = donations_db.get_last_donation(event_name=event_name)
+    return jsonify(
+        {
+            'amount': last_donation.get_donation_amount(),
+            'total_raised': last_donation.get_new_amount(),
+            'timestamp': last_donation.get_timestamp()
+        }
+    )
+
+
+@app.route('/api/v1/event/<event_name>/donations/distribution')
 def event_donations_distribution(event_name):
     if event_name not in donations_db.get_event_names():
         abort(404)
@@ -152,21 +170,7 @@ def event_donations_distribution(event_name):
     return jsonify(donations_distribution=distribution)
 
 
-@app.route('/event/<event_name>/donations/last')
-def last_event_donation(event_name):
-    if event_name not in donations_db.get_event_names():
-        abort(404)
-    last_donation = donations_db.get_last_donation(event_name=event_name)
-    return jsonify(
-        {
-            'amount': last_donation.get_donation_amount(),
-            'total_raised': last_donation.get_new_amount(),
-            'timestamp': last_donation.get_timestamp()
-        }
-    )
-
-
-@app.route('/event/<event_name>/overlay')
+@app.route('/overlay/<event_name>')
 def amount_raised(event_name):
     if event_name not in donations_db.get_event_names():
         return render_template('overlay.html',
@@ -180,6 +184,13 @@ def amount_raised(event_name):
                            event_name=event_name,
                            amount_raised=pretty_number,
                            currency_symbol=get_event_config_value(event_name=event_name, key_required='currency'))
+
+
+@app.route('/stats/<event_name>', methods=['GET'])
+def status_console(event_name):
+    if event_name not in donations_db.get_event_names():
+        abort(404)
+    return render_template('console.html', event_name=event_name, debug_mode=str(debug_mode).lower())
 
 
 @app.route('/debug')
