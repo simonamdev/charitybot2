@@ -59,7 +59,9 @@ class TestEventGET:
         assert '£' == content['currency_symbol']
         assert 0 == content['last_hour_donation_count']  # technically doesn't test if it works
         assert 0 == content['start_time']
-        assert 1482250557 == content['end_time']
+        assert 9999999999 == content['end_time']
+        assert 230.5 == content['amount_raised']
+        assert 1000 == content['target_amount']
 
 
 class TestDonationsGET:

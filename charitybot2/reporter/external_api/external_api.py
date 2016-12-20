@@ -108,8 +108,11 @@ def event_details(event_name):
         abort(404)
     all_donations = donations_db.get_all_donations(event_name=event_name)
     current_time_minus_an_hour = int(time.time()) - 3600
+    # TODO: Do this in the donations DB module, not here!
     last_hour_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
-    start_time, end_time, currency_key = get_event_config_values(event_name=event_name, keys_required=('start_time', 'end_time', 'currency'))
+    start_time, end_time, currency_key, target_amount = get_event_config_values(
+        event_name=event_name,
+        keys_required=('start_time', 'end_time', 'currency', 'target_amount'))
     event_data = {
         'name': event_name,
         'donation_count': len(all_donations),
@@ -118,7 +121,9 @@ def event_details(event_name):
         'currency_symbol': get_currency_symbol(currency_key=currency_key),
         'last_hour_donation_count': last_hour_donation_count,
         'start_time': start_time,
-        'end_time': end_time
+        'end_time': end_time,
+        'amount_raised': all_donations[-1].get_new_amount(),
+        'target_amount': target_amount
     }
     return jsonify(event_data)
 
