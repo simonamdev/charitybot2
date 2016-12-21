@@ -16,7 +16,27 @@ function numberWithCommas(x) {
 
 function convertToTimestamp(unixTimestamp){
   var d = new Date(unixTimestamp * 1000);
-  return d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+  var day = d.getDate();
+  var month = d.getMonth() + 1;
+  var hours = d.getHours();
+  var minutes = d.getMinutes();
+  var seconds = d.getSeconds();
+  if (day < 10) {
+     day = '0' + day;
+  }
+  if (month < 10) {
+    month = '0' + month;
+  }
+  if (hours < 10) {
+    hours = '0' + hours;
+  }
+  if (minutes < 10) {
+    minutes = '0' + minutes;
+  }
+  if (seconds < 10) {
+    seconds = '0' + seconds;
+  }
+  return day + '/' + month + '/' + d.getFullYear() + ' ' + hours + ':' + minutes + ':' + seconds;
 }
 
 function returnTimespanString(timespanInSeconds) {
@@ -56,7 +76,6 @@ class API {
         // Event details
         var eventUrl = this._url + 'event/' + this._eventName;
         $.getJSON(eventUrl, (data) => {
-            // console.log(data);
             this.writeEventDetailsToPage(data);
             this.writeCurrencySymbols(data['currency_symbol']);
         }).fail(() => {
@@ -72,7 +91,6 @@ class API {
         // Donation Charts
         var donationsUrl = eventUrl + '/donations';
         $.getJSON(donationsUrl, (data) => {
-            // console.log(data);
             this.drawAmountRaisedChart(data['donations']);
         }).fail(() => {
             console.log('Could not get donations data');
@@ -83,13 +101,6 @@ class API {
         }).fail(() => {
             console.log('Could not get donation distribution data');
         });
-        // Last donation Details TODO: Move to donation details api call
-        var lastDonationUrl = donationsUrl + '/last';
-        $.getJSON(lastDonationUrl, (data) => {
-            this.writeLastDonationAmount(data['donations_info']);
-        }).fail(() => {
-            console.log('Could not get last donation data');
-        })
     }
 
     writeCurrencySymbols(currencySymbol) {
@@ -134,10 +145,6 @@ class API {
         $('#largest-donation-timestamp').text(convertToTimestamp(data['largest']['timestamp']));
         $('#last-donation').text(data['last']['amount']);
         $('#last-donation-timestamp').text(convertToTimestamp(data['last']['timestamp']));
-    }
-
-    writeLastDonationAmount(data) {
-        // $('#last_donation').text(data['amount']);
     }
 
     drawAmountRaisedChart(data) {
