@@ -45,17 +45,16 @@ class API {
         });
         // Donation details
         var donationsInfoUrl = eventUrl + '/donations/info';
-        $.getJSON(donationsInfoUrl, (data => {
-            this.writeDonationDetailsToPage(data);
+        $.getJSON(donationsInfoUrl, (data) => {
+            this.writeDonationDetailsToPage(data['donations_info']);
         }).fail(() => {
             console.log('Could not get donations info data');
-        }));
+        });
         // Donation Charts
         var donationsUrl = eventUrl + '/donations';
         $.getJSON(donationsUrl, (data) => {
             // console.log(data);
             this.drawAmountRaisedChart(data['donations']);
-
         }).fail(() => {
             console.log('Could not get donations data');
         });
@@ -68,7 +67,7 @@ class API {
         // Last donation Details TODO: Move to donation details api call
         var lastDonationUrl = donationsUrl + '/last';
         $.getJSON(lastDonationUrl, (data) => {
-            this.writeLastDonationAmount(data);
+            this.writeLastDonationAmount(data['donations_info']);
         }).fail(() => {
             console.log('Could not get last donation data');
         })
@@ -107,14 +106,17 @@ class API {
     }
 
     writeDonationDetailsToPage(data) {
+        console.log(data);
         $('#total-donation-count').text(data['count']);
-        $('#donation_average').text(data['average']);
-        $('#largest_donation').text(data['largest_donation']);
-        $('#last_hour_donation_count').text(data['last_hour_donation_count']);
+        $('#donation-count').text(data['last_hour_count']);
+
+        //$('#donation_average').text(data['average']);
+        //$('#largest_donation').text(data['largest_donation']);
+        //$('#last_hour_donation_count').text(data['last_hour_donation_count']);
     }
 
     writeLastDonationAmount(data) {
-        $('#last_donation').text(data['amount']);
+        // $('#last_donation').text(data['amount']);
     }
 
     drawAmountRaisedChart(data) {
