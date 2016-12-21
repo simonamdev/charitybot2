@@ -80,7 +80,9 @@ class TestDonationsGET:
         assert isinstance(content['last'], dict)
         assert 8.5 == content['last']['amount']
         assert 1477258999 == content['last']['timestamp']
-        assert 0 == content['last_hour_count']  # technically doesn't test if it works
+        assert isinstance(content['specific'], dict)
+        assert 0 == content['specific']['count'] == 0
+        assert 3600 == content['specific']['timespan']
 
     def test_get_donation_data(self):
         response = requests.get(api_v1_base_url + 'event/test/donations')

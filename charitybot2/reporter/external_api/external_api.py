@@ -145,9 +145,10 @@ def donations_info(event_name):
     if not donations_db.event_exists(event_name=event_name):
         abort(404)
     all_donations = donations_db.get_all_donations(event_name=event_name)
-    current_time_minus_an_hour = int(time.time()) - 3600
+    last_timespan = 3600 # an hour in seconds
+    current_time_minus_an_hour = int(time.time()) - last_timespan
     # TODO: Do this in the donations DB module, not here!
-    last_hour_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
+    last_timespan_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
     largest_donation_amount = max(donation.get_donation_amount() for donation in all_donations)
     largest_donation_timestamp = next(donation for donation in all_donations if donation.get_donation_amount() == largest_donation_amount).get_timestamp()
     last_donation = all_donations[-1]
@@ -162,7 +163,10 @@ def donations_info(event_name):
             'amount': last_donation.get_donation_amount(),
             'timestamp': last_donation.get_timestamp()
         },
-        'last_hour_count': last_hour_donation_count,
+        'specific': {
+            'count': last_timespan_donation_count,
+            'timespan': last_timespan
+        }
     }
     return jsonify(donations_info=donations_info_object)
 
