@@ -48,18 +48,20 @@ class ResetDB:
 
 
 class ServiceTest(ResetDB):
-    def __init__(self, service_name, service_url, service_path, enter_debug=True, db_path='', sql_path=''):
+    def __init__(self, service_name, service_url, service_path, enter_debug=True, extra_args=[], db_path='',
+                 sql_path=''):
         super().__init__(db_path=db_path, sql_path=sql_path)
         self.service_url = service_url
         self.service_name = service_name
         self.service_path = service_path
         self.enter_debug = enter_debug
+        self.extra_args = extra_args
         self.service = None
 
     def start_service(self):
         print('Starting Microservice')
-        print(self.service_path)
         args = [sys.executable, self.service_path]
+        args.extend(self.extra_args)
         self.service = subprocess.Popen(args)
         sleep(4)
         if self.enter_debug:

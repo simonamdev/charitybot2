@@ -38,11 +38,11 @@ class IllegalArgumentException(Exception):
     pass
 
 
-def create_parser():
-    parser = argparse.ArgumentParser(description='Charity stream bot')
+def create_cb_process_parser():
+    parser = argparse.ArgumentParser(description='Charitybot Process')
     parser.add_argument('event', type=str, help='Event Configuration file name')
     parser.add_argument('--twitch-config', type=str, help='Twitch Bot Config file name')
-    parser.add_argument('--debug', dest='debug', help='Run CharityBot in debug mode', action='store_true')
+    parser.add_argument('--debug', dest='debug', help='Run Charitybot in debug mode', action='store_true')
     return parser
 
 

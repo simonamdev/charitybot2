@@ -2,9 +2,9 @@ import time
 
 import requests
 from bs4 import BeautifulSoup
-from charitybot2.charitybot2 import CharityBot, create_parser
+from charitybot2.charitybot2 import CharityBot, create_cb_process_parser
 from charitybot2.events.currency import Currency
-from charitybot2.paths import mocksite_path, external_api_path
+from charitybot2.paths import mocksite_path, external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
 from charitybot2.reporter.twitch import ChatBot
 from selenium import webdriver
@@ -12,8 +12,8 @@ from tests.integration.test_event_loop_with_mocksite import MockEvent
 from tests.tests import ServiceTest, AdjustTestConfig, TestFilePath
 
 driver = None
-parser = create_parser()
-config_adjustment = AdjustTestConfig(config_path=TestFilePath().get_config_path('event', 'config.json'))
+parser = create_cb_process_parser()
+config_adjustment = AdjustTestConfig(config_path=TestFilePath().get_config_path('event', 'E2E_Test_Charity_Event.json'))
 service_test = ServiceTest(
     service_name='Donations Mocksite',
     service_url=MockEvent.mocksite_base_url,
@@ -21,9 +21,10 @@ service_test = ServiceTest(
     enter_debug=False)
 
 external_api = ServiceTest(
-    service_name='External_API',
+    service_name='External API',
     service_url=api_full_url,
-    service_path=external_api_path,
+    service_path=external_api_cli_path,
+    extra_args=['--debug'],
     enter_debug=True)
 
 
@@ -44,7 +45,7 @@ def setup_module():
     external_api.start_service()
     global driver
     driver = webdriver.Chrome()
-    driver.implicitly_wait(5)
+    driver.implicitly_wait(10)
 
 
 def teardown_module():
@@ -58,7 +59,7 @@ class TestFullTwitchEvent:
     def test_full_twitch_event(self):
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 30)
         navigate_to_twitch_channel()
-        args = parser.parse_args(['config', '--debug', '--twitch-config', 'purrcat259'])
+        args = parser.parse_args(['E2E_Test_Charity_Event', '--debug', '--twitch-config', 'purrcat259'])
         bot = CharityBot(args=args)
         bot.initialise_bot()
         bot.start_bot()
@@ -74,14 +75,19 @@ class TestFullAPIEvent:
     def test_full_event(self):
         response = requests.get(MockEvent.mocksite_base_url + 'reset/')
         assert 200 == response.status_code
-        config_adjustment.change_value(key='end_time', value=int(time.time()) + 10)
-        args = parser.parse_args(['config', '--debug'])
+        config_adjustment.change_value(key='end_time', value=int(time.time()) + 15)
+        args = parser.parse_args(['E2E_Test_Charity_Event', '--debug'])
         bot = CharityBot(args=args)
         bot.initialise_bot()
+        # see that the overlay is functioning before starting
+        overlay_url = api_full_url + 'overlay/E2E_Test_Charity_Event'
+        response = requests.get(url=overlay_url)
+        assert 200 == response.status_code
         bot.start_bot()
-        response = requests.get(url=api_full_url + 'event/E2E_Test_Charity_Event/overlay')
+        # get the value from the overlay
+        response = requests.get(url=overlay_url)
         assert 200 == response.status_code
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
         soup = BeautifulSoup(response.content, 'html.parser')
         amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
-        assert '300' == amount_raised
+        assert '350' == amount_raised

@@ -3,7 +3,7 @@ import requests
 
 from bs4 import BeautifulSoup
 from charitybot2.events.event_loop import EventLoop
-from charitybot2.paths import mocksite_path, external_api_path
+from charitybot2.paths import mocksite_path, external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from selenium import webdriver
@@ -23,12 +23,13 @@ mocksite = ServiceTest(
 
 
 external_api = ServiceTest(
-    service_name='External_API',
+    service_name='External API',
     service_url=api_full_url,
-    service_path=external_api_path,
+    service_path=external_api_cli_path,
+    enter_debug=True,
+    extra_args=['--debug'],
     db_path=donations_db_path,
-    sql_path=donations_db_init_script_path,
-    enter_debug=True)
+    sql_path=donations_db_init_script_path)
 
 
 def reset_mocksite():
@@ -49,7 +50,7 @@ def teardown_module():
 
 
 class TestOverlay:
-    overlay_url = api_full_url + 'event/{}/overlay'
+    overlay_url = api_full_url + 'overlay/{}'
 
     def test_getting_last_donation_amount_on_overlay(self):
         reset_mocksite()
@@ -71,10 +72,10 @@ class TestOverlay:
         driver = webdriver.Chrome()
         reset_mocksite()
         time.sleep(2)
-        event_name = 'test_two'
+        event_name = 'config'
         driver.get(self.overlay_url.format(event_name))
         EventLoop(event=MockEvent(event_name, time.time() + 25), debug=True).start()
         soup = BeautifulSoup(driver.find_element_by_id('amount_raised').text.strip(), 'html.parser')
         assert '400' == soup.text
         soup = BeautifulSoup(driver.find_element_by_id('overlay-text').text.strip(), 'html.parser')
-        assert '$400' == soup.text
+        assert '£400' == soup.text

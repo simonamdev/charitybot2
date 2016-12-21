@@ -14,6 +14,50 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function convertToTimestamp(unixTimestamp){
+  var d = new Date(unixTimestamp * 1000);
+  var day = d.getDate();
+  var month = d.getMonth() + 1;
+  var hours = d.getHours();
+  var minutes = d.getMinutes();
+  var seconds = d.getSeconds();
+  if (day < 10) {
+     day = '0' + day;
+  }
+  if (month < 10) {
+    month = '0' + month;
+  }
+  if (hours < 10) {
+    hours = '0' + hours;
+  }
+  if (minutes < 10) {
+    minutes = '0' + minutes;
+  }
+  if (seconds < 10) {
+    seconds = '0' + seconds;
+  }
+  return day + '/' + month + '/' + d.getFullYear() + ' ' + hours + ':' + minutes + ':' + seconds;
+}
+
+function returnTimespanString(timespanInSeconds) {
+    var timespanInMinutes = timespanInSeconds / 60;
+    if (timespanInMinutes < 1) {
+        return timespanInSeconds + ' seconds';
+    } else if (timespanInMinutes == 1) {
+        return 'second';
+    }
+    var timespanInHours = timespanInMinutes / 60;
+    if (timespanInHours < 1) {
+        return timespanInMinutes + ' minutes';
+    } else if (timespanInMinutes == 1) {
+        return 'minute';
+    }
+    if (timespanInHours == 1) {
+        return 'hour';
+    }
+    return timespanInHours + ' hours';
+}
+
 class API {
     constructor(url, eventName) {
         this._url = url;
@@ -22,27 +66,32 @@ class API {
 
     makeApiCalls() {
         showLoader();
-        var api_call = this.showEventInformation(this._eventName);
+        var api_call = this.writeAllDataToPage(this._eventName);
         $.when(api_call).then(() => {
             hideLoader();
         });
     }
 
-    showEventInformation() {
+    writeAllDataToPage() {
+        // Event details
         var eventUrl = this._url + 'event/' + this._eventName;
         $.getJSON(eventUrl, (data) => {
-            // console.log(data);
-            this.writeEventDataToPage(data);
+            this.writeEventDetailsToPage(data);
             this.writeCurrencySymbols(data['currency_symbol']);
         }).fail(() => {
             console.log('Could not get event data');
         });
+        // Donation details
+        var donationsInfoUrl = eventUrl + '/donations/info';
+        $.getJSON(donationsInfoUrl, (data) => {
+            this.writeDonationDetailsToPage(data['donations_info']);
+        }).fail(() => {
+            console.log('Could not get donations info data');
+        });
+        // Donation Charts
         var donationsUrl = eventUrl + '/donations';
         $.getJSON(donationsUrl, (data) => {
-            // console.log(data);
-            this.writeAmountRaised(data['donations']);
             this.drawAmountRaisedChart(data['donations']);
-
         }).fail(() => {
             console.log('Could not get donations data');
         });
@@ -52,32 +101,50 @@ class API {
         }).fail(() => {
             console.log('Could not get donation distribution data');
         });
-        var lastDonationUrl = donationsUrl + '/last';
-        $.getJSON(lastDonationUrl, (data) => {
-            this.writeLastDonationAmount(data);
-        }).fail(() => {
-            console.log('Could not get last donation data');
-        })
     }
 
     writeCurrencySymbols(currencySymbol) {
-        $('.currency_symbol').text(currencySymbol);
+        $('.currency-symbol').text(currencySymbol);
     }
 
-    writeEventDataToPage(data) {
-        $('#donation_count').text(data['donation_count']);
-        $('#donation_average').text(data['donation_average']);
-        $('#largest_donation').text(data['largest_donation']);
-        $('#last_hour_donation_count').text(data['last_hour_donation_count']);
+    writeEventDetailsToPage(data) {
+        console.log(data);
+        // Event Length Data
+        $('#event-start').text(convertToTimestamp(data['start_time']));
+        $('#event-end').text(convertToTimestamp(data['end_time']));
+        var eventLength = Math.round(((data['end_time'] - data['start_time']) / (60 * 60)) * 100) / 100;
+        var currentTime = Math.floor(Date.now() / 1000);
+        var eventRemaining = Math.round((data['end_time'] - currentTime) * 100) / 100;
+        var eventPercentageComplete = ((data['end_time'] - currentTime) / (data['end_time'] - data['start_time'])) * 100;
+        eventPercentageComplete = Math.abs(Math.round(eventPercentageComplete * 100) / 100);
+        $('#event-length').text(numberWithCommas(eventLength));
+        $('#event-remaining').text(numberWithCommas(eventRemaining));
+        $('#event-progress').css('width', eventPercentageComplete + '%').attr('aria-valuenow', eventPercentageComplete).text(eventPercentageComplete + '%');
+        if (eventPercentageComplete >= 100) {
+            $('#event-progress').toggleClass('progress-bar-success');
+        }
+        // Amount Raised Data
+        $('#amount-raised').text(numberWithCommas(data['amount_raised']));
+        $('#target-amount').text(numberWithCommas(data['target_amount']));
+        var amountPercentageComplete = (data['amount_raised'] / data['target_amount']) * 100;
+        amountPercentageComplete = Math.round(amountPercentageComplete * 100) / 100;
+        console.log(amountPercentageComplete);
+        $('#amount-progress').css('width', amountPercentageComplete + '%').attr('aria-valuenow', amountPercentageComplete).text(amountPercentageComplete + '%');
+        if (amountPercentageComplete >= 100) {
+            $('#amount-progress').toggleClass('progress-bar-success');
+        }
     }
 
-    writeLastDonationAmount(data) {
-        $('#last_donation').text(data['amount']);
-    }
-
-    writeAmountRaised(data) {
-        var prettyNumber = numberWithCommas(data[data.length - 1]['total_raised']);
-        $('#amount_raised').text(prettyNumber);
+    writeDonationDetailsToPage(data) {
+        console.log(data);
+        $('#total-donation-count').text(data['count']);
+        $('#donation-count').text(data['specific']['count']);
+        $('#donation-timespan').text(returnTimespanString(data['specific']['timespan']));
+        $('#average-donation').text(data['average']);
+        $('#largest-donation').text(data['largest']['amount']);
+        $('#largest-donation-timestamp').text(convertToTimestamp(data['largest']['timestamp']));
+        $('#last-donation').text(data['last']['amount']);
+        $('#last-donation-timestamp').text(convertToTimestamp(data['last']['timestamp']));
     }
 
     drawAmountRaisedChart(data) {
@@ -108,7 +175,7 @@ class API {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 scales: {
                     yAxes: [{
                         ticks: {
@@ -152,7 +219,7 @@ class API {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 scales: {
                     yAxes: [{
                         ticks: {

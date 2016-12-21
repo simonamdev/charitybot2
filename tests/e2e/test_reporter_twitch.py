@@ -66,5 +66,5 @@ class TestTwitchChat:
         test_event_loop = TwitchEventLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         time.sleep(4)
-        expected_string = ChatBot.donation_string.format(Currency.GBP, 50.0, Currency.GBP, 250.52)
+        expected_string = ChatBot.donation_string.format(Currency.GBP, 250.52, Currency.GBP, 250.52)
         assert expected_string in get_twitch_chat_box_contents()
