@@ -74,9 +74,10 @@ class TestDonationsGET:
         assert isinstance(content, dict)
         assert 15 == content['count']
         assert 13.92 == content['average']
-        assert 42.0 == content['largest']
+        assert isinstance(content['largest'], dict)
+        assert 42.0 == content['largest']['amount']
+        assert 1477258844 == content['largest']['timestamp']
         assert 0 == content['last_hour_count']  # technically doesn't test if it works
-
 
     def test_get_donation_data(self):
         response = requests.get(api_v1_base_url + 'event/test/donations')

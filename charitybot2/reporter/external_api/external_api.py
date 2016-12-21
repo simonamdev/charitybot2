@@ -148,10 +148,15 @@ def donations_info(event_name):
     current_time_minus_an_hour = int(time.time()) - 3600
     # TODO: Do this in the donations DB module, not here!
     last_hour_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
+    largest_donation_amount = max(donation.get_donation_amount() for donation in all_donations)
+    largest_donation_timestamp = next(donation for donation in all_donations if donation.get_donation_amount() == largest_donation_amount).get_timestamp()
     donations_info_object = {
         'count': len(all_donations),
         'average': donations_db.get_average_donation(event_name=event_name),  # TODO: Do properly via SQL AVG() function
-        'largest': max(donation.get_donation_amount() for donation in all_donations),
+        'largest': {
+            'amount': largest_donation_amount,
+            'timestamp': largest_donation_timestamp
+        },
         'last_hour_count': last_hour_donation_count,
     }
     return jsonify(donations_info=donations_info_object)
