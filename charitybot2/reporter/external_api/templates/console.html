@@ -29,17 +29,19 @@
         </div>
         <!-- Event Details -->
         <h1 class="text-center">Event: <span id="event_name">{{ event_name }}</span></h1>
-        <div class="row text-center">
-            <div class="col-md-2 col-md-offset-2">
+        <div class="row text-center donation-text">
+            <div class="col-md-3 col-md-offset-3">
                 Start Time: <span id="event-start"></span>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 End Time: <span id="event-end"></span>
             </div>
-            <div class="col-md-2">
+        </div>
+        <div class="row text-center donation-text">
+            <div class="col-md-3 col-md-offset-3">
                 Duration: <span id="event-length"></span> hours
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 Time Remaining: <span id="event-remaining"></span> hours
             </div>
         </div>
@@ -51,8 +53,11 @@
                 </div>
             </div>
         </div>
-        <!-- Amounts Details -->
         <div class="row text-center">
+            <h1>Donations</h1>
+        </div>
+        <!-- Amounts Details -->
+        <div class="row text-center donation-text">
             <div class="col-md-2 col-md-offset-4">
                 Amount Raised: <span class="currency-symbol"></span><span id="amount-raised"></span>
             </div>
@@ -69,62 +74,29 @@
             </div>
         </div>
         <!-- Donations Details -->
-        <div class="row text-center">
-            <div class="col-md-4 col-md-offset-2">
+        <div class="row text-center donation-text">
+            <div class="col-md-6 col-md-offset-3">
                 <span id="total-donation-count"></span> donations in total
             </div>
-            <div class="col-md-4">
+        </div>
+        <div class="row text-center donation-text">
+            <div class="col-md-6 col-md-offset-3">
                 <span id="donation-count"></span> donations in the last <span id="donation-timespan"></span>
             </div>
         </div>
-        <div class="row text-center">
-            <div class="col-md-6 col-md-offset-4">
+        <div class="row text-center donation-text">
+            <div class="col-md-6 col-md-offset-3">
                 Average Donation: <span class="currency-symbol"></span><span id="average-donation"></span>
             </div>
         </div>
-        <div class="row text-center">
-            <div class="col-md-6 col-md-offset-4">
+        <div class="row text-center donation-text">
+            <div class="col-md-6 col-md-offset-3">
                 Largest Donation: <span class="currency-symbol"></span><span id="largest-donation"></span> at: <span id="largest-donation-timestamp"></span>
             </div>
         </div>
-        <div class="row text-center">
-            <div class="col-md-6 col-md-offset-4">
+        <div class="row text-center donation-text">
+            <div class="col-md-6 col-md-offset-3">
                 Last Donation: <span class="currency-symbol"></span><span id="last-donation"></span> at: <span id="last-donation-timestamp"></span>
-            </div>
-        </div>
-
-
-
-
-
-        <div class="row donation-text">
-            <div class="col-md-6 col-md-offset-3 text-center">
-                <div class="col-md-4 info-row">
-                    Amount Raised: <span class="currency_symbol"></span><span id="amount_raised"></span>
-                </div>
-                <div class="col-md-4 info-row">
-                    <span id="last_hour_donation_count"></span> donations in the last hour
-                </div>
-                <div class="col-md-4 info-row">
-                    Last donation: <span class="currency_symbol"></span><span id="last_donation"></span>
-                </div>
-            </div>
-        </div>
-        <div class="row donation-text">
-            <div class="col-md-6 col-md-offset-3 text-center">
-                <div class="col-md-4">
-                    <span id="donation_count"></span> donations so far
-                </div>
-                <div class="col-md-4">
-                    Average donation: <span class="currency_symbol"></span><span id="donation_average"></span>
-                </div>
-                <div class="col-md-4">
-                    Largest donation: <span class="currency_symbol"></span><span id="largest_donation"></span>
-                </div>
-            </div>
-        </div>
-        <div class="row info-row">
-            <div class="col-md-6">
             </div>
         </div>
         <div class="row info-row">

@@ -19,6 +19,25 @@ function convertToTimestamp(unixTimestamp){
   return d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 }
 
+function returnTimespanString(timespanInSeconds) {
+    var timespanInMinutes = timespanInSeconds / 60;
+    if (timespanInMinutes < 1) {
+        return timespanInSeconds + ' seconds';
+    } else if (timespanInMinutes == 1) {
+        return 'second';
+    }
+    var timespanInHours = timespanInMinutes / 60;
+    if (timespanInHours < 1) {
+        return timespanInMinutes + ' minutes';
+    } else if (timespanInMinutes == 1) {
+        return 'minute';
+    }
+    if (timespanInHours == 1) {
+        return 'hour';
+    }
+    return timespanInHours + ' hours';
+}
+
 class API {
     constructor(url, eventName) {
         this._url = url;
@@ -108,11 +127,13 @@ class API {
     writeDonationDetailsToPage(data) {
         console.log(data);
         $('#total-donation-count').text(data['count']);
-        $('#donation-count').text(data['last_hour_count']);
-
-        //$('#donation_average').text(data['average']);
-        //$('#largest_donation').text(data['largest_donation']);
-        //$('#last_hour_donation_count').text(data['last_hour_donation_count']);
+        $('#donation-count').text(data['specific']['count']);
+        $('#donation-timespan').text(returnTimespanString(data['specific']['timespan']));
+        $('#average-donation').text(data['average']);
+        $('#largest-donation').text(data['largest']['amount']);
+        $('#largest-donation-timestamp').text(convertToTimestamp(data['largest']['timestamp']));
+        $('#last-donation').text(data['last']['amount']);
+        $('#last-donation-timestamp').text(convertToTimestamp(data['last']['timestamp']));
     }
 
     writeLastDonationAmount(data) {
