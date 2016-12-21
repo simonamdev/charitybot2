@@ -77,6 +77,9 @@ class TestDonationsGET:
         assert isinstance(content['largest'], dict)
         assert 42.0 == content['largest']['amount']
         assert 1477258844 == content['largest']['timestamp']
+        assert isinstance(content['last'], dict)
+        assert 8.5 == content['last']['amount']
+        assert 1477258999 == content['last']['timestamp']
         assert 0 == content['last_hour_count']  # technically doesn't test if it works
 
     def test_get_donation_data(self):

@@ -150,12 +150,17 @@ def donations_info(event_name):
     last_hour_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
     largest_donation_amount = max(donation.get_donation_amount() for donation in all_donations)
     largest_donation_timestamp = next(donation for donation in all_donations if donation.get_donation_amount() == largest_donation_amount).get_timestamp()
+    last_donation = all_donations[-1]
     donations_info_object = {
         'count': len(all_donations),
         'average': donations_db.get_average_donation(event_name=event_name),  # TODO: Do properly via SQL AVG() function
         'largest': {
             'amount': largest_donation_amount,
             'timestamp': largest_donation_timestamp
+        },
+        'last': {
+            'amount': last_donation.get_donation_amount(),
+            'timestamp': last_donation.get_timestamp()
         },
         'last_hour_count': last_hour_donation_count,
     }
