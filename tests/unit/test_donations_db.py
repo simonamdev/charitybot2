@@ -79,6 +79,11 @@ class TestDonationsDBRetrieve:
         ddb = DonationsDB(db_path=donations_db_path, debug=True)
         assert True is ddb.currency_is_set(event_name='test')
 
+    def test_get_donations_from_a_timespan(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        last_timespan_donations = ddb.get_donations_for_timespan(event_name='test', timespan_start=1477258100)
+        assert 6 == len(last_timespan_donations)
+
 
 class TestDonationsDBRecording:
     def test_recording_donation_records_in_db(self):

@@ -63,3 +63,9 @@ class DonationsDB(BaseDB):
 
     def set_event_currency_key(self, event_name, currency_key):
         self.db.insert_row(table='currency', row_string='(NULL, ?, ?)', row_data=(event_name, currency_key))
+
+    def get_donations_for_timespan(self, event_name, timespan_start, timespan_end=int(time.time())):
+        donation_rows = self.db.get_specific_rows(table=event_name, filter_string='timestamp >= {} AND timestamp <= {}'.format(
+            timespan_start,
+            timespan_end))
+        return [convert_row_to_donation(row) for row in donation_rows]

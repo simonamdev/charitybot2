@@ -146,9 +146,9 @@ def donations_info(event_name):
         abort(404)
     all_donations = donations_db.get_all_donations(event_name=event_name)
     last_timespan = 3600 # an hour in seconds
-    current_time_minus_an_hour = int(time.time()) - last_timespan
-    # TODO: Do this in the donations DB module, not here!
-    last_timespan_donation_count = len([donation for donation in all_donations if donation.get_timestamp() > current_time_minus_an_hour])
+    last_timespan_donations = donations_db.get_donations_for_timespan(
+        event_name=event_name,
+        timespan_start=int(time.time()) - last_timespan)
     largest_donation_amount = max(donation.get_donation_amount() for donation in all_donations)
     largest_donation_timestamp = next(donation for donation in all_donations if donation.get_donation_amount() == largest_donation_amount).get_timestamp()
     last_donation = all_donations[-1]
@@ -164,7 +164,7 @@ def donations_info(event_name):
             'timestamp': last_donation.get_timestamp()
         },
         'specific': {
-            'count': last_timespan_donation_count,
+            'count': len(last_timespan_donations),
             'timespan': last_timespan
         }
     }
