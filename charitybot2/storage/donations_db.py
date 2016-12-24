@@ -21,7 +21,7 @@ class DonationsDB(BaseDB):
         super().__init__(file_path=db_path, db_name='Donations DB', verbose=debug)
         self.logger = Logger(source='Donations_DB', event='', console_only=debug)
 
-    def record_donation(self, event_name, donation, currency_key='GBP'):
+    def record_donation(self, event_name, donation):
         self.create_event_table_if_not_exists(event_name=event_name)
         self.logger.log_info('Inserting donation: {} into donations database'.format(donation))
         self.db.insert_row(
@@ -36,9 +36,6 @@ class DonationsDB(BaseDB):
 
     def event_exists(self, event_name):
         return event_name in self.db.get_table_names()
-
-    def currency_is_set(self, event_name):
-        return event_name in [row[1] for row in self.db.get_all_rows(table='currency')]
 
     def get_all_donations(self, event_name):
         donation_rows = self.db.get_all_rows(table=event_name)
@@ -56,15 +53,8 @@ class DonationsDB(BaseDB):
         return round(average_donation_row[0][0], 2)
 
     def get_event_names(self):
-        names_to_remove = ('sqlite_sequence', 'currency')
+        names_to_remove = ('sqlite_sequence')
         return [name for name in self.db.get_table_names() if name not in names_to_remove]
-
-    def get_event_currency_key(self, event_name):
-        currency_key = self.db.get_specific_rows(table='currency', filter_string='event = \'{}\''.format(event_name))
-        return currency_key[0][2]
-
-    def set_event_currency_key(self, event_name, currency_key):
-        self.db.insert_row(table='currency', row_string='(NULL, ?, ?)', row_data=(event_name, currency_key))
 
     def get_donations_for_timespan(self, event_name, timespan_start, timespan_end=int(time.time())):
         donation_rows = self.db.get_specific_rows(table=event_name, filter_string='timestamp >= {} AND timestamp <= {}'.format(
