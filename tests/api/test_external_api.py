@@ -141,3 +141,11 @@ class TestOverlayGET:
         soup = BeautifulSoup(response.content, 'html.parser')
         amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
         assert '230' == amount_raised
+
+    def test_get_overlay_for_non_existent_event_returns_three_dots(self):
+        response = requests.get(api_full_url + 'overlay/blablablalba')
+        assert 200 == response.status_code
+        assert '<!DOCTYPE html>' in response.content.decode('utf-8')
+        soup = BeautifulSoup(response.content, 'html.parser')
+        amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
+        assert '...' == amount_raised
