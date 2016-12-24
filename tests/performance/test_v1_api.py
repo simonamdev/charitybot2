@@ -80,3 +80,9 @@ class TestEventInfoRetrieval:
         assert 200 == response.status_code
         content = json.loads(response.content)['events']
         assert 250 == len(content)
+
+    def test_retrieve_1_event_info(self):
+        start_time = datetime.now()
+        response = requests.get(api_v1_base_url + 'event/test')
+        assert_time_taken_in_ms(start_time, 15)
+        assert 200 == response.status_code
