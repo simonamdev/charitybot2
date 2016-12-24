@@ -1,20 +1,7 @@
-DROP TABLE IF EXISTS `test`;
-DROP TABLE IF EXISTS `config`;
-DROP TABLE IF EXISTS `currency`;
-DROP TABLE IF EXISTS `name`;
-DROP TABLE IF EXISTS `test_event`;
-DROP TABLE IF EXISTS `test_event_two`;
-DROP TABLE IF EXISTS `test_event_three`;
-DROP TABLE IF EXISTS `test_event_four`;
-DROP TABLE IF EXISTS `test_one`;
-DROP TABLE IF EXISTS `test_two`;
-DROP TABLE IF EXISTS `test_three`;
-DROP TABLE IF EXISTS `name_one`;
-DROP TABLE IF EXISTS `name_two`;
-DROP TABLE IF EXISTS `name_three`;
-DROP TABLE IF EXISTS `E2E Test Charity Event`;
-DROP TABLE IF EXISTS `E2E_Test_Charity_Event`;
-DROP TABLE IF EXISTS `External_API_Test`;
+PRAGMA writable_schema = 1;
+DELETE FROM sqlite_master WHERE type IN ('table', 'index', 'trigger');
+PRAGMA writeable_schema = 0;
+VACUUM;
 CREATE TABLE `test` (
 	`id`	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	`timestamp`	INTEGER NOT NULL,
