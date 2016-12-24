@@ -153,7 +153,7 @@ def donations_info(event_name):
     last_donation = all_donations[-1]
     donations_info_object = {
         'count': len(all_donations),
-        'average': donations_db.get_average_donation(event_name=event_name),  # TODO: Do properly via SQL AVG() function
+        'average': donations_db.get_average_donation(event_name=event_name),
         'largest': {
             'amount': largest_donation.get_donation_amount(),
             'timestamp': largest_donation.get_timestamp()
