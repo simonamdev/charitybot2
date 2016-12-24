@@ -23,10 +23,3 @@ INSERT INTO `test` (id, timestamp, amount, delta) VALUES (12, 1477258505, 160, 3
 INSERT INTO `test` (id, timestamp, amount, delta) VALUES (13, 1477258631, 180, 20.0);
 INSERT INTO `test` (id, timestamp, amount, delta) VALUES (14, 1477258844, 222, 42.0);
 INSERT INTO `test` (id, timestamp, amount, delta) VALUES (15, 1477258999, 230.5, 8.5);
-CREATE TABLE `currency` (
-	`id`	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	`event`	    TEXT NOT NULL,
-	`currency`	TEXT NOT NULL
-);
-INSERT INTO `currency` (id, event, currency) VALUES (1, 'test', 'GBP');
-INSERT INTO `currency` (id, event, currency) VALUES (2, 'test_two', 'USD');
