@@ -84,6 +84,12 @@ class TestDonationsDBRetrieve:
         last_timespan_donations = ddb.get_donations_for_timespan(event_name='test', timespan_start=1477258100)
         assert 6 == len(last_timespan_donations)
 
+    def test_get_largest_donation(self):
+        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        largest_donation = ddb.get_largest_donation(event_name='test')
+        assert 42 == largest_donation.get_donation_amount()
+        assert 1477258844 == largest_donation.get_timestamp()
+
 
 class TestDonationsDBRecording:
     def test_recording_donation_records_in_db(self):

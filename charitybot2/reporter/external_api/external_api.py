@@ -149,15 +149,14 @@ def donations_info(event_name):
     last_timespan_donations = donations_db.get_donations_for_timespan(
         event_name=event_name,
         timespan_start=int(time.time()) - last_timespan)
-    largest_donation_amount = max(donation.get_donation_amount() for donation in all_donations)
-    largest_donation_timestamp = next(donation for donation in all_donations if donation.get_donation_amount() == largest_donation_amount).get_timestamp()
+    largest_donation = donations_db.get_largest_donation(event_name=event_name)
     last_donation = all_donations[-1]
     donations_info_object = {
         'count': len(all_donations),
         'average': donations_db.get_average_donation(event_name=event_name),  # TODO: Do properly via SQL AVG() function
         'largest': {
-            'amount': largest_donation_amount,
-            'timestamp': largest_donation_timestamp
+            'amount': largest_donation.get_donation_amount(),
+            'timestamp': largest_donation.get_timestamp()
         },
         'last': {
             'amount': last_donation.get_donation_amount(),

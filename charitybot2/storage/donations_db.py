@@ -69,3 +69,10 @@ class DonationsDB(BaseDB):
             timespan_start,
             timespan_end))
         return [convert_row_to_donation(row) for row in donation_rows]
+
+    def get_largest_donation(self, event_name):
+        largest_donation_row = self.db.get_specific_rows(
+            table=event_name,
+            contents_string='id, timestamp, amount, MAX(delta)',
+            filter_string='id IS NOT NULL')
+        return convert_row_to_donation(largest_donation_row[0])
