@@ -49,9 +49,11 @@ class DonationsDB(BaseDB):
         return self.get_all_donations(event_name=event_name)[-1]
 
     def get_average_donation(self, event_name):
-        donations = self.get_all_donations(event_name=event_name)
-        donation_deltas = [donation.get_donation_amount() for donation in donations]
-        return round(sum(donation_deltas) / len(donation_deltas), 2)
+        average_donation_row = self.db.get_specific_rows(
+            table=event_name,
+            contents_string='AVG(delta)',
+            filter_string='id IS NOT NULL')
+        return round(average_donation_row[0][0], 2)
 
     def get_event_names(self):
         names_to_remove = ('sqlite_sequence', 'currency')
