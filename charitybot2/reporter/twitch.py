@@ -115,7 +115,7 @@ class ChatBot(TwitchChatBot):
                 self.currency_symbol,
                 donation.get_donation_amount(),
                 self.currency_symbol,
-                donation.get_new_amount(),
+                donation.get_total_raised(),
                 self.charity_bot_url))
 
     def post_advert_to_chat(self):

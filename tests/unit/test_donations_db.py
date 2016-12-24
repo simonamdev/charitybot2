@@ -24,7 +24,7 @@ class TestDonationsDBRetrieve:
         recorded_donation = ddb.get_all_donations(event_name=event_name)[0]
         assert isinstance(recorded_donation, Donation)
         assert recorded_donation.get_donation_amount() == 500.1
-        assert recorded_donation.get_new_amount() == 1000.1
+        assert recorded_donation.get_total_raised() == 1000.1
 
     def test_event_existence_of_existing_event(self):
         ddb = DonationsDB(db_path=donations_db_path, debug=True)
@@ -44,7 +44,7 @@ class TestDonationsDBRetrieve:
         all_donations = ddb.get_all_donations(event_name=event_name)
         for donation in all_donations:
             assert donation.get_donation_amount() == amount_increase
-            assert donation.get_new_amount() == round(new_amount, 2)
+            assert donation.get_total_raised() == round(new_amount, 2)
             new_amount += amount_increase
 
     def test_getting_last_donation(self):
@@ -54,7 +54,7 @@ class TestDonationsDBRetrieve:
         ddb.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=600))
         last_donation = ddb.get_last_donation(event_name=event_name)
         assert 100 == last_donation.get_donation_amount()
-        assert 600 == last_donation.get_new_amount()
+        assert 600 == last_donation.get_total_raised()
 
     def test_getting_average_donation_delta(self):
         ddb = DonationsDB(db_path=donations_db_path, debug=True)

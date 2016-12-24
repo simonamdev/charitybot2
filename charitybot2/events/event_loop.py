@@ -81,7 +81,7 @@ class EventLoop:
             except InvalidArgumentException:
                 self.logger.log_error('These do not match: Current Amount: {}, New Amount: {}'.format(current_amount, new_amount))
             else:
-                self.event.set_amount_raised(amount=new_donation.get_new_amount())
+                self.event.set_amount_raised(amount=new_donation.get_total_raised())
                 self.record_new_donation(new_donation)
                 self.report_new_donation(new_donation)
 

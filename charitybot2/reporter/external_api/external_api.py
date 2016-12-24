@@ -115,7 +115,7 @@ def event_details(event_name):
         'currency_symbol': get_currency_symbol(currency_key=currency_key),
         'start_time': start_time,
         'end_time': end_time,
-        'amount_raised': all_donations[-1].get_new_amount(),
+        'amount_raised': all_donations[-1].get_total_raised(),
         'target_amount': target_amount
     }
     return jsonify(event_data)
@@ -133,7 +133,7 @@ def event_donations(event_name):
     donation_objects = [
         {
             'amount': donation.get_donation_amount(),
-            'total_raised': donation.get_new_amount(),
+            'total_raised': donation.get_total_raised(),
             'timestamp': donation.get_timestamp()
         } for donation in all_donations
     ]
@@ -178,7 +178,7 @@ def last_event_donation(event_name):
     return jsonify(
         {
             'amount': last_donation.get_donation_amount(),
-            'total_raised': last_donation.get_new_amount(),
+            'total_raised': last_donation.get_total_raised(),
             'timestamp': last_donation.get_timestamp()
         }
     )
@@ -218,7 +218,7 @@ def amount_raised(event_name):
                                currency_symbol='')
     last_donation = donations_db.get_last_donation(event_name=event_name)
     # Remove decimal point and add thousands separators
-    pretty_number = format(int(last_donation.get_new_amount()), ',d')
+    pretty_number = format(int(last_donation.get_total_raised()), ',d')
     currency_key = get_event_config_value(event_name=event_name, key_required='currency')
     currency_symbol = get_currency_symbol(currency_key=currency_key)
     return render_template('overlay.html',

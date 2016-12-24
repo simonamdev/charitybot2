@@ -27,7 +27,7 @@ class DonationsDB(BaseDB):
         self.db.insert_row(
             table=event_name,
             row_string='(NULL, ?, ?, ?)',
-            row_data=(int(time.time()), donation.get_new_amount(), donation.get_donation_amount()))
+            row_data=(int(time.time()), donation.get_total_raised(), donation.get_donation_amount()))
 
     def create_event_table_if_not_exists(self, event_name):
         if not self.event_exists(event_name=event_name):

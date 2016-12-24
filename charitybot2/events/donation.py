@@ -35,7 +35,7 @@ class Donation:
     def get_donation_amount(self):
         return round(self.donation_amount, self.rounding)
 
-    def get_new_amount(self):
+    def get_total_raised(self):
         return round(self.new_amount, self.rounding)
 
     def get_timestamp(self):
