@@ -21,6 +21,10 @@ class DonationsDB(BaseDB):
         super().__init__(file_path=db_path, db_name='Donations DB', verbose=debug)
         self.logger = Logger(source='Donations_DB', event='', console_only=debug)
 
+    def get_number_of_donations(self, event_name):
+        return_row = self.db.get_specific_rows(table=event_name, contents_string='COUNT(*)', filter_string='id IS NOT NULL')
+        return return_row[0][0]
+
     def record_donation(self, event_name, donation):
         self.create_event_table_if_not_exists(event_name=event_name)
         self.logger.log_info('Inserting donation: {} into donations database'.format(donation))

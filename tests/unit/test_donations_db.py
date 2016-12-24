@@ -5,6 +5,7 @@ from tests.tests import ResetDB, TestFilePath
 
 donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
+donations_db = DonationsDB(db_path=donations_db_path, debug=True)
 
 
 def setup_module():
@@ -17,75 +18,67 @@ class TestDonationsDBInitialisation:
 
 
 class TestDonationsDBRetrieve:
+    def test_getting_number_of_donations(self):
+        assert 15 == donations_db.get_number_of_donations(event_name='test')
+
     def test_getting_all_donations_after_recording_one(self):
-        ddb = DonationsDB(db_path=donations_db_path, debug=True)
         event_name = 'test_event_two'
-        ddb.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=1000.1))
-        recorded_donation = ddb.get_all_donations(event_name=event_name)[0]
+        donations_db.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=1000.1))
+        recorded_donation = donations_db.get_all_donations(event_name=event_name)[0]
         assert isinstance(recorded_donation, Donation)
         assert recorded_donation.get_donation_amount() == 500.1
         assert recorded_donation.get_total_raised() == 1000.1
 
     def test_event_existence_of_existing_event(self):
-        ddb = DonationsDB(db_path=donations_db_path, debug=True)
         event_name = 'test_event_four'
-        ddb.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=1000.1))
-        assert True is ddb.event_exists(event_name=event_name)
+        donations_db.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=1000.1))
+        assert True is donations_db.event_exists(event_name=event_name)
 
     def test_getting_all_donations_after_recording_several(self):
-        ddb = DonationsDB(db_path=donations_db_path, debug=True)
         event_name = 'test_event_three'
         old_amount = 0
         amount_increase = 50.34
         for i in range(5):
-            ddb.record_donation(event_name=event_name, donation=Donation(old_amount=old_amount, new_amount=old_amount + amount_increase))
+            donations_db.record_donation(event_name=event_name, donation=Donation(old_amount=old_amount, new_amount=old_amount + amount_increase))
             old_amount += amount_increase
         new_amount = amount_increase
-        all_donations = ddb.get_all_donations(event_name=event_name)
+        all_donations = donations_db.get_all_donations(event_name=event_name)
         for donation in all_donations:
             assert donation.get_donation_amount() == amount_increase
             assert donation.get_total_raised() == round(new_amount, 2)
             new_amount += amount_increase
 
     def test_getting_last_donation(self):
-        ddb = DonationsDB(db_path=donations_db_path, debug=True)
         event_name = 'test_event_two'
-        ddb.record_donation(event_name=event_name, donation=Donation(old_amount=300, new_amount=500))
-        ddb.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=600))
-        last_donation = ddb.get_last_donation(event_name=event_name)
+        donations_db.record_donation(event_name=event_name, donation=Donation(old_amount=300, new_amount=500))
+        donations_db.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=600))
+        last_donation = donations_db.get_last_donation(event_name=event_name)
         assert 100 == last_donation.get_donation_amount()
         assert 600 == last_donation.get_total_raised()
 
     def test_getting_average_donation_delta(self):
-        ddb = DonationsDB(db_path=donations_db_path, debug=True)
         event_name = 'test_event_two'
-        assert 266.7 == ddb.get_average_donation(event_name=event_name)
+        assert 266.7 == donations_db.get_average_donation(event_name=event_name)
 
     def test_getting_event_names(self):
-        ddb = DonationsDB(db_path=donations_db_path, debug=True)
         event_names = ('test', 'test_event_two', 'test_event_three', 'test_event_four')
-        assert sorted(event_names) == sorted(ddb.get_event_names())
+        assert sorted(event_names) == sorted(donations_db.get_event_names())
 
     def test_get_donations_from_a_timespan(self):
-        ddb = DonationsDB(db_path=donations_db_path, debug=True)
-        last_timespan_donations = ddb.get_donations_for_timespan(event_name='test', timespan_start=1477258100)
+        last_timespan_donations = donations_db.get_donations_for_timespan(event_name='test', timespan_start=1477258100)
         assert 6 == len(last_timespan_donations)
 
     def test_get_largest_donation(self):
-        ddb = DonationsDB(db_path=donations_db_path, debug=True)
-        largest_donation = ddb.get_largest_donation(event_name='test')
+        largest_donation = donations_db.get_largest_donation(event_name='test')
         assert 42 == largest_donation.get_donation_amount()
         assert 1477258844 == largest_donation.get_timestamp()
 
 
 class TestDonationsDBRecording:
     def test_recording_donation_records_in_db(self):
-        ddb = DonationsDB(db_path=donations_db_path, debug=True)
         donation = Donation(old_amount=533.3, new_amount=545.7)
-        ddb.record_donation(event_name='test_event', donation=donation)
-        db = Neopysqlite(database_name='Donations test DB', db_path=donations_db_path, verbose=True)
-        all_donations = db.get_all_rows(table='test_event')
-        assert len(all_donations) == 1
-        assert all_donations[0][2] == 545.7
-        delta = round(545.7 - 533.3, 2)
-        assert all_donations[0][3] == delta
+        donations_db.record_donation(event_name='test_event', donation=donation)
+        all_donations = donations_db.get_all_donations(event_name='test_event')
+        assert 1 == len(all_donations)
+        assert 545.7 == all_donations[0].get_total_raised()
+        assert round(545.7 - 533.3, 2) == all_donations[0].get_donation_amount()
