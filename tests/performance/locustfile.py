@@ -1,5 +1,10 @@
 from locust import HttpLocust, TaskSet, task
 
+event_name = 'performance'
+api_path = '/api/v1/'
+overlay_path = '/overlay/' + event_name
+stats_path = '/stats/' + event_name
+
 
 class ApiBehaviour(TaskSet):
     def on_start(self):
@@ -7,7 +12,15 @@ class ApiBehaviour(TaskSet):
 
     @task(1)
     def index(self):
-        self.client.get('/')
+        self.client.get(api_path)
+
+    @task(5)
+    def overlay(self):
+        self.client.get(overlay_path)
+
+    @task(3)
+    def stats(self):
+        self.client.get(stats_path)
 
 
 class ApiUser(HttpLocust):
