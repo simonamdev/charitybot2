@@ -20,12 +20,8 @@ stats_api_calls = [
 ]
 
 
-class ApiBehaviour(TaskSet):
-    @task(1)
-    def index(self):
-        self.client.get(api_path)
-
-    @task(5)
+class OverlayBehaviour(TaskSet):
+    @task
     def overlay(self):
         self.client.get(overlay_path)
 
@@ -40,13 +36,13 @@ class UserBehaviour(TaskSet):
             self.client.get(api_path + call)
 
 
-class ApiCalls(HttpLocust):
-    task_set = ApiBehaviour
-    min_wait = 5000
-    max_wait = 9000
-
-
-class OverlayCalls(HttpLocust):
+class StatsConsoleCalls(HttpLocust):
     task_set = UserBehaviour
     min_wait = 5000
     max_wait = 30000
+
+
+class OverlayCalls(HttpLocust):
+    task_set = OverlayBehaviour
+    min_wait = 3999
+    max_wait = 4000
