@@ -1,7 +1,9 @@
+import copy
 import pytest
 
+from charitybot2.botconfig.event_config import EventConfigurationFromFile, EventConfigurationCreator
 from charitybot2.events.event_loop import EventLoop
-from charitybot2.events.event import Event, EventInvalidException, EventAlreadyFinishedException
+from charitybot2.events.event import Event, EventInvalidException
 from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount
 from charitybot2.sources.justgiving import JustGivingScraper
@@ -9,9 +11,12 @@ from charitybot2.storage.db_handler import DBHandler
 from tests.tests import ResetDB, TestFilePath
 
 valid_config_path = TestFilePath().get_config_path('event', 'valid_config' + '.json')
-btdonate_config_path = TestFilePath().get_config_path('event', 'btdonate_config' + '.json')
-invalid_config_path = TestFilePath().get_config_path('event', 'invalid_config' + '.json')
-already_finished_config_path = TestFilePath().get_config_path('event', 'already_finished_event_config' + '.json')
+valid_event_config_values = EventConfigurationFromFile(file_path=valid_config_path).get_config_data()
+valid_event_configuration = EventConfigurationCreator(config_values=valid_event_config_values).get_event_configuration()
+
+btdonate_config_values = copy.deepcopy(valid_event_config_values)
+btdonate_config_values['source_url'] = 'https://mydonate.bt.com/fundraisers/acpi'
+btdonate_configuration = EventConfigurationCreator(config_values=btdonate_config_values).get_event_configuration()
 
 donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
@@ -26,7 +31,7 @@ def setup_module():
 
 class ValidTestEvent(Event):
     def __init__(self):
-        super().__init__(config_path=valid_config_path, db_handler=db_handler)
+        super().__init__(event_configuration=valid_event_configuration, db_handler=db_handler)
 
 
 class TestEventLoopValidity:
@@ -35,21 +40,16 @@ class TestEventLoopValidity:
             el = EventLoop(event=None, debug=True)
 
     def test_initialise_with_valid_event(self):
-        el = EventLoop(event=ValidTestEvent(), debug=True)
+            el = EventLoop(event=ValidTestEvent(), debug=True)
 
     def test_initialise_not_implemented_btdonate_scraper_throws_exception(self):
         with pytest.raises(NotImplementedError):
-            e = Event(config_path=btdonate_config_path, db_handler=db_handler)
+            e = Event(event_configuration=btdonate_configuration, db_handler=db_handler)
             el = EventLoop(event=e, debug=True)
 
     def test_valid_event_loop_scraper_is_of_type_justgivingscraper(self):
         el = EventLoop(event=ValidTestEvent(), debug=True)
         assert isinstance(el.scraper, JustGivingScraper)
-
-    def test_starting_already_complete_event_throws_exception(self):
-        with pytest.raises(EventAlreadyFinishedException):
-            e = Event(config_path=already_finished_config_path, db_handler=db_handler)
-            el = EventLoop(event=e, debug=True)
 
     def test_event_loop_event_is_not_already_registered(self):
         el = EventLoop(event=ValidTestEvent(), debug=True)

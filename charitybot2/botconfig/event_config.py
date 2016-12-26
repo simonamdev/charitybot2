@@ -81,5 +81,8 @@ class EventConfigurationFromFile(JSONConfigurationFile):
     def __init__(self, file_path):
         super().__init__(file_path=file_path, keys_required=EventConfigurationCreator.keys_required)
 
+    def get_config_data(self):
+        return self.config_data
+
     def get_event_configuration(self):
         return EventConfigurationCreator(config_values=self.config_data).get_event_configuration()
