@@ -1,5 +1,6 @@
 import pytest
-from charitybot2.botconfig.event_config import EventConfiguration, InvalidEventNameException
+from charitybot2.botconfig.event_config import EventConfiguration, InvalidEventNameException, EventConfigurationCreator
+from charitybot2.botconfig.json_config import InvalidConfigurationException
 from charitybot2.events.currency import InvalidCurrencyException
 from tests.tests import TestFilePath
 
@@ -41,3 +42,9 @@ class TestEventConfigValidity:
     def test_passing_event_name_with_spaces_throws_exception(self):
         with pytest.raises(InvalidEventNameException):
             ec = EventConfiguration(file_path=get_config_file_path('name_with_spaces'))
+
+
+class TestEventConfigCreator:
+    def test_not_passing_all_required_keys_throws_exception(self):
+        with pytest.raises(InvalidConfigurationException):
+            event_config_creator = EventConfigurationCreator({'foo': 5, 'bla': 3, 'fizz': 'buzz'})

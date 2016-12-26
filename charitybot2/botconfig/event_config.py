@@ -1,4 +1,4 @@
-from charitybot2.botconfig.json_config import JSONConfigurationFile
+from charitybot2.botconfig.json_config import JSONConfigurationFile, InvalidConfigurationException
 from charitybot2.events.currency import InvalidCurrencyException
 
 
@@ -41,3 +41,12 @@ class EventConfiguration(JSONConfigurationFile):
         if ' ' in self.config_data['event_name']:
             raise InvalidEventNameException('Event names cannot have spaces within them. Use underscores instead!')
 
+
+class EventConfigurationCreator:
+    def __init__(self, key_value_dict):
+        self.key_value_dict = key_value_dict
+        self.validate_keys_passed()
+
+    def validate_keys_passed(self):
+        if not sorted(list(self.key_value_dict.keys())) == sorted(EventConfiguration.keys_required):
+            raise InvalidConfigurationException
