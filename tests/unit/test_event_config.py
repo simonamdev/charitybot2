@@ -47,4 +47,26 @@ class TestEventConfigValidity:
 class TestEventConfigCreator:
     def test_not_passing_all_required_keys_throws_exception(self):
         with pytest.raises(InvalidConfigurationException):
-            event_config_creator = EventConfigurationCreator({'foo': 5, 'bla': 3, 'fizz': 'buzz'})
+            EventConfigurationCreator({'foo': 5, 'bla': 3, 'fizz': 'buzz'})
+
+    def test_passing_incorrect_formatted_values_throws_exception(self):
+        config_values = {}
+        for key in EventConfiguration.keys_required:
+            config_values[key] = ''
+        with pytest.raises(InvalidConfigurationException):
+            EventConfigurationCreator(config_values)
+
+    def test_passing_incorrect_currency_value_throws_exception(self):
+        config_values = {}
+        for key in EventConfiguration.keys_required:
+            config_values[key] = '' if key not in EventConfiguration.number_keys else 0
+        with pytest.raises(InvalidConfigurationException):
+            EventConfigurationCreator(config_values)
+
+    def test_passing_all_required_keys_does_not_throw_exception(self):
+        config_values = {}
+        for key in EventConfiguration.keys_required:
+            config_values[key] = '' if key not in EventConfiguration.number_keys else 0
+        # override the currency one
+        config_values['currency'] = 'GBP'
+        EventConfigurationCreator(config_values)

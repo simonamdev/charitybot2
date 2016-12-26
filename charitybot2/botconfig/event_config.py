@@ -43,10 +43,18 @@ class EventConfiguration(JSONConfigurationFile):
 
 
 class EventConfigurationCreator:
-    def __init__(self, key_value_dict):
-        self.key_value_dict = key_value_dict
+    def __init__(self, config_values):
+        self.config_values = config_values
         self.validate_keys_passed()
+        self.validate_key_types()
 
     def validate_keys_passed(self):
-        if not sorted(list(self.key_value_dict.keys())) == sorted(EventConfiguration.keys_required):
+        if not sorted(list(self.config_values.keys())) == sorted(EventConfiguration.keys_required):
+            raise InvalidConfigurationException
+
+    def validate_key_types(self):
+        for key in EventConfiguration.number_keys:
+            if not isinstance(self.config_values[key], int):
+                raise InvalidConfigurationException
+        if self.config_values['currency'] not in EventConfiguration.currencies:
             raise InvalidConfigurationException
