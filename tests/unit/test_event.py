@@ -1,4 +1,5 @@
 import pytest
+from charitybot2.botconfig.event_config import EventConfigurationFromFile
 from charitybot2.botconfig.json_config import InvalidConfigurationException
 from charitybot2.events.event import Event
 from charitybot2.storage.db_handler import DBHandler
@@ -10,20 +11,12 @@ donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 
 db_handler = DBHandler(donations_db_path=donations_db_path, debug=True)
-valid_event = Event(config_path=valid_config_path, db_handler=db_handler)
+valid_event_configuration = EventConfigurationFromFile(file_path=valid_config_path)
+valid_event = Event(event_configuration=valid_event_configuration, db_handler=db_handler)
 
 
 def setup_module():
     ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
-
-
-class TestEventConfigurationValidity:
-    def test_invalid_config_throws_exception(self):
-        with pytest.raises(InvalidConfigurationException):
-            event = Event(config_path=invalid_config_path, db_handler=db_handler)
-
-    def test_valid_config_loads_without_exception(self):
-        event = Event(config_path=valid_config_path, db_handler=db_handler)
 
 
 class TestEventRetrieve:
