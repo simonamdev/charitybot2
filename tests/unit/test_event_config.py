@@ -1,18 +1,9 @@
 import pytest
-from charitybot2.botconfig.event_config import EventConfiguration, EventConfigurationCreator
-from charitybot2.botconfig.json_config import InvalidConfigurationException
+from charitybot2.botconfig.event_config import EventConfiguration, EventConfigurationCreator, EventConfigurationFromFile
+from charitybot2.botconfig.json_config import InvalidConfigurationException, ConfigurationFileDoesNotExistException, \
+    JSONConfigurationFile
 from charitybot2.events.currency import InvalidCurrencyException
-#
-#
-# def get_config_file_path(config_name):
-#     return TestFilePath().get_config_path('event', config_name + '.json')
-#
-#
-# class TestEventConfigExistence:
-#     def test_event_config_does_exist(self):
-#         ec = EventConfiguration(file_path=get_config_file_path('valid_config'))
-#         assert ec.config_exists() is True
-#
+from tests.tests import TestFilePath
 
 
 def get_valid_config_values():
@@ -82,5 +73,19 @@ class TestEventConfigurationRetrieve:
             assert isinstance(event_config.get_value(key), int)
 
 
-class TestEventConfigurationFileReader:
-    pass
+class TestEventConfigurationFromFile:
+    def test_passing_non_existent_file_throws_exception(self):
+        with pytest.raises(ConfigurationFileDoesNotExistException):
+            EventConfigurationFromFile(file_path='blalslsd')
+
+    def test_getting_valid_event_configuration(self):
+        config_file_path = TestFilePath().get_config_path('event', 'valid_config.json')
+        event_config = EventConfigurationFromFile(file_path=config_file_path).get_event_configuration()
+        assert isinstance(event_config, EventConfiguration)
+
+    def test_event_config_values_match_values_from_file(self):
+        config_file_path = TestFilePath().get_config_path('event', 'valid_config.json')
+        event_config = EventConfigurationFromFile(file_path=config_file_path).get_event_configuration()
+        json_config = JSONConfigurationFile(file_path=config_file_path, keys_required=EventConfigurationCreator.keys_required)
+        for key in EventConfigurationCreator.keys_required:
+            assert json_config.get_value(key) == event_config.get_value(key)

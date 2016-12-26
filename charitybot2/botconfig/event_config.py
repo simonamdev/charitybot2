@@ -1,6 +1,6 @@
 import re
 
-from charitybot2.botconfig.json_config import InvalidConfigurationException
+from charitybot2.botconfig.json_config import InvalidConfigurationException, JSONConfigurationFile
 from charitybot2.events.currency import InvalidCurrencyException
 
 url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
@@ -77,5 +77,9 @@ class EventConfigurationCreator:
         return EventConfiguration(self.config_values)
 
 
-class EventConfigurationFileReader(EventConfigurationCreator):
-    pass
+class EventConfigurationFromFile(JSONConfigurationFile):
+    def __init__(self, file_path):
+        super().__init__(file_path=file_path, keys_required=EventConfigurationCreator.keys_required)
+
+    def get_event_configuration(self):
+        return EventConfigurationCreator(config_values=self.config_data).get_event_configuration()
