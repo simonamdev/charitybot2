@@ -49,18 +49,33 @@ class EventConfigurationCreator:
             raise InvalidConfigurationException('Keys provided do not match keys required for event configuration')
 
     def validate_key_types(self):
+        # Test for spaces in Event Name
         if ' ' in self.config_values['event_name']:
             raise InvalidConfigurationException('Currently event names cannot have spaces, use underscores')
+        # Test that number keys are actually numbers
         for key in self.number_keys:
             if not isinstance(self.config_values[key], int):
                 raise InvalidConfigurationException('Expected numbers in key: {} but found something else instead'.format(key))
+        # Test that the currency key is recognised
         if self.config_values['currency'] not in self.currencies:
             raise InvalidCurrencyException(
                     'Invalid currency key passed. Please use one of the following: {}'.format(
                         str(self.currencies)))
+        # Test that the URL actually is a URL
         url_count = re.findall(url_regex, self.config_values['source_url'])
         if not len(url_count) == 1:
             raise InvalidConfigurationException('URL provided in configuration is not a valid URL')
+        # Test that the event end time is greater than the start time
+        if not self.config_values['end_time'] > self.config_values['start_time']:
+            raise InvalidConfigurationException('Event end time is not greater than '
+                                                'the event start time. End time: {} Start time: {}'.format(
+                                                    self.config_values['end_time'],
+                                                    self.config_values['start_time']
+                                                ))
 
     def get_event_configuration(self):
         return EventConfiguration(self.config_values)
+
+
+class EventConfigurationFileReader(EventConfigurationCreator):
+    pass

@@ -19,6 +19,7 @@ def get_valid_config_values():
     config_values = {}
     for key in EventConfigurationCreator.keys_required:
         config_values[key] = '' if key not in EventConfigurationCreator.number_keys else 0
+    config_values['end_time'] = 1
     config_values['currency'] = 'GBP'
     config_values['source_url'] = 'http://www.test.com'
     return config_values
@@ -55,6 +56,12 @@ class TestEventConfigCreator:
         with pytest.raises(InvalidConfigurationException):
             EventConfigurationCreator(config_values)
 
+    def test_passing_end_time_not_greater_than_start_time_throws_exception(self):
+        config_values = get_valid_config_values()
+        config_values['end_time'] = 0
+        with pytest.raises(InvalidConfigurationException):
+            EventConfigurationCreator(config_values)
+
     def test_getting_valid_event_configuration(self):
         event_config = EventConfigurationCreator(config_values=get_valid_config_values()).get_event_configuration()
         assert isinstance(event_config, EventConfiguration)
@@ -73,3 +80,7 @@ class TestEventConfigurationRetrieve:
         event_config = EventConfigurationCreator(config_values=config_values).get_event_configuration()
         for key in EventConfigurationCreator.number_keys:
             assert isinstance(event_config.get_value(key), int)
+
+
+class TestEventConfigurationFileReader:
+    pass
