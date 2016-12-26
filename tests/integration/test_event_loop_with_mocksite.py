@@ -7,6 +7,7 @@ from charitybot2.paths import mocksite_path
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from charitybot2.storage.db_handler import DBHandler
 from tests.tests import ResetDB, ServiceTest, TestFilePath
+from tests.unit.test_event_loop import ValidTestEvent
 
 config_path = TestFilePath().get_config_path('event', 'config.json')
 donations_db_path = TestFilePath().get_db_path('donations.db')
@@ -52,6 +53,11 @@ def teardown_module():
 
 
 class TestEventRunThrough:
+    def test_getting_new_amount_properly_formatted(self):
+        test_event = MockEvent('test_one', time.time() + 5)
+        el = EventLoop(event=test_event, debug=True)
+        assert 200.52 == el.get_new_amount()
+
     def test_event_cycles_increment_properly(self):
         test_event = MockEvent('test_two', time.time() + 5)
         test_event_loop = EventLoop(event=test_event, debug=True)

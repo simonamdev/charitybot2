@@ -51,10 +51,10 @@ class TestEventLoopValidity:
             e = Event(config_path=already_finished_config_path, db_handler=db_handler)
             el = EventLoop(event=e, debug=True)
 
-
-class TestEventLoopAmountRetrieve:
-    # Test is definitely flaky
-    # TODO: Convert test to use mocksite
-    def test_event_loop_retrieving_formatted_new_amount(self):
+    def test_event_loop_event_is_not_already_registered(self):
         el = EventLoop(event=ValidTestEvent(), debug=True)
-        assert 35632.0 == el.get_new_amount()
+        assert False is el.event_already_registered()
+
+    def test_event_loop_donations_not_stored_yet(self):
+        el = EventLoop(event=ValidTestEvent(), debug=True)
+        assert False is el.donations_already_present()
