@@ -10,6 +10,9 @@ class EventConfiguration:
     def __init__(self, config_values):
         self.config_values = config_values
 
+    def get_value(self, key):
+        return self.config_values[key]
+
 
 class EventConfigurationCreator:
     keys_required = (
