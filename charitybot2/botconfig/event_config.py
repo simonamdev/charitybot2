@@ -1,9 +1,9 @@
-from charitybot2.botconfig.json_config import JSONConfigurationFile, InvalidConfigurationException
+import re
+
+from charitybot2.botconfig.json_config import InvalidConfigurationException
 from charitybot2.events.currency import InvalidCurrencyException
 
-
-class InvalidEventNameException(Exception):
-    pass
+url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
 
 
 class EventConfiguration:
@@ -47,7 +47,7 @@ class EventConfigurationCreator:
 
     def validate_key_types(self):
         if ' ' in self.config_values['event_name']:
-            raise InvalidEventNameException('Currently event names cannot have spaces, use underscores')
+            raise InvalidConfigurationException('Currently event names cannot have spaces, use underscores')
         for key in self.number_keys:
             if not isinstance(self.config_values[key], int):
                 raise InvalidConfigurationException('Expected numbers in key: {} but found something else instead'.format(key))
@@ -55,6 +55,9 @@ class EventConfigurationCreator:
             raise InvalidCurrencyException(
                     'Invalid currency key passed. Please use one of the following: {}'.format(
                         str(self.currencies)))
+        url_count = re.findall(url_regex, self.config_values['source_url'])
+        if not len(url_count) == 1:
+            raise InvalidConfigurationException('URL provided in configuration is not a valid URL')
 
     def get_event_configuration(self):
         return EventConfiguration(self.config_values)

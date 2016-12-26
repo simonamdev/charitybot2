@@ -1,8 +1,7 @@
 import pytest
-from charitybot2.botconfig.event_config import EventConfiguration, InvalidEventNameException, EventConfigurationCreator
+from charitybot2.botconfig.event_config import EventConfiguration, EventConfigurationCreator
 from charitybot2.botconfig.json_config import InvalidConfigurationException
 from charitybot2.events.currency import InvalidCurrencyException
-from tests.tests import TestFilePath
 #
 #
 # def get_config_file_path(config_name):
@@ -44,6 +43,15 @@ from tests.tests import TestFilePath
 #             ec = EventConfiguration(file_path=get_config_file_path('name_with_spaces'))
 
 
+def get_valid_config_values():
+    config_values = {}
+    for key in EventConfigurationCreator.keys_required:
+        config_values[key] = '' if key not in EventConfigurationCreator.number_keys else 0
+    config_values['currency'] = 'GBP'
+    config_values['source_url'] = 'http://www.test.com'
+    return config_values
+
+
 class TestEventConfigCreator:
     def test_not_passing_all_required_keys_throws_exception(self):
         with pytest.raises(InvalidConfigurationException):
@@ -58,25 +66,23 @@ class TestEventConfigCreator:
 
     # TODO: Update when refactoring how events handles names
     def test_passing_name_with_spaces_throws_exception(self):
-        config_values = {}
-        for key in EventConfigurationCreator.keys_required:
-            config_values[key] = '' if key not in EventConfigurationCreator.number_keys else 0
-        config_values['currency'] = 'GBP'
+        config_values = get_valid_config_values()
         config_values['event_name'] = 'bla bla bla bla bla'
-        with pytest.raises(InvalidEventNameException):
+        with pytest.raises(InvalidConfigurationException):
             EventConfigurationCreator(config_values)
 
     def test_passing_incorrect_currency_value_throws_exception(self):
-        config_values = {}
-        for key in EventConfigurationCreator.keys_required:
-            config_values[key] = '' if key not in EventConfigurationCreator.number_keys else 0
+        config_values = get_valid_config_values()
+        config_values['currency'] = 'Hello'
         with pytest.raises(InvalidCurrencyException):
             EventConfigurationCreator(config_values)
 
+    def test_passing_invalid_url_throws_exception(self):
+        config_values = get_valid_config_values()
+        config_values['source_url'] = 'this is a test'
+        with pytest.raises(InvalidConfigurationException):
+            EventConfigurationCreator(config_values)
+
     def test_getting_valid_event_configuration(self):
-        config_values = {}
-        for key in EventConfigurationCreator.keys_required:
-            config_values[key] = '' if key not in EventConfigurationCreator.number_keys else 0
-        config_values['currency'] = 'GBP'
-        event_config = EventConfigurationCreator(config_values=config_values).get_event_configuration()
+        event_config = EventConfigurationCreator(config_values=get_valid_config_values()).get_event_configuration()
         assert isinstance(event_config, EventConfiguration)
