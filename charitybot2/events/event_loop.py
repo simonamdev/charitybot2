@@ -19,8 +19,6 @@ class EventLoop:
         self.loop_count = 0
         self.donation_checks = 0
         self.initialise_scraper()
-        self.current_amount_raised = 0
-        self.new_amount_raised = 0
         self.initialise_event_loop()
 
     def validate_event_loop(self):
@@ -36,10 +34,10 @@ class EventLoop:
         if self.donations_already_present():
             # set the current amount from the last donation recorded
             last_donation = self.event.db_handler.get_donations_db().get_last_donation(event_name=self.event.get_event_name())
-            self.current_amount_raised = last_donation.get_total_raised()
+            self.event.set_amount_raised(last_donation.get_total_raised())
             self.logger.log_info('Amount raised retrieved from database is: {}{}'.format(
                 self.event.get_currency().get_symbol(),
-                self.current_amount_raised
+                self.event.get_amount_raised()
             ))
 
     def donations_already_present(self):
