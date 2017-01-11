@@ -1,4 +1,5 @@
-from flask import Flask, request
+from flask import Flask, request, redirect, url_for
+
 app = Flask(__name__)
 
 mocksite_url = '127.0.0.1'
@@ -10,9 +11,14 @@ amount = 100
 
 @app.route('/justgiving/')
 def justgiving():
+    return '<span class="statistics-amount-raised theme-highlight-text-font">£{}.52</span>'.format(amount)
+
+
+@app.route('/justgiving/increase/')
+def justgiving_increase():
     global amount
     amount += 50
-    return '<span class="statistics-amount-raised theme-highlight-text-font">£{}.52</span>'.format(amount)
+    return redirect(url_for('justgiving'))
 
 
 @app.route('/reset/')
