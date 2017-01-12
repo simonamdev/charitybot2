@@ -9,6 +9,11 @@ mocksite_full_url = 'http://' + mocksite_url + ':' + str(mocksite_port) + '/'
 amount = 100
 
 
+@app.route('/')
+def index():
+    return '<!DOCTYPE html><html><body>Mocksite Index Page</body></html>'
+
+
 @app.route('/justgiving/')
 def justgiving():
     return '<span class="statistics-amount-raised theme-highlight-text-font">£{}.52</span>'.format(amount)
