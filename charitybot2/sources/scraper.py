@@ -1,5 +1,5 @@
-from smokesignal import smokesignal
 from bs4 import BeautifulSoup
+from charitybot2.sources.url_call import UrlCall, ConnectionFailedException
 
 
 class ScraperException(Exception):
@@ -11,33 +11,28 @@ class SourceUnavailableException(Exception):
 
 
 class Scraper:
-    def __init__(self, url, verbose=False):
+    def __init__(self, url, debug=False):
         self.url = url
+        self.debug = debug
         self.parser = 'lxml'
-        self.get = smokesignal.GetRequest(url=url, verbose=verbose)
-        self.url_is_valid = self.validate_url()
-        self.url_contents = None
-        self.url_soup = None
+        self.url_call = UrlCall(url=self.url)
 
-    def validate_url(self):
+    def get_data_from_url(self):
         try:
-            self.get.make_request()
-        except smokesignal.exceptions.ConnectionFailedException:
+            response = self.url_call.get()
+        except ConnectionFailedException:
             raise SourceUnavailableException('Scraper could not connect to url: {0}'.format(self.url))
-        return self.get.get_response_code() == 200
+        return response
 
-    # TODO: Review and clean this API
-    def get_url_contents(self):
-        self.get.make_request()
-        self.url_contents = self.get.get_response_contents()
+    def get_contents_from_url(self):
+        contents = self.get_data_from_url().content.decode('utf-8')
+        if self.debug:
+            print('Returned contents:')
+            print(contents)
+        return contents
 
     def get_soup_from_url(self):
-        self.get_url_contents()
-        self.url_soup = BeautifulSoup(self.url_contents, self.parser)
-
-    def get_soup(self):
-        self.get_soup_from_url()
-        return self.url_soup
+        return BeautifulSoup(self.get_contents_from_url(), self.parser)
 
 
 class SoupDataSourceNotRegisteredException(Exception):

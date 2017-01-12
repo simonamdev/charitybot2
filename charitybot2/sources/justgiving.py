@@ -12,12 +12,12 @@ class InvalidFundraiserUrlException(Exception):
 
 
 class JustGivingScraper(Scraper):
-    def __init__(self, url, verbose=False):
+    def __init__(self, url, debug=False):
         self.url = url
-        self.verbose = verbose
+        self.verbose = debug
         self.soup_data_sources = None
         try:
-            super().__init__(url=self.url, verbose=verbose)
+            super().__init__(url=self.url, debug=debug)
         except SourceUnavailableException:
             raise InvalidFundraiserUrlException
         self.setup_soup_data_sources()

@@ -17,12 +17,12 @@ service_test = ServiceTest(
 class TestFundraiserValidity:
     def test_invalid_fundraiser_name_given_raises_exception(self):
         with pytest.raises(justgiving.InvalidFundraiserUrlException):
-            justgiving.JustGivingScraper(url='isdofjisdjfiojsdfoijo', verbose=True)
+            justgiving.JustGivingScraper(url='isdofjisdjfiojsdfoijo', debug=True)
 
 
 class TestFundraiserRetrieve:
     def test_get_amount_raised(self):
-        jg = justgiving.JustGivingScraper(url='https://www.justgiving.com/fundraising/alasdair-clift', verbose=True)
+        jg = justgiving.JustGivingScraper(url='https://www.justgiving.com/fundraising/alasdair-clift', debug=True)
         amount_raised = jg.get_source_value(source_name='amount_raised')
         # since the amount raised is not static, at least we can check for the £ and decimal point
         assert amount_raised is not None
@@ -31,7 +31,7 @@ class TestFundraiserRetrieve:
 
     def test_get_amount_raised_fails_gracefully(self):
         service_test.start_service()
-        jg = justgiving.JustGivingScraper(url=MockEvent.mocksite_base_url, verbose=True)
+        jg = justgiving.JustGivingScraper(url=MockEvent.mocksite_base_url, debug=True)
         # simulate as if the website went down
         service_test.stop_service()
         with pytest.raises(SourceUnavailableException):
