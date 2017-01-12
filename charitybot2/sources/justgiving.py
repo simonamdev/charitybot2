@@ -1,4 +1,4 @@
-from smokesignal.exceptions import ConnectionFailedException
+from charitybot2.sources.url_call import ConnectionFailedException
 
 from .scraper import Scraper, SoupDataSources, SourceUnavailableException
 
