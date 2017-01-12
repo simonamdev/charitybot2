@@ -1,5 +1,4 @@
 pytest
-smokesignal
 bs4
 flask
 flask-cors
