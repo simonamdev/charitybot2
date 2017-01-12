@@ -42,19 +42,18 @@ class JustGivingScraper(Scraper):
             value = self.get_source_value(source_name=source_name)
             print(value)
 
+    def scrape_amount_raised(self):
+        return self.get_source_value(source_name='amount_raised')
+
     def get_source_value(self, source_name):
         try:
-            self.get_soup_from_url()
-        except ConnectionFailedException:
-            raise SourceUnavailableException('Unable to connect to the source')
-        try:
-            source_value = self.url_soup.find(
+            source_value = self.get_soup_from_url().find(
                 self.soup_data_sources.get_source_tag(source_name=source_name),
                 self.soup_data_sources.get_bs4_find_parameters_dict(source_name=source_name)
             ).text
+        except ConnectionFailedException:
+            raise SourceUnavailableException('Unable to connect to the source')
         except AttributeError:
             raise SourceUnavailableException('Unable to find amount raised on JustGiving website')
         return source_value
 
-    def get_amount_raised(self):
-        return self.get_source_value(source_name='amount_raised')
