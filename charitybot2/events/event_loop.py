@@ -37,7 +37,7 @@ class EventLoop:
             self.event.set_amount_raised(last_donation.get_total_raised())
             self.logger.log_info('Amount raised retrieved from database is: {}{}'.format(
                 self.event.get_currency().get_symbol(),
-                self.event.scrape_amount_raised()
+                self.event.get_amount_raised()
             ))
 
     def donations_already_present(self):
