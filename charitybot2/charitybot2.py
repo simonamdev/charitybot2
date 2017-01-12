@@ -1,6 +1,7 @@
 import os
 import argparse
 
+from charitybot2.botconfig.event_config import EventConfigurationFromFile
 from charitybot2.botconfig.twitch_config import TwitchAccountConfiguration
 from charitybot2.events.event import Event
 from charitybot2.events.event_loop import TwitchEventLoop, EventLoop
@@ -70,11 +71,15 @@ class CharityBot:
 
     def initialise_bot(self):
         db_handler = DBHandler(donations_db_path=self.donations_db_path, debug=self.debug)
-        event = Event(config_path=self.event_config_path, db_handler=db_handler)
-        twitch_config_path = os.path.join(self.config_dir, 'twitch', self.args.twitch_config + '.json') if self.twitch_mode else None
-        twitch_config = TwitchAccountConfiguration(file_path=twitch_config_path) if self.twitch_mode else None
-        twitch_account = TwitchAccount(twitch_config=twitch_config) if self.twitch_mode else None
-        self.event_loop = TwitchEventLoop(event=event, twitch_account=twitch_account, debug=self.debug) if self.twitch_mode else EventLoop(event=event, debug=self.debug)
+        event_config = EventConfigurationFromFile(file_path=self.event_config_path)
+        event = Event(event_configuration=event_config, db_handler=db_handler)
+        if self.twitch_mode:
+            twitch_config_path = os.path.join(self.config_dir, 'twitch', self.args.twitch_config + '.json')
+            twitch_config = TwitchAccountConfiguration(file_path=twitch_config_path)
+            twitch_account = TwitchAccount(twitch_config=twitch_config)
+            self.event_loop = TwitchEventLoop(event=event, twitch_account=twitch_account, debug=self.debug)
+        else:
+            self.event_loop = EventLoop(event=event, debug=self.debug)
 
     def start_bot(self):
         self.event_loop.start()

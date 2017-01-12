@@ -2,7 +2,7 @@ import argparse
 import os
 import time
 
-from charitybot2.botconfig.event_config import EventConfiguration
+from charitybot2.botconfig.event_config import EventConfiguration, EventConfigurationCreator, EventConfigurationFromFile
 from charitybot2.botconfig.json_config import ConfigurationFileDoesNotExistException
 from charitybot2.events.currency import Currency
 from charitybot2.paths import production_donations_db_path, event_config_folder
@@ -56,7 +56,7 @@ def get_event_config(event_name):
         file_path = TestFilePath().get_config_path('event', event_name + '.json')
     event_config = None
     try:
-        event_config = EventConfiguration(file_path=file_path)
+        event_config = EventConfigurationFromFile(file_path=file_path)
     except ConfigurationFileDoesNotExistException:
         abort(400)
     return event_config
