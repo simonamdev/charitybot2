@@ -1,4 +1,5 @@
 import time
+import sqlite3
 
 from charitybot2.events.donation import Donation
 from charitybot2.storage.logger import Logger
@@ -11,12 +12,19 @@ def convert_row_to_donation(row):
 class Repository:
     def __init__(self, db_path, debug=False):
         self.db_path = db_path
+        self.connection = sqlite3.connect(self.db_path)
+        self.cursor = self.connection.cursor()
         self.debug = debug
-        self.logger = Logger(source='Donations_DB', event='', console_only=debug)
+        self.logger = Logger(source='Donations_DB',  event='', console_only=debug)
 
     def get_number_of_donations(self, event_name):
-        return_row = self.db.get_specific_rows(table=event_name, contents_string='COUNT(*)', filter_string='id IS NOT NULL')
-        return return_row[0][0]
+        query = 'SELECT COUNT(*) ' \
+                'FROM `donations` ' \
+                'JOIN `events` ' \
+                'ON donations.eventId = events.eventId ' \
+                'WHERE events.internalName = (?)'
+        data = (event_name, )
+        return self.connection.execute(query, data).fetchone()[0]
 
     def record_donation(self, event_name, donation):
         self.create_event_table_if_not_exists(event_name=event_name)

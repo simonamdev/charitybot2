@@ -1,6 +1,5 @@
 from charitybot2.events.donation import Donation
 from charitybot2.storage.repository import Repository
-from neopysqlite.neopysqlite import Neopysqlite
 from tests.tests import ResetDB, TestFilePath
 
 repository_db_path = TestFilePath().get_repository_db_path()
@@ -19,7 +18,7 @@ class TestRepositoryInitialisation:
 
 class TestDonationsDBRetrieve:
     def test_getting_number_of_donations(self):
-        assert 15 == donations_db.get_number_of_donations(event_name='test')
+        assert 5 == repository.get_number_of_donations(event_name='TestOne')
 
     def test_getting_all_donations_after_recording_one(self):
         event_name = 'test_event_two'
