@@ -10,7 +10,8 @@ def convert_row_to_donation(row):
 
 class Repository:
     def __init__(self, db_path, debug=False):
-        super().__init__(file_path=db_path, db_name='Donations DB', verbose=debug)
+        self.db_path = db_path
+        self.debug = debug
         self.logger = Logger(source='Donations_DB', event='', console_only=debug)
 
     def get_number_of_donations(self, event_name):

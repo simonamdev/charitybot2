@@ -3,7 +3,7 @@ DELETE FROM sqlite_master WHERE type IN ('table', 'index', 'trigger');
 PRAGMA writeable_schema = 0;
 VACUUM;
 
-CREATE TABLE `events` {
+CREATE TABLE `events` (
     `eventId`          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `internalName`     TEXT NOT NULL,
     `externalName`     TEXT NOT NULL,
@@ -13,32 +13,31 @@ CREATE TABLE `events` {
     `startingAmount`   REAL,
     `sourceUrl`        TEXT NOT NULL,
     `updateDelay`      INTEGER
-};
+);
 
-CREATE TABLE `donations` {
+CREATE TABLE `donations` (
     `donationId`     INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `eventId`        INTEGER NOT NULL,
     `timeRecorded`   INTEGER NOT NULL,
     `donationAmount` REAL NOT NULL,
     `runningTotal`   REAL NOT NULL,
     `notes`          TEXT,
-    `valid`          INTEGER NOT NULL,
-    CHECK (valid BETWEEN 0 AND 1);
+    `valid`          INTEGER NOT NULL CHECK (valid BETWEEN 0 AND 1),
     FOREIGN KEY(eventId) REFERENCES events(eventId)
-};
+);
 
-CREATE TABLE `donationRegressions` {
+CREATE TABLE `donationRegressions` (
     `donationRegressionId`  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `eventId`               INTEGER NOT NULL,
     `donationId`            INTEGER NOT NULL,
     `previousTotal`         REAL NOT NULL,
     `newTotal`              REAL NOT NULL,
-    `regressionAmount`      REAL NOT NULL
-    FOREIGN KEY(eventId) REFERENCES events(eventId);
-    FOREIGN KEY(donationId) REFERENCES donations(donationId);
-};
+    `regressionAmount`      REAL NOT NULL,
+    FOREIGN KEY(eventId) REFERENCES events(eventId),
+    FOREIGN KEY(donationId) REFERENCES donations(donationId)
+);
 
-INSERT INTO `events` (eventId, internalName, externalName, startTime, endTime, currencyId, sourceUrl, updateDelay)
+INSERT INTO `events` (eventId, internalName, externalName, startTime, endTime, currencyId, startingAmount, sourceUrl, updateDelay)
 VALUES
 (1, "TestOne", "Test One Title", 1477256983, 1477256985, "GBP", 0.0, "http:/127.0.0.1:5000/justgiving", 5),
 (2, "TestTwo", "Test Two Title", 1477256989, 1477256995, "USD", 10.0, "http:/127.0.0.1:5000/justgiving", 5),
