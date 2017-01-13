@@ -4,15 +4,15 @@ PRAGMA writeable_schema = 0;
 VACUUM;
 
 CREATE TABLE `events` {
-    `eventId`      INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `internalName` TEXT NOT NULL,
-    `externalName` TEXT NOT NULL,
-    `startTime`    INTEGER NOT NULL,
-    `endTime`      INTEGER NOT NULL,
-    `currencyId`   TEXT NOT NULL,
+    `eventId`          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `internalName`     TEXT NOT NULL,
+    `externalName`     TEXT NOT NULL,
+    `startTime`        INTEGER NOT NULL,
+    `endTime`          INTEGER NOT NULL,
+    `currencyId`       TEXT NOT NULL,
     `startingAmount`   REAL,
-    `sourceUrl`    TEXT NOT NULL,
-    `updateDelay`  INTEGER
+    `sourceUrl`        TEXT NOT NULL,
+    `updateDelay`      INTEGER
 };
 
 CREATE TABLE `donations` {
@@ -29,11 +29,11 @@ CREATE TABLE `donations` {
 
 CREATE TABLE `donationRegressions` {
     `donationRegressionId`  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `eventId` INTEGER NOT NULL,
-    `donationId` INTEGER NOT NULL,
-    `previousTotal` REAL NOT NULL,
-    `newTotal` REAL NOT NULL,
-    `regressionAmount` REAL NOT NULL
+    `eventId`               INTEGER NOT NULL,
+    `donationId`            INTEGER NOT NULL,
+    `previousTotal`         REAL NOT NULL,
+    `newTotal`              REAL NOT NULL,
+    `regressionAmount`      REAL NOT NULL
     FOREIGN KEY(eventId) REFERENCES events(eventId);
     FOREIGN KEY(donationId) REFERENCES donations(donationId);
 };
