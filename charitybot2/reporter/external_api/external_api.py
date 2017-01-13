@@ -6,7 +6,7 @@ from charitybot2.botconfig.event_config import EventConfiguration, EventConfigur
 from charitybot2.botconfig.json_config import ConfigurationFileDoesNotExistException
 from charitybot2.events.currency import Currency
 from charitybot2.paths import production_donations_db_path, event_config_folder
-from charitybot2.storage.donations_db import DonationsDB
+from charitybot2.storage.repository import Repository
 from flask import Flask, request, jsonify, make_response, abort
 from flask import render_template
 from flask_cors import CORS
@@ -43,7 +43,7 @@ api_paths = {
     ]
 }
 
-donations_db = DonationsDB(db_path=test_donations_db_path, debug=True)
+donations_db = Repository(db_path=test_donations_db_path, debug=True)
 
 
 def get_currency_symbol(currency_key):
@@ -240,7 +240,7 @@ def debug():
         global debug_mode
         debug_mode = True
         global donations_db
-        donations_db = DonationsDB(db_path=test_donations_db_path, debug=debug_mode)
+        donations_db = Repository(db_path=test_donations_db_path, debug=debug_mode)
         return 'Entered API debug mode'
     else:
         return 'Entering API debug mode is not allowed'
@@ -267,10 +267,10 @@ def start_api(args):
     global donations_db
     if cli_debug_mode:
         print('--- Starting in debug mode ---')
-        donations_db = DonationsDB(db_path=test_donations_db_path, debug=True)
+        donations_db = Repository(db_path=test_donations_db_path, debug=True)
     else:
         print('--- Starting in production mode ---')
-        donations_db = DonationsDB(db_path=production_donations_db_path, debug=True)
+        donations_db = Repository(db_path=production_donations_db_path, debug=True)
     app.run(host=api_address, port=api_port, debug=cli_debug_mode)
 
 

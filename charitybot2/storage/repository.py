@@ -1,7 +1,6 @@
 import time
 
 from charitybot2.events.donation import Donation
-from charitybot2.storage.base_db import BaseDB
 from charitybot2.storage.logger import Logger
 
 
@@ -9,14 +8,7 @@ def convert_row_to_donation(row):
     return Donation(old_amount=(row[2] - row[3]), new_amount=row[2], timestamp=row[1])
 
 
-class DonationsDB(BaseDB):
-    event_table_create_statement = 'CREATE TABLE `{}` (' \
-                                   '`id`	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' \
-                                   '`timestamp`	INTEGER NOT NULL,' \
-                                   '`amount`	REAL NOT NULL,' \
-                                   '`delta`	    REAL NOT NULL' \
-                                   ');'
-
+class Repository:
     def __init__(self, db_path, debug=False):
         super().__init__(file_path=db_path, db_name='Donations DB', verbose=debug)
         self.logger = Logger(source='Donations_DB', event='', console_only=debug)

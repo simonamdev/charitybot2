@@ -1,20 +1,20 @@
 from charitybot2.events.donation import Donation
-from charitybot2.storage.donations_db import DonationsDB
+from charitybot2.storage.repository import Repository
 from neopysqlite.neopysqlite import Neopysqlite
 from tests.tests import ResetDB, TestFilePath
 
 donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
-donations_db = DonationsDB(db_path=donations_db_path, debug=True)
+donations_db = Repository(db_path=donations_db_path, debug=True)
 
 
 def setup_module():
     ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
 
 
-class TestDonationsDBInitialisation:
+class TestRepositoryInitialisation:
     def test_initialising_db(self):
-        ddb = DonationsDB(db_path=donations_db_path, debug=True)
+        ddb = Repository(db_path=donations_db_path, debug=True)
 
 
 class TestDonationsDBRetrieve:

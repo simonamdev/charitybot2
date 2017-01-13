@@ -1,7 +1,7 @@
 import requests
 from charitybot2.paths import external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url, api_paths
-from charitybot2.storage.donations_db import DonationsDB
+from charitybot2.storage.repository import Repository
 from flask import json
 from tests.tests import TestFilePath, ServiceTest
 from datetime import datetime
@@ -19,7 +19,7 @@ status_service = ServiceTest(
     sql_path=donations_db_init_script_path)
 
 api_v1_base_url = api_full_url + 'api/v1/'
-donations_db = DonationsDB(db_path=donations_db_path, debug=True)
+donations_db = Repository(db_path=donations_db_path, debug=True)
 
 
 def setup_module():
