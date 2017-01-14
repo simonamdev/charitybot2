@@ -1,6 +1,7 @@
 import time
 import sqlite3
 
+from charitybot2.botconfig.event_config import EventConfigurationCreator
 from charitybot2.events.donation import Donation
 from charitybot2.storage.logger import Logger
 
@@ -9,8 +10,22 @@ class EventNotRegisteredException(Exception):
     pass
 
 
-def convert_row_to_donation(row):
+def convert_donation_row_to_object(row):
     return Donation(old_amount=(row[4] - row[3]), new_amount=row[4], timestamp=row[2], notes=row[5], valid=row[6])
+
+
+def convert_event_row_to_configuration(row):
+    config_data = {
+        'internal_name': row[1],
+        'external_name': row[2],
+        'start_time': row[3],
+        'end_time': row[4],
+        'currency_key': row[5],
+        'target_amount': int(row[7]),
+        'source_url': row[8],
+        'update_delay': row[9]
+    }
+    return EventConfigurationCreator(config_values=config_data).get_event_configuration()
 
 
 class Repository:
@@ -55,6 +70,36 @@ class Repository:
             event_configuration.get_value('update_delay'))
         self.cursor.execute(query, data)
 
+    def update_event(self, event_configuration):
+        query = 'UPDATE `events`' \
+                'SET ' \
+                'externalName = (?),' \
+                'startTime = (?),' \
+                'endTime = (?),' \
+                'currencyId = (?),' \
+                'targetAmount = (?),' \
+                'sourceUrl = (?),' \
+                'updateDelay = (?)' \
+                'WHERE eventId = (?)'
+        data = (
+            event_configuration.get_value('external_name'),
+            event_configuration.get_value('start_time'),
+            event_configuration.get_value('end_time'),
+            event_configuration.get_value('currency_key'),
+            event_configuration.get_value('target_amount'),
+            event_configuration.get_value('source_url'),
+            event_configuration.get_value('update_delay'),
+            self.get_event_id(event_configuration.get_value('internal_name')))
+        self.connection.execute(query, data)
+
+    def get_event_configuration(self, event_name):
+        query = 'SELECT *' \
+                'FROM `events`' \
+                'WHERE eventId = (?)'
+        data = (self.get_event_id(event_name), )
+        event_row = self.connection.execute(query, data).fetchone()
+        return convert_event_row_to_configuration(event_row)
+
     def get_number_of_donations(self, event_name):
         query = 'SELECT COUNT(*)' \
                 'FROM `donations`' \
@@ -67,7 +112,7 @@ class Repository:
                 'FROM `donations`' \
                 'WHERE eventId = (?)'
         data = (self.get_event_id(event_name), )
-        return [convert_row_to_donation(row) for row in self.connection.execute(query, data).fetchall()]
+        return [convert_donation_row_to_object(row) for row in self.connection.execute(query, data).fetchall()]
 
     def record_donation(self, event_name, donation):
         self.logger.log_verbose('Inserting donation: {} into donations database'.format(donation))
@@ -107,7 +152,7 @@ class Repository:
                 'FROM `donations`' \
                 'WHERE eventId = (?) AND timeRecorded BETWEEN (?) AND (?) AND valid = 1'
         data = (self.get_event_id(event_name), timespan_start, timespan_end)
-        return [convert_row_to_donation(row) for row in self.connection.execute(query, data).fetchall()]
+        return [convert_donation_row_to_object(row) for row in self.connection.execute(query, data).fetchall()]
 
     def get_largest_donation(self, event_name):
         query = 'SELECT *' \
@@ -116,4 +161,4 @@ class Repository:
                 'ORDER BY donationAmount DESC, timeRecorded DESC ' \
                 'LIMIT 1'
         data = (self.get_event_id(event_name), )
-        return convert_row_to_donation(self.connection.execute(query, data).fetchone())
+        return convert_donation_row_to_object(self.connection.execute(query, data).fetchone())

@@ -1,4 +1,5 @@
 from charitybot2.events.currency import Currency
+from charitybot2.storage.repository import Repository
 
 
 class EventInvalidException(Exception):
@@ -10,13 +11,25 @@ class EventAlreadyFinishedException(Exception):
 
 
 class Event:
-    def __init__(self, event_configuration, db_handler):
+    def __init__(self, event_configuration, db_path):
         self.event_configuration = event_configuration
-        self.db_handler = db_handler
+        self.repository = Repository(db_path=db_path, debug=True)
         self.amount_raised = 0
 
-    def get_event_name(self):
-        return self.event_configuration.get_value('event_name')
+    def event_already_registered(self):
+        return self.repository.event_exists(event_name=self.event_configuration.get_value('internal_name'))
+
+    def register_or_update_event(self):
+        if not self.event_already_registered():
+            self.repository.register_event(event_configuration=self.event_configuration)
+        else:
+            self.repository.update_event(event_configuration=self.event_configuration)
+
+    def get_internal_name(self):
+        return self.event_configuration.get_value('internal_name')
+
+    def get_external_name(self):
+        return self.event_configuration.get_value('external_name')
 
     def get_channel_name(self):
         return self.event_configuration.get_value('channel_name')
@@ -34,10 +47,10 @@ class Event:
         return self.event_configuration.get_value('source_url')
 
     def get_update_tick(self):
-        return self.event_configuration.get_value('update_tick')
+        return self.event_configuration.get_value('update_delay')
 
     def get_currency(self):
-        return Currency(self.event_configuration.get_value('currency'))
+        return Currency(self.event_configuration.get_value('currency_key'))
 
     def get_amount_raised(self):
         return self.amount_raised

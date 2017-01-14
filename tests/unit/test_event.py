@@ -2,25 +2,32 @@ import pytest
 from charitybot2.botconfig.event_config import EventConfigurationFromFile
 from charitybot2.botconfig.json_config import InvalidConfigurationException
 from charitybot2.events.event import Event
-from charitybot2.storage.db_handler import DBHandler
 from tests.tests import ResetDB, TestFilePath
 
 valid_config_path = TestFilePath().get_config_path('event', 'valid_config.json')
 invalid_config_path = TestFilePath().get_config_path('event', 'invalid_config.json')
-donations_db_path = TestFilePath().get_db_path('donations.db')
-donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
+db_path = TestFilePath().get_repository_db_path()
+db_script_path = TestFilePath().get_repository_script_path()
 
-db_handler = DBHandler(donations_db_path=donations_db_path, debug=True)
 valid_event_configuration = EventConfigurationFromFile(file_path=valid_config_path)
-valid_event = Event(event_configuration=valid_event_configuration, db_handler=db_handler)
+valid_event = Event(event_configuration=valid_event_configuration, db_path=db_path)
 
 
 def setup_module():
-    ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
+    ResetDB(db_path=db_path, sql_path=db_script_path)
 
 
 class TestEventRetrieve:
-    def test_retrieve_event_name(self):
+    def test_valid_event_is_not_already_registered(self):
+        assert valid_event.event_already_registered() is False
+
+    def test_registering_event(self):
+        valid_event.register_or_update_event()
+
+    def test_retrieve_internal_name(self):
+        assert valid_event.get_event_name() == 'name'
+
+    def test_retrieve_external_name(self):
         assert valid_event.get_event_name() == 'name'
 
     def test_retrieve_channel_name(self):

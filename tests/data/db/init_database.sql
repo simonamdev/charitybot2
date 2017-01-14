@@ -40,10 +40,10 @@ CREATE TABLE `donationRegressions` (
 
 INSERT INTO `events` (eventId, internalName, externalName, startTime, endTime, currencyId, startingAmount, targetAmount, sourceUrl, updateDelay)
 VALUES
-(1, "TestOne", "Test One Title", 1477256983, 1477256985, "GBP", 0, 1000, "http:/127.0.0.1:5000/justgiving", 5),
-(2, "TestTwo", "Test Two Title", 1477256989, 1477256995, "USD", 10.0, 1000, "http:/127.0.0.1:5000/justgiving", 5),
-(3, "TestThree", "Test Three Title", 1477256999, 1477257999, "GBP", 3000.5, 5000, "http:/127.0.0.1:5000/justgiving", 5),
-(4, "TestFour", "Test Four Title", 1477256999, 1477257999, "GBP", 0, 5000, "http:/127.0.0.1:5000/justgiving", 5);
+(1, "TestOne", "Test One Title", 1477256983, 1477256985, "GBP", 0, 1000, "http://127.0.0.1:5000/justgiving", 5),
+(2, "TestTwo", "Test Two Title", 1477256989, 1477256995, "USD", 10.0, 1000, "http://127.0.0.1:5000/justgiving", 5),
+(3, "TestThree", "Test Three Title", 1477256999, 1477257999, "GBP", 3000.5, 5000, "http://127.0.0.1:5000/justgiving", 5),
+(4, "TestFour", "Test Four Title", 1477256999, 1477257999, "GBP", 0, 5000, "http://127.0.0.1:5000/justgiving", 5);
 
 INSERT INTO `donations` (donationId, eventId, timeRecorded, donationAmount, runningTotal, notes, valid)
 VALUES

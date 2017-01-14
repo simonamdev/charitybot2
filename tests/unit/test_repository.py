@@ -1,7 +1,7 @@
 import pytest
 from charitybot2.botconfig.event_config import EventConfigurationFromFile, EventConfigurationCreator
 from charitybot2.events.donation import Donation
-from charitybot2.events.event import EventInvalidException
+from charitybot2.events.event import EventInvalidException, Event
 from charitybot2.storage.repository import Repository, EventNotRegisteredException
 from tests.tests import ResetDB, TestFilePath
 
@@ -58,6 +58,27 @@ class TestRepositoryOperations:
         event_configuration = EventConfigurationFromFile(file_path=config_file_path).get_event_configuration()
         repository.register_event(event_configuration=event_configuration)
         assert repository.event_exists('valid_configured_event')
+
+    def test_retrieving_event_configuration(self):
+        event_configuration = repository.get_event_configuration(event_name='TestOne')
+        event = Event(event_configuration=event_configuration, db_path=repository_db_path)
+        assert 'TestOne' == event.get_internal_name()
+        assert 'Test One Title' == event.get_external_name()
+        assert 1477256983 == event.get_start_time()
+        assert 1477256985 == event.get_end_time()
+        assert 'GBP' == event.get_currency().get_key()
+        assert 1000 == event.get_target_amount()
+        assert 5 == event.get_update_tick()
+
+    def test_updating_event_configuration(self):
+        config_file_path = TestFilePath().get_config_path('event', 'valid_config.json')
+        event_config_data = EventConfigurationFromFile(file_path=config_file_path).get_config_data()
+        event_config_data['end_time'] = 888888888888888
+        event_configuration = EventConfigurationCreator(config_values=event_config_data).get_event_configuration()
+        repository.update_event(event_configuration=event_configuration)
+        new_configuration = repository.get_event_configuration('valid_configured_event')
+        event = Event(event_configuration=new_configuration, db_path=repository_db_path)
+        assert 888888888888888 == event.get_end_time()
 
     def test_getting_all_donations_after_recording_several(self):
         event_name = 'TestTwo'
