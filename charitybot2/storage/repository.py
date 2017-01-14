@@ -69,6 +69,7 @@ class Repository:
             event_configuration.get_value('source_url'),
             event_configuration.get_value('update_delay'))
         self.cursor.execute(query, data)
+        self.connection.commit()
 
     def update_event(self, event_configuration):
         query = 'UPDATE `events`' \
@@ -90,14 +91,15 @@ class Repository:
             event_configuration.get_value('source_url'),
             event_configuration.get_value('update_delay'),
             self.get_event_id(event_configuration.get_value('internal_name')))
-        self.connection.execute(query, data)
+        self.cursor.execute(query, data)
+        self.connection.commit()
 
     def get_event_configuration(self, event_name):
         query = 'SELECT *' \
                 'FROM `events`' \
                 'WHERE eventId = (?)'
         data = (self.get_event_id(event_name), )
-        event_row = self.connection.execute(query, data).fetchone()
+        event_row = self.cursor.execute(query, data).fetchone()
         return convert_event_row_to_configuration(event_row)
 
     def get_number_of_donations(self, event_name):
@@ -105,14 +107,14 @@ class Repository:
                 'FROM `donations`' \
                 'WHERE eventId = (?)'
         data = (self.get_event_id(event_name), )
-        return self.connection.execute(query, data).fetchone()[0]
+        return self.cursor.execute(query, data).fetchone()[0]
 
     def get_all_donations(self, event_name):
         query = 'SELECT *' \
                 'FROM `donations`' \
                 'WHERE eventId = (?)'
         data = (self.get_event_id(event_name), )
-        return [convert_donation_row_to_object(row) for row in self.connection.execute(query, data).fetchall()]
+        return [convert_donation_row_to_object(row) for row in self.cursor.execute(query, data).fetchall()]
 
     def record_donation(self, event_name, donation):
         self.logger.log_verbose('Inserting donation: {} into donations database'.format(donation))
@@ -127,7 +129,8 @@ class Repository:
             donation.get_total_raised(),
             donation.get_notes(),
             1 if donation.get_validity() else 0)
-        self.connection.execute(query, data)
+        self.cursor.execute(query, data)
+        self.connection.commit()
 
     def get_last_donation(self, event_name):
         # Need to implement get last row in neopysqlite, luckily performance isn't such an issue
@@ -138,13 +141,13 @@ class Repository:
                 'FROM `donations`' \
                 'WHERE eventId = (?) AND valid = 1'
         data = (self.get_event_id(event_name=event_name), )
-        average = self.connection.execute(query, data).fetchone()[0]
+        average = self.cursor.execute(query, data).fetchone()[0]
         return round(average, 2)
 
     def get_event_names(self):
         query = 'SELECT internalName ' \
                 'FROM `events`'
-        names = self.connection.execute(query).fetchall()
+        names = self.cursor.execute(query).fetchall()
         return [name[0] for name in names]
 
     def get_donations_for_timespan(self, event_name, timespan_start, timespan_end=int(time.time())):
@@ -152,7 +155,7 @@ class Repository:
                 'FROM `donations`' \
                 'WHERE eventId = (?) AND timeRecorded BETWEEN (?) AND (?) AND valid = 1'
         data = (self.get_event_id(event_name), timespan_start, timespan_end)
-        return [convert_donation_row_to_object(row) for row in self.connection.execute(query, data).fetchall()]
+        return [convert_donation_row_to_object(row) for row in self.cursor.execute(query, data).fetchall()]
 
     def get_largest_donation(self, event_name):
         query = 'SELECT *' \
@@ -161,4 +164,4 @@ class Repository:
                 'ORDER BY donationAmount DESC, timeRecorded DESC ' \
                 'LIMIT 1'
         data = (self.get_event_id(event_name), )
-        return convert_donation_row_to_object(self.connection.execute(query, data).fetchone())
+        return convert_donation_row_to_object(self.cursor.execute(query, data).fetchone())
