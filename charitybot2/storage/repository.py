@@ -40,10 +40,19 @@ class Repository:
 
     def register_event(self, event_configuration):
         query = 'INSERT INTO `events`' \
-                '(eventId, internalName, externalName, startTime, endTime, currencyId, startingAmount, sourceUrl, updateDelay)' \
+                '(eventId, internalName, externalName, startTime, endTime, currencyId, startingAmount, targetAmount, sourceUrl, updateDelay)' \
                 'VALUES' \
-                '(NULL, ?, ?, ?, ?, ?, ?, ?, ?);'
-        data = (internal_name, external_name,)
+                '(NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
+        data = (
+            event_configuration.get_value('internal_name'),
+            event_configuration.get_value('external_name'),
+            event_configuration.get_value('start_time'),
+            event_configuration.get_value('end_time'),
+            event_configuration.get_value('currency_key'),
+            0,
+            event_configuration.get_value('target_amount'),
+            event_configuration.get_value('source_url'),
+            event_configuration.get_value('update_delay'))
         self.cursor.execute(query, data)
 
     def get_number_of_donations(self, event_name):
@@ -80,25 +89,31 @@ class Repository:
         return self.get_all_donations(event_name=event_name)[-1]
 
     def get_average_donation(self, event_name):
-        average_donation_row = self.db.get_specific_rows(
-            table=event_name,
-            contents_string='AVG(delta)',
-            filter_string='id IS NOT NULL')
-        return round(average_donation_row[0][0], 2)
+        query = 'SELECT AVG(donationAmount)' \
+                'FROM `donations`' \
+                'WHERE eventId = (?) AND valid = 1'
+        data = (self.get_event_id(event_name=event_name), )
+        average = self.connection.execute(query, data).fetchone()[0]
+        return round(average, 2)
 
     def get_event_names(self):
-        names_to_remove = ('sqlite_sequence')
-        return [name for name in self.db.get_table_names() if name not in names_to_remove]
+        query = 'SELECT internalName ' \
+                'FROM `events`'
+        names = self.connection.execute(query).fetchall()
+        return [name[0] for name in names]
 
     def get_donations_for_timespan(self, event_name, timespan_start, timespan_end=int(time.time())):
-        donation_rows = self.db.get_specific_rows(table=event_name, filter_string='timestamp >= {} AND timestamp <= {}'.format(
-            timespan_start,
-            timespan_end))
-        return [convert_row_to_donation(row) for row in donation_rows]
+        query = 'SELECT * ' \
+                'FROM `donations`' \
+                'WHERE eventId = (?) AND timeRecorded BETWEEN (?) AND (?) AND valid = 1'
+        data = (self.get_event_id(event_name), timespan_start, timespan_end)
+        return [convert_row_to_donation(row) for row in self.connection.execute(query, data).fetchall()]
 
     def get_largest_donation(self, event_name):
-        largest_donation_row = self.db.get_specific_rows(
-            table=event_name,
-            contents_string='id, timestamp, amount, MAX(delta)',
-            filter_string='id IS NOT NULL')
-        return convert_row_to_donation(largest_donation_row[0])
+        query = 'SELECT *' \
+                'FROM `donations`' \
+                'WHERE eventId = (?)' \
+                'ORDER BY donationAmount DESC, timeRecorded DESC ' \
+                'LIMIT 1'
+        data = (self.get_event_id(event_name), )
+        return convert_row_to_donation(self.connection.execute(query, data).fetchone())

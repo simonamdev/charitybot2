@@ -1,4 +1,5 @@
 import pytest
+from charitybot2.botconfig.event_config import EventConfigurationFromFile, EventConfigurationCreator
 from charitybot2.events.donation import Donation
 from charitybot2.events.event import EventInvalidException
 from charitybot2.storage.repository import Repository, EventNotRegisteredException
@@ -18,7 +19,7 @@ class TestRepositoryInitialisation:
         repository = Repository(db_path=repository_db_path, debug=True)
 
 
-class TestDonationsDBRetrieve:
+class TestRepositoryOperations:
     def test_getting_event_ids(self):
         assert 1 == repository.get_event_id(event_name='TestOne')
         assert 2 == repository.get_event_id(event_name='TestTwo')
@@ -53,18 +54,16 @@ class TestDonationsDBRetrieve:
         assert False is repository.event_exists(event_name='meow')
 
     def test_registering_new_event(self):
-        event_configuration = EventConeve
-        repository.register_event()
-        assert repository.event_exists('i_like_cats')
-
-    def test_registering_event_with_spaces_in_name_throws_exception(self):
-        with pytest.raises(EventInvalidException):
-            repository.register_event()
+        config_file_path = TestFilePath().get_config_path('event', 'valid_config.json')
+        event_configuration = EventConfigurationFromFile(file_path=config_file_path).get_event_configuration()
+        repository.register_event(event_configuration=event_configuration)
+        assert repository.event_exists('valid_configured_event')
 
     def test_getting_all_donations_after_recording_several(self):
-        event_name = 'test_event_three'
+        event_name = 'TestTwo'
         old_amount = 0
         amount_increase = 50.34
+        already_stored_count = repository.get_number_of_donations(event_name=event_name)
         for i in range(5):
             repository.record_donation(
                 event_name=event_name,
@@ -72,42 +71,39 @@ class TestDonationsDBRetrieve:
             old_amount += amount_increase
         new_amount = amount_increase
         all_donations = repository.get_all_donations(event_name=event_name)
-        for donation in all_donations:
+        new_donations = all_donations[already_stored_count:-1]
+        for donation in new_donations:
             assert donation.get_donation_amount() == amount_increase
             assert donation.get_total_raised() == round(new_amount, 2)
             new_amount += amount_increase
 
     def test_getting_last_donation(self):
-        event_name = 'test_event_two'
-        donations_db.record_donation(event_name=event_name, donation=Donation(old_amount=300, new_amount=500))
-        donations_db.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=600))
-        last_donation = donations_db.get_last_donation(event_name=event_name)
-        assert 100 == last_donation.get_donation_amount()
-        assert 600 == last_donation.get_total_raised()
+        event_name = 'TestOne'
+        repository.record_donation(event_name=event_name, donation=Donation(old_amount=100, new_amount=200))
+        repository.record_donation(event_name=event_name, donation=Donation(old_amount=200, new_amount=350))
+        last_donation = repository.get_last_donation(event_name=event_name)
+        assert 150 == last_donation.get_donation_amount()
+        assert 350 == last_donation.get_total_raised()
 
-    def test_getting_average_donation_delta(self):
-        event_name = 'test_event_two'
-        assert 266.7 == donations_db.get_average_donation(event_name=event_name)
+    def test_getting_average_donation_amount(self):
+        event_name = 'TestThree'
+        assert 100 == repository.get_average_donation(event_name=event_name)
+
+    def test_getting_average_donation_amount_does_not_include_invalid_donations(self):
+        event_name = 'TestFour'
+        assert 87.5 == repository.get_average_donation(event_name=event_name)
 
     def test_getting_event_names(self):
-        event_names = ('test', 'test_event_two', 'test_event_three', 'test_event_four')
-        assert sorted(event_names) == sorted(donations_db.get_event_names())
+        event_names = ('TestOne', 'TestTwo', 'TestThree', 'TestFour', 'valid_configured_event')
+        assert sorted(event_names) == sorted(repository.get_event_names())
 
     def test_get_donations_from_a_timespan(self):
-        last_timespan_donations = donations_db.get_donations_for_timespan(event_name='test', timespan_start=1477258100)
-        assert 6 == len(last_timespan_donations)
+        last_timespan_donations = repository.get_donations_for_timespan(
+            event_name='TestFour',
+            timespan_start=1477257061)
+        assert 1 == len(last_timespan_donations)
 
     def test_get_largest_donation(self):
-        largest_donation = donations_db.get_largest_donation(event_name='test')
-        assert 42 == largest_donation.get_donation_amount()
-        assert 1477258844 == largest_donation.get_timestamp()
-
-
-class TestDonationsDBRecording:
-    def test_recording_donation_records_in_db(self):
-        donation = Donation(old_amount=533.3, new_amount=545.7)
-        donations_db.record_donation(event_name='test_event', donation=donation)
-        all_donations = donations_db.get_all_donations(event_name='test_event')
-        assert 1 == len(all_donations)
-        assert 545.7 == all_donations[0].get_total_raised()
-        assert round(545.7 - 533.3, 2) == all_donations[0].get_donation_amount()
+        largest_donation = repository.get_largest_donation(event_name='TestFour')
+        assert 100 == largest_donation.get_donation_amount()
+        assert 1477257060 == largest_donation.get_timestamp()
