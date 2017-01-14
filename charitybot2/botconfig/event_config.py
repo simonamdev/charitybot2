@@ -51,7 +51,7 @@ class EventConfigurationCreator:
     def validate_key_types(self):
         # Test for spaces in Event Name
         if ' ' in self.config_values['internal_name']:
-            raise InvalidConfigurationException('Currently event names cannot have spaces, use underscores')
+            raise InvalidConfigurationException('Event internal names cannot have spaces')
         # Test that number keys are actually numbers
         for key in self.number_keys:
             if not isinstance(self.config_values[key], int):
