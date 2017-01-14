@@ -12,7 +12,7 @@ class EventLoop:
     def __init__(self, event, debug=False):
         self.event = event
         self.validate_event_loop()
-        self.logger = Logger(source='EventLoop', event=self.event.get_event_name(), console_only=debug)
+        self.logger = Logger(source='EventLoop', event=self.event.get_internal_name(), console_only=debug)
         self.debug = debug
         self.scraper = None
         self.reporter = None
@@ -33,7 +33,7 @@ class EventLoop:
         self.logger.log_verbose('Checking whether the event already has donations')
         if self.donations_already_present():
             # set the current amount from the last donation recorded
-            last_donation = self.event.db_handler.get_donations_db().get_last_donation(event_name=self.event.get_event_name())
+            last_donation = self.event.repository.get_last_donation(event_name=self.event.get_internal_name())
             self.event.set_amount_raised(last_donation.get_total_raised())
             self.logger.log_info('Amount raised retrieved from database is: {}{}'.format(
                 self.event.get_currency().get_symbol(),
@@ -43,10 +43,10 @@ class EventLoop:
     def donations_already_present(self):
         if not self.event_already_registered():
             return False
-        return self.event.db_handler.get_donations_db().get_number_of_donations(event_name=self.event.get_event_name()) > 0
+        return self.event.repository.get_number_of_donations(event_name=self.event.get_internal_name()) > 0
 
     def event_already_registered(self):
-        return self.event.db_handler.get_donations_db().event_exists(event_name=self.event.get_event_name())
+        return self.event.repository.event_exists(event_name=self.event.get_internal_name())
 
     def initialise_scraper(self):
         source_url = self.event.get_source_url()
@@ -57,11 +57,11 @@ class EventLoop:
             self.logger.log_error('BTDonate scraper has not been implemented yet')
             raise NotImplementedError
         else:
-            self.logger.log_error('Unable to initialise scraper for event: {}'.format(self.event.get_event_name()))
-            raise EventInvalidException('Unable to initialise scraper for event: {}'.format(self.event.get_event_name()))
+            self.logger.log_error('Unable to initialise scraper for event: {}'.format(self.event.get_internal_name()))
+            raise EventInvalidException('Unable to initialise scraper for event: {}'.format(self.event.get_internal_name()))
 
     def start(self):
-        self.logger.log_info('Starting Event: {}'.format(self.event.get_event_name()))
+        self.logger.log_info('Starting Event: {}'.format(self.event.get_internal_name()))
         while time.time() < self.event.get_end_time():
             hours_remaining = int((self.event.get_end_time() - time.time()) / (60 * 60))
             self.logger.log_info('Cycle {}: {} hours remaining in event'.format(
@@ -106,7 +106,7 @@ class EventLoop:
         self.logger.log_info('New Donation of {} {} detected'.format(
             self.event.get_currency().get_key(),
             donation.get_donation_amount()))
-        self.event.db_handler.get_donations_db().record_donation(event_name=self.event.get_event_name(), donation=donation)
+        self.event.repository.record_donation(event_name=self.event.get_internal_name(), donation=donation)
 
     def report_new_donation(self, donation):
         pass
