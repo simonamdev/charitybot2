@@ -6,26 +6,26 @@ from charitybot2.events.event_loop import EventLoop
 from charitybot2.events.event import Event
 from charitybot2.paths import mocksite_path
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
-from charitybot2.storage.db_handler import DBHandler
 from tests.tests import ResetDB, ServiceTest, TestFilePath
 
 config_path = TestFilePath().get_config_path('event', 'valid_config.json')
 config_values = EventConfigurationFromFile(file_path=config_path).get_config_data()
-donations_db_path = TestFilePath().get_db_path('donations.db')
-donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
+db_path = TestFilePath().get_repository_db_path()
+db_script_path = TestFilePath().get_repository_script_path()
 
 
 class MockEvent(Event):
     mocksite_base_url = mocksite_full_url
 
-    def __init__(self, event_configuration):
+    def __init__(self, mock_name, mock_end_time):
+        config_values['internal_name'] = mock_name
         config_values['end_time'] = mock_end_time
         mock_event_config = EventConfigurationCreator(config_values=config_values).get_event_configuration()
-        super().__init__(event_configuration=mock_event_config)
+        super().__init__(event_configuration=mock_event_config, db_path=db_path)
         self.mock_name = mock_name
         self.mock_end_time = mock_end_time
 
-    def get_event_name(self):
+    def get_internal_name(self):
         return self.mock_name
 
     def get_end_time(self):
@@ -48,7 +48,7 @@ service_test = ServiceTest(
 
 
 def setup_module():
-    ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
+    ResetDB(db_path=db_path, sql_path=db_script_path)
     service_test.start_service()
     r = requests.get(url=mocksite_full_url + 'reset')
     assert 200 == r.status_code
@@ -60,7 +60,7 @@ def teardown_module():
 
 class TestEventRunThrough:
     def test_getting_new_amount_properly_formatted(self):
-        test_event = MockEvent('test_one')
+        test_event = MockEvent('test_one', int(time.time()) + 10)
         el = EventLoop(event=test_event, debug=True)
         # 2 loops
         test_event.increase_mocksite_amount()
@@ -68,13 +68,13 @@ class TestEventRunThrough:
         assert 200.52 == el.get_new_amount()
 
     def test_event_cycles_increment_properly(self):
-        test_event = MockEvent('test_two')
+        test_event = MockEvent('test_two', int(time.time()) + 5)
         test_event_loop = EventLoop(event=test_event, debug=True)
         test_event_loop.start()
         assert 1 == test_event_loop.loop_count
 
     def test_event_amount_raised_changes_each_cycle(self):
-        test_event = MockEvent('test_three')
+        test_event = MockEvent('test_three', int(time.time()) + 10)
         # first reset the amount on the mocksite so that the amount raised is back to default
         test_event.reset_mocksite()
         # 3 cycles
@@ -86,7 +86,7 @@ class TestEventRunThrough:
         assert 250.52 == test_event_loop.event.get_amount_raised()
 
     def test_event_amount_raising_only_when_amount_is_different(self):
-        test_event = MockEvent('test_four')
+        test_event = MockEvent('EventLoopTest', int(time.time()) + 20)
         test_event.reset_mocksite()
         test_event_loop = EventLoop(event=test_event, debug=True)
         # avoid first check
@@ -97,8 +97,8 @@ class TestEventRunThrough:
         test_event_loop.check_for_donation()
         assert 100.52 == test_event_loop.event.get_amount_raised()
         # Change the amount
-        response = requests.get(test_event.get_source_url())
-        assert 200 == response.status_code
+        # response = requests.get(test_event.get_source_url())
+        # assert 200 == response.status_code
         test_event.increase_mocksite_amount()
         test_event_loop.check_for_donation()
         assert 150.52 == test_event_loop.event.get_amount_raised()
