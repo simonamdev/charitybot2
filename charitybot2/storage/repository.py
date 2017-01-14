@@ -133,8 +133,16 @@ class Repository:
         self.connection.commit()
 
     def get_last_donation(self, event_name):
-        # Need to implement get last row in neopysqlite, luckily performance isn't such an issue
-        return self.get_all_donations(event_name=event_name)[-1]
+        query = 'SELECT *' \
+                'FROM `donations`' \
+                'WHERE eventId = (?)' \
+                'ORDER BY runningTotal DESC ' \
+                'LIMIT 1'
+        data = (self.get_event_id(event_name), )
+        return convert_donation_row_to_object(self.cursor.execute(query, data).fetchone())
+
+    def get_total_raised(self, event_name):
+        return self.get_last_donation(event_name=event_name).get_total_raised()
 
     def get_average_donation(self, event_name):
         query = 'SELECT AVG(donationAmount)' \

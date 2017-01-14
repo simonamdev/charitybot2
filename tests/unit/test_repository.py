@@ -1,7 +1,7 @@
 import pytest
 from charitybot2.botconfig.event_config import EventConfigurationFromFile, EventConfigurationCreator
 from charitybot2.events.donation import Donation
-from charitybot2.events.event import EventInvalidException, Event
+from charitybot2.events.event import Event
 from charitybot2.storage.repository import Repository, EventNotRegisteredException
 from tests.tests import ResetDB, TestFilePath
 
@@ -103,8 +103,12 @@ class TestRepositoryOperations:
         repository.record_donation(event_name=event_name, donation=Donation(old_amount=100, new_amount=200))
         repository.record_donation(event_name=event_name, donation=Donation(old_amount=200, new_amount=350))
         last_donation = repository.get_last_donation(event_name=event_name)
+        assert isinstance(last_donation, Donation)
         assert 150 == last_donation.get_donation_amount()
         assert 350 == last_donation.get_total_raised()
+
+    def test_getting_total_raised(self):
+        assert 350 == repository.get_total_raised('TestOne')
 
     def test_getting_average_donation_amount(self):
         event_name = 'TestThree'
