@@ -18,13 +18,10 @@ donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
 class MockEvent(Event):
     mocksite_base_url = mocksite_full_url
 
-    def __init__(self, mock_name, mock_end_time):
+    def __init__(self, event_configuration):
         config_values['end_time'] = mock_end_time
         mock_event_config = EventConfigurationCreator(config_values=config_values).get_event_configuration()
-        super().__init__(
-            event_configuration=mock_event_config,
-            db_handler=DBHandler(donations_db_path=donations_db_path,
-            debug=True))
+        super().__init__(event_configuration=mock_event_config)
         self.mock_name = mock_name
         self.mock_end_time = mock_end_time
 
@@ -63,7 +60,7 @@ def teardown_module():
 
 class TestEventRunThrough:
     def test_getting_new_amount_properly_formatted(self):
-        test_event = MockEvent('test_one', int(time.time()) + 5)
+        test_event = MockEvent('test_one')
         el = EventLoop(event=test_event, debug=True)
         # 2 loops
         test_event.increase_mocksite_amount()
@@ -71,13 +68,13 @@ class TestEventRunThrough:
         assert 200.52 == el.get_new_amount()
 
     def test_event_cycles_increment_properly(self):
-        test_event = MockEvent('test_two', int(time.time()) + 5)
+        test_event = MockEvent('test_two')
         test_event_loop = EventLoop(event=test_event, debug=True)
         test_event_loop.start()
         assert 1 == test_event_loop.loop_count
 
     def test_event_amount_raised_changes_each_cycle(self):
-        test_event = MockEvent('test_three', int(time.time()) + 10)
+        test_event = MockEvent('test_three')
         # first reset the amount on the mocksite so that the amount raised is back to default
         test_event.reset_mocksite()
         # 3 cycles
@@ -89,7 +86,7 @@ class TestEventRunThrough:
         assert 250.52 == test_event_loop.event.get_amount_raised()
 
     def test_event_amount_raising_only_when_amount_is_different(self):
-        test_event = MockEvent('test_four', int(time.time()) + 20)
+        test_event = MockEvent('test_four')
         test_event.reset_mocksite()
         test_event_loop = EventLoop(event=test_event, debug=True)
         # avoid first check

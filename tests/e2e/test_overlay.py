@@ -59,7 +59,7 @@ class TestOverlay:
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 20)
         reset_mocksite()
         time.sleep(2)
-        EventLoop(event=MockEvent(event_name, int(time.time()) + 10), debug=True).start()
+        EventLoop(event=MockEvent(event_name), debug=True).start()
         response = requests.get(url=self.overlay_url.format(event_name))
         assert 200 == response.status_code
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
@@ -76,14 +76,14 @@ class TestOverlay:
         reset_mocksite()
         time.sleep(2)
         driver.get(self.overlay_url.format(event_name))
-        EventLoop(event=MockEvent(event_name, int(time.time()) + 10), debug=True).start()
+        EventLoop(event=MockEvent(event_name), debug=True).start()
         soup = BeautifulSoup(driver.find_element_by_id('amount_raised').text.strip(), 'html.parser')
         assert '100' == soup.text
         soup = BeautifulSoup(driver.find_element_by_id('overlay-text').text.strip(), 'html.parser')
         assert '£100' == soup.text
         # refactor this following line later when separating mocksite logic from mockevent object
         requests.get(url=MockEvent.mocksite_base_url + 'justgiving/increase/')
-        EventLoop(event=MockEvent(event_name, int(time.time()) + 10), debug=True).start()
+        EventLoop(event=MockEvent(event_name), debug=True).start()
         soup = BeautifulSoup(driver.find_element_by_id('amount_raised').text.strip(), 'html.parser')
         assert '150' == soup.text
         soup = BeautifulSoup(driver.find_element_by_id('overlay-text').text.strip(), 'html.parser')

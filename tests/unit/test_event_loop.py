@@ -31,7 +31,7 @@ def setup_module():
 
 class ValidTestEvent(Event):
     def __init__(self):
-        super().__init__(event_configuration=valid_event_configuration, db_handler=db_handler)
+        super().__init__(event_configuration=valid_event_configuration)
 
 
 class TestEventLoopValidity:
@@ -44,7 +44,7 @@ class TestEventLoopValidity:
 
     def test_initialise_not_implemented_btdonate_scraper_throws_exception(self):
         with pytest.raises(NotImplementedError):
-            e = Event(event_configuration=btdonate_configuration, db_handler=db_handler)
+            e = Event(event_configuration=btdonate_configuration)
             el = EventLoop(event=e, debug=True)
 
     def test_valid_event_loop_scraper_is_of_type_justgivingscraper(self):

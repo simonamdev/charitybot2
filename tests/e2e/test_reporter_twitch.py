@@ -62,7 +62,7 @@ class TestTwitchChat:
 
     def test_twitch_chat_donations_appear(self):
         navigate_to_twitch_channel()
-        test_event = MockEvent('test_one', time.time() + 10)
+        test_event = MockEvent('test_one')
         test_event_loop = TwitchEventLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         time.sleep(4)
