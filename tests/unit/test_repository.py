@@ -1,5 +1,7 @@
+import pytest
 from charitybot2.events.donation import Donation
-from charitybot2.storage.repository import Repository
+from charitybot2.events.event import EventInvalidException
+from charitybot2.storage.repository import Repository, EventNotRegisteredException
 from tests.tests import ResetDB, TestFilePath
 
 repository_db_path = TestFilePath().get_repository_db_path()
@@ -17,31 +19,59 @@ class TestRepositoryInitialisation:
 
 
 class TestDonationsDBRetrieve:
+    def test_getting_event_ids(self):
+        assert 1 == repository.get_event_id(event_name='TestOne')
+        assert 2 == repository.get_event_id(event_name='TestTwo')
+        assert 3 == repository.get_event_id(event_name='TestThree')
+
+    def test_getting_event_id_of_non_existent_event_throws_exception(self):
+        with pytest.raises(EventNotRegisteredException):
+            repository.get_event_id(event_name='meowmeow')
+
     def test_getting_number_of_donations(self):
         assert 5 == repository.get_number_of_donations(event_name='TestOne')
 
+    def test_getting_all_donations(self):
+        donations = repository.get_all_donations(event_name='TestTwo')
+        for donation in donations:
+            assert isinstance(donation, Donation)
+        assert -10.0 == donations[2].get_donation_amount()
+        assert 20.0 == donations[2].get_total_raised()
+        assert "Mistake" == donations[2].get_notes()
+
     def test_getting_all_donations_after_recording_one(self):
-        event_name = 'test_event_two'
-        donations_db.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=1000.1))
-        recorded_donation = donations_db.get_all_donations(event_name=event_name)[0]
+        repository.record_donation(event_name='TestThree', donation=Donation(old_amount=3300.0, new_amount=3400.0))
+        recorded_donation = repository.get_all_donations(event_name='TestThree')[-1]
         assert isinstance(recorded_donation, Donation)
-        assert recorded_donation.get_donation_amount() == 500.1
-        assert recorded_donation.get_total_raised() == 1000.1
+        assert recorded_donation.get_donation_amount() == 100.0
+        assert recorded_donation.get_total_raised() == 3400.0
 
     def test_event_existence_of_existing_event(self):
-        event_name = 'test_event_four'
-        donations_db.record_donation(event_name=event_name, donation=Donation(old_amount=500, new_amount=1000.1))
-        assert True is donations_db.event_exists(event_name=event_name)
+        assert True is repository.event_exists(event_name='TestThree')
+
+    def test_event_existence_of_non_existent_event(self):
+        assert False is repository.event_exists(event_name='meow')
+
+    def test_registering_new_event(self):
+        event_configuration = EventConeve
+        repository.register_event()
+        assert repository.event_exists('i_like_cats')
+
+    def test_registering_event_with_spaces_in_name_throws_exception(self):
+        with pytest.raises(EventInvalidException):
+            repository.register_event()
 
     def test_getting_all_donations_after_recording_several(self):
         event_name = 'test_event_three'
         old_amount = 0
         amount_increase = 50.34
         for i in range(5):
-            donations_db.record_donation(event_name=event_name, donation=Donation(old_amount=old_amount, new_amount=old_amount + amount_increase))
+            repository.record_donation(
+                event_name=event_name,
+                donation=Donation(old_amount=old_amount, new_amount=old_amount + amount_increase))
             old_amount += amount_increase
         new_amount = amount_increase
-        all_donations = donations_db.get_all_donations(event_name=event_name)
+        all_donations = repository.get_all_donations(event_name=event_name)
         for donation in all_donations:
             assert donation.get_donation_amount() == amount_increase
             assert donation.get_total_raised() == round(new_amount, 2)

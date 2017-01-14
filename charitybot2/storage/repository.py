@@ -5,8 +5,12 @@ from charitybot2.events.donation import Donation
 from charitybot2.storage.logger import Logger
 
 
+class EventNotRegisteredException(Exception):
+    pass
+
+
 def convert_row_to_donation(row):
-    return Donation(old_amount=(row[2] - row[3]), new_amount=row[2], timestamp=row[1])
+    return Donation(old_amount=(row[4] - row[3]), new_amount=row[4], timestamp=row[2], notes=row[5], valid=row[6])
 
 
 class Repository:
@@ -17,34 +21,59 @@ class Repository:
         self.debug = debug
         self.logger = Logger(source='Donations_DB',  event='', console_only=debug)
 
-    def get_number_of_donations(self, event_name):
-        query = 'SELECT COUNT(*) ' \
-                'FROM `donations` ' \
-                'JOIN `events` ' \
-                'ON donations.eventId = events.eventId ' \
+    def get_event_id(self, event_name):
+        query = 'SELECT `eventId`' \
+                'FROM `events`' \
                 'WHERE events.internalName = (?)'
         data = (event_name, )
-        return self.connection.execute(query, data).fetchone()[0]
-
-    def record_donation(self, event_name, donation):
-        self.create_event_table_if_not_exists(event_name=event_name)
-        self.logger.log_info('Inserting donation: {} into donations database'.format(donation))
-        self.db.insert_row(
-            table=event_name,
-            row_string='(NULL, ?, ?, ?)',
-            row_data=(int(time.time()), donation.get_total_raised(), donation.get_donation_amount()))
-
-    def create_event_table_if_not_exists(self, event_name):
-        if not self.event_exists(event_name=event_name):
-            self.logger.log_info('Creating table for event: {}'.format(event_name))
-            self.db.execute_sql(self.event_table_create_statement.format(event_name))
+        event_id = self.connection.execute(query, data).fetchone()
+        if event_id is None:
+            raise EventNotRegisteredException('Event: {} is not registered yet')
+        return event_id[0]
 
     def event_exists(self, event_name):
-        return event_name in self.db.get_table_names()
+        query = 'SELECT COUNT(*)' \
+                'FROM `events`' \
+                'WHERE internalName = (?)'
+        data = (event_name, )
+        return 1 == self.connection.execute(query, data).fetchone()[0]
+
+    def register_event(self, event_configuration):
+        query = 'INSERT INTO `events`' \
+                '(eventId, internalName, externalName, startTime, endTime, currencyId, startingAmount, sourceUrl, updateDelay)' \
+                'VALUES' \
+                '(NULL, ?, ?, ?, ?, ?, ?, ?, ?);'
+        data = (internal_name, external_name,)
+        self.cursor.execute(query, data)
+
+    def get_number_of_donations(self, event_name):
+        query = 'SELECT COUNT(*)' \
+                'FROM `donations`' \
+                'WHERE eventId = (?)'
+        data = (self.get_event_id(event_name), )
+        return self.connection.execute(query, data).fetchone()[0]
 
     def get_all_donations(self, event_name):
-        donation_rows = self.db.get_all_rows(table=event_name)
-        return [convert_row_to_donation(row) for row in donation_rows]
+        query = 'SELECT *' \
+                'FROM `donations`' \
+                'WHERE eventId = (?)'
+        data = (self.get_event_id(event_name), )
+        return [convert_row_to_donation(row) for row in self.connection.execute(query, data).fetchall()]
+
+    def record_donation(self, event_name, donation):
+        self.logger.log_verbose('Inserting donation: {} into donations database'.format(donation))
+        query = 'INSERT INTO `donations` ' \
+                '(donationId, eventId, timeRecorded, donationAmount, runningTotal, notes, valid)' \
+                'VALUES' \
+                '(NULL, ?, ?, ?, ?, ?, ?)'
+        data = (
+            self.get_event_id(event_name),
+            int(time.time()),
+            donation.get_donation_amount(),
+            donation.get_total_raised(),
+            donation.get_notes(),
+            1 if donation.get_validity() else 0)
+        self.connection.execute(query, data)
 
     def get_last_donation(self, event_name):
         # Need to implement get last row in neopysqlite, luckily performance isn't such an issue
