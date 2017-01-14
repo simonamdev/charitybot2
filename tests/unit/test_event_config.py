@@ -11,7 +11,7 @@ def get_valid_config_values():
     for key in EventConfigurationCreator.keys_required:
         config_values[key] = '' if key not in EventConfigurationCreator.number_keys else 0
     config_values['end_time'] = 1
-    config_values['currency'] = 'GBP'
+    config_values['currency_key'] = 'GBP'
     config_values['source_url'] = 'http://www.test.com'
     return config_values
 
@@ -37,7 +37,7 @@ class TestEventConfigCreator:
 
     def test_passing_incorrect_currency_value_throws_exception(self):
         config_values = get_valid_config_values()
-        config_values['currency'] = 'Hello'
+        config_values['currency_key'] = 'Hello'
         with pytest.raises(InvalidCurrencyException):
             EventConfigurationCreator(config_values)
 

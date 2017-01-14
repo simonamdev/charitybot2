@@ -1,10 +1,10 @@
 {
-  "event_name": "name",
-  "channel_name": "channel",
+  "internal_name": "valid_configured_event",
+  "external_name": "Valid Configured Event",
   "start_time": 0,
   "end_time": 9999999999999999,
+  "currency_key": "GBP",
   "target_amount": 1000,
-  "currency": "GBP",
   "source_url": "https://www.justgiving.com/fundraising/alasdair-clift",
-  "update_tick": 5
+  "update_delay": 5
 }

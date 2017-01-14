@@ -11,6 +11,7 @@ CREATE TABLE `events` (
     `endTime`          INTEGER NOT NULL,
     `currencyId`       TEXT NOT NULL,
     `startingAmount`   REAL,
+    `targetAmount`     REAL NOT NULL,
     `sourceUrl`        TEXT NOT NULL,
     `updateDelay`      INTEGER
 );
