@@ -1,6 +1,4 @@
-import pytest
 from charitybot2.botconfig.event_config import EventConfigurationFromFile
-from charitybot2.botconfig.json_config import InvalidConfigurationException
 from charitybot2.events.event import Event
 from tests.tests import ResetDB, TestFilePath
 
@@ -25,13 +23,10 @@ class TestEventRetrieve:
         valid_event.register_or_update_event()
 
     def test_retrieve_internal_name(self):
-        assert valid_event.get_event_name() == 'name'
+        assert valid_event.get_internal_name() == 'valid_configured_event'
 
     def test_retrieve_external_name(self):
-        assert valid_event.get_event_name() == 'name'
-
-    def test_retrieve_channel_name(self):
-        assert valid_event.get_channel_name() == 'channel'
+        assert valid_event.get_external_name() == 'Valid Configured Event'
 
     def test_retrieve_event_start_time(self):
         assert valid_event.get_start_time() == 0

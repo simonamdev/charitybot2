@@ -31,9 +31,6 @@ class Event:
     def get_external_name(self):
         return self.event_configuration.get_value('external_name')
 
-    def get_channel_name(self):
-        return self.event_configuration.get_value('channel_name')
-
     def get_start_time(self):
         return self.event_configuration.get_value('start_time')
 
