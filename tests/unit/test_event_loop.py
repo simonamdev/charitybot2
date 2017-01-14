@@ -49,10 +49,6 @@ class TestEventLoopValidity:
         el = EventLoop(event=ValidTestEvent(), debug=True)
         assert isinstance(el.scraper, JustGivingScraper)
 
-    def test_event_loop_event_is_not_already_registered(self):
-        el = EventLoop(event=ValidTestEvent(), debug=True)
-        assert False is el.event_already_registered()
-
     def test_event_loop_donations_not_stored_yet(self):
         el = EventLoop(event=ValidTestEvent(), debug=True)
         assert False is el.donations_already_present()
