@@ -38,6 +38,7 @@ class EventLoop:
             self.event.register_event()
         self.logger.log_verbose('Checking whether the event already has donations')
         if self.donations_already_present():
+            self.logger.log_verbose('Donations are already present for the event')
             # set the current amount from the last donation recorded
             last_donation = self.event.repository.get_last_donation(event_name=self.event.get_internal_name())
             self.event.set_amount_raised(last_donation.get_total_raised())
@@ -45,6 +46,8 @@ class EventLoop:
                 self.event.get_currency().get_symbol(),
                 self.event.get_amount_raised()
             ))
+        else:
+            self.logger.log_verbose('Donations are not present for the event')
 
     def donations_already_present(self):
         if not self.event_already_registered():
