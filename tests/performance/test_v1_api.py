@@ -3,7 +3,7 @@ from charitybot2.paths import external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url, api_paths
 from charitybot2.storage.repository import Repository
 from flask import json
-from tests.tests import TestFilePath, ServiceTest
+from tests.test_helpers import TestFilePath, ServiceTest
 from datetime import datetime
 
 donations_db_path = TestFilePath().get_db_path('donations.db')

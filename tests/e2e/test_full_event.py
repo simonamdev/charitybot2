@@ -9,7 +9,7 @@ from charitybot2.reporter.external_api.external_api import api_full_url
 from charitybot2.reporter.twitch import ChatBot
 from selenium import webdriver
 from tests.integration.test_event_loop_with_mocksite import MockEvent
-from tests.tests import ServiceTest, AdjustTestConfig, TestFilePath, ResetDB
+from tests.test_helpers import ServiceTest, AdjustTestConfig, TestFilePath, ResetDB
 
 donations_db_path = TestFilePath().get_db_path('donations.db')
 donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')

@@ -3,7 +3,7 @@ from charitybot2.botconfig.event_config import EventConfigurationFromFile, Event
 from charitybot2.events.donation import Donation
 from charitybot2.events.event import Event
 from charitybot2.storage.repository import Repository, EventNotRegisteredException
-from tests.tests import ResetDB, TestFilePath
+from tests.test_helpers import ResetDB, TestFilePath
 
 repository_db_path = TestFilePath().get_repository_db_path()
 repository_script_path = TestFilePath().get_repository_script_path()

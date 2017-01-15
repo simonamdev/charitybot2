@@ -3,7 +3,7 @@ import json
 import requests
 from charitybot2.paths import external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
-from tests.tests import ServiceTest
+from tests.test_helpers import ServiceTest
 
 service = ServiceTest(
             service_name='External API for Debug test',

@@ -1,6 +1,6 @@
 from charitybot2.botconfig.event_config import EventConfigurationFromFile
 from charitybot2.events.event import Event
-from tests.tests import ResetDB, TestFilePath
+from tests.test_helpers import ResetDB, TestFilePath
 
 valid_config_path = TestFilePath().get_config_path('event', 'valid_config.json')
 db_path = TestFilePath().get_repository_db_path()

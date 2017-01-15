@@ -6,7 +6,7 @@ from charitybot2.botconfig.twitch_config import TwitchAccountConfiguration
 from charitybot2.events.event import Event
 from charitybot2.events.event_loop import TwitchEventLoop, EventLoop
 from charitybot2.reporter.twitch import TwitchAccount
-from tests.tests import TestFilePath
+from tests.test_helpers import TestFilePath
 from charitybot2 import paths
 
 

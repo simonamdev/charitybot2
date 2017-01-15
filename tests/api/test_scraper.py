@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from charitybot2.paths import mocksite_path
 from charitybot2.sources.scraper import Scraper, SourceUnavailableException
 from tests.integration.test_event_loop_with_mocksite import MockEvent
-from tests.tests import ServiceTest
+from tests.test_helpers import ServiceTest
 
 url = MockEvent.mocksite_base_url
 mocksite = ServiceTest(

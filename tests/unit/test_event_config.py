@@ -3,7 +3,7 @@ from charitybot2.botconfig.event_config import EventConfiguration, EventConfigur
 from charitybot2.botconfig.json_config import InvalidConfigurationException, ConfigurationFileDoesNotExistException, \
     JSONConfigurationFile
 from charitybot2.events.currency import InvalidCurrencyException
-from tests.tests import TestFilePath
+from tests.test_helpers import TestFilePath
 
 
 def get_valid_config_values():

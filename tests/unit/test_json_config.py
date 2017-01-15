@@ -1,7 +1,7 @@
 import pytest
 from charitybot2.botconfig.json_config import ConfigurationFileDoesNotExistException, JSONConfigurationFile, InvalidConfigurationException, \
     ConfigurationFieldDoesNotExistException
-from tests.tests import TestFilePath
+from tests.test_helpers import TestFilePath
 
 valid_config_keys = ("key1", "key2", "key3")
 invalid_config_keys = ("test1", "test2")

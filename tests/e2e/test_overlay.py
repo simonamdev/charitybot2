@@ -2,20 +2,22 @@ import time
 import requests
 
 from bs4 import BeautifulSoup
+from charitybot2.botconfig.event_config import EventConfigurationFromFile
 from charitybot2.events.event_loop import EventLoop
 from charitybot2.paths import mocksite_path, external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from selenium import webdriver
 from tests.integration.test_event_loop_with_mocksite import MockEvent
-from tests.tests import ServiceTest, TestFilePath, ResetDB, AdjustTestConfig
+from tests.test_helpers import ServiceTest, TestFilePath, ResetDB, AdjustTestConfig
+from tests.test_paths import end_to_end_config_path
 
 driver = None
 
 db_path = TestFilePath().get_repository_db_path()
 db_script_path = TestFilePath().get_repository_script_path()
-config_adjustment = AdjustTestConfig(config_path=TestFilePath().get_config_path('event', 'E2E_Test_Charity_Event.json'))
-event_name = 'E2E_Test_Charity_Event'
+config_adjustment = AdjustTestConfig(config_path=end_to_end_config_path)
+event_configuration = EventConfigurationFromFile(file_path=end_to_end_config_path)
 
 mocksite = ServiceTest(
     service_name='Donations Mocksite',

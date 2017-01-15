@@ -6,7 +6,7 @@ from charitybot2.events.event_loop import EventLoop
 from charitybot2.events.event import Event
 from charitybot2.paths import mocksite_path
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
-from tests.tests import ResetDB, ServiceTest, TestFilePath
+from tests.test_helpers import ResetDB, ServiceTest, TestFilePath
 
 config_path = TestFilePath().get_config_path('event', 'valid_config.json')
 config_values = EventConfigurationFromFile(file_path=config_path).get_config_data()

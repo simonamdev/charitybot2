@@ -8,7 +8,7 @@ from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount, TwitchChatBot, ChatBot
 from selenium import webdriver
 from tests.integration.test_event_loop_with_mocksite import MockEvent
-from tests.tests import ServiceTest
+from tests.test_helpers import ServiceTest
 
 
 def return_unique_test_string():

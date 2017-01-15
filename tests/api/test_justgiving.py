@@ -3,7 +3,7 @@ from charitybot2.paths import mocksite_path
 from charitybot2.sources.justgiving import JustGivingScraper
 from charitybot2.sources.scraper import SourceUnavailableException
 from tests.integration.test_event_loop_with_mocksite import MockEvent
-from tests.tests import ServiceTest
+from tests.test_helpers import ServiceTest
 
 mocksite = ServiceTest(
     service_name='Donations Mocksite',

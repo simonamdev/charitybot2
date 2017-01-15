@@ -1,7 +1,7 @@
 import pytest
 
 from charitybot2.storage.base_db import DatabaseDoesNotExistException, BaseDB
-from tests.tests import TestFilePath
+from tests.test_helpers import TestFilePath
 
 db_path = TestFilePath().get_db_path('logs.db')
 

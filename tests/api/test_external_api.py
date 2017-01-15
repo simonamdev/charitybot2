@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from charitybot2.paths import external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url, api_paths
 from flask import json
-from tests.tests import TestFilePath, ServiceTest
+from tests.test_helpers import TestFilePath, ServiceTest
 
 db_path = TestFilePath().get_repository_db_path()
 db_script_path = TestFilePath().get_repository_script_path()
