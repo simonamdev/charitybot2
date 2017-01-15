@@ -111,7 +111,7 @@ class TestRepositoryOperations:
         event_name = 'TestFive'
         starting_amount = repository.get_starting_amount(event_name=event_name)
         assert isinstance(starting_amount, float)
-        assert 50 == starting_amount
+        assert 100 == starting_amount
 
     def test_getting_last_donation_when_no_donations_present_returns_starting_amount(self):
         event_name = 'TestFive'

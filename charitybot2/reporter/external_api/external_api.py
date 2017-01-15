@@ -190,13 +190,14 @@ def amount_raised(event_name):
                                amount_raised='...',
                                currency_symbol='')
     last_donation = repository.get_last_donation(event_name=event_name)
+    # Take no donations present into consideration
+    amount = last_donation if isinstance(last_donation, float) else last_donation.get_total_raised()
     # Remove decimal point and add thousands separators
-    pretty_number = format(int(last_donation.get_total_raised()), ',d')
-    currency_symbol = get_currency_symbol(event_name=event_name)
+    pretty_number = format(int(amount), ',d')
     return render_template('overlay.html',
                            event_name=event_name,
                            amount_raised=pretty_number,
-                           currency_symbol=currency_symbol)
+                           currency_symbol=get_currency_symbol(event_name=event_name))
 
 
 @app.route('/stats/<event_name>', methods=['GET'])
