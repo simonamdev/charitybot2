@@ -50,30 +50,6 @@ def get_currency_symbol(currency_key):
     return Currency(key=currency_key).get_symbol()
 
 
-def get_event_config(event_name):
-    file_path = os.path.join(event_config_folder, event_name + '.json')
-    if debug_mode:
-        file_path = TestFilePath().get_config_path('event', event_name + '.json')
-    event_config = None
-    try:
-        event_config = EventConfigurationFromFile(file_path=file_path)
-    except ConfigurationFileDoesNotExistException:
-        abort(400)
-    return event_config
-
-
-def get_event_config_value(event_name, key_required):
-    return get_event_config(event_name=event_name).get_value(key_name=key_required)
-
-
-def get_event_config_values(event_name, keys_required=()):
-    event_config = get_event_config(event_name=event_name)
-    return_values = []
-    for key in keys_required:
-        return_values.append(event_config.get_value(key_name=key))
-    return return_values
-
-
 @app.errorhandler(400)
 def bad_request(error):
     return make_response(jsonify({'error': 'Configuration file missing'}), 400)
