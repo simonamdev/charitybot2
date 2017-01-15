@@ -46,8 +46,9 @@ api_paths = {
 repository = Repository(db_path=test_repository_db_path, debug=True)
 
 
-def get_currency_symbol(currency_key):
-    return Currency(key=currency_key).get_symbol()
+def get_currency_symbol(event_name):
+    key = repository.get_event_configuration(event_name=event_name).get_value('currency_key')
+    return Currency(key=key).get_symbol()
 
 
 @app.errorhandler(400)
@@ -85,7 +86,7 @@ def event_details(event_name):
     event_configuration = repository.get_event_configuration(event_name=event_name)
     event_data = {
         'name': event_name,
-        'currency_symbol': get_currency_symbol(currency_key=event_configuration.get_value('currency_key')),
+        'currency_symbol': get_currency_symbol(event_name=event_name),
         'start_time': event_configuration.get_value('start_time'),
         'end_time': event_configuration.get_value('end_time'),
         'amount_raised': repository.get_total_raised(event_name=event_name),
@@ -191,8 +192,7 @@ def amount_raised(event_name):
     last_donation = repository.get_last_donation(event_name=event_name)
     # Remove decimal point and add thousands separators
     pretty_number = format(int(last_donation.get_total_raised()), ',d')
-    currency_key = repository.get_event_configuration(event_name=event_name).get_value('currency_key')
-    currency_symbol = get_currency_symbol(currency_key=currency_key)
+    currency_symbol = get_currency_symbol(event_name=event_name)
     return render_template('overlay.html',
                            event_name=event_name,
                            amount_raised=pretty_number,
