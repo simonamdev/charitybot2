@@ -17,7 +17,7 @@ class TestFileValidation:
     validator = BotStartupValidator(db_directory=TestFilePath().db_dir, config_directory=TestFilePath().config_dir)
 
     def test_given_existing_config_name_exists(self):
-        self.validator.confirm_config_exists(config_type='base', file_name='empty_config.json')
+        self.validator.confirm_config_exists(config_type='base', file_name='valid_config.json')
 
     def test_given_non_existing_file_name_throws_exception(self):
         with pytest.raises(MissingRequiredFileException):
