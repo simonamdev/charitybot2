@@ -3,20 +3,14 @@ import json
 import requests
 from charitybot2.paths import external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
-from tests.tests import ServiceTest, TestFilePath
-
-donations_db_path = TestFilePath().get_db_path('donations.db')
-donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
-
+from tests.tests import ServiceTest
 
 service = ServiceTest(
             service_name='External API for Debug test',
             service_url=api_full_url,
             service_path=external_api_cli_path,
             enter_debug=False,
-            extra_args=['--debug'],
-            db_path=donations_db_path,
-            sql_path=donations_db_init_script_path)
+            extra_args=['--debug'])
 
 
 def setup_module():

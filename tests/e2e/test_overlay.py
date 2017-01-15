@@ -12,8 +12,8 @@ from tests.tests import ServiceTest, TestFilePath, ResetDB, AdjustTestConfig
 
 driver = None
 
-donations_db_path = TestFilePath().get_db_path('donations.db')
-donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
+db_path = TestFilePath().get_repository_db_path()
+db_script_path = TestFilePath().get_repository_script_path()
 config_adjustment = AdjustTestConfig(config_path=TestFilePath().get_config_path('event', 'E2E_Test_Charity_Event.json'))
 event_name = 'E2E_Test_Charity_Event'
 
@@ -55,7 +55,7 @@ class TestOverlay:
     overlay_url = api_full_url + 'overlay/{}'
 
     def test_getting_last_donation_amount_on_overlay(self):
-        ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
+        ResetDB(db_path=db_path, sql_path=db_script_path)
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 20)
         reset_mocksite()
         time.sleep(2)
@@ -71,7 +71,7 @@ class TestOverlay:
         assert '£100' == overlay_text
 
     def test_overlay_amount_updates_automagically(self):
-        ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
+        ResetDB(db_path=db_path, sql_path=db_script_path)
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 25)
         reset_mocksite()
         time.sleep(2)
