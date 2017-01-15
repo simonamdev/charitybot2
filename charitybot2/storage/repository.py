@@ -134,13 +134,16 @@ class Repository:
         self.connection.commit()
 
     def get_last_donation(self, event_name):
+        if self.get_number_of_donations(event_name=event_name) == 0:
+            return self.get_starting_amount(event_name=event_name)
         query = 'SELECT *' \
                 'FROM `donations`' \
                 'WHERE eventId = (?)' \
                 'ORDER BY runningTotal DESC ' \
                 'LIMIT 1'
         data = (self.get_event_id(event_name), )
-        return convert_donation_row_to_object(self.cursor.execute(query, data).fetchone())
+        last_donation_row = self.cursor.execute(query, data).fetchone()
+        return convert_donation_row_to_object(last_donation_row)
 
     def get_total_raised(self, event_name):
         return self.get_last_donation(event_name=event_name).get_total_raised()
@@ -174,3 +177,10 @@ class Repository:
                 'LIMIT 1'
         data = (self.get_event_id(event_name), )
         return convert_donation_row_to_object(self.cursor.execute(query, data).fetchone())
+
+    def get_starting_amount(self, event_name):
+        query = 'SELECT startingAmount ' \
+                'FROM `events` ' \
+                'WHERE eventId = (?)'
+        data = (self.get_event_id(event_name), )
+        return self.cursor.execute(query, data).fetchone()[0]

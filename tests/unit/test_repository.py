@@ -107,6 +107,17 @@ class TestRepositoryOperations:
         assert 150 == last_donation.get_donation_amount()
         assert 350 == last_donation.get_total_raised()
 
+    def test_getting_starting_amount(self):
+        event_name = 'TestFive'
+        starting_amount = repository.get_starting_amount(event_name=event_name)
+        assert isinstance(starting_amount, float)
+        assert 50 == starting_amount
+
+    def test_getting_last_donation_when_no_donations_present_returns_starting_amount(self):
+        event_name = 'TestFive'
+        starting_amount = repository.get_last_donation(event_name=event_name)
+        assert starting_amount == repository.get_starting_amount(event_name=event_name)
+
     def test_getting_total_raised(self):
         assert 350 == repository.get_total_raised('TestOne')
 
@@ -119,7 +130,7 @@ class TestRepositoryOperations:
         assert 87.5 == repository.get_average_donation(event_name=event_name)
 
     def test_getting_event_names(self):
-        event_names = ('TestOne', 'TestTwo', 'TestThree', 'TestFour', 'valid_configured_event')
+        event_names = ('TestOne', 'TestTwo', 'TestThree', 'TestFour', 'valid_configured_event', 'TestFive')
         assert sorted(event_names) == sorted(repository.get_event_names())
 
     def test_get_donations_from_a_timespan(self):
