@@ -16,14 +16,18 @@ class Event:
         self.repository = Repository(db_path=db_path, debug=True)
         self.amount_raised = 0
 
-    def event_already_registered(self):
-        return self.repository.event_exists(event_name=self.event_configuration.get_value('internal_name'))
-
-    def register_or_update_event(self):
+    def register_event(self):
         if not self.event_already_registered():
             self.repository.register_event(event_configuration=self.event_configuration)
-        else:
-            self.repository.update_event(event_configuration=self.event_configuration)
+
+    def update_event(self, event_configuration):
+        if self.event_already_registered():
+            self.repository.update_event(event_configuration=event_configuration)
+            self.event_configuration = self.repository.get_event_configuration(
+                event_name=self.event_configuration.get_value('internal_name'))
+
+    def event_already_registered(self):
+        return self.repository.event_exists(event_name=self.event_configuration.get_value('internal_name'))
 
     def get_internal_name(self):
         return self.event_configuration.get_value('internal_name')

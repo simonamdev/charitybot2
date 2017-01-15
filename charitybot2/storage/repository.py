@@ -47,11 +47,12 @@ class Repository:
         return event_id[0]
 
     def event_exists(self, event_name):
-        query = 'SELECT COUNT(*)' \
+        query = 'SELECT COUNT(*) ' \
                 'FROM `events`' \
                 'WHERE internalName = (?)'
         data = (event_name, )
-        return 1 == self.connection.execute(query, data).fetchone()[0]
+        event_count = self.connection.execute(query, data).fetchone()[0]
+        return 1 == event_count
 
     def register_event(self, event_configuration):
         query = 'INSERT INTO `events`' \

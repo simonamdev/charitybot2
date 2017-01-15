@@ -10,6 +10,12 @@ class EventConfiguration:
     def __init__(self, config_values):
         self.config_values = config_values
 
+    def __str__(self):
+        return_string = ''
+        for key in EventConfigurationCreator.keys_required:
+            return_string += '{}: {}\n'.format(key, self.get_value(key=key))
+        return return_string
+
     def get_value(self, key):
         return self.config_values[key]
 

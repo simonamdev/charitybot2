@@ -30,8 +30,12 @@ class EventLoop:
                 self.event.get_end_time()))
 
     def initialise_event_loop(self):
-        self.logger.log_verbose('Registering/Updating event configuration')
-        self.event.register_or_update_event()
+        if self.event_already_registered():
+            self.logger.log_info('Updating event configuration')
+            self.event.update_event(self.event.event_configuration)
+        else:
+            self.logger.log_info('Registering event configuration')
+            self.event.register_event()
         self.logger.log_verbose('Checking whether the event already has donations')
         if self.donations_already_present():
             # set the current amount from the last donation recorded
