@@ -2,7 +2,7 @@ import pytest
 from charitybot2.botconfig.twitch_config import TwitchAccountConfiguration
 from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import InvalidTwitchAccountException, TwitchAccount
-from tests.test_helpers import TestFilePath
+from tests.restters_for_tests import TestFilePath
 
 invalid_config_path = TestFilePath().get_config_path('twitch', 'test_twitch_config.json')
 

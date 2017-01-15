@@ -1,6 +1,6 @@
 import pytest
 from charitybot2.charitybot2 import BotStartupValidator, MissingRequiredFolderException, MissingRequiredFileException
-from tests.test_helpers import TestFilePath
+from tests.restters_for_tests import TestFilePath
 
 
 class TestDirectoryValidation:

@@ -2,7 +2,7 @@ import argparse
 
 from charitybot2.events.donation import Donation
 from charitybot2.storage.repository import Repository
-from tests.test_helpers import TestFilePath
+from tests.restters_for_tests import TestFilePath
 
 donations_db_path = TestFilePath().get_db_path('donations.db')
 

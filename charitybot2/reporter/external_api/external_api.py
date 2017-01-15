@@ -10,7 +10,7 @@ from charitybot2.storage.repository import Repository
 from flask import Flask, request, jsonify, make_response, abort
 from flask import render_template
 from flask_cors import CORS
-from tests.test_helpers import TestFilePath
+from tests.restters_for_tests import TestFilePath
 
 app = Flask(__name__)
 cors = CORS(app)

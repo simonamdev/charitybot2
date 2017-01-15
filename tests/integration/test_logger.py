@@ -1,6 +1,6 @@
 from charitybot2.storage.logger import Logger
 from charitybot2.storage.logs_db import Log, LogsDB
-from tests.test_helpers import ResetDB, TestFilePath
+from tests.restters_for_tests import ResetDB, TestFilePath
 
 logs_db_path = TestFilePath().get_db_path('logs.db')
 logs_reset_path = TestFilePath().get_db_path('logs.sql')

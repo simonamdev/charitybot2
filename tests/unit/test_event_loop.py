@@ -7,7 +7,7 @@ from charitybot2.events.event import Event, EventInvalidException
 from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount
 from charitybot2.sources.justgiving import JustGivingScraper
-from tests.test_helpers import ResetDB, TestFilePath
+from tests.restters_for_tests import ResetDB, TestFilePath
 
 valid_config_path = TestFilePath().get_config_path('event', 'valid_config' + '.json')
 valid_event_config_values = EventConfigurationFromFile(file_path=valid_config_path).get_config_data()
