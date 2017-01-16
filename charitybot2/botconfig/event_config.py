@@ -10,27 +10,33 @@ class EventConfiguration:
     def __init__(self, config_values):
         self.config_values = config_values
 
+    def __str__(self):
+        return_string = ''
+        for key in EventConfigurationCreator.keys_required:
+            return_string += '{}: {}\n'.format(key, self.get_value(key=key))
+        return return_string
+
     def get_value(self, key):
         return self.config_values[key]
 
 
 class EventConfigurationCreator:
     keys_required = (
-        'event_name',
-        'channel_name',
+        'internal_name',
+        'external_name',
         'start_time',
         'end_time',
+        'currency_key',
         'target_amount',
-        'currency',
         'source_url',
-        'update_tick'
+        'update_delay'
     )
 
     number_keys = [
         'start_time',
         'end_time',
         'target_amount',
-        'update_tick'
+        'update_delay'
     ]
 
     currencies = (
@@ -50,14 +56,14 @@ class EventConfigurationCreator:
 
     def validate_key_types(self):
         # Test for spaces in Event Name
-        if ' ' in self.config_values['event_name']:
-            raise InvalidConfigurationException('Currently event names cannot have spaces, use underscores')
+        if ' ' in self.config_values['internal_name']:
+            raise InvalidConfigurationException('Event internal names cannot have spaces')
         # Test that number keys are actually numbers
         for key in self.number_keys:
             if not isinstance(self.config_values[key], int):
                 raise InvalidConfigurationException('Expected numbers in key: {} but found something else instead'.format(key))
         # Test that the currency key is recognised
-        if self.config_values['currency'] not in self.currencies:
+        if self.config_values['currency_key'] not in self.currencies:
             raise InvalidCurrencyException(
                     'Invalid currency key passed. Please use one of the following: {}'.format(
                         str(self.currencies)))

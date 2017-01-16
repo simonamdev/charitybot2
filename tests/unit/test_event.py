@@ -1,30 +1,49 @@
-import pytest
-from charitybot2.botconfig.event_config import EventConfigurationFromFile
-from charitybot2.botconfig.json_config import InvalidConfigurationException
+from charitybot2.botconfig.event_config import EventConfigurationFromFile, EventConfigurationCreator
 from charitybot2.events.event import Event
-from charitybot2.storage.db_handler import DBHandler
-from tests.tests import ResetDB, TestFilePath
+from charitybot2.storage.repository import Repository
+from tests.restters_for_tests import ResetDB, TestFilePath
+from tests.paths_for_tests import valid_config_path
 
-valid_config_path = TestFilePath().get_config_path('event', 'valid_config.json')
-invalid_config_path = TestFilePath().get_config_path('event', 'invalid_config.json')
-donations_db_path = TestFilePath().get_db_path('donations.db')
-donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
+db_path = TestFilePath().get_repository_db_path()
+db_script_path = TestFilePath().get_repository_script_path()
+repository = Repository(db_path=db_path)
 
-db_handler = DBHandler(donations_db_path=donations_db_path, debug=True)
-valid_event_configuration = EventConfigurationFromFile(file_path=valid_config_path)
-valid_event = Event(event_configuration=valid_event_configuration, db_handler=db_handler)
+valid_event_configuration = EventConfigurationFromFile(file_path=valid_config_path).get_event_configuration()
+valid_event = Event(event_configuration=valid_event_configuration, db_path=db_path)
 
 
 def setup_module():
-    ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
+    ResetDB(db_path=db_path, sql_path=db_script_path)
+
+
+class TestEventRegistration:
+    def test_valid_event_is_not_already_registered(self):
+        assert valid_event.event_already_registered() is False
+
+    def test_registering_event(self):
+        assert False is repository.event_exists(event_name='valid_configured_event')
+        assert False is valid_event.event_already_registered()
+        valid_event.register_event()
+        assert True is repository.event_exists(event_name='valid_configured_event')
+        assert True is valid_event.event_already_registered()
+
+    def test_updating_event_configuration(self):
+        config_data = EventConfigurationFromFile(file_path=valid_config_path).get_config_data()
+        config_data['currency_key'] = 'USD'
+        new_currency_config = EventConfigurationCreator(config_values=config_data).get_event_configuration()
+        valid_event.update_event(event_configuration=new_currency_config)
+        assert 'USD' == valid_event.get_currency().get_key()
+        print(valid_event_configuration.get_value('currency_key'))
+        valid_event.update_event(event_configuration=valid_event_configuration)
+        assert 'GBP' == valid_event.get_currency().get_key()
 
 
 class TestEventRetrieve:
-    def test_retrieve_event_name(self):
-        assert valid_event.get_event_name() == 'name'
+    def test_retrieve_internal_name(self):
+        assert valid_event.get_internal_name() == 'valid_configured_event'
 
-    def test_retrieve_channel_name(self):
-        assert valid_event.get_channel_name() == 'channel'
+    def test_retrieve_external_name(self):
+        assert valid_event.get_external_name() == 'Valid Configured Event'
 
     def test_retrieve_event_start_time(self):
         assert valid_event.get_start_time() == 0
@@ -55,3 +74,4 @@ class TestEventUpdate:
         valid_event.set_amount_raised(amount=200)
         valid_event.increment_amount_raised(amount_increase=50)
         assert valid_event.get_amount_raised() == 250
+

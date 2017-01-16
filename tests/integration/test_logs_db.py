@@ -1,6 +1,6 @@
 import time
 from charitybot2.storage.logs_db import LogsDB, Log
-from tests.tests import TestFilePath, ResetDB
+from tests.restters_for_tests import TestFilePath, ResetDB
 
 logs_db_path = TestFilePath().get_db_path('logs.db')
 logs_sql_path = TestFilePath().get_db_path('logs.sql')

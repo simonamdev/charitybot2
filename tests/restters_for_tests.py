@@ -2,10 +2,10 @@ import json
 import os
 import subprocess
 import sys
+import requests
+
 
 from time import sleep
-
-import requests
 from neopysqlite import neopysqlite
 
 
@@ -15,6 +15,15 @@ class TestFilePath:
         self.base_dir = os.path.join(self.current_dir, 'data')
         self.db_dir = os.path.join(self.base_dir, 'db')
         self.config_dir = os.path.join(self.base_dir, 'config')
+
+    def get_repository_db_path(self):
+        return self.get_db_path('repository.db')
+
+    def get_logs_path(self):
+        return self.get_db_path('logs.db')
+
+    def get_repository_script_path(self):
+        return self.get_db_path('init_database.sql')
 
     def get_db_path(self, file_name):
         return os.path.join(self.db_dir, file_name)

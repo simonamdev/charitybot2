@@ -16,7 +16,7 @@ class TestParserRequiredArguments:
             CharityBot(args=args)
 
     def test_passing_existent_event_config(self):
-        args = self.parser.parse_args(['config', '--debug'])
+        args = self.parser.parse_args(['valid_config', '--debug'])
         CharityBot(args=args)
 
 
@@ -29,5 +29,5 @@ class TestParserOptionalArguments:
             CharityBot(args=args)
 
     def test_passing_existent_twitch_config_in_twitch_mode(self):
-        args = self.parser.parse_args(['config', '--debug', '--twitch-config', 'test_twitch_config'])
+        args = self.parser.parse_args(['valid_config', '--debug', '--twitch-config', 'test_twitch_config'])
         CharityBot(args=args)

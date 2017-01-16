@@ -6,16 +6,16 @@ from charitybot2.botconfig.event_config import EventConfiguration, EventConfigur
 from charitybot2.botconfig.json_config import ConfigurationFileDoesNotExistException
 from charitybot2.events.currency import Currency
 from charitybot2.paths import production_donations_db_path, event_config_folder
-from charitybot2.storage.donations_db import DonationsDB
+from charitybot2.storage.repository import Repository
 from flask import Flask, request, jsonify, make_response, abort
 from flask import render_template
 from flask_cors import CORS
-from tests.tests import TestFilePath
+from tests.restters_for_tests import TestFilePath
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-test_donations_db_path = TestFilePath().get_db_path('donations.db')
+test_repository_db_path = TestFilePath().get_repository_db_path()
 
 api_address = '127.0.0.1'
 api_port = 8000
@@ -43,35 +43,12 @@ api_paths = {
     ]
 }
 
-donations_db = DonationsDB(db_path=test_donations_db_path, debug=True)
+repository = Repository(db_path=test_repository_db_path, debug=True)
 
 
-def get_currency_symbol(currency_key):
-    return Currency(key=currency_key).get_symbol()
-
-
-def get_event_config(event_name):
-    file_path = os.path.join(event_config_folder, event_name + '.json')
-    if debug_mode:
-        file_path = TestFilePath().get_config_path('event', event_name + '.json')
-    event_config = None
-    try:
-        event_config = EventConfigurationFromFile(file_path=file_path)
-    except ConfigurationFileDoesNotExistException:
-        abort(400)
-    return event_config
-
-
-def get_event_config_value(event_name, key_required):
-    return get_event_config(event_name=event_name).get_value(key_name=key_required)
-
-
-def get_event_config_values(event_name, keys_required=()):
-    event_config = get_event_config(event_name=event_name)
-    return_values = []
-    for key in keys_required:
-        return_values.append(event_config.get_value(key_name=key))
-    return return_values
+def get_currency_symbol(event_name):
+    key = repository.get_event_configuration(event_name=event_name).get_value('currency_key')
+    return Currency(key=key).get_symbol()
 
 
 @app.errorhandler(400)
@@ -96,7 +73,7 @@ def index():
 
 @app.route('/api/v1/events', methods=['GET'])
 def events():
-    event_names = donations_db.get_event_names()
+    event_names = repository.get_event_names()
     if len(event_names) == 0:
         abort(404)
     return jsonify(events=event_names)
@@ -104,28 +81,25 @@ def events():
 
 @app.route('/api/v1/event/<event_name>', methods=['GET'])
 def event_details(event_name):
-    if event_name not in donations_db.get_event_names():
+    if not repository.event_exists(event_name=event_name):
         abort(404)
-    all_donations = donations_db.get_all_donations(event_name=event_name)
-    start_time, end_time, currency_key, target_amount = get_event_config_values(
-        event_name=event_name,
-        keys_required=('start_time', 'end_time', 'currency', 'target_amount'))
+    event_configuration = repository.get_event_configuration(event_name=event_name)
     event_data = {
         'name': event_name,
-        'currency_symbol': get_currency_symbol(currency_key=currency_key),
-        'start_time': start_time,
-        'end_time': end_time,
-        'amount_raised': all_donations[-1].get_total_raised(),
-        'target_amount': target_amount
+        'currency_symbol': get_currency_symbol(event_name=event_name),
+        'start_time': event_configuration.get_value('start_time'),
+        'end_time': event_configuration.get_value('end_time'),
+        'amount_raised': repository.get_total_raised(event_name=event_name),
+        'target_amount': event_configuration.get_value('target_amount')
     }
     return jsonify(event_data)
 
 
 @app.route('/api/v1/event/<event_name>/donations')
 def event_donations(event_name):
-    if not donations_db.event_exists(event_name=event_name):
+    if not repository.event_exists(event_name=event_name):
         abort(404)
-    all_donations = donations_db.get_all_donations(event_name=event_name)
+    all_donations = repository.get_all_donations(event_name=event_name)
     # TODO: Add option to limit via Neopysqlite and not slicing after the fact
     limit = request.args.get('limit')
     if limit is not None:
@@ -142,18 +116,17 @@ def event_donations(event_name):
 
 @app.route('/api/v1/event/<event_name>/donations/info')
 def donations_info(event_name):
-    if not donations_db.event_exists(event_name=event_name):
+    if not repository.event_exists(event_name=event_name):
         abort(404)
-    all_donations = donations_db.get_all_donations(event_name=event_name)
-    last_timespan = 3600 # an hour in seconds
-    last_timespan_donations = donations_db.get_donations_for_timespan(
+    last_timespan = 3600  # an hour in seconds
+    last_timespan_donations = repository.get_donations_for_timespan(
         event_name=event_name,
         timespan_start=int(time.time()) - last_timespan)
-    largest_donation = donations_db.get_largest_donation(event_name=event_name)
-    last_donation = all_donations[-1]
+    largest_donation = repository.get_largest_donation(event_name=event_name)
+    last_donation = repository.get_last_donation(event_name=event_name)
     donations_info_object = {
-        'count': len(all_donations),
-        'average': donations_db.get_average_donation(event_name=event_name),
+        'count': repository.get_number_of_donations(event_name=event_name),
+        'average': repository.get_average_donation(event_name=event_name),
         'largest': {
             'amount': largest_donation.get_donation_amount(),
             'timestamp': largest_donation.get_timestamp()
@@ -172,9 +145,9 @@ def donations_info(event_name):
 
 @app.route('/api/v1/event/<event_name>/donations/last')
 def last_event_donation(event_name):
-    if event_name not in donations_db.get_event_names():
+    if event_name not in repository.get_event_names():
         abort(404)
-    last_donation = donations_db.get_last_donation(event_name=event_name)
+    last_donation = repository.get_last_donation(event_name=event_name)
     return jsonify(
         {
             'amount': last_donation.get_donation_amount(),
@@ -186,9 +159,9 @@ def last_event_donation(event_name):
 
 @app.route('/api/v1/event/<event_name>/donations/distribution')
 def event_donations_distribution(event_name):
-    if event_name not in donations_db.get_event_names():
+    if event_name not in repository.get_event_names():
         abort(404)
-    all_donations = donations_db.get_all_donations(event_name=event_name)
+    all_donations = repository.get_all_donations(event_name=event_name)
     distribution = {
         '0-9': 0,
         '10-19': 0,
@@ -211,25 +184,25 @@ def event_donations_distribution(event_name):
 
 @app.route('/overlay/<event_name>')
 def amount_raised(event_name):
-    if not donations_db.event_exists(event_name=event_name):
+    if not repository.event_exists(event_name=event_name):
         return render_template('overlay.html',
                                event_name=event_name,
                                amount_raised='...',
                                currency_symbol='')
-    last_donation = donations_db.get_last_donation(event_name=event_name)
+    last_donation = repository.get_last_donation(event_name=event_name)
+    # Take no donations present into consideration
+    amount = last_donation if isinstance(last_donation, float) else last_donation.get_total_raised()
     # Remove decimal point and add thousands separators
-    pretty_number = format(int(last_donation.get_total_raised()), ',d')
-    currency_key = get_event_config_value(event_name=event_name, key_required='currency')
-    currency_symbol = get_currency_symbol(currency_key=currency_key)
+    pretty_number = format(int(amount), ',d')
     return render_template('overlay.html',
                            event_name=event_name,
                            amount_raised=pretty_number,
-                           currency_symbol=currency_symbol)
+                           currency_symbol=get_currency_symbol(event_name=event_name))
 
 
 @app.route('/stats/<event_name>', methods=['GET'])
 def status_console(event_name):
-    if event_name not in donations_db.get_event_names():
+    if not repository.event_exists(event_name=event_name):
         abort(404)
     return render_template('console.html', event_name=event_name, debug_mode=str(debug_mode).lower())
 
@@ -239,8 +212,8 @@ def debug():
     if cli_debug_mode:
         global debug_mode
         debug_mode = True
-        global donations_db
-        donations_db = DonationsDB(db_path=test_donations_db_path, debug=debug_mode)
+        global repository
+        repository = Repository(db_path=test_repository_db_path, debug=debug_mode)
         return 'Entered API debug mode'
     else:
         return 'Entering API debug mode is not allowed'
@@ -264,13 +237,13 @@ def create_api_process_parser():
 def start_api(args):
     global cli_debug_mode
     cli_debug_mode = args.debug
-    global donations_db
+    global repository
     if cli_debug_mode:
         print('--- Starting in debug mode ---')
-        donations_db = DonationsDB(db_path=test_donations_db_path, debug=True)
+        repository = Repository(db_path=test_repository_db_path, debug=True)
     else:
         print('--- Starting in production mode ---')
-        donations_db = DonationsDB(db_path=production_donations_db_path, debug=True)
+        repository = Repository(db_path=production_donations_db_path, debug=True)
     app.run(host=api_address, port=api_port, debug=cli_debug_mode)
 
 

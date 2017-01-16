@@ -6,8 +6,7 @@ from charitybot2.botconfig.twitch_config import TwitchAccountConfiguration
 from charitybot2.events.event import Event
 from charitybot2.events.event_loop import TwitchEventLoop, EventLoop
 from charitybot2.reporter.twitch import TwitchAccount
-from charitybot2.storage.db_handler import DBHandler
-from tests.tests import TestFilePath
+from tests.restters_for_tests import TestFilePath
 from charitybot2 import paths
 
 
@@ -53,7 +52,7 @@ class CharityBot:
         self.event_config_path = None
         self.debug = self.args.debug
         self.db_dir = TestFilePath().db_dir if self.debug else paths.db_folder
-        self.donations_db_path = os.path.join(self.db_dir, 'donations.db')
+        self.db_path = os.path.join(self.db_dir, 'repository.db')
         self.config_dir = TestFilePath().config_dir if self.debug else paths.config_folder
         self.twitch_mode = True if self.args.twitch_config else False
         self.validate_bot()
@@ -70,9 +69,8 @@ class CharityBot:
             validator.confirm_config_exists('twitch', self.args.twitch_config + '.json')
 
     def initialise_bot(self):
-        db_handler = DBHandler(donations_db_path=self.donations_db_path, debug=self.debug)
         event_config = EventConfigurationFromFile(file_path=self.event_config_path)
-        event = Event(event_configuration=event_config, db_handler=db_handler)
+        event = Event(event_configuration=event_config, db_path=self.db_path)
         if self.twitch_mode:
             twitch_config_path = os.path.join(self.config_dir, 'twitch', self.args.twitch_config + '.json')
             twitch_config = TwitchAccountConfiguration(file_path=twitch_config_path)

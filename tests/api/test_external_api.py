@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 from charitybot2.paths import external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url, api_paths
 from flask import json
-from tests.tests import TestFilePath, ServiceTest
+from tests.restters_for_tests import TestFilePath, ServiceTest
 
-donations_db_path = TestFilePath().get_db_path('donations.db')
-donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
+db_path = TestFilePath().get_repository_db_path()
+db_script_path = TestFilePath().get_repository_script_path()
 
 status_service = ServiceTest(
     service_name='External API',
@@ -14,8 +14,8 @@ status_service = ServiceTest(
     service_path=external_api_cli_path,
     enter_debug=True,
     extra_args=['--debug'],
-    db_path=donations_db_path,
-    sql_path=donations_db_init_script_path)
+    db_path=db_path,
+    sql_path=db_script_path)
 
 api_v1_base_url = api_full_url + 'api/v1/'
 
@@ -39,7 +39,8 @@ class TestEventGET:
     def test_events_route_returns_event_names(self):
         response = requests.get(api_v1_base_url + 'events')
         content = json.loads(response.content)['events']
-        assert ['test'] == content
+        print(content)
+        assert ['TestOne', 'TestTwo', 'TestThree', 'TestFour', 'TestFive'] == content
 
     def test_getting_nonexistent_event_returns_404(self):
         response = requests.get(api_v1_base_url + 'event/bla')
@@ -48,15 +49,15 @@ class TestEventGET:
         assert content['error'] == 'Not found'
 
     def test_getting_event_info(self):
-        response = requests.get(api_v1_base_url + 'event/test')
+        response = requests.get(api_v1_base_url + 'event/TestOne')
         content = json.loads(response.content)
         assert 200 == response.status_code
         assert isinstance(content, dict)
-        assert 'test' == content['name']
+        assert 'TestOne' == content['name']
         assert '£' == content['currency_symbol']
-        assert 0 == content['start_time']
-        assert 9999999999 == content['end_time']
-        assert 230.5 == content['amount_raised']
+        assert 1477256983 == content['start_time']
+        assert 1477256985 == content['end_time']
+        assert 100.0 == content['amount_raised']
         assert 1000 == content['target_amount']
 
 
@@ -68,55 +69,55 @@ class TestDonationsGET:
         assert 404 == response.status_code
 
     def test_getting_donations_info(self):
-        response = requests.get(api_v1_base_url + 'event/test/donations/info')
+        response = requests.get(api_v1_base_url + 'event/TestOne/donations/info')
         content = json.loads(response.content.decode('utf-8'))['donations_info']
         assert 200 == response.status_code
         assert isinstance(content, dict)
-        assert 15 == content['count']
-        assert 13.92 == content['average']
+        assert 5 == content['count']
+        assert 20 == content['average']
         assert isinstance(content['largest'], dict)
-        assert 42.0 == content['largest']['amount']
-        assert 1477258844 == content['largest']['timestamp']
+        assert 63.17 == content['largest']['amount']
+        assert 1477256999 == content['largest']['timestamp']
         assert isinstance(content['last'], dict)
-        assert 8.5 == content['last']['amount']
-        assert 1477258999 == content['last']['timestamp']
+        assert 63.17 == content['last']['amount']
+        assert 1477256999 == content['last']['timestamp']
         assert isinstance(content['specific'], dict)
-        assert 0 == content['specific']['count'] == 0
+        assert 0 == content['specific']['count']
         assert 3600 == content['specific']['timespan']
 
     def test_get_donation_data(self):
-        response = requests.get(api_v1_base_url + 'event/test/donations')
+        response = requests.get(api_v1_base_url + 'event/TestOne/donations')
         content = json.loads(response.content)['donations']
         assert 200 == response.status_code
         assert isinstance(content, list)
-        assert 11.45 == content[0]['amount']
-        assert 33.2 == content[0]['total_raised']
+        assert 10.5 == content[1]['amount']
+        assert 21.0 == content[1]['total_raised']
 
     def test_getting_donation_data_with_limit(self):
-        response = requests.get(api_v1_base_url + 'event/test/donations?limit=2')
+        response = requests.get(api_v1_base_url + 'event/TestOne/donations?limit=2')
         content = json.loads(response.content)['donations']
         assert 200 == response.status_code
         assert 2 == len(content)
 
     def test_getting_last_donation_only(self):
-        response = requests.get(api_v1_base_url + 'event/test/donations/last')
+        response = requests.get(api_v1_base_url + 'event/TestOne/donations/last')
         content = json.loads(response.content)
         assert 200 == response.status_code
-        assert 8.5 == content['amount']
-        assert 230.5 == content['total_raised']
+        assert 63.17 == content['amount']
+        assert 100.0 == content['total_raised']
 
     def test_getting_donations_distribution(self):
-        response = requests.get(api_v1_base_url + 'event/test/donations/distribution')
+        response = requests.get(api_v1_base_url + 'event/TestOne/donations/distribution')
         assert 200 == response.status_code
         content = json.loads(response.content)['donations_distribution']
         assert isinstance(content, dict)
         expected_distribution = {
-            '0-9': 8,
-            '10-19': 2,
-            '20-29': 2,
-            '30-39': 2,
-            '40-49': 1,
-            '50-75': 0,
+            '0-9': 1,
+            '10-19': 3,
+            '20-29': 0,
+            '30-39': 0,
+            '40-49': 0,
+            '50-75': 1,
             '76-99': 0,
             '100-10000': 0
         }
@@ -125,7 +126,7 @@ class TestDonationsGET:
 
 class TestStatsConsoleGET:
     def test_stats_console_returns_200(self):
-        response = requests.get(api_full_url + 'stats/test')
+        response = requests.get(api_full_url + 'stats/TestOne')
         assert 200 == response.status_code
 
     def test_accessing_status_console_of_non_existent_event_returns_404(self):
@@ -135,12 +136,12 @@ class TestStatsConsoleGET:
 
 class TestOverlayGET:
     def test_get_amount_raised_for_overlay(self):
-        response = requests.get(api_full_url + 'overlay/test')
+        response = requests.get(api_full_url + 'overlay/TestOne')
         assert 200 == response.status_code
         assert '<!DOCTYPE html>' in response.content.decode('utf-8')
         soup = BeautifulSoup(response.content, 'html.parser')
         amount_raised = soup.find('span', {'id': 'amount_raised'}).text.strip()
-        assert '230' == amount_raised
+        assert '100' == amount_raised
 
     def test_get_overlay_for_non_existent_event_returns_three_dots(self):
         response = requests.get(api_full_url + 'overlay/blablablalba')

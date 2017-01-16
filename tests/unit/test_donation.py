@@ -21,6 +21,9 @@ class TestDonationValidity:
         with pytest.raises(InvalidArgumentException):
             Donation(old_amount='33.3', new_amount='22.2')
 
+    def test_passing_smaller_new_amount_invalid_donation_does_not_throw_exception(self):
+        Donation(old_amount='33.3', new_amount='22.2', valid=False)
+
     def test_passing_floats_processes_normally(self):
         donation = Donation(old_amount=33.3, new_amount=44.4)
         assert 11.1 == donation.get_donation_amount()
@@ -52,3 +55,21 @@ class TestDonationProcessing:
         current_time_float = time.time()
         donation = Donation(old_amount=0, new_amount=1, timestamp=current_time_float)
         assert int(current_time_float) == donation.get_timestamp()
+
+    def test_passing_notes_returns_correctly(self):
+        donation = Donation(old_amount=0, new_amount=1, notes='much test very driven')
+        assert 'much test very driven' == donation.get_notes()
+
+    def test_passing_validity_returns_correctly(self):
+        donation = Donation(old_amount=0, new_amount=1, valid=False)
+        assert False is donation.get_validity()
+
+
+class TestDonationDefaults:
+    def test_default_notes_are_empty(self):
+        donation = Donation(old_amount=0, new_amount=1)
+        assert '' == donation.get_notes()
+
+    def test_default_validity_is_true(self):
+        donation = Donation(old_amount=0, new_amount=1)
+        assert True is donation.get_validity()

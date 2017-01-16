@@ -1,8 +1,8 @@
 import argparse
 
 from charitybot2.events.donation import Donation
-from charitybot2.storage.donations_db import DonationsDB
-from tests.tests import TestFilePath
+from charitybot2.storage.repository import Repository
+from tests.restters_for_tests import TestFilePath
 
 donations_db_path = TestFilePath().get_db_path('donations.db')
 
@@ -14,7 +14,7 @@ def setup_parser():
     return parser
 
 args = setup_parser().parse_args()
-donations_db = DonationsDB(db_path=donations_db_path, debug=True)
+donations_db = Repository(db_path=donations_db_path, debug=True)
 running_total = 0
 for i in range(0, args.amount):
     next_donation = Donation(old_amount=running_total, new_amount=running_total + 5)
