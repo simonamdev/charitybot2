@@ -32,9 +32,7 @@ external_api = ServiceTest(
     service_url=api_full_url,
     service_path=external_api_cli_path,
     extra_args=['--debug'],
-    enter_debug=True,
-    db_path=db_path,
-    sql_path=db_script_path)
+    enter_debug=True)
 
 
 def setup_module():
@@ -54,10 +52,10 @@ def teardown_module():
 
 class TestFullTwitchEvent:
     def test_full_twitch_event(self):
+        ResetDB(db_path=db_path, sql_path=db_script_path)
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 30)
         navigate_to_twitch_channel()
-        args = parser.parse_args(
-            [event_config.get_value('internal_name'), '--debug', '--twitch-config', 'purrcat259'])
+        args = parser.parse_args(['e2e_config', '--debug', '--twitch-config', 'purrcat259'])
         bot = CharityBot(args=args)
         bot.initialise_bot()
         bot.start_bot()

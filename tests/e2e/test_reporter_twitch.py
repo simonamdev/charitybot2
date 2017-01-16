@@ -8,6 +8,7 @@ from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount, TwitchChatBot, ChatBot
 from selenium import webdriver
 from tests.integration.test_event_loop_with_mocksite import MockEvent
+from tests.paths_for_tests import end_to_end_config_path
 from tests.restters_for_tests import ServiceTest
 
 
@@ -62,7 +63,7 @@ class TestTwitchChat:
 
     def test_twitch_chat_donations_appear(self):
         navigate_to_twitch_channel()
-        test_event = MockEvent('test_one')
+        test_event = MockEvent(end_to_end_config_path, 'e2e_twitch_event', int(time.time()) + 20)
         test_event_loop = TwitchEventLoop(event=test_event, twitch_account=purrbot, debug=True)
         test_event_loop.start()
         time.sleep(4)
