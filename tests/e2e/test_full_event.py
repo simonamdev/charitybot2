@@ -2,20 +2,24 @@ import time
 
 import requests
 from bs4 import BeautifulSoup
+from charitybot2.botconfig.event_config import EventConfigurationFromFile
 from charitybot2.charitybot2 import CharityBot, create_cb_process_parser
 from charitybot2.events.currency import Currency
 from charitybot2.paths import mocksite_path, external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
 from charitybot2.reporter.twitch import ChatBot
 from selenium import webdriver
+from tests.e2e.test_reporter_twitch import navigate_to_twitch_channel, get_twitch_chat_box_contents
 from tests.integration.test_event_loop_with_mocksite import MockEvent
+from tests.paths_for_tests import end_to_end_config_path
 from tests.restters_for_tests import ServiceTest, AdjustTestConfig, TestFilePath, ResetDB
 
-donations_db_path = TestFilePath().get_db_path('donations.db')
-donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
+db_path = TestFilePath().get_repository_db_path()
+db_script_path = TestFilePath().get_repository_script_path()
 driver = None
 parser = create_cb_process_parser()
-config_adjustment = AdjustTestConfig(config_path=TestFilePath().get_config_path('event', 'E2E_Test_Charity_Event.json'))
+config_adjustment = AdjustTestConfig(config_path=end_to_end_config_path)
+event_config = EventConfigurationFromFile(file_path=end_to_end_config_path).get_event_configuration()
 
 service_test = ServiceTest(
     service_name='Donations Mocksite',
@@ -29,20 +33,8 @@ external_api = ServiceTest(
     service_path=external_api_cli_path,
     extra_args=['--debug'],
     enter_debug=True,
-    db_path=donations_db_path,
-    sql_path=donations_db_init_script_path)
-
-
-# Duplicated from other E2E test, could do with a common refactor
-def navigate_to_twitch_channel():
-    global driver
-    driver.get('https://www.twitch.tv/purrcat259')
-    assert 'Purrcat259 - Twitch' == driver.title
-    time.sleep(2)
-
-
-def get_twitch_chat_box_contents():
-    return driver.find_element_by_class_name('chat-display').text
+    db_path=db_path,
+    sql_path=db_script_path)
 
 
 def setup_module():
@@ -64,7 +56,8 @@ class TestFullTwitchEvent:
     def test_full_twitch_event(self):
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 30)
         navigate_to_twitch_channel()
-        args = parser.parse_args(['E2E_Test_Charity_Event', '--debug', '--twitch-config', 'purrcat259'])
+        args = parser.parse_args(
+            [event_config.get_value('internal_name'), '--debug', '--twitch-config', 'purrcat259'])
         bot = CharityBot(args=args)
         bot.initialise_bot()
         bot.start_bot()
@@ -86,16 +79,15 @@ class TestFullTwitchEvent:
 
 class TestFullAPIEvent:
     def test_full_event(self):
-        # Reset the DB
-        ResetDB(db_path=donations_db_path, sql_path=donations_db_init_script_path)
+        ResetDB(db_path=db_path, sql_path=db_script_path)
         response = requests.get(MockEvent.mocksite_base_url + 'reset/')
         assert 200 == response.status_code
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 10)
-        args = parser.parse_args(['E2E_Test_Charity_Event', '--debug'])
+        args = parser.parse_args(['e2e_config', '--debug'])
         bot = CharityBot(args=args)
         bot.initialise_bot()
         # see that the overlay is functioning before starting
-        overlay_url = api_full_url + 'overlay/E2E_Test_Charity_Event'
+        overlay_url = api_full_url + 'overlay/{}'.format(event_config.get_value('internal_name'))
         response = requests.get(url=overlay_url)
         assert 200 == response.status_code
         bot.start_bot()

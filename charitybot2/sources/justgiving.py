@@ -51,8 +51,10 @@ class JustGivingScraper(Scraper):
                 self.soup_data_sources.get_bs4_find_parameters_dict(source_name=source_name)
             ).text
         except ConnectionFailedException:
+            self.logger.log_error('Unable to connect to the scraper source')
             raise SourceUnavailableException('Unable to connect to the source')
         except AttributeError:
+            self.logger.log_error('Unable to find amount raised on Justgiving source')
             raise SourceUnavailableException('Unable to find amount raised on JustGiving website')
         return source_value
 
