@@ -5,6 +5,6 @@
   "end_time": 9999999999999999,
   "currency_key": "EUR",
   "target_amount": 1000,
-  "source_url": "https://127.0.0.1/justgiving",
+  "source_url": "https://127.0.0.1:5000/justgiving",
   "update_delay": 5
 }
