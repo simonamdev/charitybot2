@@ -40,7 +40,7 @@ class TestEventGET:
         response = requests.get(api_v1_base_url + 'events')
         content = json.loads(response.content)['events']
         print(content)
-        assert ['TestOne', 'TestTwo', 'TestThree', 'TestFour'] == content
+        assert ['TestOne', 'TestTwo', 'TestThree', 'TestFour', 'TestFive'] == content
 
     def test_getting_nonexistent_event_returns_404(self):
         response = requests.get(api_v1_base_url + 'event/bla')
