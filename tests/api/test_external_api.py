@@ -40,7 +40,7 @@ class TestEventGET:
         response = requests.get(api_v1_base_url + 'events')
         content = json.loads(response.content)['events']
         print(content)
-        assert ['TestOne', 'TestTwo', 'TestThree', 'TestFour', 'TestFive'] == content
+        assert ['TestOne', 'TestTwo', 'TestThree', 'TestFour', 'NoDonations', 'LastOneInvalid', 'OnlyInvalid'] == content
 
     def test_getting_nonexistent_event_returns_404(self):
         response = requests.get(api_v1_base_url + 'event/bla')
@@ -77,10 +77,10 @@ class TestDonationsGET:
         assert 20 == content['average']
         assert isinstance(content['largest'], dict)
         assert 63.17 == content['largest']['amount']
-        assert 1477256999 == content['largest']['timestamp']
+        assert 1477257000 == content['largest']['timestamp']
         assert isinstance(content['last'], dict)
         assert 63.17 == content['last']['amount']
-        assert 1477256999 == content['last']['timestamp']
+        assert 1477257000 == content['last']['timestamp']
         assert isinstance(content['specific'], dict)
         assert 0 == content['specific']['count']
         assert 3600 == content['specific']['timespan']
