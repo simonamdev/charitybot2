@@ -101,22 +101,43 @@ class TestRepositoryOperations:
     def test_getting_last_donation(self):
         event_name = 'TestOne'
         repository.record_donation(event_name=event_name, donation=Donation(old_amount=100, new_amount=200))
+        from time import sleep
+        sleep(1)
         repository.record_donation(event_name=event_name, donation=Donation(old_amount=200, new_amount=350))
         last_donation = repository.get_last_donation(event_name=event_name)
+        print(last_donation)
         assert isinstance(last_donation, Donation)
         assert 150 == last_donation.get_donation_amount()
         assert 350 == last_donation.get_total_raised()
 
     def test_getting_starting_amount(self):
-        event_name = 'TestFive'
+        event_name = 'NoDonations'
         starting_amount = repository.get_starting_amount(event_name=event_name)
         assert isinstance(starting_amount, float)
         assert 100 == starting_amount
 
     def test_getting_last_donation_when_no_donations_present_returns_starting_amount(self):
-        event_name = 'TestFive'
+        event_name = 'NoDonations'
         starting_amount = repository.get_last_donation(event_name=event_name)
         assert starting_amount == repository.get_starting_amount(event_name=event_name)
+
+    def test_getting_last_invalid_donation_returns_closest_valid_donation_instead(self):
+        event_name = 'LastOneInvalid'
+        last_donation = repository.get_last_donation(event_name=event_name)
+        print(last_donation)
+        assert True is last_donation.get_validity()
+        assert 50 == last_donation.get_donation_amount()
+        assert 150 == last_donation.get_total_raised()
+        assert 1477257104 == last_donation.get_timestamp()
+
+    def test_getting_last_invalid_donation(self):
+        event_name = 'LastOneInvalid'
+        last_invalid_donation = repository.get_last_donation(event_name=event_name, get_invalid=True)
+        print(last_invalid_donation)
+        assert False is last_invalid_donation.get_validity()
+        assert -100 == last_invalid_donation.get_donation_amount()
+        assert 50 == last_invalid_donation.get_total_raised()
+        assert 1477257114 == last_invalid_donation.get_timestamp()
 
     def test_getting_total_raised(self):
         assert 350 == repository.get_total_raised('TestOne')
@@ -130,16 +151,24 @@ class TestRepositoryOperations:
         assert 87.5 == repository.get_average_donation(event_name=event_name)
 
     def test_getting_event_names(self):
-        event_names = ('TestOne', 'TestTwo', 'TestThree', 'TestFour', 'valid_configured_event', 'TestFive')
+        event_names = (
+            'TestOne',
+            'TestTwo',
+            'TestThree',
+            'TestFour',
+            'valid_configured_event',
+            'NoDonations',
+            'LastOneInvalid',
+            'OnlyInvalid')
         assert sorted(event_names) == sorted(repository.get_event_names())
 
     def test_get_donations_from_a_timespan(self):
         last_timespan_donations = repository.get_donations_for_timespan(
             event_name='TestFour',
             timespan_start=1477257061)
-        assert 1 == len(last_timespan_donations)
+        assert 2 == len(last_timespan_donations)
 
     def test_get_largest_donation(self):
         largest_donation = repository.get_largest_donation(event_name='TestFour')
         assert 100 == largest_donation.get_donation_amount()
-        assert 1477257060 == largest_donation.get_timestamp()
+        assert 1477257070 == largest_donation.get_timestamp()

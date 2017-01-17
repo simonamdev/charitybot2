@@ -8,9 +8,9 @@ class InvalidArgumentException(Exception):
 
 
 class Donation:
-    def __init__(self, old_amount, new_amount, timestamp=int(time.time()), rounding=2, notes='', valid=True):
+    def __init__(self, old_amount, new_amount, timestamp=None, rounding=2, notes='', valid=True):
         self.rounding = rounding
-        self.timestamp = timestamp
+        self.timestamp = int(time.time()) if timestamp is None else timestamp
         self.old_amount = self.parse_donation_input(old_amount)
         self.new_amount = self.parse_donation_input(new_amount)
         self.notes = notes
@@ -19,7 +19,11 @@ class Donation:
         self.donation_amount = self.new_amount - self.old_amount
 
     def __str__(self):
-        return 'Donation of {} at {}'.format(self.get_donation_amount(), self.get_timestamp())
+        return 'Donation of {} at {} with notes: {} and validity: {}'.format(
+            self.get_donation_amount(),
+            self.get_timestamp(),
+            self.get_notes(),
+            self.get_validity())
 
     def parse_donation_input(self, amount):
         if amount == '':
@@ -47,4 +51,4 @@ class Donation:
         return self.notes
 
     def get_validity(self):
-        return self.valid
+        return self.valid if isinstance(self.valid, bool) else self.valid == 1

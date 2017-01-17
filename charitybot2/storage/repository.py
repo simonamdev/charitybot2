@@ -133,20 +133,21 @@ class Repository:
         self.cursor.execute(query, data)
         self.connection.commit()
 
-    def get_last_donation(self, event_name):
+    def get_last_donation(self, event_name, get_invalid=False):
         if self.get_number_of_donations(event_name=event_name) == 0:
             return self.get_starting_amount(event_name=event_name)
+        valid_where_query = 'AND valid = 1 ' if not get_invalid else ''
         query = 'SELECT *' \
                 'FROM `donations`' \
-                'WHERE eventId = (?)' \
-                'ORDER BY runningTotal DESC ' \
-                'LIMIT 1'
+                'WHERE eventId = (?) {}' \
+                'ORDER BY timeRecorded DESC ' \
+                'LIMIT 1'.format(valid_where_query)
         data = (self.get_event_id(event_name), )
         last_donation_row = self.cursor.execute(query, data).fetchone()
         return convert_donation_row_to_object(last_donation_row)
 
     def get_total_raised(self, event_name):
-        return self.get_last_donation(event_name=event_name).get_total_raised()
+        return self.get_last_donation(event_name=event_name, get_invalid=True).get_total_raised()
 
     def get_average_donation(self, event_name):
         query = 'SELECT AVG(donationAmount)' \
