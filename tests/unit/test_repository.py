@@ -140,7 +140,11 @@ class TestRepositoryOperations:
         assert 1477257114 == last_invalid_donation.get_timestamp()
 
     def test_getting_total_raised(self):
-        assert 350 == repository.get_total_raised('TestOne')
+        # test where last donation is valid
+        assert 150 == repository.get_total_raised('TestFour')
+        # test where last donation is invalid
+        assert 50 == repository.get_total_raised('LastOneInvalid')
+        assert 0 == repository.get_total_raised('OnlyInvalid')
 
     def test_getting_average_donation_amount(self):
         event_name = 'TestThree'
