@@ -125,7 +125,7 @@ class Repository:
                 '(NULL, ?, ?, ?, ?, ?, ?)'
         data = (
             self.get_event_id(event_name),
-            int(time.time()),
+            donation.get_timestamp(),
             donation.get_donation_amount(),
             donation.get_total_raised(),
             donation.get_notes(),

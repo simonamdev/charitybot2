@@ -1,4 +1,5 @@
 import pytest
+import time
 from charitybot2.botconfig.event_config import EventConfigurationFromFile, EventConfigurationCreator
 from charitybot2.events.donation import Donation
 from charitybot2.events.event import Event
@@ -100,10 +101,13 @@ class TestRepositoryOperations:
 
     def test_getting_last_donation(self):
         event_name = 'TestOne'
-        repository.record_donation(event_name=event_name, donation=Donation(old_amount=100, new_amount=200))
-        from time import sleep
-        sleep(1)
-        repository.record_donation(event_name=event_name, donation=Donation(old_amount=200, new_amount=350))
+        current_time = int(time.time())
+        repository.record_donation(
+            event_name=event_name,
+            donation=Donation(old_amount=100, new_amount=200, timestamp=current_time))
+        repository.record_donation(
+            event_name=event_name,
+            donation=Donation(old_amount=200, new_amount=350, timestamp=current_time + 5))
         last_donation = repository.get_last_donation(event_name=event_name)
         print(last_donation)
         assert isinstance(last_donation, Donation)
