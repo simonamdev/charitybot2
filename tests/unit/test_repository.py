@@ -10,6 +10,16 @@ repository_db_path = TestFilePath().get_repository_db_path()
 repository_script_path = TestFilePath().get_repository_script_path()
 repository = Repository(db_path=repository_db_path, debug=True)
 
+event_names = (
+    'TestOne',
+    'TestTwo',
+    'TestThree',
+    'TestFour',
+    'valid_configured_event',
+    'NoDonations',
+    'LastOneInvalid',
+    'OnlyInvalid')
+
 
 def setup_module():
     ResetDB(db_path=repository_db_path, sql_path=repository_script_path)
@@ -170,15 +180,6 @@ class TestRepositoryOperations:
         assert 0.0 == average_donation
 
     def test_getting_event_names(self):
-        event_names = (
-            'TestOne',
-            'TestTwo',
-            'TestThree',
-            'TestFour',
-            'valid_configured_event',
-            'NoDonations',
-            'LastOneInvalid',
-            'OnlyInvalid')
         assert sorted(event_names) == sorted(repository.get_event_names())
 
     def test_get_donations_from_a_timespan(self):

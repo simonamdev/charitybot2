@@ -1,9 +1,12 @@
+import copy
+
 import requests
 from bs4 import BeautifulSoup
 from charitybot2.paths import external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url, api_paths
 from flask import json
 from tests.restters_for_tests import TestFilePath, ServiceTest
+from tests.unit.test_repository import event_names
 
 db_path = TestFilePath().get_repository_db_path()
 db_script_path = TestFilePath().get_repository_script_path()
@@ -128,6 +131,14 @@ class TestStatsConsoleGET:
     def test_stats_console_returns_200(self):
         response = requests.get(api_full_url + 'stats/TestOne')
         assert 200 == response.status_code
+
+    def test_every_event_stats_console_returns_200(self):
+        events = list(copy.deepcopy(event_names))
+        events.remove('valid_configured_event')
+        for event in events:
+            url = api_full_url + 'stats/' + event
+            response = requests.get(url)
+            assert 200 == response.status_code
 
     def test_accessing_status_console_of_non_existent_event_returns_404(self):
         response = requests.get(api_v1_base_url + 'event/foobar/status')
