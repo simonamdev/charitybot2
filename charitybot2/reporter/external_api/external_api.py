@@ -23,6 +23,7 @@ api_url = 'http://' + api_address
 api_full_url = api_url + ':' + str(api_port) + '/'
 debug_mode = False
 cli_debug_mode = False
+console_version = '0.1.1'
 
 api_paths = {
     'api': {
@@ -204,7 +205,11 @@ def amount_raised(event_name):
 def status_console(event_name):
     if not repository.event_exists(event_name=event_name):
         abort(404)
-    return render_template('console.html', event_name=event_name, debug_mode=str(debug_mode).lower())
+    return render_template(
+        'console.html',
+        event_name=event_name,
+        debug_mode=str(debug_mode).lower(),
+        console_version=console_version)
 
 
 @app.route('/debug')
