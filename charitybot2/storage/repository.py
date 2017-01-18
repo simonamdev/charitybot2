@@ -154,13 +154,14 @@ class Repository:
         return last_donation.get_total_raised() if isinstance(last_donation, Donation) else last_donation
 
     def get_average_donation(self, event_name):
+        if self.get_number_of_donations(event_name=event_name) == 0:
+            return 0.0
         query = 'SELECT AVG(donationAmount)' \
                 'FROM `donations`' \
                 'WHERE eventId = (?) AND valid = 1'
         data = (self.get_event_id(event_name=event_name), )
         average = self.cursor.execute(query, data).fetchone()[0]
-        average = round(average, 2) if isinstance(average, float) else 0.0
-        return average
+        return round(average, 2)
 
     def get_event_names(self):
         query = 'SELECT internalName ' \
@@ -176,6 +177,8 @@ class Repository:
         return [convert_donation_row_to_object(row) for row in self.cursor.execute(query, data).fetchall()]
 
     def get_largest_donation(self, event_name):
+        if self.get_number_of_donations(event_name=event_name) == 0:
+            return None
         query = 'SELECT *' \
                 'FROM `donations`' \
                 'WHERE eventId = (?)' \
@@ -183,7 +186,7 @@ class Repository:
                 'LIMIT 1'
         data = (self.get_event_id(event_name), )
         largest_donation = self.cursor.execute(query, data).fetchone()
-        return None if largest_donation is None else convert_donation_row_to_object(largest_donation)
+        return convert_donation_row_to_object(largest_donation)
 
     def get_starting_amount(self, event_name):
         query = 'SELECT startingAmount ' \
