@@ -10,3 +10,4 @@ tests/data/config/event/fdevtest16.json
 fdevchristmas16.json
 fdevtest16.json
 htmlcov/
+.coverage
