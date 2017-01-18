@@ -44,7 +44,7 @@ class EventLoop:
             self.event.register_event()
 
     def __check_for_donations(self):
-        if self.donations_already_present():
+        if self.__donations_already_present():
             self.logger.log_verbose('Donations are already present for the event')
             # set the current amount from the last donation recorded
             last_donation = self.event.repository.get_last_donation(event_name=self.event.get_internal_name())
@@ -56,13 +56,8 @@ class EventLoop:
         else:
             self.logger.log_verbose('Donations are not present for the event')
 
-    def donations_already_present(self):
-        if not self.event_already_registered():
-            return False
-        return self.event.repository.get_number_of_donations(event_name=self.event.get_internal_name()) > 0
-
-    def event_already_registered(self):
-        return self.event.repository.event_exists(event_name=self.event.get_internal_name())
+    def __donations_already_present(self):
+        return self.event.repository.donations_are_present()
 
     def initialise_scraper(self):
         source_url = self.event.get_source_url()
@@ -75,6 +70,9 @@ class EventLoop:
         else:
             self.logger.log_error('Unable to initialise scraper for event: {}'.format(self.event.get_internal_name()))
             raise EventInvalidException('Unable to initialise scraper for event: {}'.format(self.event.get_internal_name()))
+
+    def event_already_registered(self):
+        return self.event.repository.event_exists(event_name=self.event.get_internal_name())
 
     def start(self):
         self.logger.log_info('Starting Event: {}'.format(self.event.get_internal_name()))

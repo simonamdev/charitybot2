@@ -110,6 +110,9 @@ class Repository:
         data = (self.get_event_id(event_name), )
         return self.cursor.execute(query, data).fetchone()[0]
 
+    def donations_are_present(self, event_name):
+        return self.get_number_of_donations(event_name=event_name) > 0
+
     def get_all_donations(self, event_name):
         query = 'SELECT *' \
                 'FROM `donations`' \
@@ -185,3 +188,4 @@ class Repository:
                 'WHERE eventId = (?)'
         data = (self.get_event_id(event_name), )
         return self.cursor.execute(query, data).fetchone()[0]
+

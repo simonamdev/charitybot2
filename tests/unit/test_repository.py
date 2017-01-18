@@ -33,6 +33,10 @@ class TestRepositoryOperations:
     def test_getting_number_of_donations(self):
         assert 5 == repository.get_number_of_donations(event_name='TestOne')
 
+    def test_donations_are_present(self):
+        assert True is repository.donations_are_present(event_name='TestOne')
+        assert False is repository.donations_are_present(event_name='NoDonations')
+
     def test_getting_all_donations(self):
         donations = repository.get_all_donations(event_name='TestTwo')
         for donation in donations:
