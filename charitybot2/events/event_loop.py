@@ -60,16 +60,19 @@ class EventLoop:
             self.logger.log_verbose('Donations are already present for the event')
             # set the current amount from the last donation recorded
             last_donation = self.event.repository.get_last_donation(event_name=self.event.get_internal_name())
-            self.event.set_amount_raised(last_donation.get_total_raised())
+            self.event.set_amount_raised(amount=last_donation.get_total_raised())
             self.logger.log_info('Amount raised retrieved from database is: {}{}'.format(
                 self.event.get_currency().get_symbol(),
                 self.event.get_amount_raised()
             ))
         else:
             self.logger.log_verbose('Donations are not present for the event')
+            # set the current amount raised from the starting amount
+            starting_amount = self.event.get_starting_amount()
+            self.event.set_amount_raised(amount=starting_amount)
 
     def __donations_already_present(self):
-        return self.event.repository.donations_are_present()
+        return self.event.repository.donations_are_present(event_name=self.event.get_internal_name())
 
     def __event_already_registered(self):
         return self.event.repository.event_exists(event_name=self.event.get_internal_name())
@@ -102,23 +105,28 @@ class EventLoop:
         if new_amount == '':
             self.logger.log_error('Could not check for donation, skipping cycle')
             return
-        self.logger.log_info('Current Amount: {}, New Amount: {}'.format(current_amount, new_amount))
         new_donation_detected = not new_amount == current_amount
+        self.logger.log_info('Current Amount: {}, New Amount: {}, Donation detected: {}'.format(
+            current_amount,
+            new_amount,
+            new_donation_detected))
         if new_donation_detected and not self.donation_checks == 0:
             self.logger.log_verbose('New donation detected')
             try:
                 new_donation = Donation(old_amount=current_amount, new_amount=new_amount, timestamp=int(time.time()))
             except InvalidArgumentException:
-                self.logger.log_error('These do not match: Current Amount: {}, New Amount: {}'.format(current_amount, new_amount))
+                self.logger.log_error('These amounts do not match: Current Amount: {}, New Amount: {}'.format(
+                    current_amount,
+                    new_amount))
             else:
                 self.event.set_amount_raised(amount=new_donation.get_total_raised())
-                self.record_new_donation(new_donation)
+                self.__record_new_donation(new_donation)
                 self.report_new_donation(new_donation)
         self.donation_checks += 1
 
-    def record_new_donation(self, donation):
-        self.logger.log_info('New Donation of {} {} detected'.format(
-            self.event.get_currency().get_key(),
+    def __record_new_donation(self, donation):
+        self.logger.log_info('New Donation of {}{} detected'.format(
+            self.event.get_currency().get_symbol(),
             donation.get_donation_amount()))
         self.event.repository.record_donation(event_name=self.event.get_internal_name(), donation=donation)
 

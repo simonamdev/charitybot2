@@ -64,6 +64,9 @@ class TestEventRetrieve:
     def test_retrieve_amount_raised(self):
         assert valid_event.get_amount_raised() == 0
 
+    def test_retrieve_starting_amount(self):
+        assert valid_event.get_starting_amount() == 0
+
 
 class TestEventUpdate:
     def test_setting_amount_raised(self):

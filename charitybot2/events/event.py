@@ -61,3 +61,6 @@ class Event:
 
     def increment_amount_raised(self, amount_increase):
         self.amount_raised += amount_increase
+
+    def get_starting_amount(self):
+        return self.repository.get_starting_amount(event_name=self.get_internal_name())

@@ -7,20 +7,19 @@ from charitybot2.events.event import Event, EventInvalidException
 from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount
 from charitybot2.sources.justgiving import JustGivingScraper
+from tests.paths_for_tests import valid_config_path
 from tests.restters_for_tests import ResetDB, TestFilePath
 
-valid_config_path = TestFilePath().get_config_path('event', 'valid_config' + '.json')
 valid_event_config_values = EventConfigurationFromFile(file_path=valid_config_path).get_config_data()
 valid_event_configuration = EventConfigurationCreator(config_values=valid_event_config_values).get_event_configuration()
 
 btdonate_config_values = copy.deepcopy(valid_event_config_values)
+no_donations_config_values = copy.deepcopy(valid_event_config_values)
 btdonate_config_values['source_url'] = 'https://mydonate.bt.com/fundraisers/acpi'
 btdonate_configuration = EventConfigurationCreator(config_values=btdonate_config_values).get_event_configuration()
 
 db_path = TestFilePath().get_repository_db_path()
 db_script_path = TestFilePath().get_repository_script_path()
-
-valid_twitch_account = TwitchAccount(twitch_config=purrbot_config)
 
 
 def setup_module():
@@ -48,3 +47,10 @@ class TestEventLoopValidity:
     def test_valid_event_loop_scraper_is_of_type_justgivingscraper(self):
         el = EventLoop(event=ValidTestEvent(), debug=True)
         assert isinstance(el.scraper, JustGivingScraper)
+
+    def test_current_amount_is_equal_to_starting_amount_when_no_donations_present(self):
+        no_donations_config_values['internal_name'] = 'NoDonations'
+        no_donations_config = EventConfigurationCreator(no_donations_config_values).get_event_configuration()
+        no_donations_event = Event(event_configuration=no_donations_config, db_path=db_path)
+        el = EventLoop(event=no_donations_event, debug=True)
+        assert 100 == el.event.get_amount_raised()
