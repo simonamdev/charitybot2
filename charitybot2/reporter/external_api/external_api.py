@@ -125,18 +125,20 @@ def donations_info(event_name):
         event_name=event_name,
         timespan_start=int(time.time()) - last_timespan)
     largest_donation = repository.get_largest_donation(event_name=event_name)
+    largest_donation = {
+        'amount': largest_donation.get_donation_amount(),
+        'timestamp': largest_donation.get_timestamp()
+    } if isinstance(largest_donation, Donation) else None
     last_donation = repository.get_last_donation(event_name=event_name)
+    last_donation = {
+        'amount': last_donation.get_donation_amount(),
+        'timestamp': last_donation.get_timestamp()
+    } if isinstance(last_donation, Donation) else None
     donations_info_object = {
         'count': repository.get_number_of_donations(event_name=event_name),
         'average': repository.get_average_donation(event_name=event_name),
-        'largest': {
-            'amount': largest_donation.get_donation_amount() if isinstance(largest_donation, Donation) else 0,
-            'timestamp': largest_donation.get_timestamp() if isinstance(largest_donation, Donation) else None
-        },
-        'last': {
-            'amount': last_donation.get_donation_amount() if isinstance(last_donation, Donation) else 0,
-            'timestamp': last_donation.get_timestamp() if isinstance(last_donation, Donation) else None
-        },
+        'largest': largest_donation,
+        'last': last_donation,
         'specific': {
             'count': len(last_timespan_donations),
             'timespan': last_timespan

@@ -15,6 +15,9 @@ function numberWithCommas(x) {
 }
 
 function convertToTimestamp(unixTimestamp){
+  if (unixTimestamp >= 2147483647) {
+    return 'Heat Death of the Universe';
+  }
   var d = new Date(unixTimestamp * 1000);
   var day = d.getDate();
   var month = d.getMonth() + 1;
@@ -140,21 +143,20 @@ class API {
         $('#donation-count').text(data['specific']['count']);
         $('#donation-timespan').text(returnTimespanString(data['specific']['timespan']));
         $('#average-donation').text(data['average']);
-        $('#largest-donation').text(data['largest']['amount']);
-        var largest_donation_timestamp = data['largest']['timestamp'];
-        if (largest_donation_timestamp == null) {
-            $('#largest-donation-column').text('Largest Donation: Waiting for first donation');
+        var largest_donation = data['largest'];
+        if (largest_donation != null) {
+            $('#largest-donation').text(largest_donation['amount']);
+            $('#largest-donation-timestamp').text(convertToTimestamp(largest_donation['timestamp']));
         } else {
-            $('#largest-donation-timestamp').text(convertToTimestamp(data['largest']['timestamp']));
+            $('#largest-donation-column').text('Largest Donation: Waiting for a donation');
         }
-        $('#last-donation').text(data['last']['amount']);
-        var last_donation_timestamp = data['last']['timestamp'];
-        if (last_donation_timestamp == null) {
-            $('#last-donation-column').text('Last Donation: Waiting for first donation');
+        var last_donation = data['last'];
+        if (last_donation != null) {
+            $('#last-donation').text(last_donation['amount']);
+            $('#last-donation-timestamp').text(convertToTimestamp(last_donation['timestamp']));
         } else {
-            $('#last-donation-timestamp').text(convertToTimestamp(data['last']['timestamp']));
+            $('#last-donation-column').text('Last Donation: Waiting for a donation');
         }
-        $('#last-donation-timestamp').text(convertToTimestamp(data['last']['timestamp']));
     }
 
     drawAmountRaisedChart(data) {
