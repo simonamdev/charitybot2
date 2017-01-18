@@ -123,6 +123,7 @@ class EventLoop:
         self.event.repository.record_donation(event_name=self.event.get_internal_name(), donation=donation)
 
     def report_new_donation(self, donation):
+        # This should be overridden by specific reporter children of this the EventLoop class
         pass
 
 
