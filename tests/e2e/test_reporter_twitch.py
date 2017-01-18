@@ -51,6 +51,7 @@ def navigate_to_twitch_channel():
 
 
 class TestTwitchChat:
+    @pytest.mark.skip(reason='Currently out of scope')
     def test_twitch_chat_string_sent_appears(self):
         navigate_to_twitch_channel()
         test_string = return_unique_test_string()
