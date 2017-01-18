@@ -1,6 +1,7 @@
 import uuid
 import time
 
+import pytest
 from charitybot2.events.event_loop import TwitchEventLoop
 from charitybot2.events.currency import Currency
 from charitybot2.paths import mocksite_path
@@ -61,6 +62,7 @@ class TestTwitchChat:
         time.sleep(4)
         assert test_string in get_twitch_chat_box_contents()
 
+    @pytest.mark.skip(reason='Currently out of scope')
     def test_twitch_chat_donations_appear(self):
         navigate_to_twitch_channel()
         test_event = MockEvent(end_to_end_config_path, 'e2e_twitch_event', int(time.time()) + 20)

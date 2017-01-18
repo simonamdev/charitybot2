@@ -1,5 +1,6 @@
 import time
 
+import pytest
 import requests
 from bs4 import BeautifulSoup
 from charitybot2.botconfig.event_config import EventConfigurationFromFile
@@ -51,6 +52,7 @@ def teardown_module():
 
 
 class TestFullTwitchEvent:
+    @pytest.mark.skip(reason='Currently out of scope')
     def test_full_twitch_event(self):
         ResetDB(db_path=db_path, sql_path=db_script_path)
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 30)
