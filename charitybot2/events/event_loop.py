@@ -18,8 +18,20 @@ class EventLoop:
         self.reporter = None
         self.loop_count = 0
         self.donation_checks = 0
-        self.initialise_scraper()
-        self.initialise_event_loop()
+        self.__initialise_scraper()
+        self.__initialise_event_loop()
+
+    def __initialise_scraper(self):
+        source_url = self.event.get_source_url()
+        if 'justgiving' in source_url:
+            self.logger.log_info('Initialising JustGiving Scraper')
+            self.scraper = JustGivingScraper(url=source_url)
+        elif 'mydonate.bt' in source_url:
+            self.logger.log_error('BTDonate scraper has not been implemented yet')
+            raise NotImplementedError
+        else:
+            self.logger.log_error('Unable to initialise scraper for event: {}'.format(self.event.get_internal_name()))
+            raise EventInvalidException('Unable to initialise scraper for event: {}'.format(self.event.get_internal_name()))
 
     def validate_event_loop(self):
         if self.event is None:
@@ -29,14 +41,14 @@ class EventLoop:
                 time.time(),
                 self.event.get_end_time()))
 
-    def initialise_event_loop(self):
+    def __initialise_event_loop(self):
         self.logger.log_verbose('Checking whether the event is registered or not')
         self.__check_event_registration()
         self.logger.log_verbose('Checking whether the event already has donations')
         self.__check_for_donations()
 
     def __check_event_registration(self):
-        if self.event_already_registered():
+        if self.__event_already_registered():
             self.logger.log_info('Updating event configuration')
             self.event.update_event(self.event.event_configuration)
         else:
@@ -59,19 +71,7 @@ class EventLoop:
     def __donations_already_present(self):
         return self.event.repository.donations_are_present()
 
-    def initialise_scraper(self):
-        source_url = self.event.get_source_url()
-        if 'justgiving' in source_url:
-            self.logger.log_info('Initialising JustGiving Scraper')
-            self.scraper = JustGivingScraper(url=source_url)
-        elif 'mydonate.bt' in source_url:
-            self.logger.log_error('BTDonate scraper has not been implemented yet')
-            raise NotImplementedError
-        else:
-            self.logger.log_error('Unable to initialise scraper for event: {}'.format(self.event.get_internal_name()))
-            raise EventInvalidException('Unable to initialise scraper for event: {}'.format(self.event.get_internal_name()))
-
-    def event_already_registered(self):
+    def __event_already_registered(self):
         return self.event.repository.event_exists(event_name=self.event.get_internal_name())
 
     def start(self):
