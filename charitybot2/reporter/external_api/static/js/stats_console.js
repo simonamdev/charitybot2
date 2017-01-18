@@ -128,7 +128,6 @@ class API {
         $('#target-amount').text(numberWithCommas(data['target_amount']));
         var amountPercentageComplete = (data['amount_raised'] / data['target_amount']) * 100;
         amountPercentageComplete = Math.round(amountPercentageComplete * 100) / 100;
-        console.log(amountPercentageComplete);
         $('#amount-progress').css('width', amountPercentageComplete + '%').attr('aria-valuenow', amountPercentageComplete).text(amountPercentageComplete + '%');
         if (amountPercentageComplete >= 100) {
             $('#amount-progress').toggleClass('progress-bar-success');
@@ -142,8 +141,19 @@ class API {
         $('#donation-timespan').text(returnTimespanString(data['specific']['timespan']));
         $('#average-donation').text(data['average']);
         $('#largest-donation').text(data['largest']['amount']);
-        $('#largest-donation-timestamp').text(convertToTimestamp(data['largest']['timestamp']));
+        var largest_donation_timestamp = data['largest']['timestamp'];
+        if (largest_donation_timestamp == null) {
+            $('#largest-donation-column').text('Largest Donation: Waiting for first donation');
+        } else {
+            $('#largest-donation-timestamp').text(convertToTimestamp(data['largest']['timestamp']));
+        }
         $('#last-donation').text(data['last']['amount']);
+        var last_donation_timestamp = data['last']['timestamp'];
+        if (last_donation_timestamp == null) {
+            $('#last-donation-column').text('Last Donation: Waiting for first donation');
+        } else {
+            $('#last-donation-timestamp').text(convertToTimestamp(data['last']['timestamp']));
+        }
         $('#last-donation-timestamp').text(convertToTimestamp(data['last']['timestamp']));
     }
 

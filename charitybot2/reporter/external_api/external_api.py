@@ -5,6 +5,7 @@ import time
 from charitybot2.botconfig.event_config import EventConfiguration, EventConfigurationCreator, EventConfigurationFromFile
 from charitybot2.botconfig.json_config import ConfigurationFileDoesNotExistException
 from charitybot2.events.currency import Currency
+from charitybot2.events.donation import Donation
 from charitybot2.paths import production_donations_db_path, event_config_folder
 from charitybot2.storage.repository import Repository
 from flask import Flask, request, jsonify, make_response, abort
@@ -129,12 +130,12 @@ def donations_info(event_name):
         'count': repository.get_number_of_donations(event_name=event_name),
         'average': repository.get_average_donation(event_name=event_name),
         'largest': {
-            'amount': largest_donation.get_donation_amount(),
-            'timestamp': largest_donation.get_timestamp()
+            'amount': largest_donation.get_donation_amount() if isinstance(largest_donation, Donation) else 0,
+            'timestamp': largest_donation.get_timestamp() if isinstance(largest_donation, Donation) else None
         },
         'last': {
-            'amount': last_donation.get_donation_amount(),
-            'timestamp': last_donation.get_timestamp()
+            'amount': last_donation.get_donation_amount() if isinstance(last_donation, Donation) else 0,
+            'timestamp': last_donation.get_timestamp() if isinstance(last_donation, Donation) else None
         },
         'specific': {
             'count': len(last_timespan_donations),

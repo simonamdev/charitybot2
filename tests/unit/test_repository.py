@@ -74,6 +74,7 @@ class TestRepositoryOperations:
         assert 'GBP' == event.get_currency().get_key()
         assert 1000 == event.get_target_amount()
         assert 5 == event.get_update_tick()
+        assert 'http://127.0.0.1:5000/justgiving' == event.get_source_url()
 
     def test_updating_event_configuration(self):
         config_file_path = TestFilePath().get_config_path('event', 'valid_config.json')
@@ -162,6 +163,12 @@ class TestRepositoryOperations:
         event_name = 'TestFour'
         assert 87.5 == repository.get_average_donation(event_name=event_name)
 
+    def test_getting_zero_average_donation_with_no_donations_present(self):
+        event_name = 'NoDonations'
+        average_donation = repository.get_average_donation(event_name=event_name)
+        assert isinstance(average_donation, float)
+        assert 0.0 == average_donation
+
     def test_getting_event_names(self):
         event_names = (
             'TestOne',
@@ -184,3 +191,7 @@ class TestRepositoryOperations:
         largest_donation = repository.get_largest_donation(event_name='TestFour')
         assert 100 == largest_donation.get_donation_amount()
         assert 1477257070 == largest_donation.get_timestamp()
+
+    def test_getting_largest_donation_returns_none_when_no_donations_are_present(self):
+        largest_donation = repository.get_largest_donation(event_name='NoDonations')
+        assert largest_donation is None
