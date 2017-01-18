@@ -69,6 +69,9 @@ class EventLoop:
             self.logger.log_verbose('Donations are not present for the event')
             # set the current amount raised from the starting amount
             starting_amount = self.event.get_starting_amount()
+            self.logger.log_info('Setting starting amount to: {}{}'.format(
+                self.event.get_currency().get_symbol(),
+                starting_amount))
             self.event.set_amount_raised(amount=starting_amount)
 
     def __donations_already_present(self):
