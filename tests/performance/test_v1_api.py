@@ -1,3 +1,4 @@
+import pytest
 import requests
 from charitybot2.paths import external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url, api_paths
@@ -37,6 +38,7 @@ def assert_time_taken_in_ms(start_time, maximum_value_ms):
 
 
 class TestEventInfoRetrieval:
+    @pytest.mark.skip(reason='Use Locust for performance testing')
     def test_check_path_return_time(self):
         start_time = datetime.now()
         response = requests.get(api_v1_base_url)
@@ -44,6 +46,7 @@ class TestEventInfoRetrieval:
         assert 200 == response.status_code
 
     def test_retrieve_nominal_event_names(self):
+        @pytest.mark.skip(reason='Use Locust for performance testing')
         start_time = datetime.now()
         response = requests.get(api_v1_base_url + 'events')
         assert_time_taken_in_ms(start_time, 5)
@@ -51,9 +54,10 @@ class TestEventInfoRetrieval:
         content = json.loads(response.content)['events']
         assert 1 == len(content)
 
+    @pytest.mark.skip(reason='Use Locust for performance testing')
     def test_retrieve_10_event_names(self):
-        for i in range(0, 10):
-            donations_db.create_event_table_if_not_exists(event_name='test_{}'.format(i))
+        # for i in range(0, 10):
+        #     donations_db.create_event_table_if_not_exists(event_name='test_{}'.format(i))
         start_time = datetime.now()
         response = requests.get(api_v1_base_url + 'events')
         assert_time_taken_in_ms(start_time, 5)
@@ -61,9 +65,10 @@ class TestEventInfoRetrieval:
         content = json.loads(response.content)['events']
         assert 11 == len(content)  # includes original test table
 
+    @pytest.mark.skip(reason='Use Locust for performance testing')
     def test_retrieve_100_event_names(self):
-        for i in range(11, 100):
-            donations_db.create_event_table_if_not_exists(event_name='test_{}'.format(i))
+        # for i in range(11, 100):
+        #     donations_db.create_event_table_if_not_exists(event_name='test_{}'.format(i))
         start_time = datetime.now()
         response = requests.get(api_v1_base_url + 'events')
         assert_time_taken_in_ms(start_time, 10)
@@ -71,9 +76,10 @@ class TestEventInfoRetrieval:
         content = json.loads(response.content)['events']
         assert 100 == len(content)
 
+    @pytest.mark.skip(reason='Use Locust for performance testing')
     def test_retrieve_250_event_names(self):
-        for i in range(100, 250):
-            donations_db.create_event_table_if_not_exists(event_name='test_{}'.format(i))
+        # for i in range(100, 250):
+        #     donations_db.create_event_table_if_not_exists(event_name='test_{}'.format(i))
         start_time = datetime.now()
         response = requests.get(api_v1_base_url + 'events')
         assert_time_taken_in_ms(start_time, 20)
@@ -81,6 +87,7 @@ class TestEventInfoRetrieval:
         content = json.loads(response.content)['events']
         assert 250 == len(content)
 
+    @pytest.mark.skip(reason='Use Locust for performance testing')
     def test_retrieve_1_event_info(self):
         start_time = datetime.now()
         response = requests.get(api_v1_base_url + 'event/test')
