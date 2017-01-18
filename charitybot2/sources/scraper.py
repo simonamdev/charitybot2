@@ -17,6 +17,13 @@ class Scraper:
         self.parser = 'lxml'
         self.url_call = UrlCall(url=self.url)
 
+    def validate_url(self):
+        try:
+            response = self.url_call.get()
+        except ConnectionFailedException:
+            return False
+        return response.status_code == 200
+
     def get_data_from_url(self):
         try:
             response = self.url_call.get()
@@ -31,8 +38,11 @@ class Scraper:
             print(contents)
         return contents
 
+    def get_soup(self, url_contents):
+        return BeautifulSoup(url_contents, self.parser)
+
     def get_soup_from_url(self):
-        return BeautifulSoup(self.get_contents_from_url(), self.parser)
+        return self.get_soup(self.get_contents_from_url())
 
 
 class SoupDataSourceNotRegisteredException(Exception):
