@@ -7,7 +7,7 @@ from charitybot2.events.event import Event
 from charitybot2.paths import mocksite_path
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
 from tests.paths_for_tests import valid_config_path
-from tests.restters_for_tests import ResetDB, ServiceTest, TestFilePath
+from tests.mocks import ResetDB, ServiceTest, TestFilePath
 
 db_path = TestFilePath().get_repository_db_path()
 db_script_path = TestFilePath().get_repository_script_path()

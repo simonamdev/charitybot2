@@ -56,6 +56,10 @@ class ResetDB:
         return sql_string
 
 
+class Mocksite:
+    pass
+
+
 class ServiceTest(ResetDB):
     def __init__(self, service_name, service_url, service_path, enter_debug=True, extra_args=[], db_path='',
                  sql_path=''):
