@@ -3,7 +3,7 @@ import time
 
 from charitybot2.events.currency import Currency
 from charitybot2.events.donation import Donation
-from charitybot2.paths import production_donations_db_path
+from charitybot2.paths import production_repository_db_path
 from charitybot2.storage.repository import Repository
 from flask import Flask, request, jsonify, make_response, abort
 from flask import render_template
@@ -248,7 +248,7 @@ def start_api(args):
         repository = Repository(db_path=test_repository_db_path, debug=True)
     else:
         print('--- Starting in production mode ---')
-        repository = Repository(db_path=production_donations_db_path, debug=True)
+        repository = Repository(db_path=production_repository_db_path, debug=True)
     app.run(host=api_address, port=api_port, debug=cli_debug_mode)
 
 
