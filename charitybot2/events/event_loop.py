@@ -17,7 +17,6 @@ class EventLoop:
         self.scraper = None
         self.reporter = None
         self.loop_count = 0
-        self.donation_checks = 0
         self.__initialise_scraper()
         self.__initialise_event_loop()
 
@@ -113,7 +112,7 @@ class EventLoop:
             current_amount,
             new_amount,
             new_donation_detected))
-        if new_donation_detected and not self.donation_checks == 0:
+        if new_donation_detected:
             self.logger.log_verbose('New donation detected')
             try:
                 new_donation = Donation(old_amount=current_amount, new_amount=new_amount, timestamp=int(time.time()))
@@ -125,7 +124,6 @@ class EventLoop:
                 self.event.set_amount_raised(amount=new_donation.get_total_raised())
                 self.__record_new_donation(new_donation)
                 self.report_new_donation(new_donation)
-        self.donation_checks += 1
 
     def __record_new_donation(self, donation):
         self.logger.log_info('New Donation of {}{} detected'.format(
