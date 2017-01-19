@@ -4,11 +4,11 @@ from charitybot2.paths import external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url, api_paths
 from charitybot2.storage.repository import Repository
 from flask import json
-from tests.restters_for_tests import TestFilePath, ServiceTest
+from tests.mocks import ServiceTest
 from datetime import datetime
 
-donations_db_path = TestFilePath().get_db_path('donations.db')
-donations_db_init_script_path = TestFilePath().get_db_path('donations.sql')
+from tests.paths_for_tests import repository_db_path
+from tests.paths_for_tests import repository_db_script_path
 
 status_service = ServiceTest(
     service_name='External API for Performance Tests',
@@ -16,11 +16,11 @@ status_service = ServiceTest(
     service_path=external_api_cli_path,
     enter_debug=True,
     extra_args=['--debug'],
-    db_path=donations_db_path,
-    sql_path=donations_db_init_script_path)
+    db_path=repository_db_path,
+    sql_path=repository_db_script_path)
 
 api_v1_base_url = api_full_url + 'api/v1/'
-donations_db = Repository(db_path=donations_db_path, debug=True)
+repository = Repository(db_path=repository_db_path, debug=True)
 
 
 def setup_module():
@@ -45,8 +45,8 @@ class TestEventInfoRetrieval:
         assert_time_taken_in_ms(start_time, 5)
         assert 200 == response.status_code
 
+    @pytest.mark.skip(reason='Use Locust for performance testing')
     def test_retrieve_nominal_event_names(self):
-        @pytest.mark.skip(reason='Use Locust for performance testing')
         start_time = datetime.now()
         response = requests.get(api_v1_base_url + 'events')
         assert_time_taken_in_ms(start_time, 5)

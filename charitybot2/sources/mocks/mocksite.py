@@ -6,30 +6,37 @@ mocksite_url = '127.0.0.1'
 mocksite_port = 5000
 mocksite_full_url = 'http://' + mocksite_url + ':' + str(mocksite_port) + '/'
 
-amount = 100
+justgiving_amount = 100
 
 
 @app.route('/')
 def index():
-    return '<!DOCTYPE html><html><body>Mocksite Index Page</body></html>'
+    return '<!DOCTYPE html>' \
+           '<html>' \
+           '<body>' \
+           'Mocksite Index Page' \
+           '</body>' \
+           '</html>'
 
 
 @app.route('/justgiving/')
 def justgiving():
-    return '<span class="statistics-amount-raised theme-highlight-text-font">£{}.52</span>'.format(amount)
+    return '<span class="statistics-amount-raised theme-highlight-text-font">' \
+           '£{}.52' \
+           '</span>'.format(justgiving_amount)
 
 
 @app.route('/justgiving/increase/')
 def justgiving_increase():
-    global amount
-    amount += 50
+    global justgiving_amount
+    justgiving_amount += 50
     return redirect(url_for('justgiving'))
 
 
-@app.route('/reset/')
+@app.route('/justgiving/reset/')
 def justgiving_reset():
-    global amount
-    amount = 100
+    global justgiving_amount
+    justgiving_amount = 100
     return ''
 
 

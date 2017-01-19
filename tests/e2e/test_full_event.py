@@ -6,47 +6,35 @@ from bs4 import BeautifulSoup
 from charitybot2.botconfig.event_config import EventConfigurationFromFile
 from charitybot2.charitybot2 import CharityBot, create_cb_process_parser
 from charitybot2.events.currency import Currency
-from charitybot2.paths import mocksite_path, external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
 from charitybot2.reporter.twitch import ChatBot
 from selenium import webdriver
 from tests.e2e.test_reporter_twitch import navigate_to_twitch_channel, get_twitch_chat_box_contents
 from tests.integration.test_event_loop_with_mocksite import MockEvent
-from tests.paths_for_tests import end_to_end_config_path
-from tests.restters_for_tests import ServiceTest, AdjustTestConfig, TestFilePath, ResetDB
+from tests.paths_for_tests import end_to_end_config_path, repository_db_path, repository_db_script_path
+from tests.mocks import AdjustTestConfig, ResetDB, MockFundraisingWebsite, MockExternalAPI
 
-db_path = TestFilePath().get_repository_db_path()
-db_script_path = TestFilePath().get_repository_script_path()
 driver = None
 parser = create_cb_process_parser()
 config_adjustment = AdjustTestConfig(config_path=end_to_end_config_path)
 event_config = EventConfigurationFromFile(file_path=end_to_end_config_path).get_event_configuration()
 
-service_test = ServiceTest(
-    service_name='Donations Mocksite',
-    service_url=MockEvent.mocksite_base_url,
-    service_path=mocksite_path,
-    enter_debug=False)
+mock_fundraising_website = MockFundraisingWebsite(fundraiser_name='justgiving')
 
-external_api = ServiceTest(
-    service_name='External API',
-    service_url=api_full_url,
-    service_path=external_api_cli_path,
-    extra_args=['--debug'],
-    enter_debug=True)
+mock_external_api = MockExternalAPI(extra_args=['--debug'], enter_debug=True)
 
 
 def setup_module():
-    service_test.start_service()
-    external_api.start_service()
+    mock_fundraising_website.start()
+    mock_external_api.start()
     global driver
     driver = webdriver.Chrome()
     driver.implicitly_wait(10)
 
 
 def teardown_module():
-    service_test.stop_service()
-    external_api.stop_service()
+    mock_fundraising_website.stop()
+    mock_external_api.stop()
     global driver
     driver.close()
 
@@ -54,7 +42,7 @@ def teardown_module():
 class TestFullTwitchEvent:
     @pytest.mark.skip(reason='Currently out of scope')
     def test_full_twitch_event(self):
-        ResetDB(db_path=db_path, sql_path=db_script_path)
+        ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 30)
         navigate_to_twitch_channel()
         args = parser.parse_args(['e2e_config', '--debug', '--twitch-config', 'purrcat259'])
@@ -79,9 +67,8 @@ class TestFullTwitchEvent:
 
 class TestFullAPIEvent:
     def test_full_event(self):
-        ResetDB(db_path=db_path, sql_path=db_script_path)
-        response = requests.get(MockEvent.mocksite_base_url + 'reset/')
-        assert 200 == response.status_code
+        ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
+        mock_fundraising_website.reset_amount()
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 10)
         args = parser.parse_args(['e2e_config', '--debug'])
         bot = CharityBot(args=args)

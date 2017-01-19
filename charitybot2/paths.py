@@ -13,7 +13,7 @@ purrcat259_config_path = os.path.join(twitch_config_folder, 'purrcat259.json')
 
 # Databases
 production_logs_db_path = os.path.join(db_folder, 'logs.db')
-production_donations_db_path = os.path.join(db_folder, 'donations.db')
+production_repository_db_path = os.path.join(db_folder, 'repository.db')
 
 # Services
 mocksite_path = os.path.join(current_directory, 'sources', 'mocks', 'mocksite.py')

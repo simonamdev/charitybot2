@@ -1,19 +1,17 @@
 from charitybot2.botconfig.event_config import EventConfigurationFromFile, EventConfigurationCreator
 from charitybot2.events.event import Event
 from charitybot2.storage.repository import Repository
-from tests.restters_for_tests import ResetDB, TestFilePath
-from tests.paths_for_tests import valid_config_path
+from tests.mocks import ResetDB
+from tests.paths_for_tests import valid_config_path, repository_db_script_path, repository_db_path
 
-db_path = TestFilePath().get_repository_db_path()
-db_script_path = TestFilePath().get_repository_script_path()
-repository = Repository(db_path=db_path)
+repository = Repository(db_path=repository_db_path)
 
 valid_event_configuration = EventConfigurationFromFile(file_path=valid_config_path).get_event_configuration()
-valid_event = Event(event_configuration=valid_event_configuration, db_path=db_path)
+valid_event = Event(event_configuration=valid_event_configuration, db_path=repository_db_path)
 
 
 def setup_module():
-    ResetDB(db_path=db_path, sql_path=db_script_path)
+    ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
 
 
 class TestEventRegistration:

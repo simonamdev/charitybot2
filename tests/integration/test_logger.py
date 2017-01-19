@@ -1,11 +1,9 @@
 from charitybot2.storage.logger import Logger
 from charitybot2.storage.logs_db import Log, LogsDB
-from tests.restters_for_tests import ResetDB, TestFilePath
+from tests.mocks import ResetDB
+from tests.paths_for_tests import logs_db_path, logs_script_path
 
-logs_db_path = TestFilePath().get_db_path('logs.db')
-logs_reset_path = TestFilePath().get_db_path('logs.sql')
-
-ResetDB(db_path=logs_db_path, sql_path=logs_reset_path)
+ResetDB(db_path=logs_db_path, sql_path=logs_script_path)
 logs_db = LogsDB(db_path=logs_db_path, verbose=True)
 
 

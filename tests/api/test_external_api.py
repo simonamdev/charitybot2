@@ -2,33 +2,24 @@ import copy
 
 import requests
 from bs4 import BeautifulSoup
-from charitybot2.paths import external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url, api_paths
 from flask import json
-from tests.restters_for_tests import TestFilePath, ServiceTest
-from tests.unit.test_repository import event_names
+from tests.mocks import ResetDB, MockExternalAPI
+from tests.paths_for_tests import repository_db_script_path
+from tests.unit.test_repository import event_names, repository_db_path
 
-db_path = TestFilePath().get_repository_db_path()
-db_script_path = TestFilePath().get_repository_script_path()
-
-status_service = ServiceTest(
-    service_name='External API',
-    service_url=api_full_url,
-    service_path=external_api_cli_path,
-    enter_debug=True,
-    extra_args=['--debug'],
-    db_path=db_path,
-    sql_path=db_script_path)
+ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
+mock_external_api = MockExternalAPI(extra_args=['--debug'])
 
 api_v1_base_url = api_full_url + 'api/v1/'
 
 
 def setup_module():
-    status_service.start_service()
+    mock_external_api.start()
 
 
 def teardown_module():
-    status_service.stop_service()
+    mock_external_api.stop()
 
 
 class TestEventGET:

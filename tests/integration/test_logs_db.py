@@ -1,13 +1,11 @@
 import time
 from charitybot2.storage.logs_db import LogsDB, Log
-from tests.restters_for_tests import TestFilePath, ResetDB
-
-logs_db_path = TestFilePath().get_db_path('logs.db')
-logs_sql_path = TestFilePath().get_db_path('logs.sql')
+from tests.mocks import ResetDB
+from tests.paths_for_tests import logs_db_path, logs_script_path
 
 
 def setup_module():
-    ResetDB(db_path=logs_db_path, sql_path=logs_sql_path)
+    ResetDB(db_path=logs_db_path, sql_path=logs_script_path)
 
 
 logs_db = LogsDB(db_path=logs_db_path, verbose=True)
