@@ -5,6 +5,7 @@ import sys
 from time import sleep
 
 import requests
+from charitybot2.paths import mocksite_path
 from neopysqlite import neopysqlite
 
 
@@ -32,8 +33,52 @@ class ResetDB:
         return sql_string
 
 
-class Mocksite:
-    pass
+class WebServer:
+    def __init__(self, name, url, script_path, extra_args=(), start_delay=3, stop_delay=2):
+        self.name = name
+        self.url = url
+        self.script_path = script_path
+        self.extra_args = extra_args
+        self.start_delay = start_delay
+        self.stop_delay = stop_delay
+        self.web_server = None
+
+    def start(self):
+        print('Starting Web Server for: {}'.format(self.name))
+        args = [sys.executable, self.script_path]
+        args.extend(list(self.extra_args))
+        self.web_server = subprocess.Popen(args)
+        sleep(self.start_delay)
+
+    def stop(self):
+        print('Stopping Web Server for: {}'.format(self.name))
+        self.__kill_process()
+
+    def __kill_process(self):
+        print('Killing process for: {}'.format(self.name))
+        sleep(self.stop_delay)
+        pid = self.web_server.pid
+        os.kill(pid, 0)
+        self.web_server.kill()
+
+
+class MockFundraisingWebsite(WebServer):
+    def __init__(self, fundraiser_name, extra_args=()):
+        self.url = 'http://127.0.0.1:5000'
+        self.fundraiser_name = fundraiser_name
+        super().__init__(
+            name='Mock Fundraising Website',
+            url=self.url,
+            script_path=mocksite_path,
+            extra_args=extra_args)
+
+    def reset_amount(self):
+        response = requests.get(url=self.url + '/{}/reset/'.format(self.fundraiser_name))
+        assert 200 == response.status_code
+
+    def increase_amount(self):
+        response = requests.get(url=self.url + '/{}/increase'.format(self.fundraiser_name))
+        assert 200 == response.status_code
 
 
 class ServiceTest(ResetDB):
