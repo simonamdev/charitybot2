@@ -85,7 +85,8 @@ class TestDonationsGET:
         assert 200 == response.status_code
         assert isinstance(content, list)
         assert 10.5 == content[1]['amount']
-        assert 21.0 == content[1]['total_raised']
+        assert 36.83 == content[1]['total_raised']
+        assert 1477256999 == content[1]['timestamp']
 
     def test_getting_donation_data_with_limit(self):
         response = requests.get(api_v1_base_url + 'event/TestOne/donations?limit=2')
