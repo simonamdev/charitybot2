@@ -48,20 +48,40 @@ class TestRepositoryOperations:
         assert True is repository.donations_are_present(event_name='TestOne')
         assert False is repository.donations_are_present(event_name='NoDonations')
 
+    def test_get_last_4_donations(self):
+        event_name = 'TestOne'
+        last_4_donations = repository.get_donations(event_name=event_name, amount=4)
+        assert 4 == len(last_4_donations)
+        assert 63.17 == last_4_donations[0].get_donation_amount()
+        assert 1477257000 == last_4_donations[0].get_timestamp()
+
+    def test_get_last_donations_given_amount_0_or_negative_returns_all(self):
+        event_name = 'TestOne'
+        last_donations = repository.get_donations(event_name=event_name)
+        all_donations = repository.get_all_donations(event_name=event_name)
+        assert len(last_donations) == len(all_donations)
+        for i in range(0, len(last_donations)):
+            assert last_donations[i].get_donation_amount() == all_donations[i].get_donation_amount()
+            assert last_donations[i].get_total_raised() == all_donations[i].get_total_raised()
+            assert last_donations[i].get_timestamp() == all_donations[i].get_timestamp()
+            assert last_donations[i].get_validity() == all_donations[i].get_validity()
+            assert last_donations[i].get_notes() == all_donations[i].get_notes()
+
     def test_getting_all_donations(self):
         donations = repository.get_all_donations(event_name='TestTwo')
         for donation in donations:
             assert isinstance(donation, Donation)
-        assert -10.0 == donations[2].get_donation_amount()
-        assert 20.0 == donations[2].get_total_raised()
-        assert "Mistake" == donations[2].get_notes()
+        assert 10.0 == donations[0].get_donation_amount()
+        assert 30.0 == donations[0].get_total_raised()
+        assert 1477257010 == donations[0].get_timestamp()
 
     def test_getting_all_donations_after_recording_one(self):
-        repository.record_donation(event_name='TestThree', donation=Donation(old_amount=3300.0, new_amount=3400.0))
-        recorded_donation = repository.get_all_donations(event_name='TestThree')[-1]
+        event_name = 'TestThree'
+        repository.record_donation(event_name=event_name, donation=Donation(old_amount=3300.0, new_amount=3400.0))
+        recorded_donation = repository.get_all_donations(event_name=event_name)[0]
         assert isinstance(recorded_donation, Donation)
-        assert recorded_donation.get_donation_amount() == 100.0
-        assert recorded_donation.get_total_raised() == 3400.0
+        assert 100.0 == recorded_donation.get_donation_amount()
+        assert 3400.0 == recorded_donation.get_total_raised()
 
     def test_event_existence_of_existing_event(self):
         assert True is repository.event_exists(event_name='TestThree')
@@ -97,19 +117,18 @@ class TestRepositoryOperations:
         event = Event(event_configuration=new_configuration, db_path=repository_db_path)
         assert 888888888888888 == event.get_end_time()
 
-    def test_getting_all_donations_after_recording_several(self):
+    def test_getting_donations_after_recording_several(self):
         event_name = 'TestTwo'
+        amount_to_add = 5
         old_amount = 0
         amount_increase = 50.34
-        already_stored_count = repository.get_number_of_donations(event_name=event_name)
-        for i in range(5):
+        for i in range(amount_to_add):
             repository.record_donation(
                 event_name=event_name,
                 donation=Donation(old_amount=old_amount, new_amount=old_amount + amount_increase))
             old_amount += amount_increase
         new_amount = amount_increase
-        all_donations = repository.get_all_donations(event_name=event_name)
-        new_donations = all_donations[already_stored_count:-1]
+        new_donations = repository.get_donations(event_name=event_name, amount=amount_to_add)
         for donation in new_donations:
             assert donation.get_donation_amount() == amount_increase
             assert donation.get_total_raised() == round(new_amount, 2)
@@ -125,7 +144,6 @@ class TestRepositoryOperations:
             event_name=event_name,
             donation=Donation(old_amount=200, new_amount=350, timestamp=current_time + 5))
         last_donation = repository.get_last_donation(event_name=event_name)
-        print(last_donation)
         assert isinstance(last_donation, Donation)
         assert 150 == last_donation.get_donation_amount()
         assert 350 == last_donation.get_total_raised()
@@ -144,7 +162,6 @@ class TestRepositoryOperations:
     def test_getting_last_invalid_donation_returns_closest_valid_donation_instead(self):
         event_name = 'LastOneInvalid'
         last_donation = repository.get_last_donation(event_name=event_name)
-        print(last_donation)
         assert True is last_donation.get_validity()
         assert 50 == last_donation.get_donation_amount()
         assert 150 == last_donation.get_total_raised()
@@ -153,7 +170,6 @@ class TestRepositoryOperations:
     def test_getting_last_invalid_donation(self):
         event_name = 'LastOneInvalid'
         last_invalid_donation = repository.get_last_donation(event_name=event_name, get_invalid=True)
-        print(last_invalid_donation)
         assert False is last_invalid_donation.get_validity()
         assert -100 == last_invalid_donation.get_donation_amount()
         assert 50 == last_invalid_donation.get_total_raised()

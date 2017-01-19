@@ -19,8 +19,9 @@ class Donation:
         self.donation_amount = self.new_amount - self.old_amount
 
     def __str__(self):
-        return 'Donation of {} at {} with notes: {} and validity: {}'.format(
+        return 'Donation of {} to a total of {} at {} with notes: {} and validity: {}'.format(
             self.get_donation_amount(),
+            self.get_total_raised(),
             self.get_timestamp(),
             self.get_notes(),
             self.get_validity())
