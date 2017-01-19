@@ -4,13 +4,12 @@ import time
 import pytest
 from charitybot2.events.event_loop import TwitchEventLoop
 from charitybot2.events.currency import Currency
-from charitybot2.paths import mocksite_path
 from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount, TwitchChatBot, ChatBot
 from selenium import webdriver
 from tests.integration.test_event_loop_with_mocksite import MockEvent
+from tests.mocks import MockFundraisingWebsite
 from tests.paths_for_tests import end_to_end_config_path
-from tests.mocks import ServiceTest
 
 
 def return_unique_test_string():
@@ -19,22 +18,18 @@ def return_unique_test_string():
 
 driver = None
 purrbot = TwitchAccount(twitch_config=purrbot_config)
-service_test = ServiceTest(
-    service_name='Donations Mocksite',
-    service_url=MockEvent.mocksite_base_url,
-    service_path=mocksite_path,
-    enter_debug=False)
+mock_fundraising_website = MockFundraisingWebsite(fundraiser_name='justgiving')
 
 
 def setup_module():
-    service_test.start_service()
+    mock_fundraising_website.start()
     global driver
     driver = webdriver.Chrome()
     driver.implicitly_wait(5)
 
 
 def teardown_module():
-    service_test.stop_service()
+    mock_fundraising_website.stop()
     global driver
     driver.close()
 

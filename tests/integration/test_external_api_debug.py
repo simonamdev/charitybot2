@@ -1,24 +1,18 @@
 import json
 
 import requests
-from charitybot2.paths import external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
-from tests.mocks import ServiceTest
+from tests.mocks import MockExternalAPI
 
-service = ServiceTest(
-            service_name='External API for Debug test',
-            service_url=api_full_url,
-            service_path=external_api_cli_path,
-            enter_debug=False,
-            extra_args=['--debug'])
+mock_external_api = MockExternalAPI(extra_args=['--debug'], enter_debug=False)
 
 
 def setup_module():
-    service.start_service()
+    mock_external_api.start()
 
 
 def teardown_module():
-    service.stop_service()
+    mock_external_api.stop()
 
 
 class TestExternalAPIDebugState:

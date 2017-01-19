@@ -8,6 +8,7 @@ import requests
 from charitybot2.paths import mocksite_path, external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
 from neopysqlite import neopysqlite
+from urllib.parse import urljoin
 
 
 class ResetDB:
@@ -35,10 +36,11 @@ class ResetDB:
 
 
 class WebServer:
-    def __init__(self, name, url, script_path, extra_args=(), start_delay=3, stop_delay=2):
+    def __init__(self, name, url, script_path, extra_args=(), destroy_on_stop=True, start_delay=3, stop_delay=3):
         self.name = name
         self.url = url
         self.script_path = script_path
+        self.destroy_on_stop = destroy_on_stop
         self.extra_args = extra_args
         self.start_delay = start_delay
         self.stop_delay = stop_delay
@@ -53,14 +55,24 @@ class WebServer:
 
     def stop(self):
         print('Stopping Web Server for: {}'.format(self.name))
+        if self.destroy_on_stop:
+            self.__destroy()
         self.__kill_process()
 
     def __kill_process(self):
         print('Killing process for: {}'.format(self.name))
-        sleep(self.stop_delay)
         pid = self.web_server.pid
+        self.web_server.terminate()
+        # sleep(self.stop_delay)
         os.kill(pid, 0)
         self.web_server.kill()
+
+    def __destroy(self):
+        url = urljoin(self.url, '/destroy')
+        print('Destroying process for: {} at: {}'.format(self.name, url))
+        response = requests.get(url)
+        assert 200 == response.status_code
+        sleep(self.stop_delay)
 
 
 class MockFundraisingWebsite(WebServer):
@@ -74,7 +86,8 @@ class MockFundraisingWebsite(WebServer):
             extra_args=extra_args)
 
     def reset_amount(self):
-        response = requests.get(url=self.url + '/{}/reset/'.format(self.fundraiser_name))
+        url = urljoin(self.url, '/{}/reset'.format(self.fundraiser_name))
+        response = requests.get(url=url)
         assert 200 == response.status_code
 
     def increase_amount(self):
@@ -98,65 +111,12 @@ class MockExternalAPI(WebServer):
         if self.enter_debug:
             self.__enter_debug_mode()
 
-    def stop(self):
-        self.__destroy_api()
-        super().stop()
-
-    def __destroy_api(self):
-        response = requests.get(self.url + 'destroy')
-        assert 200 == response.status_code
-
     def __enter_debug_mode(self):
         print('Entering debug mode for: {}'.format(self.name))
-        response = requests.get(self.url + 'debug')
+        url = urljoin(self.url, 'debug')
+        response = requests.get(url)
         assert 200 == response.status_code
         assert 'Entered API debug mode' == response.content.decode('utf-8')
-
-
-class ServiceTest(ResetDB):
-    def __init__(self, service_name, service_url, service_path, enter_debug=True, extra_args=[], db_path='',
-                 sql_path=''):
-        super().__init__(db_path=db_path, sql_path=sql_path)
-        self.service_url = service_url
-        self.service_name = service_name
-        self.service_path = service_path
-        self.enter_debug = enter_debug
-        self.extra_args = extra_args
-        self.service = None
-
-    def start_service(self):
-        print('Starting Microservice')
-        args = [sys.executable, self.service_path]
-        args.extend(self.extra_args)
-        self.service = subprocess.Popen(args)
-        sleep(4)
-        if self.enter_debug:
-            response = requests.get(self.service_url + 'debug')
-            assert 200 == response.status_code
-            print('Entered debug mode for microservice')
-
-    def stop_service(self):
-        print('Stopping Microservice')
-        try:
-            requests.get(self.service_url + 'destroy')
-            print('Accessed service destroy URL')
-        except Exception:
-            print('Service already destroyed')
-        sleep(2)
-        self.kill_process()
-
-    def kill_process(self):
-        print('Attempting to kill process')
-        # Attempt graceful termination
-        pid = self.service.pid
-        self.service.terminate()
-        # Attempt force termination
-        try:
-            os.kill(pid, 0)
-            self.service.kill()
-            print('Process killed Forcefully')
-        except Exception:
-            print('Process killed gracefully')
 
 
 class AdjustTestConfig:

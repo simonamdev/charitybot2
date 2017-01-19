@@ -1,26 +1,19 @@
 import pytest
 from bs4 import BeautifulSoup
-from charitybot2.paths import mocksite_path
 from charitybot2.sources.scraper import Scraper, SourceUnavailableException
-from tests.integration.test_event_loop_with_mocksite import MockEvent
-from tests.mocks import ServiceTest
+from tests.mocks import MockFundraisingWebsite
 
-url = MockEvent.mocksite_base_url
-mocksite = ServiceTest(
-    service_name='Donations Mocksite',
-    service_url=url,
-    service_path=mocksite_path,
-    enter_debug=False)
+mock_fundraising_website = MockFundraisingWebsite(fundraiser_name='justgiving')
 
 
 def setup_module():
-    mocksite.start_service()
+    mock_fundraising_website.start()
 
 
 def teardown_module():
-    mocksite.stop_service()
+    mock_fundraising_website.stop()
 
-valid_scraper = Scraper(url=url, debug=True)
+valid_scraper = Scraper(url=mock_fundraising_website.url, debug=True)
 
 
 class TestScraperURLValidity:
