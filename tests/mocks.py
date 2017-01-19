@@ -5,7 +5,8 @@ import sys
 from time import sleep
 
 import requests
-from charitybot2.paths import mocksite_path
+from charitybot2.paths import mocksite_path, external_api_cli_path
+from charitybot2.reporter.external_api.external_api import api_full_url
 from neopysqlite import neopysqlite
 
 
@@ -79,6 +80,37 @@ class MockFundraisingWebsite(WebServer):
     def increase_amount(self):
         response = requests.get(url=self.url + '/{}/increase'.format(self.fundraiser_name))
         assert 200 == response.status_code
+
+
+class MockExternalAPI(WebServer):
+    def __init__(self, extra_args=(), enter_debug=True):
+        self.url = api_full_url
+        self.enter_debug = enter_debug
+        super().__init__(
+            name='Mock External API',
+            url=self.url,
+            script_path=external_api_cli_path,
+            extra_args=extra_args,
+            start_delay=5)
+
+    def start(self):
+        super().start()
+        if self.enter_debug:
+            self.__enter_debug_mode()
+
+    def stop(self):
+        self.__destroy_api()
+        super().stop()
+
+    def __destroy_api(self):
+        response = requests.get(self.url + 'destroy')
+        assert 200 == response.status_code
+
+    def __enter_debug_mode(self):
+        print('Entering debug mode for: {}'.format(self.name))
+        response = requests.get(self.url + 'debug')
+        assert 200 == response.status_code
+        assert 'Entered API debug mode' == response.content.decode('utf-8')
 
 
 class ServiceTest(ResetDB):
