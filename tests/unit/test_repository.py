@@ -122,13 +122,16 @@ class TestRepositoryOperations:
         amount_to_add = 5
         old_amount = 0
         amount_increase = 50.34
+        timestamp = int(time.time())
         for i in range(amount_to_add):
+            timestamp += 2
             repository.record_donation(
                 event_name=event_name,
-                donation=Donation(old_amount=old_amount, new_amount=old_amount + amount_increase))
+                donation=Donation(old_amount=old_amount, new_amount=old_amount + amount_increase, timestamp=timestamp))
             old_amount += amount_increase
         new_amount = amount_increase
         new_donations = repository.get_donations(event_name=event_name, amount=amount_to_add)
+        new_donations.reverse()
         for donation in new_donations:
             assert donation.get_donation_amount() == amount_increase
             assert donation.get_total_raised() == round(new_amount, 2)
