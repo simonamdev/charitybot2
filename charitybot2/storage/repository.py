@@ -34,7 +34,7 @@ class Repository:
         self.connection = sqlite3.connect(self.db_path)
         self.cursor = self.connection.cursor()
         self.debug = debug
-        self.logger = Logger(source='Donations_DB',  event='', console_only=debug)
+        self.logger = Logger(source='Repository',  event='', console_only=debug)
 
     def get_event_id(self, event_name):
         query = 'SELECT `eventId`' \
