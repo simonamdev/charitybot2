@@ -3,7 +3,7 @@ from charitybot2.botconfig.event_config import EventConfiguration, EventConfigur
 from charitybot2.botconfig.json_config import InvalidConfigurationException, ConfigurationFileDoesNotExistException, \
     JSONConfigurationFile
 from charitybot2.events.currency import InvalidCurrencyException
-from tests.restters_for_tests import TestFilePath
+from tests.paths_for_tests import valid_config_path
 
 
 def get_valid_config_values():
@@ -79,13 +79,11 @@ class TestEventConfigurationFromFile:
             EventConfigurationFromFile(file_path='blalslsd')
 
     def test_getting_valid_event_configuration(self):
-        config_file_path = TestFilePath().get_config_path('event', 'valid_config.json')
-        event_config = EventConfigurationFromFile(file_path=config_file_path).get_event_configuration()
+        event_config = EventConfigurationFromFile(file_path=valid_config_path).get_event_configuration()
         assert isinstance(event_config, EventConfiguration)
 
     def test_event_config_values_match_values_from_file(self):
-        config_file_path = TestFilePath().get_config_path('event', 'valid_config.json')
-        event_config = EventConfigurationFromFile(file_path=config_file_path).get_event_configuration()
-        json_config = JSONConfigurationFile(file_path=config_file_path, keys_required=EventConfigurationCreator.keys_required)
+        event_config = EventConfigurationFromFile(file_path=valid_config_path).get_event_configuration()
+        json_config = JSONConfigurationFile(file_path=valid_config_path, keys_required=EventConfigurationCreator.keys_required)
         for key in EventConfigurationCreator.keys_required:
             assert json_config.get_value(key) == event_config.get_value(key)

@@ -6,11 +6,8 @@ from charitybot2.events.event_loop import EventLoop
 from charitybot2.events.event import Event
 from charitybot2.paths import mocksite_path
 from charitybot2.sources.mocks.mocksite import mocksite_full_url
-from tests.paths_for_tests import valid_config_path
-from tests.mocks import ResetDB, ServiceTest, TestFilePath
-
-db_path = TestFilePath().get_repository_db_path()
-db_script_path = TestFilePath().get_repository_script_path()
+from tests.paths_for_tests import valid_config_path, repository_db_path, repository_db_script_path
+from tests.mocks import ResetDB, ServiceTest
 
 
 class MockEvent(Event):
@@ -21,7 +18,7 @@ class MockEvent(Event):
         config_values['internal_name'] = mock_name
         config_values['end_time'] = mock_end_time
         mock_event_config = EventConfigurationCreator(config_values=config_values).get_event_configuration()
-        super().__init__(event_configuration=mock_event_config, db_path=db_path)
+        super().__init__(event_configuration=mock_event_config, db_path=repository_db_path)
         self.mock_name = mock_name
         self.mock_end_time = mock_end_time
 
@@ -48,7 +45,7 @@ service_test = ServiceTest(
 
 
 def setup_module():
-    ResetDB(db_path=db_path, sql_path=db_script_path)
+    ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
     service_test.start_service()
     r = requests.get(url=mocksite_full_url + 'reset')
     assert 200 == r.status_code

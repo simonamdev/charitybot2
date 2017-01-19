@@ -1,5 +1,5 @@
 from charitybot2.botconfig.twitch_config import TwitchAccountConfiguration
-from tests.restters_for_tests import TestFilePath
+from tests.paths_for_tests import TestFilePath
 
 
 def get_config_file_path(config_name):

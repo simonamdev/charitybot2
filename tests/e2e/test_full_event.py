@@ -12,11 +12,9 @@ from charitybot2.reporter.twitch import ChatBot
 from selenium import webdriver
 from tests.e2e.test_reporter_twitch import navigate_to_twitch_channel, get_twitch_chat_box_contents
 from tests.integration.test_event_loop_with_mocksite import MockEvent
-from tests.paths_for_tests import end_to_end_config_path
-from tests.restters_for_tests import ServiceTest, AdjustTestConfig, TestFilePath, ResetDB
+from tests.paths_for_tests import end_to_end_config_path, repository_db_path, repository_db_script_path
+from tests.mocks import ServiceTest, AdjustTestConfig, ResetDB
 
-db_path = TestFilePath().get_repository_db_path()
-db_script_path = TestFilePath().get_repository_script_path()
 driver = None
 parser = create_cb_process_parser()
 config_adjustment = AdjustTestConfig(config_path=end_to_end_config_path)
@@ -54,7 +52,7 @@ def teardown_module():
 class TestFullTwitchEvent:
     @pytest.mark.skip(reason='Currently out of scope')
     def test_full_twitch_event(self):
-        ResetDB(db_path=db_path, sql_path=db_script_path)
+        ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 30)
         navigate_to_twitch_channel()
         args = parser.parse_args(['e2e_config', '--debug', '--twitch-config', 'purrcat259'])
@@ -79,7 +77,7 @@ class TestFullTwitchEvent:
 
 class TestFullAPIEvent:
     def test_full_event(self):
-        ResetDB(db_path=db_path, sql_path=db_script_path)
+        ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
         response = requests.get(MockEvent.mocksite_base_url + 'reset/')
         assert 200 == response.status_code
         config_adjustment.change_value(key='end_time', value=int(time.time()) + 10)

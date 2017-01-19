@@ -10,7 +10,7 @@ from charitybot2.reporter.twitch import TwitchAccount, TwitchChatBot, ChatBot
 from selenium import webdriver
 from tests.integration.test_event_loop_with_mocksite import MockEvent
 from tests.paths_for_tests import end_to_end_config_path
-from tests.restters_for_tests import ServiceTest
+from tests.mocks import ServiceTest
 
 
 def return_unique_test_string():

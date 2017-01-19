@@ -1,22 +1,19 @@
 import argparse
-import os
 import time
 
-from charitybot2.botconfig.event_config import EventConfiguration, EventConfigurationCreator, EventConfigurationFromFile
-from charitybot2.botconfig.json_config import ConfigurationFileDoesNotExistException
 from charitybot2.events.currency import Currency
 from charitybot2.events.donation import Donation
-from charitybot2.paths import production_donations_db_path, event_config_folder
+from charitybot2.paths import production_donations_db_path
 from charitybot2.storage.repository import Repository
 from flask import Flask, request, jsonify, make_response, abort
 from flask import render_template
 from flask_cors import CORS
-from tests.restters_for_tests import TestFilePath
+from tests.paths_for_tests import repository_db_path
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-test_repository_db_path = TestFilePath().get_repository_db_path()
+test_repository_db_path = repository_db_path
 
 api_address = '127.0.0.1'
 api_port = 8000

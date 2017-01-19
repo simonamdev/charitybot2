@@ -8,13 +8,11 @@ from charitybot2.paths import mocksite_path, external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
 from selenium import webdriver
 from tests.integration.test_event_loop_with_mocksite import MockEvent
-from tests.restters_for_tests import ServiceTest, TestFilePath, ResetDB, AdjustTestConfig
-from tests.paths_for_tests import end_to_end_config_path
+from tests.mocks import ServiceTest, ResetDB, AdjustTestConfig
+from tests.paths_for_tests import end_to_end_config_path, repository_db_path, repository_db_script_path
 
 driver = None
 
-db_path = TestFilePath().get_repository_db_path()
-db_script_path = TestFilePath().get_repository_script_path()
 config_adjustment = AdjustTestConfig(config_path=end_to_end_config_path)
 
 
@@ -60,7 +58,7 @@ class TestOverlay:
     overlay_url = api_full_url + 'overlay/{}'
 
     def test_getting_last_donation_amount_on_overlay(self):
-        ResetDB(db_path=db_path, sql_path=db_script_path)
+        ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
         mock_event = get_new_mock_event()
         mock_event.reset_mocksite()
         print(mock_event.get_currency().get_symbol())
@@ -75,7 +73,7 @@ class TestOverlay:
         assert '€100' == overlay_text
 
     def test_overlay_amount_updates_automagically(self):
-        ResetDB(db_path=db_path, sql_path=db_script_path)
+        ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
         mock_event = get_new_mock_event()
         mock_event.reset_mocksite()
         driver.get(self.overlay_url.format(mock_event.get_internal_name()))
