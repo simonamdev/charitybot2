@@ -98,17 +98,17 @@ def event_details(event_name):
 def event_donations(event_name):
     if not repository.event_exists(event_name=event_name):
         abort(404)
-    all_donations = repository.get_all_donations(event_name=event_name)
-    # TODO: Add option to limit via Neopysqlite and not slicing after the fact
     limit = request.args.get('limit')
-    if limit is not None:
-        all_donations = all_donations[-int(limit):]
+    if limit is None:
+        limit = 0
+    print(limit)
+    donations = repository.get_donations(event_name=event_name, amount=limit)
     donation_objects = [
         {
             'amount': donation.get_donation_amount(),
             'total_raised': donation.get_total_raised(),
             'timestamp': donation.get_timestamp()
-        } for donation in all_donations
+        } for donation in donations
     ]
     return jsonify(donations=donation_objects)
 

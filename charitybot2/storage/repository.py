@@ -114,7 +114,7 @@ class Repository:
         return self.get_number_of_donations(event_name=event_name) > 0
 
     def get_donations(self, event_name, amount=-1):
-        limit_query_part = 'LIMIT {}'.format(amount) if amount > 0 else ''
+        limit_query_part = 'LIMIT {}'.format(amount) if int(amount) > 0 else ''
         query = 'SELECT *' \
                 'FROM `donations`' \
                 'WHERE eventId = (?) AND valid = 1 ' \
