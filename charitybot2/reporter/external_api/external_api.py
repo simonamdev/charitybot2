@@ -46,7 +46,7 @@ repository = Repository(db_path=test_repository_db_path, debug=True)
 
 
 def get_currency_symbol(event_name):
-    key = repository.get_event_configuration(event_name=event_name).get_value('currency_key')
+    key = repository.get_event_configuration(event_name=event_name).get_currency().get_key()
     return Currency(key=key).get_symbol()
 
 
@@ -86,10 +86,10 @@ def event_details(event_name):
     event_data = {
         'name': event_name,
         'currency_symbol': get_currency_symbol(event_name=event_name),
-        'start_time': event_configuration.get_value('start_time'),
-        'end_time': event_configuration.get_value('end_time'),
+        'start_time': event_configuration.get_start_time(),
+        'end_time': event_configuration.get_end_time(),
         'amount_raised': repository.get_total_raised(event_name=event_name),
-        'target_amount': event_configuration.get_value('target_amount')
+        'target_amount': event_configuration.get_target_amount()
     }
     return jsonify(event_data)
 

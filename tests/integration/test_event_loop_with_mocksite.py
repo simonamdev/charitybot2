@@ -13,6 +13,7 @@ class MockEvent(Event):
 
     def __init__(self, config_path, mock_name, mock_end_time):
         config_values = EventConfigurationFromFile(file_path=config_path).get_config_data()
+        config_values['source_url'] = self.get_source_url()
         config_values['internal_name'] = mock_name
         config_values['end_time'] = mock_end_time
         mock_event_config = EventConfigurationCreator(config_values=config_values).get_event_configuration()

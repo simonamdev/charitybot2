@@ -1,7 +1,7 @@
 import re
 
 from charitybot2.botconfig.json_config import InvalidConfigurationException, JSONConfigurationFile
-from charitybot2.events.currency import InvalidCurrencyException
+from charitybot2.events.currency import InvalidCurrencyException, Currency
 
 url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
 
@@ -13,11 +13,35 @@ class EventConfiguration:
     def __str__(self):
         return_string = ''
         for key in EventConfigurationCreator.keys_required:
-            return_string += '{}: {}\n'.format(key, self.get_value(key=key))
+            return_string += '{}: {}\n'.format(key, self.__get_value(key=key))
         return return_string
 
-    def get_value(self, key):
+    def __get_value(self, key):
         return self.config_values[key]
+
+    def get_internal_name(self):
+        return self.__get_value('internal_name')
+
+    def get_external_name(self):
+        return self.__get_value('external_name')
+
+    def get_start_time(self):
+        return self.__get_value('start_time')
+
+    def get_end_time(self):
+        return self.__get_value('end_time')
+
+    def get_target_amount(self):
+        return self.__get_value('target_amount')
+
+    def get_source_url(self):
+        return self.__get_value('source_url')
+
+    def get_update_delay(self):
+        return self.__get_value('update_delay')
+
+    def get_currency(self):
+        return Currency(self.__get_value('currency_key'))
 
 
 class EventConfigurationCreator:

@@ -12,7 +12,11 @@ class EventLoop:
     def __init__(self, event, debug=False):
         self.event = event
         self.validate_event_loop()
-        self.logger = Logger(source='EventLoop', event=self.event.get_internal_name(), console_only=debug)
+        self.event_configuration = self.event.get_configuration()
+        self.logger = Logger(
+            source='EventLoop',
+            event=self.event.name,
+            console_only=debug)
         self.debug = debug
         self.scraper = None
         self.reporter = None
@@ -21,7 +25,7 @@ class EventLoop:
         self.__initialise_event_loop()
 
     def __initialise_scraper(self):
-        source_url = self.event.get_source_url()
+        source_url = self.event_configuration.get_source_url()
         if 'justgiving' in source_url:
             self.logger.log_info('Initialising JustGiving Scraper')
             self.scraper = JustGivingScraper(url=source_url)
@@ -29,16 +33,16 @@ class EventLoop:
             self.logger.log_error('BTDonate scraper has not been implemented yet')
             raise NotImplementedError
         else:
-            self.logger.log_error('Unable to initialise scraper for event: {}'.format(self.event.get_internal_name()))
-            raise EventInvalidException('Unable to initialise scraper for event: {}'.format(self.event.get_internal_name()))
+            self.logger.log_error('Unable to initialise scraper for event: {}'.format(self.event.name))
+            raise EventInvalidException('Unable to initialise scraper for event: {}'.format(self.event.name))
 
     def validate_event_loop(self):
         if self.event is None:
             raise EventInvalidException('No Event object passed to Event Loop')
-        if time.time() > self.event.get_end_time():
+        if time.time() > self.event.get_configuration().get_end_time():
             raise EventAlreadyFinishedException('Current time: {} Event end time: {}'.format(
                 time.time(),
-                self.event.get_end_time()))
+                self.event.get_configuration().get_end_time()))
 
     def __initialise_event_loop(self):
         self.logger.log_verbose('Checking whether the event is registered or not')
@@ -47,10 +51,7 @@ class EventLoop:
         self.__check_for_donations()
 
     def __check_event_registration(self):
-        if self.__event_already_registered():
-            self.logger.log_info('Updating event configuration')
-            self.event.update_event(self.event.event_configuration)
-        else:
+        if not self.__event_already_registered():
             self.logger.log_info('Registering event configuration')
             self.event.register_event()
 
@@ -58,10 +59,10 @@ class EventLoop:
         if self.__donations_already_present():
             self.logger.log_verbose('Donations are already present for the event')
             # set the current amount from the last donation recorded
-            last_donation = self.event.repository.get_last_donation(event_name=self.event.get_internal_name())
+            last_donation = self.event.repository.get_last_donation(event_name=self.event.name)
             self.event.set_amount_raised(amount=last_donation.get_total_raised())
             self.logger.log_info('Amount raised retrieved from database is: {}{}'.format(
-                self.event.get_currency().get_symbol(),
+                self.event_configuration.get_currency().get_symbol(),
                 self.event.get_amount_raised()
             ))
         else:
@@ -69,26 +70,26 @@ class EventLoop:
             # set the current amount raised from the starting amount
             starting_amount = self.event.get_starting_amount()
             self.logger.log_info('Setting starting amount to: {}{}'.format(
-                self.event.get_currency().get_symbol(),
+                self.event_configuration.get_currency().get_symbol(),
                 starting_amount))
             self.event.set_amount_raised(amount=starting_amount)
 
     def __donations_already_present(self):
-        return self.event.repository.donations_are_present(event_name=self.event.get_internal_name())
+        return self.event.repository.donations_are_present(event_name=self.event.name)
 
     def __event_already_registered(self):
-        return self.event.repository.event_exists(event_name=self.event.get_internal_name())
+        return self.event.repository.event_exists(event_name=self.event.name)
 
     def start(self):
-        self.logger.log_info('Starting Event: {}'.format(self.event.get_internal_name()))
-        while time.time() < self.event.get_end_time():
-            hours_remaining = int((self.event.get_end_time() - time.time()) / (60 * 60))
+        self.logger.log_info('Starting Event: {}'.format(self.event.name))
+        while time.time() < self.event_configuration.get_end_time():
+            hours_remaining = int((self.event_configuration.get_end_time() - time.time()) / (60 * 60))
             self.logger.log_info('Cycle {}: {} hours remaining in event'.format(
                 self.loop_count,
                 hours_remaining))
             self.check_for_donation()
             self.logger.log_info('Holding until cycle: {}'.format(self.loop_count + 1))
-            time.sleep(self.event.get_update_tick())
+            time.sleep(self.event_configuration.get_update_delay())
             self.loop_count += 1
         self.logger.log_info('Event has exceeded its end time')
 
@@ -127,9 +128,9 @@ class EventLoop:
 
     def __record_new_donation(self, donation):
         self.logger.log_info('New Donation of {}{} detected'.format(
-            self.event.get_currency().get_symbol(),
+            self.event_configuration.get_currency().get_symbol(),
             donation.get_donation_amount()))
-        self.event.repository.record_donation(event_name=self.event.get_internal_name(), donation=donation)
+        self.event.repository.record_donation(event_name=self.event.name, donation=donation)
 
     def report_new_donation(self, donation):
         # This should be overridden by specific reporter children of this the EventLoop class

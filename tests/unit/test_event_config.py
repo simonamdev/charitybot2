@@ -1,8 +1,7 @@
 import pytest
 from charitybot2.botconfig.event_config import EventConfiguration, EventConfigurationCreator, EventConfigurationFromFile
-from charitybot2.botconfig.json_config import InvalidConfigurationException, ConfigurationFileDoesNotExistException, \
-    JSONConfigurationFile
-from charitybot2.events.currency import InvalidCurrencyException
+from charitybot2.botconfig.json_config import InvalidConfigurationException, ConfigurationFileDoesNotExistException
+from charitybot2.events.currency import InvalidCurrencyException, Currency
 from tests.paths_for_tests import valid_config_path
 
 
@@ -10,10 +9,16 @@ def get_valid_config_values():
     config_values = {}
     for key in EventConfigurationCreator.keys_required:
         config_values[key] = '' if key not in EventConfigurationCreator.number_keys else 0
+    config_values['internal_name'] = 'internal_name'
+    config_values['external_name'] = 'External Name'
     config_values['end_time'] = 1
+    config_values['target_amount'] = 1000
     config_values['currency_key'] = 'GBP'
     config_values['source_url'] = 'http://www.test.com'
+    config_values['update_delay'] = 5
     return config_values
+
+valid_event_config = EventConfigurationCreator(config_values=get_valid_config_values()).get_event_configuration()
 
 
 class TestEventConfigCreator:
@@ -59,18 +64,42 @@ class TestEventConfigCreator:
 
 
 class TestEventConfigurationRetrieve:
-    # This is just a sanity check... if this fails then something is very wrong
-    def test_getting_event_config_values_match_passed_values(self):
-        config_values = get_valid_config_values()
-        event_config = EventConfigurationCreator(config_values=config_values).get_event_configuration()
-        for key in EventConfigurationCreator.keys_required:
-            assert config_values[key] == event_config.get_value(key)
-
     def test_getting_number_values_are_numbers(self):
-        config_values = get_valid_config_values()
-        event_config = EventConfigurationCreator(config_values=config_values).get_event_configuration()
-        for key in EventConfigurationCreator.number_keys:
-            assert isinstance(event_config.get_value(key), int)
+        number_values = [
+            valid_event_config.get_start_time(),
+            valid_event_config.get_end_time(),
+            valid_event_config.get_target_amount(),
+            valid_event_config.get_update_delay()
+        ]
+        for value in number_values:
+            assert isinstance(value, int)
+
+    def test_retrieve_internal_name(self):
+        assert 'internal_name' == valid_event_config.get_internal_name()
+
+    def test_retrieve_external_name(self):
+        assert 'External Name' == valid_event_config.get_external_name()
+
+    def test_retrieve_event_start_time(self):
+        assert 0 == valid_event_config.get_start_time()
+
+    def test_retrieve_event_end_time(self):
+        assert 1 == valid_event_config.get_end_time()
+
+    def test_retrieve_event_target_amount(self):
+        assert 1000 == valid_event_config.get_target_amount()
+
+    def test_retrieve_event_sources(self):
+        source_url = valid_event_config.get_source_url()
+        assert 'http://www.test.com' == source_url
+
+    def test_retrieve_update_delay(self):
+        assert 5 == valid_event_config.get_update_delay()
+
+    def test_event_returns_expected_currency(self):
+        assert isinstance(valid_event_config.get_currency(), Currency)
+        assert 'GBP' == valid_event_config.get_currency().get_key()
+        assert '£' == valid_event_config.get_currency().get_symbol()
 
 
 class TestEventConfigurationFromFile:
@@ -82,8 +111,3 @@ class TestEventConfigurationFromFile:
         event_config = EventConfigurationFromFile(file_path=valid_config_path).get_event_configuration()
         assert isinstance(event_config, EventConfiguration)
 
-    def test_event_config_values_match_values_from_file(self):
-        event_config = EventConfigurationFromFile(file_path=valid_config_path).get_event_configuration()
-        json_config = JSONConfigurationFile(file_path=valid_config_path, keys_required=EventConfigurationCreator.keys_required)
-        for key in EventConfigurationCreator.keys_required:
-            assert json_config.get_value(key) == event_config.get_value(key)

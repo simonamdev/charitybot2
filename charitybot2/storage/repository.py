@@ -60,15 +60,15 @@ class Repository:
                 'VALUES' \
                 '(NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
         data = (
-            event_configuration.get_value('internal_name'),
-            event_configuration.get_value('external_name'),
-            event_configuration.get_value('start_time'),
-            event_configuration.get_value('end_time'),
-            event_configuration.get_value('currency_key'),
+            event_configuration.get_internal_name(),
+            event_configuration.get_external_name(),
+            event_configuration.get_start_time(),
+            event_configuration.get_end_time(),
+            event_configuration.get_currency().get_key(),
             0,
-            event_configuration.get_value('target_amount'),
-            event_configuration.get_value('source_url'),
-            event_configuration.get_value('update_delay'))
+            event_configuration.get_target_amount(),
+            event_configuration.get_source_url(),
+            event_configuration.get_update_delay())
         self.cursor.execute(query, data)
         self.connection.commit()
 
@@ -84,14 +84,14 @@ class Repository:
                 'updateDelay = (?)' \
                 'WHERE eventId = (?)'
         data = (
-            event_configuration.get_value('external_name'),
-            event_configuration.get_value('start_time'),
-            event_configuration.get_value('end_time'),
-            event_configuration.get_value('currency_key'),
-            event_configuration.get_value('target_amount'),
-            event_configuration.get_value('source_url'),
-            event_configuration.get_value('update_delay'),
-            self.get_event_id(event_configuration.get_value('internal_name')))
+            event_configuration.get_external_name(),
+            event_configuration.get_start_time(),
+            event_configuration.get_end_time(),
+            event_configuration.get_currency().get_key(),
+            event_configuration.get_target_amount(),
+            event_configuration.get_source_url(),
+            event_configuration.get_update_delay(),
+            self.get_event_id(event_configuration.get_internal_name()))
         self.cursor.execute(query, data)
         self.connection.commit()
 

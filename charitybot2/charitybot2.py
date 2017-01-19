@@ -69,7 +69,7 @@ class CharityBot:
             validator.confirm_config_exists('twitch', self.args.twitch_config + '.json')
 
     def initialise_bot(self):
-        event_config = EventConfigurationFromFile(file_path=self.event_config_path)
+        event_config = EventConfigurationFromFile(file_path=self.event_config_path).get_event_configuration()
         event = Event(event_configuration=event_config, db_path=self.db_path)
         if self.twitch_mode:
             twitch_config_path = os.path.join(self.config_dir, 'twitch', self.args.twitch_config + '.json')

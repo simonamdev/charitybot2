@@ -21,7 +21,7 @@ def get_new_mock_event(end_time_increment=20):
     event_configuration = EventConfigurationFromFile(file_path=end_to_end_config_path).get_event_configuration()
     return MockEvent(
         config_path=end_to_end_config_path,
-        mock_name=event_configuration.get_value('internal_name'),
+        mock_name=event_configuration.get_internal_name(),
         mock_end_time=end_time)
 
 mock_fundraising_website = MockFundraisingWebsite(fundraiser_name='justgiving')
@@ -50,7 +50,6 @@ class TestOverlay:
         ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
         mock_event = get_new_mock_event()
         mock_fundraising_website.reset_amount()
-        print(mock_event.get_currency().get_symbol())
         EventLoop(event=mock_event, debug=True).start()
         response = requests.get(url=self.overlay_url.format(mock_event.get_internal_name()))
         assert 200 == response.status_code
@@ -63,7 +62,7 @@ class TestOverlay:
 
     def test_overlay_amount_updates_automagically(self):
         ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
-        mock_event = get_new_mock_event()
+        mock_event = get_new_mock_event(end_time_increment=30)
         mock_fundraising_website.reset_amount()
         driver.get(self.overlay_url.format(mock_event.get_internal_name()))
         EventLoop(event=mock_event, debug=True).start()

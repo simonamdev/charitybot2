@@ -32,8 +32,9 @@ class JustGivingScraper(Scraper):
             tag_class='statistics-amount-raised theme-highlight-text-font'
         )
         self.soup_data_sources = sds
-        self.logger.log_info('Just Giving Scraper sources initialised with {0} sources'.format(
+        self.logger.log_info('JustGiving Scraper sources initialised with {0} sources'.format(
             len(sds.get_available_source_names())))
+        self.logger.log_info('JustGiving URL: {}'.format(self.url))
 
     def get_all_source_values(self):
         for source_name in self.soup_data_sources.get_available_source_names():

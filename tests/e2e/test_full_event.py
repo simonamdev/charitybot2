@@ -74,7 +74,7 @@ class TestFullAPIEvent:
         bot = CharityBot(args=args)
         bot.initialise_bot()
         # see that the overlay is functioning before starting
-        overlay_url = api_full_url + 'overlay/{}'.format(event_config.get_value('internal_name'))
+        overlay_url = api_full_url + 'overlay/{}'.format(event_config.get_internal_name())
         response = requests.get(url=overlay_url)
         assert 200 == response.status_code
         bot.start_bot()
