@@ -82,7 +82,7 @@ class JustGivingCampaignScraper(JustGivingScraper):
         super().__init__(url=url, scraper_type='campaign', debug=debug)
         self.logger.log_info('Starting up PhantomJS driver (this may take some time)')
         self.driver = None
-        self.__setup_driver()
+        # self.__setup_driver()
 
     def __setup_driver(self):
         # Set User Agent
@@ -133,7 +133,16 @@ class JustGivingCampaignScraper(JustGivingScraper):
         return currency_symbol + amount_raised
 
     def scrape_amount_raised(self):
-        return self.__get_amount_raised()
+        # retries = 0
+        # while retries < 3:
+        #     try:
+        #         amount_raised
+        #     except:
+        #         pass
+        self.__setup_driver()
+        amount_raised = self.__get_amount_raised()
+        self.driver.quit()
+        return amount_raised
 
 
 class JustGivingScraperCreator:
