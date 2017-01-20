@@ -8,11 +8,21 @@ def convert_row_to_log(row):
     return Log(source=row[3], timestamp=row[1], level=row[2], message=row[5], event=row[4])
 
 
+def convert_unix_timestamp_to_readable_format(unix_timestamp):
+    return datetime.datetime.fromtimestamp(unix_timestamp).strftime('%H:%M:%S')
+
+
 class Log:
     verbose_level = 0
     info_level = 1
     warning_level = 2
     error_level = 3
+
+    log_names = (
+        'VERBOSE',
+        'INFO',
+        'WARNING',
+        'ERROR')
 
     def __init__(self, source, timestamp, level, event, message):
         self.source = source
@@ -23,8 +33,8 @@ class Log:
 
     def __str__(self):
         return '[{}] [{}] [{}] [{}]: {}'.format(
-            datetime.datetime.fromtimestamp(self.timestamp).strftime('%H:%M:%S'),
-            self.level,
+            convert_unix_timestamp_to_readable_format(self.timestamp),
+            self.log_names[self.level][0:4],
             self.source,
             self.event,
             self.message
