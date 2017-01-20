@@ -3,7 +3,7 @@ import time
 from charitybot2.botconfig.event_config import EventConfigurationFromFile, EventConfigurationCreator
 from charitybot2.events.event_loop import EventLoop
 from charitybot2.events.event import Event
-from charitybot2.sources.mocks.mocksite import mocksite_full_url
+from charitybot2.sources.mocks.mocksite import mocksite_full_url, mock_justgiving_fundraising_url
 from tests.paths_for_tests import valid_config_path, repository_db_path, repository_db_script_path
 from tests.mocks import ResetDB, MockFundraisingWebsite
 
@@ -13,7 +13,7 @@ class MockEvent(Event):
 
     def __init__(self, config_path, mock_name, mock_end_time):
         config_values = EventConfigurationFromFile(file_path=config_path).get_config_data()
-        config_values['source_url'] = self.get_source_url()
+        config_values['source_url'] = mock_justgiving_fundraising_url
         config_values['internal_name'] = mock_name
         config_values['end_time'] = mock_end_time
         mock_event_config = EventConfigurationCreator(config_values=config_values).get_event_configuration()
@@ -26,9 +26,6 @@ class MockEvent(Event):
 
     def get_end_time(self):
         return self.mock_end_time
-
-    def get_source_url(self):
-        return self.mocksite_base_url + 'justgiving/'
 
 
 mock_fundraising_website = MockFundraisingWebsite(fundraiser_name='justgiving')

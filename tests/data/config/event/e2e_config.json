@@ -1,1 +1,10 @@
-{"start_time": 0, "target_amount": 1000, "source_url": "http://127.0.0.1:5000/justgiving", "external_name": "End to End Test Event", "end_time": 1484731380, "update_delay": 5, "currency_key": "EUR", "internal_name": "e2e_event"}
+{
+  "start_time": 0,
+  "end_time": 1484731380,
+  "target_amount": 1000,
+  "source_url": "http://127.0.0.1:5000/justgiving/fundraising",
+  "external_name": "End to End Test Event",
+  "internal_name": "e2e_event",
+  "update_delay": 5,
+  "currency_key": "EUR"
+}
