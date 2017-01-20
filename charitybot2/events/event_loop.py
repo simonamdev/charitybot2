@@ -57,6 +57,10 @@ class EventLoop:
             # get the currently donated amount for storage and later reference
             starting_amount = self.scraper.scrape_amount_raised()
             self.event.register_event(starting_amount=self.strip_amount_string_to_float(starting_amount))
+        else:
+            self.logger.log_info('Updating event configuration')
+            self.event.update_event()
+            self.event_configuration = self.event.get_configuration()
 
     def __check_for_donations(self):
         if self.__donations_already_present():

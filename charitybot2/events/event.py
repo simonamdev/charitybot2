@@ -17,9 +17,11 @@ class Event:
         self.repository = Repository(db_path=db_path, debug=True)
         self.amount_raised = 0
 
-    def update_event(self, event_configuration):
+    def update_event(self, event_configuration=None):
+        new_configuration = self.event_configuration if event_configuration is None else event_configuration
+        print(new_configuration.get_start_time())
         if self.event_already_registered():
-            self.repository.update_event(event_configuration=event_configuration)
+            self.repository.update_event(event_configuration=new_configuration)
             self.event_configuration = self.repository.get_event_configuration(
                 event_name=self.event_configuration.get_internal_name())
 
