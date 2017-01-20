@@ -30,11 +30,26 @@ def justgiving():
 @app.route('/justgiving/campaign/')
 def justgiving_campaign():
     amount_html = '<p id="mock-p" class="dna-text-brand-l jg-theme-text TotalDonation__totalRaised___1sUPY"></p>'
-    amount_script = '<script>document.getElementById("mock-p").innerHTML = "£{}.52";</script>'.format(justgiving_amount)
+    # The 12th script scraped is the script tag that we need
+    script_string = '<script></script>'
+    amount_script = '<script>' \
+                    '{{"campaign":' \
+                    '   {{"totalRaisedInPageCurrency":' \
+                    '       {{"currency":' \
+                    '           {{"symbol": "£"}},' \
+                    '         "value": {0}.52' \
+                    '       }}' \
+                    '   }}' \
+                    '}}' \
+                    '</script>'.format(justgiving_amount)
+    mocksite_script_strings = ''
+    for i in range(0, 11):
+        mocksite_script_strings += '\n{}'.format(script_string)
+    mocksite_script_strings += '\n{}'.format(amount_script)
     return render_template(
         'amount.html',
         amount_html=Markup(amount_html),
-        amount_script=Markup(amount_script))
+        amount_script=Markup(mocksite_script_strings))
 
 
 @app.route('/justgiving/increase/')

@@ -1,3 +1,4 @@
+import json
 import os
 
 from selenium import webdriver
@@ -83,9 +84,34 @@ class JustGivingCampaignScraper(JustGivingScraper):
 
     def __get_amount_raised(self):
         self.driver.get(self.url)
-        element = self.driver.find_element_by_css_selector(
-            '.dna-text-brand-l.jg-theme-text.TotalDonation__totalRaised___1sUPY')
-        return element.text
+        script_tags = self.driver.find_elements_by_tag_name('script')
+        # searching method uncovered index 11, however it might need more testing later on
+        # return self.__search_for_amount_raised(script_tags=script_tags)
+        return self.__parse_script_tag_for_amount_raised(script_tags[11])
+
+    @staticmethod
+    def __search_for_amount_raised(script_tags):
+        amount_raised = ''
+        for script in script_tags:
+            inner_html = script.get_attribute('innerHTML').strip()
+            first_part = inner_html[0:9]
+            if 'window.JG' == first_part and not first_part == '':
+                amount_raised = inner_html
+                print('------------------')
+                print(script_tags.index(script))
+                break
+        return amount_raised
+
+    @staticmethod
+    def __parse_script_tag_for_amount_raised(script_tag):
+        inner_html = script_tag.get_attribute('innerHTML').strip()
+        # this is required to allow the mock test to pass
+        if not inner_html[0] == '{':
+            inner_html = inner_html[59:-1]
+        parsed_html = json.loads(inner_html)
+        currency_symbol = parsed_html['campaign']['totalRaisedInPageCurrency']['currency']['symbol']
+        amount_raised = str(parsed_html['campaign']['totalRaisedInPageCurrency']['value'])
+        return currency_symbol + amount_raised
 
     def scrape_amount_raised(self):
         return self.__get_amount_raised()

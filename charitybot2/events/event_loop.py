@@ -3,7 +3,7 @@ import time
 from charitybot2.events.donation import Donation, InvalidArgumentException
 from charitybot2.events.event import EventInvalidException, EventAlreadyFinishedException
 from charitybot2.reporter.twitch import ChatBot
-from charitybot2.sources.justgiving import JustGivingScraper
+from charitybot2.sources.justgiving import JustGivingScraperCreator
 from charitybot2.sources.scraper import SourceUnavailableException
 from charitybot2.storage.logger import Logger
 
@@ -28,7 +28,7 @@ class EventLoop:
         source_url = self.event_configuration.get_source_url()
         if 'justgiving' in source_url:
             self.logger.log_info('Initialising JustGiving Scraper')
-            self.scraper = JustGivingScraper(url=source_url)
+            self.scraper = JustGivingScraperCreator(url=source_url, debug=self.debug).get_scraper()
         elif 'mydonate.bt' in source_url:
             self.logger.log_error('BTDonate scraper has not been implemented yet')
             raise NotImplementedError
