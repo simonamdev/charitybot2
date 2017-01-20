@@ -1,6 +1,6 @@
 from urllib.parse import urljoin
 
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, render_template, Markup
 
 app = Flask(__name__)
 
@@ -16,26 +16,25 @@ justgiving_amount = 100
 
 @app.route('/')
 def index():
-    return '<!DOCTYPE html>' \
-           '<html>' \
-           '<body>' \
-           'Mocksite Index Page' \
-           '</body>' \
-           '</html>'
+    return render_template('index.html')
 
 
 @app.route('/justgiving/fundraising/')
 def justgiving():
-    return '<span class="statistics-amount-raised theme-highlight-text-font">' \
-           '£{}.52' \
-           '</span>'.format(justgiving_amount)
+    amount_html = '<span class="statistics-amount-raised theme-highlight-text-font">' \
+                   '£{}.52' \
+                   '</span>'.format(justgiving_amount)
+    return render_template('amount.html', amount_html=Markup(amount_html))
 
 
 @app.route('/justgiving/campaign/')
 def justgiving_campaign():
-    return '<p class="dna-text-brand-l jg-theme-text TotalDonation__totalRaised___1sUPY">' \
-           '£{}.52' \
-           '</p>'.format(justgiving_amount)
+    amount_html = '<p id="mock-p" class="dna-text-brand-l jg-theme-text TotalDonation__totalRaised___1sUPY"></p>'
+    amount_script = '<script>document.getElementById("mock-p").innerHTML = "£{}.52";</script>'.format(justgiving_amount)
+    return render_template(
+        'amount.html',
+        amount_html=Markup(amount_html),
+        amount_script=Markup(amount_script))
 
 
 @app.route('/justgiving/increase/')
