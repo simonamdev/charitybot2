@@ -37,7 +37,7 @@ class TestJustGivingType:
 
 
 class TestJustGivingScraping:
-    def test_get_amount_raised_from_actual_url(self):
+    def test_get_amount_raised_from_actual_fundraising_url(self):
         jg = JustGivingScraper(url='https://www.justgiving.com/fundraising/FrontierDev', debug=True)
         amount_raised = jg.get_source_value(source_name='amount_raised')
         # since the amount raised is not static, at least we can check for the £ and decimal point
@@ -54,6 +54,14 @@ class TestJustGivingScraping:
         jg = JustGivingScraper(url=mock_justgiving_campaign_url, debug=True)
         amount_raised = jg.get_source_value(source_name='amount_raised')
         assert '£100.52' == amount_raised
+
+    def test_get_amount_raised_from_actual_campaign_url(self):
+        url = 'https://www.justgiving.com/campaigns/charity/specialeffect/gameblast17'
+        jg = JustGivingScraper(url=url, debug=True)
+        amount_raised = jg.get_source_value(source_name='amount_raised')
+        assert amount_raised is not None
+        assert '£' in amount_raised
+        assert '.' in amount_raised or ',' in amount_raised
 
     def test_get_amount_raised_fails_gracefully(self):
         # only start  the mocksite if it is not running

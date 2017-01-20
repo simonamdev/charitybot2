@@ -28,7 +28,7 @@ class EventLoop:
         source_url = self.event_configuration.get_source_url()
         if 'justgiving' in source_url:
             self.logger.log_info('Initialising JustGiving Scraper')
-            self.scraper = JustGivingScraper(url=source_url)
+            self.scraper = JustGivingScraper(url=source_url, debug=self.debug)
         elif 'mydonate.bt' in source_url:
             self.logger.log_error('BTDonate scraper has not been implemented yet')
             raise NotImplementedError
