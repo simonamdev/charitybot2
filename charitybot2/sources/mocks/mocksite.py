@@ -1,10 +1,15 @@
+from urllib.parse import urljoin
+
 from flask import Flask, request, redirect, url_for
 
 app = Flask(__name__)
 
 mocksite_url = '127.0.0.1'
 mocksite_port = 5000
-mocksite_full_url = 'http://' + mocksite_url + ':' + str(mocksite_port) + '/'
+mocksite_full_url = 'http://' + mocksite_url + ':' + str(mocksite_port)
+mock_justgiving_url = urljoin(mocksite_full_url, '/justgiving/')
+mock_justgiving_fundraising_url = mock_justgiving_url + 'fundraising'
+mock_justgiving_campaign_url = mock_justgiving_url + 'campaign'
 
 justgiving_amount = 100
 
@@ -19,11 +24,18 @@ def index():
            '</html>'
 
 
-@app.route('/justgiving/')
+@app.route('/justgiving/fundraising/')
 def justgiving():
     return '<span class="statistics-amount-raised theme-highlight-text-font">' \
            '£{}.52' \
            '</span>'.format(justgiving_amount)
+
+
+@app.route('/justgiving/campaign/')
+def justgiving_campaign():
+    return '<p class="dna-text-brand-l jg-theme-text TotalDonation__totalRaised___1sUPY">' \
+           '£{}.52' \
+           '</p>'.format(justgiving_amount)
 
 
 @app.route('/justgiving/increase/')

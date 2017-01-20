@@ -15,6 +15,7 @@ class InvalidFundraiserUrlException(Exception):
 class JustGivingScraper(Scraper):
     def __init__(self, url, debug=False):
         self.url = url
+        self.type = self.__determine_type()
         self.debug = debug
         self.logger = Logger(source='JustGivingScraper', event='', console_only=self.debug)
         self.soup_data_sources = None
@@ -22,18 +23,35 @@ class JustGivingScraper(Scraper):
             super().__init__(url=self.url, debug=debug)
         except SourceUnavailableException:
             raise InvalidFundraiserUrlException
-        self.setup_soup_data_sources()
+        self.__setup_soup_data_sources()
 
-    def setup_soup_data_sources(self):
-        sds = SoupDataSources()
-        sds.set_source(
-            source_name='amount_raised',
-            tag_type='span',
-            tag_class='statistics-amount-raised theme-highlight-text-font'
-        )
-        self.soup_data_sources = sds
+    def __determine_type(self):
+        if 'fundraising' in self.url:
+            return 'fundraiser'
+        elif 'campaign' in self.url:
+            return 'campaign'
+        else:
+            raise InvalidFundraiserUrlException('Unable to discern fundraiser type from the Just Giving URL')
+
+    def get_type(self):
+        return self.type
+
+    def __setup_soup_data_sources(self):
+        self.soup_data_sources = SoupDataSources()
+        if self.get_type() == 'fundraiser':
+            self.soup_data_sources.set_source(
+                source_name='amount_raised',
+                tag_type='span',
+                tag_class='statistics-amount-raised theme-highlight-text-font'
+            )
+        elif self.get_type() == 'campaign':
+            self.soup_data_sources.set_source(
+                source_name='amount_raised',
+                tag_type='p',
+                tag_class='dna-text-brand-l jg-theme-text TotalDonation__totalRaised___1sUPY'
+            )
         self.logger.log_info('JustGiving Scraper sources initialised with {0} sources'.format(
-            len(sds.get_available_source_names())))
+            len(self.soup_data_sources.get_available_source_names())))
         self.logger.log_info('JustGiving URL: {}'.format(self.url))
 
     def get_all_source_values(self):
