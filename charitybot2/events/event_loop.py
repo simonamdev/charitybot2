@@ -70,7 +70,7 @@ class EventLoop:
             # set the current amount raised from the starting amount
             starting_amount = self.event.get_starting_amount()
             self.logger.log_info('Setting starting amount to: {}{}'.format(
-                self.event_configuration.get_currency().get_symbol(),
+                self.event_configuration.get_currency().get_key(),
                 starting_amount))
             self.event.set_amount_raised(amount=starting_amount)
 
