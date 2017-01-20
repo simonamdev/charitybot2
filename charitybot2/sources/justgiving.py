@@ -121,12 +121,11 @@ class JustGivingCampaignScraper(JustGivingScraper):
                 break
         return amount_raised
 
-    @staticmethod
-    def __parse_script_tag_for_amount_raised(script_tag):
-        inner_html = ''
+    def __parse_script_tag_for_amount_raised(self, script_tag):
+        inner_html = script_tag.get_attribute('innerHTML').strip()
         while inner_html == '':
-            print('Attempting to get inner HTML')
-            inner_html = script_tag.get_attribute('innerHTML').strip()
+            print('Entering recursive attempt to get amount raised')
+            self.__get_amount_raised()
         # this is required to allow the mock test to pass
         if not inner_html[0] == '{':
             inner_html = inner_html[59:-1]
