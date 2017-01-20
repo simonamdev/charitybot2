@@ -54,12 +54,6 @@ class JustGivingScraper(Scraper):
             len(self.soup_data_sources.get_available_source_names())))
         self.logger.log_info('JustGiving URL: {}'.format(self.url))
 
-    def get_all_source_values(self):
-        for source_name in self.soup_data_sources.get_available_source_names():
-            self.logger.log_verbose('Retrieiving the value of: {0}'.format(source_name))
-            value = self.get_source_value(source_name=source_name)
-            print(value)
-
     def scrape_amount_raised(self):
         return self.get_source_value(source_name='amount_raised')
 
