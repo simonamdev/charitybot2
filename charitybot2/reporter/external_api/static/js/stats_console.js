@@ -11,6 +11,9 @@ function resizeCanvasToWindowWidth(canvasID) {
 // Reference:
 // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
 function numberWithCommas(x) {
+    if (x < 1000) {
+        return x.toString();
+    }
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -113,19 +116,29 @@ class API {
     writeEventDetailsToPage(data) {
         console.log(data);
         // Event Length Data
-        $('#event-start').text(convertToTimestamp(data['start_time']));
+        var startTime = data['start_time'];
+        $('#event-start').text(convertToTimestamp(startTime));
         $('#event-end').text(convertToTimestamp(data['end_time']));
-        var eventLength = Math.round(((data['end_time'] - data['start_time']) / (60 * 60)) * 100) / 100;
+        var eventLength = Math.round(((data['end_time'] - startTime) / (60 * 60)) * 100) / 100;
         var currentTime = Math.floor(Date.now() / 1000);
-        var eventRemaining = Math.round((data['end_time'] - currentTime) * 100) / 100;
-        var eventPercentageComplete = ((data['end_time'] - currentTime) / (data['end_time'] - data['start_time'])) * 100;
+        var eventTimeRemaining = Math.round((data['end_time'] - currentTime) * 100) / 100;
+        var eventPercentageComplete = ((data['end_time'] - currentTime) / (data['end_time'] - startTime)) * 100;
         eventPercentageComplete = Math.abs(Math.round(eventPercentageComplete * 100) / 100);
-        $('#event-length').text(numberWithCommas(eventLength));
-        $('#event-remaining').text(numberWithCommas(eventRemaining));
-        $('#event-progress').css('width', eventPercentageComplete + '%').attr('aria-valuenow', eventPercentageComplete).text(eventPercentageComplete + '%');
-        if (eventPercentageComplete >= 100) {
-            $('#event-progress').toggleClass('progress-bar-success');
+        if (currentTime < startTime) {
+            eventPercentageComplete = 100;
+            eventTimeRemaining = startTime - currentTime;
+            $('#event-time-remaining-column').text(numberWithCommas(Math.round(eventTimeRemaining / (60 * 60))) + ' hours till event start');
+            $('#event-progress').text('Start Pending');
+            $('#event-progress').toggleClass('progress-bar-danger');
+        } else {
+            if (eventPercentageComplete >= 100) {
+                $('#event-progress').toggleClass('progress-bar-success');
+            }
+            $('#event-remaining').text(numberWithCommas(eventTimeRemaining));
+            $('#event-progress').text(eventPercentageComplete + '%');
         }
+        $('#event-progress').css('width', eventPercentageComplete + '%').attr('aria-valuenow', eventPercentageComplete);
+        $('#event-length').text(numberWithCommas(eventLength));
         // Amount Raised Data
         $('#amount-raised').text(numberWithCommas(data['amount_raised']));
         $('#target-amount').text(numberWithCommas(data['target_amount']));
