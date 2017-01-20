@@ -123,7 +123,10 @@ class JustGivingCampaignScraper(JustGivingScraper):
 
     @staticmethod
     def __parse_script_tag_for_amount_raised(script_tag):
-        inner_html = script_tag.get_attribute('innerHTML').strip()
+        inner_html = ''
+        while inner_html == '':
+            print('Attempting to get inner HTML')
+            inner_html = script_tag.get_attribute('innerHTML').strip()
         # this is required to allow the mock test to pass
         if not inner_html[0] == '{':
             inner_html = inner_html[59:-1]
