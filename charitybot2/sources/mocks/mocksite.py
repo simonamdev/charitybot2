@@ -40,6 +40,11 @@ def justgiving_reset():
     return ''
 
 
+@app.route('/useragent')
+def user_agent():
+    return request.headers.get('User-Agent')
+
+
 @app.route('/destroy')
 def destroy():
     shutdown_service()

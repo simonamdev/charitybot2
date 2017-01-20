@@ -1,4 +1,7 @@
 import requests
+import random
+
+from charitybot2.paths import user_agents_file_path
 
 
 class ConnectionFailedException(Exception):
@@ -9,6 +12,7 @@ class UrlCall:
     def __init__(self, url, params=None, timeout=2):
         self.url = url
         self.params = params if params is not None else {}
+        self.user_agent = return_random_user_agent()
         self.timeout = timeout
 
     def make_request(self, request_function):
@@ -22,5 +26,18 @@ class UrlCall:
             raise ConnectionFailedException('No schema passed for the url: {}'.format(self.url))
 
     def get(self):
+        headers = {
+            'User-Agent': self.user_agent
+        }
         return self.make_request(
-            request_function=lambda: requests.get(url=self.url, params=self.params, timeout=self.timeout))
+            request_function=lambda: requests.get(
+                url=self.url,
+                headers=headers,
+                params=self.params,
+                timeout=self.timeout))
+
+
+def return_random_user_agent():
+    with open(user_agents_file_path, 'r') as user_agent_file:
+        user_agent = random.choice(user_agent_file.readlines())
+    return user_agent.strip()
