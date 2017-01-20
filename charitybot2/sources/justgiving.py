@@ -1,3 +1,7 @@
+import os
+
+from selenium import webdriver
+
 from charitybot2.sources.url_call import ConnectionFailedException
 from charitybot2.storage.logger import Logger
 
@@ -58,7 +62,7 @@ class JustGivingFundraisingScraper(JustGivingScraper):
             raise SourceUnavailableException('Unable to find amount raised on JustGiving website')
         return source_value
 
-    def get_source_value(self, source_name):
+    def __get_source_value(self, source_name):
         try:
             url_contents = self.get_contents_from_url()
             source_value = self.__get_source_value_from_url_contents(url_contents=url_contents, source_name=source_name)
@@ -68,18 +72,23 @@ class JustGivingFundraisingScraper(JustGivingScraper):
         return source_value
 
     def scrape_amount_raised(self):
-        return self.get_source_value(source_name='amount_raised')
+        return self.__get_source_value(source_name='amount_raised')
 
 
 class JustGivingCampaignScraper(JustGivingScraper):
-    pass
+    def __init__(self, url, debug):
+        super().__init__(url=url, scraper_type='campaign', debug=debug)
+        self.logger.log_info('Starting up PhantomJS driver (this may take some time)')
+        self.driver = webdriver.PhantomJS(service_log_path=os.path.devnull)
 
-# elif self.get_type() == 'campaign':
-# self.soup_data_sources.set_source(
-#     source_name='amount_raised',
-#     tag_type='p',
-#     tag_class='dna-text-brand-l jg-theme-text TotalDonation__totalRaised___1sUPY'
-# )
+    def __get_amount_raised(self):
+        self.driver.get(self.url)
+        element = self.driver.find_element_by_css_selector(
+            '.dna-text-brand-l.jg-theme-text.TotalDonation__totalRaised___1sUPY')
+        return element.text
+
+    def scrape_amount_raised(self):
+        return self.__get_amount_raised()
 
 
 class JustGivingScraperCreator:

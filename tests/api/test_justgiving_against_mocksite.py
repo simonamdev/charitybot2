@@ -37,7 +37,7 @@ class TestJustGivingFundraisingScraper:
         jg = JustGivingScraperCreator(
             url=mock_justgiving_fundraising_url,
             debug=True).get_scraper()
-        amount_raised = jg.get_source_value(source_name='amount_raised')
+        amount_raised = jg.scrape_amount_raised()
         assert '£100.52' == amount_raised
 
     def test_get_amount_raised_fails_gracefully(self):
@@ -58,14 +58,14 @@ class TestJustGivingCampaignScraper:
     def test_get_amount_raised_from_actual_url(self):
         url = ''
         jg = JustGivingScraperCreator(
-            url=mock_justgiving_campaign_url,
+            url=url,
             debug=True).get_scraper()
-        amount_raised = jg.get_source_value(source_name='amount_raised')
+        amount_raised = jg.scrape_amount_raised()
         assert '£100.52' == amount_raised
 
     def test_get_amount_raised_from_campaign_page(self):
         jg = JustGivingScraperCreator(
             url=mock_justgiving_campaign_url,
             debug=True).get_scraper()
-        amount_raised = jg.get_source_value(source_name='amount_raised')
+        amount_raised = jg.scrape_amount_raised()
         assert '£100.52' == amount_raised
