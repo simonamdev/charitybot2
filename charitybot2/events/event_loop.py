@@ -1,9 +1,10 @@
 import time
 
+from charitybot2.botconfig.event_config import EventConfigurationFromFile
 from charitybot2.events.donation import Donation, InvalidArgumentException
 from charitybot2.events.event import EventInvalidException, EventAlreadyFinishedException
 from charitybot2.reporter.twitch import ChatBot
-from charitybot2.sources.justgiving import JustGivingScraper
+from charitybot2.sources.justgiving import JustGivingScraperCreator
 from charitybot2.sources.scraper import SourceUnavailableException
 from charitybot2.storage.logger import Logger
 
@@ -28,7 +29,7 @@ class EventLoop:
         source_url = self.event_configuration.get_source_url()
         if 'justgiving' in source_url:
             self.logger.log_info('Initialising JustGiving Scraper')
-            self.scraper = JustGivingScraper(url=source_url, debug=self.debug)
+            self.scraper = JustGivingScraperCreator(url=source_url, debug=self.debug).get_scraper()
         elif 'mydonate.bt' in source_url:
             self.logger.log_error('BTDonate scraper has not been implemented yet')
             raise NotImplementedError
@@ -53,7 +54,13 @@ class EventLoop:
     def __check_event_registration(self):
         if not self.__event_already_registered():
             self.logger.log_info('Registering event configuration')
-            self.event.register_event()
+            # get the currently donated amount for storage and later reference
+            starting_amount = self.scraper.scrape_amount_raised()
+            self.event.register_event(starting_amount=self.strip_amount_string_to_float(starting_amount))
+        else:
+            self.logger.log_info('Updating event configuration')
+            self.event.update_event()
+            self.event_configuration = self.event.get_configuration()
 
     def __check_for_donations(self):
         if self.__donations_already_present():
@@ -62,7 +69,7 @@ class EventLoop:
             last_donation = self.event.repository.get_last_donation(event_name=self.event.name)
             self.event.set_amount_raised(amount=last_donation.get_total_raised())
             self.logger.log_info('Amount raised retrieved from database is: {}{}'.format(
-                self.event_configuration.get_currency().get_symbol(),
+                self.event_configuration.get_currency().get_key(),
                 self.event.get_amount_raised()
             ))
         else:
@@ -71,7 +78,7 @@ class EventLoop:
             starting_amount = self.event.get_starting_amount()
             self.logger.log_info('Setting starting amount to: {}{}'.format(
                 self.event_configuration.get_currency().get_key(),
-                starting_amount))
+                self.strip_amount_string_to_float(starting_amount)))
             self.event.set_amount_raised(amount=starting_amount)
 
     def __donations_already_present(self):
@@ -93,14 +100,21 @@ class EventLoop:
             self.loop_count += 1
         self.logger.log_info('Event has exceeded its end time')
 
+    # convert the string to a float, removing any currency symbols and commas
+    @staticmethod
+    def strip_amount_string_to_float(amount_string):
+        if isinstance(amount_string, float):
+            return amount_string
+        return round(float(amount_string.replace(',', '').replace('£', '').replace('$', '').replace('€', '')), 2)
+
     def get_new_amount(self):
+        self.logger.log_verbose('Checking for new amount')
         try:
             new_amount = self.scraper.scrape_amount_raised()
         except SourceUnavailableException:
             self.logger.log_error('Unable to connect to donation website')
             return ''
-        # convert the string to a float, removing any currency symbols and commas
-        return float(new_amount.replace(',', '').replace('£', '').replace('$', '').replace('€', ''))
+        return self.strip_amount_string_to_float(new_amount)
 
     def check_for_donation(self):
         current_amount = float(self.event.get_amount_raised())
@@ -128,7 +142,7 @@ class EventLoop:
 
     def __record_new_donation(self, donation):
         self.logger.log_info('New Donation of {}{} detected'.format(
-            self.event_configuration.get_currency().get_symbol(),
+            self.event_configuration.get_currency().get_key(),
             donation.get_donation_amount()))
         self.event.repository.record_donation(event_name=self.event.name, donation=donation)
 

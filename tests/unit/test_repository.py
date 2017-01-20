@@ -114,7 +114,7 @@ class TestRepositoryOperations:
         event_configuration = EventConfigurationCreator(config_values=event_config_data).get_event_configuration()
         repository.update_event(event_configuration=event_configuration)
         new_configuration = repository.get_event_configuration('valid_configured_event')
-        assert 888888888888888 == event_configuration.get_end_time()
+        assert 888888888888888 == new_configuration.get_end_time()
 
     def test_getting_donations_after_recording_several(self):
         event_name = 'TestTwo'

@@ -54,7 +54,7 @@ class Repository:
         event_count = self.connection.execute(query, data).fetchone()[0]
         return 1 == event_count
 
-    def register_event(self, event_configuration):
+    def register_event(self, event_configuration, starting_amount=0):
         query = 'INSERT INTO `events`' \
                 '(eventId, ' \
                 'internalName, ' \
@@ -74,7 +74,7 @@ class Repository:
             event_configuration.get_start_time(),
             event_configuration.get_end_time(),
             event_configuration.get_currency().get_key(),
-            0,
+            starting_amount,
             event_configuration.get_target_amount(),
             event_configuration.get_source_url(),
             event_configuration.get_update_delay())

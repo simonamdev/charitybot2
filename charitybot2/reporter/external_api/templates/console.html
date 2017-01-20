@@ -142,7 +142,7 @@
         }
 
         $(document).ready(() => {
-            api = new API(test_url + 'api/v1/', "{{ event_name }}");
+            api = new API(api_url + 'api/v1/', "{{ event_name }}");
             api.makeApiCalls();
             console.log('Refreshing in 30 seconds');
         });
