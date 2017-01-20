@@ -114,7 +114,6 @@ class TestRepositoryOperations:
         event_configuration = EventConfigurationCreator(config_values=event_config_data).get_event_configuration()
         repository.update_event(event_configuration=event_configuration)
         new_configuration = repository.get_event_configuration('valid_configured_event')
-        event = Event(event_configuration=new_configuration, db_path=repository_db_path)
         assert 888888888888888 == event_configuration.get_end_time()
 
     def test_getting_donations_after_recording_several(self):
@@ -216,3 +215,33 @@ class TestRepositoryOperations:
     def test_getting_largest_donation_returns_none_when_no_donations_are_present(self):
         largest_donation = repository.get_largest_donation(event_name='NoDonations')
         assert largest_donation is None
+
+    def test_getting_donation_regressions(self):
+        event_name = 'LastOneInvalid'
+        regressions = repository.get_donation_regressions(event_name=event_name, amount=1)
+        assert 1 == len(regressions)
+        assert -100 == regressions[0].get_donation_amount()
+        assert 50 == regressions[0].get_total_raised()
+        assert 1477257114 == regressions[0].get_timestamp()
+        assert 'Regression' == regressions[0].get_notes()
+        assert False is regressions[0].get_validity()
+        regressions = repository.get_donation_regressions(event_name='OnlyInvalid')
+        assert 2 == len(regressions)
+
+    def test_recording_donation_regression(self):
+        event_name = 'LastOneInvalid'
+        regression = Donation(
+            old_amount=50,
+            new_amount=25.5,
+            timestamp=int(time.time()),
+            notes='Regression Test',
+            valid=False)
+        repository.record_donation(event_name=event_name, donation=regression)
+        regressions = repository.get_donation_regressions(event_name=event_name)
+        assert 2 == len(regressions)
+        assert regression.get_donation_amount() == regressions[0].get_donation_amount()
+        assert regression.get_total_raised() == regressions[0].get_total_raised()
+        assert regression.get_timestamp() == regressions[0].get_timestamp()
+        assert regression.get_notes() == regressions[0].get_notes()
+        assert regression.get_validity() is regressions[0].get_validity()
+

@@ -27,16 +27,6 @@ CREATE TABLE `donations` (
     FOREIGN KEY(eventId) REFERENCES events(eventId)
 );
 
-CREATE TABLE `donationRegressions` (
-    `donationRegressionId`  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `eventId`               INTEGER NOT NULL,
-    `donationId`            INTEGER NOT NULL,
-    `previousTotal`         REAL NOT NULL,
-    `newTotal`              REAL NOT NULL,
-    FOREIGN KEY(eventId) REFERENCES events(eventId),
-    FOREIGN KEY(donationId) REFERENCES donations(donationId)
-);
-
 INSERT INTO `events` (eventId, internalName, externalName, startTime, endTime, currencyId, startingAmount, targetAmount, sourceUrl, updateDelay)
 VALUES
 (1, "TestOne", "Test One Title", 1477256983, 1477256985, "GBP", 0, 1000, "http://127.0.0.1:5000/justgiving", 5),
@@ -74,12 +64,3 @@ VALUES
 
 (19, 7, 1477257122, -50, 50.0, "Regression", 0),
 (20, 7, 1477257133, -50, 0.0, "Regression", 0);
-
-INSERT INTO `donationRegressions` (donationRegressionId, eventId, donationId, previousTotal, newTotal)
-VALUES
-(1, 2, 8, 30.0, 20.0),
-(2, 2, 9, 20.0, 10.0),
-(3, 4, 14, 100, 75.0),
-(4, 6, 18, 150, 50.0),
-(5, 7, 18, 100, 50.0),
-(6, 7, 19, 50, 0);

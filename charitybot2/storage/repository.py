@@ -56,7 +56,16 @@ class Repository:
 
     def register_event(self, event_configuration):
         query = 'INSERT INTO `events`' \
-                '(eventId, internalName, externalName, startTime, endTime, currencyId, startingAmount, targetAmount, sourceUrl, updateDelay)' \
+                '(eventId, ' \
+                'internalName, ' \
+                'externalName, ' \
+                'startTime, ' \
+                'endTime, ' \
+                'currencyId, ' \
+                'startingAmount, ' \
+                'targetAmount, ' \
+                'sourceUrl, ' \
+                'updateDelay)' \
                 'VALUES' \
                 '(NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
         data = (
@@ -113,14 +122,15 @@ class Repository:
     def donations_are_present(self, event_name):
         return self.get_number_of_donations(event_name=event_name) > 0
 
-    def get_donations(self, event_name, amount=-1):
+    def get_donations(self, event_name, amount=-1, regressions_only=False):
         limit_query_part = 'LIMIT {}'.format(amount) if int(amount) > 0 else ''
+        validity_query_part = '0' if regressions_only else '1'
         query = 'SELECT *' \
                 'FROM `donations`' \
-                'WHERE eventId = (?) AND valid = 1 ' \
+                'WHERE eventId = (?) AND valid = (?) ' \
                 'ORDER BY timeRecorded DESC ' \
                 '{}'.format(limit_query_part)
-        data = (self.get_event_id(event_name), )
+        data = (self.get_event_id(event_name), validity_query_part)
         return [convert_donation_row_to_object(row) for row in self.cursor.execute(query, data).fetchall()]
 
     def get_all_donations(self, event_name):
@@ -201,3 +211,5 @@ class Repository:
         data = (self.get_event_id(event_name), )
         return self.cursor.execute(query, data).fetchone()[0]
 
+    def get_donation_regressions(self, event_name, amount=-1):
+        return self.get_donations(event_name=event_name, amount=amount, regressions_only=True)
