@@ -15,6 +15,7 @@ class InvalidFundraiserUrlException(Exception):
 class JustGivingScraper(Scraper):
     def __init__(self, url, debug=False):
         self.url = url
+        self.type = self.__determine_type()
         self.debug = debug
         self.logger = Logger(source='JustGivingScraper', event='', console_only=self.debug)
         self.soup_data_sources = None
@@ -23,6 +24,17 @@ class JustGivingScraper(Scraper):
         except SourceUnavailableException:
             raise InvalidFundraiserUrlException
         self.setup_soup_data_sources()
+
+    def __determine_type(self):
+        if 'fundraising' in self.url:
+            return 'fundraiser'
+        elif 'campaign' in self.url:
+            return 'campaign'
+        else:
+            raise InvalidFundraiserUrlException('Unable to discern fundraiser type from the Just Giving URL')
+
+    def get_type(self):
+        return self.type
 
     def setup_soup_data_sources(self):
         sds = SoupDataSources()
