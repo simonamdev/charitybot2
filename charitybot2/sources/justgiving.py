@@ -105,8 +105,8 @@ class JustGivingCampaignScraper(JustGivingScraper):
         # if self.debug:
         #     print(script_tags)
         # searching method uncovered index 11, however it might need more testing later on
-        # return self.__search_for_amount_raised(script_tags=script_tags)
-        return self.__parse_script_tag_for_amount_raised(script_tags[11])
+        return self.__search_for_amount_raised(script_tags=script_tags)
+        # return self.__parse_script_tag_for_amount_raised(script_tags[11])
 
     @staticmethod
     def __search_for_amount_raised(script_tags):
@@ -125,7 +125,9 @@ class JustGivingCampaignScraper(JustGivingScraper):
         inner_html = script_tag.get_attribute('innerHTML').strip()
         while inner_html == '':
             print('Entering recursive attempt to get amount raised')
-            self.__get_amount_raised()
+            script_tags = self.driver.find_elements_by_tag_name('script')
+            script_tag = self.__search_for_amount_raised(script_tags=script_tags)
+            inner_html = script_tag.get_attribute('innerHTML').strip()
         # this is required to allow the mock test to pass
         if not inner_html[0] == '{':
             inner_html = inner_html[59:-1]
