@@ -26,6 +26,13 @@ def justgiving():
            '</span>'.format(justgiving_amount)
 
 
+@app.route('/justgiving/campaign/')
+def justgiving_campaign():
+    return '<p class="dna-text-brand-l jg-theme-text TotalDonation__totalRaised___1sUPY">' \
+           '£().52' \
+           '</p>'.format(justgiving_amount)
+
+
 @app.route('/justgiving/increase/')
 def justgiving_increase():
     global justgiving_amount
