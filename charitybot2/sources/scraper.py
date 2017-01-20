@@ -34,8 +34,9 @@ class Scraper:
     def get_contents_from_url(self):
         contents = self.get_data_from_url().content.decode('utf-8')
         if self.debug:
-            print('Returned contents:')
+            print('---- DEBUG OUTPUT ----')
             print(contents)
+            print('---- DEBUG OUTPUT ----')
         return contents
 
     def get_soup(self, url_contents):
