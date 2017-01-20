@@ -12,3 +12,4 @@ fdevtest16.json
 htmlcov/
 .coverage
 charitybot2/sources/user_agents.txt
+charitybot2/data/config/event/gameblast17.json
