@@ -23,9 +23,11 @@ class Event:
             self.event_configuration = self.repository.get_event_configuration(
                 event_name=self.event_configuration.get_internal_name())
 
-    def register_event(self):
+    def register_event(self, starting_amount=0):
         if not self.event_already_registered():
-            self.repository.register_event(event_configuration=self.event_configuration)
+            self.repository.register_event(
+                event_configuration=self.event_configuration,
+                starting_amount=starting_amount)
 
     def event_already_registered(self):
         return self.repository.event_exists(event_name=self.event_configuration.get_internal_name())

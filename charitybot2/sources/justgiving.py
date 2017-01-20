@@ -2,8 +2,9 @@ import json
 import os
 
 from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-from charitybot2.sources.url_call import ConnectionFailedException
+from charitybot2.sources.url_call import ConnectionFailedException, return_random_user_agent
 from charitybot2.storage.logger import Logger
 
 from .scraper import Scraper, SoupDataSources, SourceUnavailableException
@@ -80,11 +81,29 @@ class JustGivingCampaignScraper(JustGivingScraper):
     def __init__(self, url, debug):
         super().__init__(url=url, scraper_type='campaign', debug=debug)
         self.logger.log_info('Starting up PhantomJS driver (this may take some time)')
-        self.driver = webdriver.PhantomJS(service_log_path=os.path.devnull)
+        self.driver = None
+        self.__setup_driver()
+
+    def __setup_driver(self):
+        # Set User Agent
+        caps = DesiredCapabilities.PHANTOMJS
+        caps['phantomjs.page.settings.userAgent'] = (return_random_user_agent())
+        caps['phantomjs.page.settings.loadImages'] = False
+        caps['phantomjs.page.settings.resourceTimeout'] = 10000
+        self.driver = webdriver.PhantomJS(service_log_path=os.path.devnull, service_args=['--ignore-ssl-errors=true', '--ssl-protocol=any'], desired_capabilities=caps)
+        # Set timeout
+        self.driver.implicitly_wait(10)
+        self.driver.set_page_load_timeout(10)
+        # print(self.driver.execute_script('return navigator.userAgent', ''))
 
     def __get_amount_raised(self):
+        # if self.debug:
+        #     print('Accessing {} with driver'.format(self.url))
         self.driver.get(self.url)
+        # self.driver.get(self.url.replace('https', 'http'))
         script_tags = self.driver.find_elements_by_tag_name('script')
+        # if self.debug:
+        #     print(script_tags)
         # searching method uncovered index 11, however it might need more testing later on
         # return self.__search_for_amount_raised(script_tags=script_tags)
         return self.__parse_script_tag_for_amount_raised(script_tags[11])
