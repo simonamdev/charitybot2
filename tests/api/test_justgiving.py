@@ -3,7 +3,6 @@ from charitybot2.sources.justgiving import JustGivingScraper, InvalidFundraiserU
 from charitybot2.sources.mocks.mocksite import mock_justgiving_fundraising_url, mock_justgiving_campaign_url
 from charitybot2.sources.scraper import SourceUnavailableException
 from charitybot2.sources.url_call import UrlCall, ConnectionFailedException
-from tests.integration.test_event_loop_with_mocksite import MockEvent
 from tests.mocks import MockFundraisingWebsite
 
 mock_fundraising_website = MockFundraisingWebsite(fundraiser_name='justgiving')

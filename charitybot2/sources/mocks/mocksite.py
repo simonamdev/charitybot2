@@ -9,7 +9,7 @@ mocksite_port = 5000
 mocksite_full_url = 'http://' + mocksite_url + ':' + str(mocksite_port)
 mock_justgiving_url = urljoin(mocksite_full_url, '/justgiving/')
 mock_justgiving_fundraising_url = mock_justgiving_url + 'fundraising'
-mock_justgiving_campaign_url = mock_justgiving_url + '/campaign'
+mock_justgiving_campaign_url = mock_justgiving_url + 'campaign'
 
 justgiving_amount = 100
 
@@ -34,7 +34,7 @@ def justgiving():
 @app.route('/justgiving/campaign/')
 def justgiving_campaign():
     return '<p class="dna-text-brand-l jg-theme-text TotalDonation__totalRaised___1sUPY">' \
-           '£().52' \
+           '£{}.52' \
            '</p>'.format(justgiving_amount)
 
 

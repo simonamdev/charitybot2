@@ -23,7 +23,7 @@ class JustGivingScraper(Scraper):
             super().__init__(url=self.url, debug=debug)
         except SourceUnavailableException:
             raise InvalidFundraiserUrlException
-        self.setup_soup_data_sources()
+        self.__setup_soup_data_sources()
 
     def __determine_type(self):
         if 'fundraising' in self.url:
@@ -36,16 +36,22 @@ class JustGivingScraper(Scraper):
     def get_type(self):
         return self.type
 
-    def setup_soup_data_sources(self):
-        sds = SoupDataSources()
-        sds.set_source(
-            source_name='amount_raised',
-            tag_type='span',
-            tag_class='statistics-amount-raised theme-highlight-text-font'
-        )
-        self.soup_data_sources = sds
+    def __setup_soup_data_sources(self):
+        self.soup_data_sources = SoupDataSources()
+        if self.get_type() == 'fundraiser':
+            self.soup_data_sources.set_source(
+                source_name='amount_raised',
+                tag_type='span',
+                tag_class='statistics-amount-raised theme-highlight-text-font'
+            )
+        elif self.get_type() == 'campaign':
+            self.soup_data_sources.set_source(
+                source_name='amount_raised',
+                tag_type='p',
+                tag_class='dna-text-brand-l jg-theme-text TotalDonation__totalRaised___1sUPY'
+            )
         self.logger.log_info('JustGiving Scraper sources initialised with {0} sources'.format(
-            len(sds.get_available_source_names())))
+            len(self.soup_data_sources.get_available_source_names())))
         self.logger.log_info('JustGiving URL: {}'.format(self.url))
 
     def get_all_source_values(self):
