@@ -44,7 +44,7 @@ class TestJustGivingScraping:
         jg = JustGivingScraperCreator(
             url='https://www.justgiving.com/fundraising/FrontierDev',
             debug=True).get_scraper()
-        amount_raised = jg.get_source_value(source_name='amount_raised')
+        amount_raised = jg.scrape_amount_raised()
         # since the amount raised is not static, at least we can check for the £ and decimal point
         assert amount_raised is not None
         assert '£' in amount_raised
@@ -60,7 +60,7 @@ class TestJustGivingScraping:
     def test_get_amount_raised_from_actual_campaign_url(self):
         url = 'https://www.justgiving.com/campaigns/charity/specialeffect/gameblast17'
         jg = JustGivingScraperCreator(url=url, debug=True).get_scraper()
-        amount_raised = jg.get_source_value(source_name='amount_raised')
+        amount_raised = jg.scrape_amount_raised()
         assert amount_raised is not None
         assert '£' in amount_raised
         assert '.' in amount_raised or ',' in amount_raised

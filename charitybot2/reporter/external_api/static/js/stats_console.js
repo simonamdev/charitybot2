@@ -1,4 +1,4 @@
-function sortNumber(a,b) {
+function sortNumber(a, b) {
     return a - b;
 }
 
@@ -182,6 +182,8 @@ class API {
         $.each(data, (index, object) => {
             values.push(object['total_raised']);
         });
+        labels.reverse();
+        values.reverse();
         var ctx =  $("#amountRaisedChart");
         var myChart = new Chart(ctx, {
             type: 'line',
