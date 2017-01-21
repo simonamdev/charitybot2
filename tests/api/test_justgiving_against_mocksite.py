@@ -1,6 +1,7 @@
 import pytest
 from charitybot2.sources.justgiving import JustGivingScraperCreator
-from charitybot2.sources.mocks.mocksite import mock_justgiving_fundraising_url, mock_justgiving_campaign_url
+from charitybot2.sources.mocks.mocksite import mock_justgiving_fundraising_url, mock_justgiving_campaign_url, \
+    actual_justgiving_campaign_url, actual_justgiving_fundraising_url
 from charitybot2.sources.scraper import SourceUnavailableException
 from charitybot2.sources.url_call import UrlCall, ConnectionFailedException
 from tests.mocks import MockFundraisingWebsite
@@ -31,18 +32,10 @@ def teardown_module():
         pass
 
 
-class TestJustGivingFundraisingScraper:
-    def test_get_amount_raised_from_actual_url(self):
-        jg = JustGivingScraperCreator(
-            url='https://www.justgiving.com/fundraising/FrontierDev',
-            debug=True).get_scraper()
-        amount_raised = jg.scrape_amount_raised()
-
-
 class TestJustGivingScraping:
     def test_get_amount_raised_from_actual_fundraising_url(self):
         jg = JustGivingScraperCreator(
-            url='https://www.justgiving.com/fundraising/FrontierDev',
+            url=actual_justgiving_fundraising_url,
             debug=True).get_scraper()
         amount_raised = jg.scrape_amount_raised()
         # since the amount raised is not static, at least we can check for the £ and decimal point
@@ -56,14 +49,6 @@ class TestJustGivingScraping:
             debug=True).get_scraper()
         amount_raised = jg.scrape_amount_raised()
         assert '£100.52' == amount_raised
-
-    def test_get_amount_raised_from_actual_campaign_url(self):
-        url = 'https://www.justgiving.com/campaigns/charity/specialeffect/gameblast17'
-        jg = JustGivingScraperCreator(url=url, debug=True).get_scraper()
-        amount_raised = jg.scrape_amount_raised()
-        assert amount_raised is not None
-        assert '£' in amount_raised
-        assert '.' in amount_raised or ',' in amount_raised
 
     def test_get_amount_raised_fails_gracefully(self):
         # only start  the mocksite if it is not running
@@ -81,9 +66,8 @@ class TestJustGivingScraping:
 class TestJustGivingCampaignScraper:
     def test_get_amount_raised_from_actual_url(self):
         try_to_start_mocksite()
-        url = 'https://www.justgiving.com/campaigns/charity/specialeffect/gameblast17'
         jg = JustGivingScraperCreator(
-            url=url,
+            url=actual_justgiving_campaign_url,
             debug=True).get_scraper()
         amount_raised = jg.scrape_amount_raised()
         assert amount_raised is not None
