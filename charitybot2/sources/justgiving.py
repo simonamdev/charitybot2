@@ -164,6 +164,11 @@ class JustGivingCampaignScraper(JustGivingScraper):
         return currency_symbol + amount_raised
 
 
+class JustGivingAPIScraper(JustGivingScraper):
+    def __init__(self, url, debug):
+        super().__init__(url=url, scraper_type='api', debug=debug)
+
+
 class JustGivingScraperCreator:
     def __init__(self, url, debug=False):
         self.url = url
@@ -173,7 +178,9 @@ class JustGivingScraperCreator:
         return self.__determine_scraper_type()
 
     def __determine_scraper_type(self):
-        if 'fundraising' in self.url:
+        if 'api' in self.url:
+            return JustGivingAPIScraper(url=self.url, debug=self.debug)
+        elif 'fundraising' in self.url:
             return JustGivingFundraisingScraper(url=self.url, debug=self.debug)
         elif 'campaign' in self.url:
             return JustGivingCampaignScraper(url=self.url, debug=self.debug)
