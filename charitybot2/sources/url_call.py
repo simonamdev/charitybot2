@@ -19,6 +19,8 @@ class UrlCall:
     def make_request(self, request_function):
         try:
             return request_function()
+        except TimeoutError:
+            raise ConnectionFailedException('Connection to {} timed out'.format(self.url))
         except requests.exceptions.ConnectionError:
             raise ConnectionFailedException('Failed to establish a connection to: {}'.format(self.url))
         except requests.exceptions.TooManyRedirects:
