@@ -1,7 +1,7 @@
 import pytest
 from charitybot2.sources.justgiving import JustGivingScraperCreator
 from charitybot2.sources.mocks.mocksite import mock_justgiving_fundraising_url, mock_justgiving_campaign_url, \
-    actual_justgiving_campaign_url, actual_justgiving_fundraising_url
+    actual_justgiving_campaign_url, actual_justgiving_fundraising_url, mock_justgiving_api_url
 from charitybot2.sources.scraper import SourceUnavailableException
 from charitybot2.sources.url_call import UrlCall, ConnectionFailedException
 from tests.mocks import MockFundraisingWebsite
@@ -32,7 +32,7 @@ def teardown_module():
         pass
 
 
-class TestJustGivingScraping:
+class TestJustGivingFundraisingScraping:
     def test_get_amount_raised_from_actual_fundraising_url(self):
         jg = JustGivingScraperCreator(
             url=actual_justgiving_fundraising_url,
@@ -49,18 +49,6 @@ class TestJustGivingScraping:
             debug=True).get_scraper()
         amount_raised = jg.scrape_amount_raised()
         assert '£100.52' == amount_raised
-
-    def test_get_amount_raised_fails_gracefully(self):
-        # only start  the mocksite if it is not running
-        if not UrlCall(url=mock_justgiving_fundraising_url).get().status_code == 200:
-            mock_fundraising_website.start()
-        jg = JustGivingScraperCreator(
-            url=mock_justgiving_fundraising_url,
-            debug=True).get_scraper()
-        # simulate as if the website went down
-        mock_fundraising_website.stop()
-        with pytest.raises(SourceUnavailableException):
-            amount_raised = jg.scrape_amount_raised()
 
 
 class TestJustGivingCampaignScraper:
@@ -80,3 +68,28 @@ class TestJustGivingCampaignScraper:
             debug=True).get_scraper()
         amount_raised = jg.scrape_amount_raised()
         assert '£100.52' == amount_raised
+
+
+# TODO: Refactor these three above test classes into a parameterised test
+class TestJustGivingAPIScraper:
+    def test_get_amount_raised_from_actual_url(self):
+        pass
+
+    def test_get_amount_raised_from_mock_api(self):
+        jg = JustGivingScraperCreator(
+            url=mock_justgiving_api_url,
+            debug=True).get_scraper()
+        amount_raised = jg.scrape_amount_raised()
+        assert '100.52' == amount_raised
+
+
+class TestJustGivingScraperFailure:
+    def test_get_amount_raised_fails_gracefully(self):
+        try_to_start_mocksite()
+        jg = JustGivingScraperCreator(
+            url=mock_justgiving_fundraising_url,
+            debug=True).get_scraper()
+        # simulate as if the website went down
+        mock_fundraising_website.stop()
+        with pytest.raises(SourceUnavailableException):
+            amount_raised = jg.scrape_amount_raised()

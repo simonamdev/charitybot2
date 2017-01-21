@@ -1,6 +1,6 @@
 from urllib.parse import urljoin
 
-from flask import Flask, request, redirect, url_for, render_template, Markup
+from flask import Flask, request, redirect, url_for, render_template, Markup, jsonify
 
 app = Flask(__name__)
 
@@ -54,6 +54,31 @@ def justgiving_campaign():
         'amount.html',
         amount_html=Markup(amount_html),
         amount_script=Markup(mocksite_script_strings))
+
+
+@app.route('/justgiving/api/')
+def justgiving_api():
+    api_return = dict(
+        id=0,
+        story='string',
+        numberOfFundraisersConnected=0,
+        target=0,
+        totalRaised='{}.52'.format(justgiving_amount),
+        totalOffline=0,
+        totalDonated='string',
+        totalFundraised='string',
+        numberOfDirectDonations=0,
+        targetPercentage=0,
+        charityId=0,
+        description='string',
+        charityLogoUrl='string',
+        currency='string',
+        fundraisingEnabled=True,
+        causeId=0,
+        campaignPageName='string',
+        campaignUrl='string',
+        errorMessage='string')
+    return jsonify(api_return)
 
 
 @app.route('/justgiving/increase/')
