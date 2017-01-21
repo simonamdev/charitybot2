@@ -188,7 +188,10 @@ class Repository:
     def get_donations_for_timespan(self, event_name, timespan_start, timespan_end=int(time.time())):
         query = 'SELECT * ' \
                 'FROM `donations`' \
-                'WHERE eventId = (?) AND timeRecorded BETWEEN (?) AND (?) AND valid = 1'
+                'WHERE eventId = (?) ' \
+                'AND timeRecorded BETWEEN (?) AND (?) ' \
+                'AND valid = 1 ' \
+                'ORDER BY timeRecorded DESC'
         data = (self.get_event_id(event_name), timespan_start, timespan_end)
         return [convert_donation_row_to_object(row) for row in self.cursor.execute(query, data).fetchall()]
 

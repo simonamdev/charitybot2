@@ -207,7 +207,8 @@ class TestRepositoryOperations:
     def test_get_donations_from_a_timespan(self):
         last_timespan_donations = repository.get_donations_for_timespan(
             event_name='TestFour',
-            timespan_start=1477257061)
+            timespan_start=0,
+            timespan_end=999999999999)
         assert 2 == len(last_timespan_donations)
 
     def test_get_largest_donation(self):
