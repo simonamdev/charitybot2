@@ -1,3 +1,5 @@
+import pytest
+
 from charitybot2.botconfig.event_config import EventConfigurationFromFile, EventConfigurationCreator, EventConfiguration
 from charitybot2.events.event import Event
 from charitybot2.storage.repository import Repository
@@ -36,14 +38,13 @@ class TestEventRegistration:
 
 
 class TestEventRetrieve:
-    def test_retrieve_configuration(self):
-        assert isinstance(valid_event.get_configuration(), EventConfiguration)
-
-    def test_retrieve_starting_amount(self):
-        assert 0 == valid_event.get_starting_amount()
-
-    def test_retrieve_amount_raised(self):
-        assert 0 == valid_event.get_amount_raised()
+    @pytest.mark.parametrize('expected,actual', [
+        (True, isinstance(valid_event.get_configuration(), EventConfiguration)),
+        (0, valid_event.get_starting_amount()),
+        (0, valid_event.get_amount_raised())
+    ])
+    def test_retrieval(self, expected, actual):
+        assert expected == actual
 
 
 class TestEventUpdate:

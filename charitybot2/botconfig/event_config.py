@@ -1,7 +1,7 @@
 import re
 
 from charitybot2.botconfig.json_config import InvalidConfigurationException, JSONConfigurationFile
-from charitybot2.events.currency import InvalidCurrencyException, Currency
+from charitybot2.events.currency import Currency
 
 url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
 
@@ -88,7 +88,7 @@ class EventConfigurationCreator:
                 raise InvalidConfigurationException('Expected numbers in key: {} but found something else instead'.format(key))
         # Test that the currency key is recognised
         if self.config_values['currency_key'] not in self.currencies:
-            raise InvalidCurrencyException(
+            raise InvalidConfigurationException(
                     'Invalid currency key passed. Please use one of the following: {}'.format(
                         str(self.currencies)))
         # Test that the URL actually is a URL

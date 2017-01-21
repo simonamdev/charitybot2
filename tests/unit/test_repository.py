@@ -32,10 +32,13 @@ class TestRepositoryInitialisation:
 
 
 class TestRepositoryOperations:
-    def test_getting_event_ids(self):
-        assert 1 == repository.get_event_id(event_name='TestOne')
-        assert 2 == repository.get_event_id(event_name='TestTwo')
-        assert 3 == repository.get_event_id(event_name='TestThree')
+    @pytest.mark.parametrize('event_id,event_name', [
+        (1, 'TestOne'),
+        (2, 'TestTwo'),
+        (3, 'TestThree')
+    ])
+    def test_getting_event_ids(self, event_id, event_name):
+        assert event_id == repository.get_event_id(event_name=event_name)
 
     def test_getting_event_id_of_non_existent_event_throws_exception(self):
         with pytest.raises(EventNotRegisteredException):

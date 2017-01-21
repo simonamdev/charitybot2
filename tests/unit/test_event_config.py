@@ -33,68 +33,45 @@ class TestEventConfigCreator:
         with pytest.raises(InvalidConfigurationException):
             EventConfigurationCreator(config_values)
 
-    # TODO: Update when refactoring how events handles names
-    def test_passing_name_with_spaces_throws_exception(self):
+    @pytest.mark.parametrize('key,value', [
+        ('internal_name', 'this should not have spaces'),
+        ('currency_key',  'definitely not a currency'),
+        ('source_url',    'definitely not a URL'),
+        ('end_time',      0),
+        ('end_time',      -1)
+    ])
+    def test_passing_invalid_values_throws_exception(self, key, value):
         config_values = get_valid_config_values()
-        config_values['event_name'] = 'bla bla bla bla bla'
+        config_values[key] = value
         with pytest.raises(InvalidConfigurationException):
-            EventConfigurationCreator(config_values)
-
-    def test_passing_incorrect_currency_value_throws_exception(self):
-        config_values = get_valid_config_values()
-        config_values['currency_key'] = 'Hello'
-        with pytest.raises(InvalidCurrencyException):
-            EventConfigurationCreator(config_values)
-
-    def test_passing_invalid_url_throws_exception(self):
-        config_values = get_valid_config_values()
-        config_values['source_url'] = 'this is a test'
-        with pytest.raises(InvalidConfigurationException):
-            EventConfigurationCreator(config_values)
-
-    def test_passing_end_time_not_greater_than_start_time_throws_exception(self):
-        config_values = get_valid_config_values()
-        config_values['end_time'] = 0
-        with pytest.raises(InvalidConfigurationException):
-            EventConfigurationCreator(config_values)
+            EventConfigurationCreator(config_values=config_values)
 
     def test_getting_valid_event_configuration(self):
         event_config = EventConfigurationCreator(config_values=get_valid_config_values()).get_event_configuration()
         assert isinstance(event_config, EventConfiguration)
 
 
-class TestEventConfigurationRetrieve:
-    def test_getting_number_values_are_numbers(self):
-        number_values = [
-            valid_event_config.get_start_time(),
-            valid_event_config.get_end_time(),
-            valid_event_config.get_target_amount(),
-            valid_event_config.get_update_delay()
-        ]
-        for value in number_values:
-            assert isinstance(value, int)
+class TestEventConfigurationRetrieval:
+    @pytest.mark.parametrize('number_value', [
+        valid_event_config.get_start_time(),
+        valid_event_config.get_end_time(),
+        valid_event_config.get_target_amount(),
+        valid_event_config.get_update_delay()
+    ])
+    def test_getting_number_values_are_numbers(self, number_value):
+        assert isinstance(number_value, int)
 
-    def test_retrieve_internal_name(self):
-        assert 'internal_name' == valid_event_config.get_internal_name()
-
-    def test_retrieve_external_name(self):
-        assert 'External Name' == valid_event_config.get_external_name()
-
-    def test_retrieve_event_start_time(self):
-        assert 0 == valid_event_config.get_start_time()
-
-    def test_retrieve_event_end_time(self):
-        assert 1 == valid_event_config.get_end_time()
-
-    def test_retrieve_event_target_amount(self):
-        assert 1000 == valid_event_config.get_target_amount()
-
-    def test_retrieve_event_sources(self):
-        source_url = valid_event_config.get_source_url()
-        assert 'http://www.test.com' == source_url
-
-    def test_retrieve_update_delay(self):
-        assert 5 == valid_event_config.get_update_delay()
+    @pytest.mark.parametrize('expected_value,actual_value', [
+        ('internal_name',       valid_event_config.get_internal_name()),
+        ('External Name',       valid_event_config.get_external_name()),
+        (0,                     valid_event_config.get_start_time()),
+        (1,                     valid_event_config.get_end_time()),
+        (1000,                  valid_event_config.get_target_amount()),
+        ('http://www.test.com', valid_event_config.get_source_url()),
+        (5,                     valid_event_config.get_update_delay())
+    ])
+    def test_value_retrieval(self, expected_value, actual_value):
+        assert expected_value == actual_value
 
     def test_event_returns_expected_currency(self):
         assert isinstance(valid_event_config.get_currency(), Currency)

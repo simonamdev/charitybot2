@@ -1,21 +1,17 @@
-import time
 import pytest
 
 from charitybot2.events.donation import Donation, InvalidArgumentException
 
 
 class TestDonationValidity:
-    def test_passing_empty_amounts_throws_exception(self):
+    @pytest.mark.parametrize('old_amount,new_amount', [
+        ('',     ''),
+        ('',     '25.4'),
+        ('33.3', '')
+    ])
+    def test_passing_invalid_amounts_throws_exception(self, old_amount, new_amount):
         with pytest.raises(InvalidArgumentException):
-            Donation('', '')
-
-    def test_passing_first_amount_empty_throws_exception(self):
-        with pytest.raises(InvalidArgumentException):
-            Donation('', '25.4')
-
-    def test_passing_second_amount_empty_throws_exception(self):
-        with pytest.raises(InvalidArgumentException):
-            Donation('33.3', '')
+            Donation(old_amount=old_amount, new_amount=new_amount)
 
     def test_passing_smaller_new_amount_throws_exception(self):
         with pytest.raises(InvalidArgumentException):
@@ -29,47 +25,21 @@ class TestDonationValidity:
         assert 11.1 == donation.get_donation_amount()
 
 
-class TestDonationProcessing:
+class TestDonationAttributes:
     def test_passing_valid_inputs_is_ok(self):
         donation = Donation(old_amount='33.3', new_amount='55.5')
         assert isinstance(donation, Donation)
 
-    def test_passing_currency_symbols_processes_normally(self):
-        donation = Donation(old_amount='£50', new_amount='£100')
-        assert donation.get_donation_amount() == 50
-
-    def test_passing_commas_and_decimal_points_processes_normally(self):
-        donation = Donation(old_amount='5000.32', new_amount='7,000.52')
-        assert donation.get_donation_amount() == 2000.20
-
-    def test_passing_all_symbols_processes_normally(self):
-        donation = Donation(old_amount='$3,000.33', new_amount='$30,010.55')
-        assert donation.get_donation_amount() == 27010.22
-
-    def test_passing_current_time_returns_correctly(self):
-        current_time = int(time.time())
-        donation = Donation(old_amount='$3,000.33', new_amount='$30,010.55', timestamp=current_time)
-        assert current_time == donation.get_timestamp()
-
-    def test_passing_non_integer_time_returns_as_integer(self):
-        current_time_float = time.time()
-        donation = Donation(old_amount=0, new_amount=1, timestamp=current_time_float)
-        assert int(current_time_float) == donation.get_timestamp()
-
-    def test_passing_notes_returns_correctly(self):
-        donation = Donation(old_amount=0, new_amount=1, notes='much test very driven')
-        assert 'much test very driven' == donation.get_notes()
-
-    def test_passing_validity_returns_correctly(self):
-        donation = Donation(old_amount=0, new_amount=1, valid=False)
-        assert False is donation.get_validity()
-
-
-class TestDonationDefaults:
-    def test_default_notes_are_empty(self):
-        donation = Donation(old_amount=0, new_amount=1)
-        assert '' == donation.get_notes()
-
-    def test_default_validity_is_true(self):
-        donation = Donation(old_amount=0, new_amount=1)
-        assert True is donation.get_validity()
+    @pytest.mark.parametrize('expected_output,actual_output', [
+        (Donation('£50', '£100').get_donation_amount(), 50),
+        (Donation('5000.32', '7,000.52').get_donation_amount(), 2000.20),
+        (Donation(old_amount='$3,000.33', new_amount='$30,010.55').get_donation_amount(), 27010.22),
+        (Donation(old_amount='$3,000.33', new_amount='$30,010.55', timestamp=5).get_timestamp(), 5),
+        (Donation(old_amount=0, new_amount=1, timestamp=5.23).get_timestamp(), 5),
+        (Donation(old_amount=0, new_amount=1, notes='much test very driven').get_notes(), 'much test very driven'),
+        (Donation(old_amount=0, new_amount=1, valid=False).get_validity(), False),
+        (Donation(old_amount=0, new_amount=1).get_notes(), ''),
+        (Donation(old_amount=0, new_amount=1).get_validity(), True)
+    ])
+    def test_getting_donation_information_when_passing_varying_valid_input(self, expected_output, actual_output):
+        assert expected_output == actual_output

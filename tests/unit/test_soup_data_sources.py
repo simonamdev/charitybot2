@@ -4,10 +4,17 @@ import charitybot2.sources.scraper as scraper
 
 
 class TestSoupDataSourceValidity:
-    def test_passing_invalid_source_name(self):
+    @pytest.mark.parametrize('source_name,tag_type', [
+        ('', ''),
+        ('foo', ''),
+        ('', 'bar'),
+        ('foo', 'bar'),
+        ('foo', 'h1')
+    ])
+    def test_passing_invalid_source_name(self, source_name, tag_type):
         sds = scraper.SoupDataSources()
         with pytest.raises(scraper.InvalidSoupSourceNameGiven):
-            sds.set_source(source_name='test', tag_type='h1')
+            sds.set_source(source_name=source_name, tag_type=tag_type)
 
     def test_retrieval_of_passed_parameters(self):
         sds = scraper.SoupDataSources()

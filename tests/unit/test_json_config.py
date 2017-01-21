@@ -22,17 +22,14 @@ class TestConfigFileExistence:
 
 
 class TestConfigValidity:
-    def test_empty_config_file_throws_exception(self):
+    @pytest.mark.parametrize('invalid_config_file_path,keys_required', [
+        (get_config_file_path('empty_config'), ()),
+        (get_config_file_path('invalid_formatted_config'), ()),
+        (get_config_file_path('invalid_config'), invalid_config_keys)
+    ])
+    def test_passing_invalid_files_throws_exception(self, invalid_config_file_path, keys_required):
         with pytest.raises(InvalidConfigurationException):
-            conf = JSONConfigurationFile(file_path=get_config_file_path('empty_config'), keys_required=())
-
-    def test_invalid_formatted_config_file_throws_exception(self):
-        with pytest.raises(InvalidConfigurationException):
-            conf = JSONConfigurationFile(file_path=get_config_file_path('invalid_formatted_config'), keys_required=())
-
-    def test_valid_formatted_but_invalid_content_config_throws_exception(self):
-        with pytest.raises(InvalidConfigurationException):
-            conf = JSONConfigurationFile(file_path=get_config_file_path('invalid_config'), keys_required=invalid_config_keys)
+            conf = JSONConfigurationFile(file_path=invalid_config_file_path, keys_required=keys_required)
 
 
 class TestConfigRetrieve:
