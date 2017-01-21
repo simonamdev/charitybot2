@@ -33,58 +33,25 @@ def teardown_module():
         pass
 
 
-class TestJustGivingFundraisingScraping:
-    def test_get_amount_raised_from_actual_fundraising_url(self):
+class TestJustGivingScrapers:
+    @pytest.mark.parametrize('url,debug,actual_url,result', [
+        (actual_justgiving_fundraising_url, True, True, ''),
+        (actual_justgiving_campaign_url, True, True, ''),
+        (actual_justgiving_api_url, False, True, ''),
+        (mock_justgiving_fundraising_url, True, False, '£100.52'),
+        # (mock_justgiving_campaign_url, True, False, '£100.52'),  # ignored temporarily
+        (mock_justgiving_api_url, True, False, '100.52')
+    ])
+    def test_getting_amount_raised_with_scrapers(self, url, debug, actual_url, result):
         jg = JustGivingScraperCreator(
-            url=actual_justgiving_fundraising_url,
-            debug=True).get_scraper()
-        amount_raised = jg.scrape_amount_raised()
-        # since the amount raised is not static, at least we can check for the £ and decimal point
-        assert amount_raised is not None
-        assert '£' in amount_raised
-        assert '.' in amount_raised or ',' in amount_raised
-
-    def test_get_amount_raised_from_fundraiser_page(self):
-        jg = JustGivingScraperCreator(
-            url=mock_justgiving_fundraising_url,
-            debug=True).get_scraper()
-        amount_raised = jg.scrape_amount_raised()
-        assert '£100.52' == amount_raised
-
-
-class TestJustGivingCampaignScraper:
-    def test_get_amount_raised_from_actual_url(self):
-        try_to_start_mocksite()
-        jg = JustGivingScraperCreator(
-            url=actual_justgiving_campaign_url,
-            debug=True).get_scraper()
+            url=url,
+            debug=debug).get_scraper()
         amount_raised = jg.scrape_amount_raised()
         assert amount_raised is not None
-        assert '£' in amount_raised
-        assert '.' in amount_raised or ',' in amount_raised
-
-    def test_get_amount_raised_from_campaign_page(self):
-        jg = JustGivingScraperCreator(
-            url=mock_justgiving_campaign_url,
-            debug=True).get_scraper()
-        amount_raised = jg.scrape_amount_raised()
-        assert '£100.52' == amount_raised
-
-
-# TODO: Refactor these three above test classes into a parameterised test
-class TestJustGivingAPIScraper:
-    def test_get_amount_raised_from_actual_url(self):
-        jg = JustGivingScraperCreator(
-            url=actual_justgiving_api_url).get_scraper()
-        amount_raised = jg.scrape_amount_raised()
-        assert '.' in amount_raised or ',' in amount_raised
-
-    def test_get_amount_raised_from_mock_api(self):
-        jg = JustGivingScraperCreator(
-            url=mock_justgiving_api_url,
-            debug=True).get_scraper()
-        amount_raised = jg.scrape_amount_raised()
-        assert '100.52' == amount_raised
+        if actual_url:
+            assert '.' in amount_raised or ',' in amount_raised
+        else:
+            assert amount_raised == result
 
 
 class TestJustGivingScraperFailure:
