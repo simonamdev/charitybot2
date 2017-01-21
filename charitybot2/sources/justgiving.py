@@ -1,14 +1,15 @@
 import json
 import os
 
+from charitybot2.paths import cb2_justgiving_api_key_path, debug_justgiving_api_key_path
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common import exceptions as selenium_exceptions
 
-from charitybot2.sources.url_call import ConnectionFailedException, return_random_user_agent
+from charitybot2.sources.url_call import ConnectionFailedException, return_random_user_agent, UrlCall
 from charitybot2.storage.logger import Logger
 
-from .scraper import Scraper, SoupDataSources, SourceUnavailableException
+from .scraper import Scraper, SoupDataSources, SourceUnavailableException, ScraperException
 
 
 class NoFundraiserNameGivenException(Exception):
@@ -164,6 +165,45 @@ class JustGivingCampaignScraper(JustGivingScraper):
         return currency_symbol + amount_raised
 
 
+class JustGivingAPIScraper(JustGivingScraper):
+    def __init__(self, url, debug):
+        super().__init__(url=url, scraper_type='api', debug=debug)
+        self.api_key_file_path = debug_justgiving_api_key_path if debug else cb2_justgiving_api_key_path
+        self.api_key = None
+        self.__initialise_scraper()
+
+    def __initialise_scraper(self):
+        self.api_key = self.__get_api_key_from_file()
+
+    def __get_api_key_from_file(self):
+        with open(self.api_key_file_path, 'r') as api_key_file:
+            api_key = api_key_file.read()
+        self.__validate_api_key(api_key=api_key)
+        return api_key
+
+    def __validate_api_key(self, api_key):
+        try:
+            assert len(api_key) == 8
+            assert str.isalnum(api_key)
+        except AssertionError:
+            raise ScraperException('Unable to retrieve a valid JustGiving API key from the given path: {}'.format(
+                self.api_key_file_path))
+
+    def scrape_amount_raised(self):
+        api_call_headers = {
+            'x-api-key': self.api_key,
+            'Accept': 'application/json'
+        }
+        url_call = UrlCall(url=self.url, headers=api_call_headers)
+        response = url_call.get()
+        # print(response)
+        # print(response.status_code)
+        # print(response.content)
+        response = json.loads(response.content.decode('utf-8'))
+        # print(response)
+        return response['totalRaised']
+
+
 class JustGivingScraperCreator:
     def __init__(self, url, debug=False):
         self.url = url
@@ -173,7 +213,9 @@ class JustGivingScraperCreator:
         return self.__determine_scraper_type()
 
     def __determine_scraper_type(self):
-        if 'fundraising' in self.url:
+        if 'api' in self.url:
+            return JustGivingAPIScraper(url=self.url, debug=self.debug)
+        elif 'fundraising' in self.url:
             return JustGivingFundraisingScraper(url=self.url, debug=self.debug)
         elif 'campaign' in self.url:
             return JustGivingCampaignScraper(url=self.url, debug=self.debug)
