@@ -9,9 +9,10 @@ class ConnectionFailedException(Exception):
 
 
 class UrlCall:
-    def __init__(self, url, params=None, timeout=2):
+    def __init__(self, url, params=None, headers=None, timeout=2):
         self.url = url
         self.params = params if params is not None else {}
+        self.headers = headers if headers is not None else {}
         self.user_agent = return_random_user_agent()
         self.timeout = timeout
 
@@ -26,13 +27,11 @@ class UrlCall:
             raise ConnectionFailedException('No schema passed for the url: {}'.format(self.url))
 
     def get(self):
-        headers = {
-            'User-Agent': self.user_agent
-        }
+        self.headers.update({'User-Agent': self.user_agent})
         return self.make_request(
             request_function=lambda: requests.get(
                 url=self.url,
-                headers=headers,
+                headers=self.headers,
                 params=self.params,
                 timeout=self.timeout))
 

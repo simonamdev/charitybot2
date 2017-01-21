@@ -1,7 +1,8 @@
 import pytest
 from charitybot2.sources.justgiving import JustGivingScraperCreator
 from charitybot2.sources.mocks.mocksite import mock_justgiving_fundraising_url, mock_justgiving_campaign_url, \
-    actual_justgiving_campaign_url, actual_justgiving_fundraising_url, mock_justgiving_api_url
+    actual_justgiving_campaign_url, actual_justgiving_fundraising_url, mock_justgiving_api_url, \
+    actual_justgiving_api_url
 from charitybot2.sources.scraper import SourceUnavailableException
 from charitybot2.sources.url_call import UrlCall, ConnectionFailedException
 from tests.mocks import MockFundraisingWebsite
@@ -73,7 +74,10 @@ class TestJustGivingCampaignScraper:
 # TODO: Refactor these three above test classes into a parameterised test
 class TestJustGivingAPIScraper:
     def test_get_amount_raised_from_actual_url(self):
-        pass
+        jg = JustGivingScraperCreator(
+            url=actual_justgiving_api_url).get_scraper()
+        amount_raised = jg.scrape_amount_raised()
+        assert '.' in amount_raised or ',' in amount_raised
 
     def test_get_amount_raised_from_mock_api(self):
         jg = JustGivingScraperCreator(

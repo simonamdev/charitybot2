@@ -13,7 +13,7 @@ mock_justgiving_campaign_url = mock_justgiving_url + 'campaign'
 mock_justgiving_api_url = mock_justgiving_url + 'api/'
 actual_justgiving_fundraising_url = 'https://www.justgiving.com/fundraising/FrontierDev'
 actual_justgiving_campaign_url = 'https://www.justgiving.com/campaigns/charity/specialeffect/gameblast17'
-actual_justgiving_api_url = 'http://api.justgiving.com/v1/campaigns/specialeffect/gameblast17'
+actual_justgiving_api_url = 'https://api.justgiving.com/v1/campaigns/specialeffect/gameblast17'
 
 justgiving_amount = 100
 
