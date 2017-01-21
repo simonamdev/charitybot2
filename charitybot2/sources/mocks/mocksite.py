@@ -1,6 +1,7 @@
 from urllib.parse import urljoin
 
 from flask import Flask, request, redirect, url_for, render_template, Markup, jsonify
+from werkzeug.exceptions import abort
 
 app = Flask(__name__)
 
@@ -58,6 +59,9 @@ def justgiving_campaign():
 
 @app.route('/justgiving/api/')
 def justgiving_api():
+    api_key = request.headers.get('x-api-key')
+    if not api_key == 'a1b2c3d4':
+        abort(403)
     api_return = dict(
         id=0,
         story='string',
