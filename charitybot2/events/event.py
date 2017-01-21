@@ -19,7 +19,6 @@ class Event:
 
     def update_event(self, event_configuration=None):
         new_configuration = self.event_configuration if event_configuration is None else event_configuration
-        print(new_configuration.get_start_time())
         if self.event_already_registered():
             self.repository.update_event(event_configuration=new_configuration)
             self.event_configuration = self.repository.get_event_configuration(

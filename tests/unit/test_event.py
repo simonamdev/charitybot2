@@ -10,6 +10,7 @@ repository = Repository(db_path=repository_db_path)
 
 valid_event_configuration = EventConfigurationFromFile(file_path=valid_config_path).get_event_configuration()
 valid_event = Event(event_configuration=valid_event_configuration, db_path=repository_db_path)
+valid_event.register_event()
 
 
 def setup_module():
@@ -17,17 +18,22 @@ def setup_module():
 
 
 class TestEventRegistration:
-    def test_valid_event_is_not_already_registered(self):
-        assert valid_event.event_already_registered() is False
-
     def test_registering_event(self):
-        assert False is repository.event_exists(event_name='valid_configured_event')
-        assert False is valid_event.event_already_registered()
-        valid_event.register_event()
-        assert True is repository.event_exists(event_name='valid_configured_event')
-        assert True is valid_event.event_already_registered()
+        new_configuration_values = EventConfigurationFromFile(file_path=valid_config_path).get_config_data()
+        new_configuration_values['internal_name'] = 'to_be_registered'
+        new_configuration_values['external_name'] = 'To Be Registered'
+        new_configuration = EventConfigurationCreator(config_values=new_configuration_values).get_event_configuration()
+        new_event = Event(
+            event_configuration=new_configuration,
+            db_path=repository_db_path)
+        assert False is repository.event_exists(event_name='to_be_registered')
+        assert False is new_event.event_already_registered()
+        new_event.register_event()
+        assert True is repository.event_exists(event_name='to_be_registered')
+        assert True is new_event.event_already_registered()
 
     def test_updating_event_configuration(self):
+        valid_event.register_event()
         config_data = EventConfigurationFromFile(file_path=valid_config_path).get_config_data()
         config_data['currency_key'] = 'USD'
         new_currency_config = EventConfigurationCreator(config_values=config_data).get_event_configuration()
