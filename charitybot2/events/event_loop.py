@@ -95,10 +95,18 @@ class EventLoop:
                 self.loop_count,
                 hours_remaining))
             self.check_for_donation()
-            self.logger.log_info('Holding until cycle: {}'.format(self.loop_count + 1))
-            time.sleep(self.event_configuration.get_update_delay())
+            self.logger.log_verbose('Holding until cycle: {}'.format(self.loop_count + 1))
+            self.__pause_loop(amount=self.event_configuration.get_update_delay())
             self.loop_count += 1
         self.logger.log_info('Event has exceeded its end time')
+
+    @staticmethod
+    def __pause_loop(amount=5, clear_pause_prompt=True):
+        for tick in range(amount, 0, -1):
+            print('---- Next cycle starts in: {} ----    '.format(tick), end='\r')
+            time.sleep(1)
+        if clear_pause_prompt:
+            print('                                        ', end='\r')
 
     # convert the string to a float, removing any currency symbols and commas
     @staticmethod
