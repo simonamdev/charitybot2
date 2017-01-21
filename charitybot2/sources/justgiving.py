@@ -3,6 +3,7 @@ import os
 
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.common import exceptions as selenium_exceptions
 
 from charitybot2.sources.url_call import ConnectionFailedException, return_random_user_agent
 from charitybot2.storage.logger import Logger
@@ -82,7 +83,8 @@ class JustGivingCampaignScraper(JustGivingScraper):
         super().__init__(url=url, scraper_type='campaign', debug=debug)
         self.logger.log_info('Starting up PhantomJS driver (this may take some time)')
         self.driver = None
-        self.__setup_driver()
+        self.tries = 0
+        # self.__setup_driver()
 
     def __setup_driver(self):
         # Set User Agent
@@ -96,34 +98,63 @@ class JustGivingCampaignScraper(JustGivingScraper):
         self.driver.set_page_load_timeout(10)
         # print(self.driver.execute_script('return navigator.userAgent', ''))
 
+    def scrape_amount_raised(self):
+        # retries = 0
+        # while retries < 3:
+        #     try:
+        #         amount_raised
+        #     except:
+        #         pass
+        self.__setup_driver()
+        amount_raised = self.__get_amount_raised()
+        self.driver.quit()
+        return amount_raised
+
     def __get_amount_raised(self):
         # if self.debug:
         #     print('Accessing {} with driver'.format(self.url))
-        self.driver.get(self.url)
+        self.tries = 0
+        while self.tries < 3:
+            try:
+                self.__try_to_access_page()
+                self.tries = 3
+            except selenium_exceptions.TimeoutException:
+                self.tries += 1
+                print('Current tries: {}'.format(self.tries))
+                print('Restarting driver')
+                self.driver.quit()
+                self.__setup_driver()
         # self.driver.get(self.url.replace('https', 'http'))
         script_tags = self.driver.find_elements_by_tag_name('script')
         # if self.debug:
         #     print(script_tags)
         # searching method uncovered index 11, however it might need more testing later on
-        # return self.__search_for_amount_raised(script_tags=script_tags)
-        return self.__parse_script_tag_for_amount_raised(script_tags[11])
+        # return self.__search_for_script_tag(script_tags=script_tags)
+        # return self.__parse_script_tag_for_amount_raised(script_tags[11])
+        return self.__parse_script_tag_for_amount_raised(self.__search_for_script_tag(script_tags=script_tags))
+
+    def __try_to_access_page(self):
+        self.driver.get(self.url)
 
     @staticmethod
-    def __search_for_amount_raised(script_tags):
-        amount_raised = ''
+    def __search_for_script_tag(script_tags):
+        script_tag = ''
         for script in script_tags:
             inner_html = script.get_attribute('innerHTML').strip()
             first_part = inner_html[0:9]
             if 'window.JG' == first_part and not first_part == '':
-                amount_raised = inner_html
-                print('------------------')
-                print(script_tags.index(script))
+                print('Tag Index from search: {}'.format(script_tags.index(script)))
+                script_tag = script
                 break
-        return amount_raised
+        return script_tag
 
-    @staticmethod
-    def __parse_script_tag_for_amount_raised(script_tag):
+    def __parse_script_tag_for_amount_raised(self, script_tag):
         inner_html = script_tag.get_attribute('innerHTML').strip()
+        # while inner_html == '':
+        #     print('Entering recursive attempt to get amount raised')
+        #     script_tags = self.driver.find_elements_by_tag_name('script')
+        #     script_tag = self.__search_for_amount_raised(script_tags=script_tags)
+        #     inner_html = script_tag.get_attribute('innerHTML').strip()
         # this is required to allow the mock test to pass
         if not inner_html[0] == '{':
             inner_html = inner_html[59:-1]
@@ -131,9 +162,6 @@ class JustGivingCampaignScraper(JustGivingScraper):
         currency_symbol = parsed_html['campaign']['totalRaisedInPageCurrency']['currency']['symbol']
         amount_raised = str(parsed_html['campaign']['totalRaisedInPageCurrency']['value'])
         return currency_symbol + amount_raised
-
-    def scrape_amount_raised(self):
-        return self.__get_amount_raised()
 
 
 class JustGivingScraperCreator:
