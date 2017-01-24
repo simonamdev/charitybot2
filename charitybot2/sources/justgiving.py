@@ -199,9 +199,13 @@ class JustGivingAPIScraper(JustGivingScraper):
             response = url_call.get()
         except ConnectionFailedException:
             raise SourceUnavailableException
-        response = json.loads(response.content.decode('utf-8'))
+        try:
+            response = json.loads(response.content.decode('utf-8'))
+        except ValueError:
+            self.logger.log_error('Unable to parse returned data from source')
+            raise SourceUnavailableException
         if isinstance(response, list):
-            print('Retrieved response: {}'.format(response))
+            self.logger.log_error('Irregular response received: {}'.format(response))
             raise SourceUnavailableException
         return response['totalRaised']
 
