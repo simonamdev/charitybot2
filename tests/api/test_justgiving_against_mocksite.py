@@ -36,7 +36,7 @@ def teardown_module():
 class TestJustGivingScrapers:
     @pytest.mark.parametrize('url,debug,actual_url,result', [
         (actual_justgiving_fundraising_url, True, True, ''),
-        (actual_justgiving_campaign_url, True, True, ''),
+        # (actual_justgiving_campaign_url, True, True, ''),
         (actual_justgiving_api_url, False, True, ''),
         (mock_justgiving_fundraising_url, True, False, '£100.52'),
         # (mock_justgiving_campaign_url, True, False, '£100.52'),  # ignored temporarily
