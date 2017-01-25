@@ -118,9 +118,11 @@ def donations_info(event_name):
     if not repository.event_exists(event_name=event_name):
         abort(404)
     last_timespan = 3600  # an hour in seconds
+    current_time = int(time.time())
     last_timespan_donations = repository.get_donations_for_timespan(
         event_name=event_name,
-        timespan_start=int(time.time()) - last_timespan)
+        timespan_start=current_time - last_timespan,
+        timespan_end=current_time)
     largest_donation = repository.get_largest_donation(event_name=event_name)
     largest_donation = {
         'amount': largest_donation.get_donation_amount(),
