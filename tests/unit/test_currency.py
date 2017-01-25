@@ -1,5 +1,5 @@
 import pytest
-from charitybot2.models.currency import Currency
+from charitybot2.models.currency import Currency, InvalidCurrencyKeyException
 
 
 class TestCurrencyInstantiation:
@@ -10,7 +10,7 @@ class TestCurrencyInstantiation:
     ])
     def test_retrieve_key(self, key):
         currency = Currency(key=key)
-        assert key == currency.get_key()
+        assert key == currency.key
 
     @pytest.mark.parametrize('key,symbol', [
         ('GBP', '£'),
@@ -19,4 +19,15 @@ class TestCurrencyInstantiation:
     ])
     def test_retrieve_symbol(self, key, symbol):
         currency = Currency(key=key)
-        assert symbol == currency.get_symbol()
+        assert symbol == currency.symbol
+
+
+class TestCurrencyExceptions:
+    @pytest.mark.parametrize('key', [
+        '',
+        'bla',
+        'foo'
+    ])
+    def test_passing_invalid_key_throws_exception(self, key):
+        with pytest.raises(InvalidCurrencyKeyException):
+            currency = Currency(key=key)
