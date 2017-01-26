@@ -18,10 +18,15 @@ class TestDonationInstantiation:
     def test_retrieval(self, expected, actual):
         assert expected == actual
 
-    def test_passing_amount_string_with_commas_parses_properly(self):
-        donation_amount = '12,345.52'
-        donation = Donation(amount=donation_amount, timestamp=0)
-        assert 12345.52 == donation.amount
+    @pytest.mark.parametrize('amount', [
+        '12345.67',
+        '12,345.67',
+        '1234,5.67',
+        '1,2345.67'
+    ])
+    def test_passing_amount_string_with_commas_parses_properly(self, amount):
+        donation = Donation(amount=amount, timestamp=0)
+        assert 12345.67 == donation.amount
 
 
 class TestDonationExceptions:
