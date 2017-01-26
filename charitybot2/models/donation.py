@@ -8,11 +8,19 @@ class InvalidDonationException(Exception):
 class Donation:
     __rounding_amount = 2
 
-    def __init__(self, amount, timestamp=int(time.time()), identifier=None, event_identifier=None):
+    def __init__(self,
+                 amount,
+                 timestamp=int(time.time()),
+                 identifier=None,
+                 event_identifier=None,
+                 notes=None,
+                 valid=True):
         self._amount = amount
         self._timestamp = timestamp
         self._identifier = identifier
         self._event_identifier = event_identifier
+        self._notes = notes
+        self._valid = valid
         self.__validate_donation()
         self.__parse_donation_amount()
 
@@ -48,3 +56,11 @@ class Donation:
     @property
     def event_identifier(self):
         return self._event_identifier
+
+    @property
+    def notes(self):
+        return self._notes
+
+    @property
+    def validity(self):
+        return self._valid

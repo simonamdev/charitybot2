@@ -1,11 +1,13 @@
 import pytest
+import time
 from charitybot2.models.donation import Donation, InvalidDonationException
 
 test_donation = Donation(
     amount=50,
     timestamp=999999,
     identifier='identifier',
-    event_identifier='event_identifier')
+    event_identifier='event_identifier',
+    notes='Automated')
 
 
 class TestDonationInstantiation:
@@ -13,7 +15,9 @@ class TestDonationInstantiation:
         (50, test_donation.amount),
         (999999, test_donation.timestamp),
         ('identifier', test_donation.identifier),
-        ('event_identifier', test_donation.event_identifier)
+        ('event_identifier', test_donation.event_identifier),
+        ('Automated', test_donation.notes),
+        (True, test_donation.validity)
     ])
     def test_retrieval(self, expected, actual):
         assert expected == actual
@@ -37,6 +41,15 @@ class TestDonationInstantiation:
     def test_donation_amount_rounding(self, amount):
         donation = Donation(amount=amount)
         assert 123.45 == donation.amount
+
+    def test_donation_defaults(self):
+        donation = Donation(amount=1)
+        assert 1 == donation.amount
+        assert int(time.time()) == donation.timestamp
+        assert None is donation.identifier
+        assert None is donation.event_identifier
+        assert None is donation.notes
+        assert True is donation.validity
 
 
 class TestDonationExceptions:
