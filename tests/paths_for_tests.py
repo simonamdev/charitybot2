@@ -24,9 +24,17 @@ class TestFilePath:
         return os.path.join(self.config_dir, sub_directory, file_name)
 
 
+def get_test_config_path(folder, file_name):
+    return TestFilePath().get_config_path(sub_directory=folder, file_name=file_name)
+
+# Base Config test paths
+empty_config_path = get_test_config_path('base', 'empty_config.json')
+invalid_config_path = get_test_config_path('base', 'invalid_formatted_config.json')
+valid_config_path = get_test_config_path('base', 'valid_config.json')
+
 # Event Config Paths
-valid_config_path = TestFilePath().get_config_path('event', 'valid_config.json')
-end_to_end_config_path = TestFilePath().get_config_path('event', 'e2e_config.json')
+valid_event_config_path = get_test_config_path('event', 'valid_config.json')
+end_to_end_event_config_path = get_test_config_path('event', 'e2e_config.json')
 
 # Database related Paths
 repository_db_path = TestFilePath().get_repository_db_path()
