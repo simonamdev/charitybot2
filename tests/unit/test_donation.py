@@ -45,7 +45,7 @@ class TestDonationInstantiation:
     def test_donation_defaults(self):
         donation = Donation(amount=1)
         assert 1 == donation.amount
-        assert int(time.time()) == donation.timestamp
+        assert int(time.time()) + 2 >= donation.timestamp >= int(time.time()) - 2
         assert None is donation.identifier
         assert None is donation.event_identifier
         assert None is donation.notes
