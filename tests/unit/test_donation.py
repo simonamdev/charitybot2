@@ -28,6 +28,16 @@ class TestDonationInstantiation:
         donation = Donation(amount=amount, timestamp=0)
         assert 12345.67 == donation.amount
 
+    @pytest.mark.parametrize('amount', [
+        123.45,
+        123.454,
+        123.4543,
+        123.45432
+    ])
+    def test_donation_amount_rounding(self, amount):
+        donation = Donation(amount=amount)
+        assert 123.45 == donation.amount
+
 
 class TestDonationExceptions:
     @pytest.mark.parametrize('amount,timestamp,identifier,event_identifier', [

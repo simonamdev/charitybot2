@@ -6,6 +6,8 @@ class InvalidDonationException(Exception):
 
 
 class Donation:
+    __rounding_amount = 2
+
     def __init__(self, amount, timestamp=int(time.time()), identifier=None, event_identifier=None):
         self._amount = amount
         self._timestamp = timestamp
@@ -29,6 +31,7 @@ class Donation:
                 self._amount = float(self._amount)
             except ValueError:
                 raise InvalidDonationException('Cannot parse input string properly')
+        self._amount = round(self._amount, self.__rounding_amount)
 
     @property
     def amount(self):
