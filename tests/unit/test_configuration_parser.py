@@ -1,5 +1,5 @@
 import pytest
-from charitybot2.configurations import ConfigurationParser, InvalidConfigurationException
+from charitybot2.configurations.configuration_parser import ConfigurationParser, InvalidConfigurationException
 from tests.paths_for_tests import valid_config_path, invalid_config_path
 
 valid_test_config_keys = ('key1', 'key2', 'key3')
