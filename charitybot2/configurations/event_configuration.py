@@ -32,3 +32,7 @@ class EventConfiguration:
     @property
     def currency(self):
         return Currency(key=self._configuration_values['currency_key'])
+
+    @property
+    def source_url(self):
+        return self._configuration_values['source_url']
