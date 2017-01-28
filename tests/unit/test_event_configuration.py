@@ -1,5 +1,5 @@
 import pytest
-from charitybot2.creators.configurations.event_configuration import EventConfiguration
+from charitybot2.configurations.event_configuration import EventConfiguration
 
 test_configuration_values = {
     'identifier': 'identifier',
