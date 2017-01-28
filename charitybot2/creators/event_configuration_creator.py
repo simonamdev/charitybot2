@@ -1,0 +1,2 @@
+class EventConfigurationCreator:
+    pass
