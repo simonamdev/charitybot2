@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 from charitybot2.reporter.external_api.external_api import api_full_url, api_paths
 from flask import json
 from tests.mocks import ResetDB, MockExternalAPI
+from tests.old_unit.test_repository import event_names, repository_db_path
 from tests.paths_for_tests import repository_db_script_path
-from tests.unit.test_repository import event_names, repository_db_path
 
 ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
 mock_external_api = MockExternalAPI(extra_args=['--debug'])
