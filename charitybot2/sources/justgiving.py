@@ -201,7 +201,7 @@ class JustGivingAPIScraper(JustGivingScraper):
         except ConnectionFailedException as e:
             self.logger.log_error('Returned exception message: {}'.format(e))
             if response is not None:
-                self.logger.log('Last status code: {}'.format(response.status_code))
+                self.logger.log_error('Last status code: {}'.format(response.status_code))
             raise SourceUnavailableException
         try:
             response = json.loads(response.content.decode('utf-8'))
