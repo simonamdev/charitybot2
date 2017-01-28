@@ -149,7 +149,7 @@ class EventLoop:
                 self.report_new_donation(new_donation)
 
     def __record_new_donation(self, donation):
-        self.logger.log_info('New Donation of {}{} detected'.format(
+        self.logger.log_info('New Donation of {} {} detected'.format(
             self.event_configuration.get_currency().get_key(),
             donation.get_donation_amount()))
         self.event.repository.record_donation(event_name=self.event.name, donation=donation)
