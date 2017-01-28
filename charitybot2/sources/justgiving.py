@@ -195,9 +195,13 @@ class JustGivingAPIScraper(JustGivingScraper):
             'Accept': 'application/json'
         }
         url_call = UrlCall(url=self.url, headers=api_call_headers, timeout=5)
+        response = None
         try:
             response = url_call.get()
-        except ConnectionFailedException:
+        except ConnectionFailedException as e:
+            self.logger.log_error('Returned exception message: {}'.format(e))
+            if response is not None:
+                self.logger.log('Last status code: {}'.format(response.status_code))
             raise SourceUnavailableException
         try:
             response = json.loads(response.content.decode('utf-8'))

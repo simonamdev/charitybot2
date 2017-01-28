@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from charitybot2.sources.url_call import UrlCall, ConnectionFailedException
+from charitybot2.storage.logger import Logger
 
 
 class ScraperException(Exception):
@@ -14,6 +15,7 @@ class Scraper:
     def __init__(self, url, debug=False):
         self.url = url
         self.debug = debug
+        self.logger = Logger(source='Scraper', event='', console_only=self.debug)
         self.parser = 'lxml'
         self.url_call = UrlCall(url=self.url)
 
@@ -25,9 +27,13 @@ class Scraper:
         return response.status_code == 200
 
     def get_data_from_url(self):
+        response = None
         try:
             response = self.url_call.get()
         except ConnectionFailedException:
+            if response is not None:
+                self.logger.log_error('Received response code: {}'.format(response.status_code))
+                self.logger.log_error('Received response content: {}'.format(response.content))
             raise SourceUnavailableException('Scraper could not connect to url: {0}'.format(self.url))
         return response
 
