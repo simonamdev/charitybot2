@@ -2,6 +2,8 @@ import time
 
 from charitybot2.paths import production_logs_db_path
 from charitybot2.storage.logs_db import Log, LogsDB
+from colorama import Style
+from colorama import init, Fore
 
 
 class LoggingFailedException(Exception):
@@ -10,6 +12,7 @@ class LoggingFailedException(Exception):
 
 class Logger:
     def __init__(self, source, event, debug_db_path='', console_only=False):
+        init()
         self.source = source
         self.event = event
         self.debug_db_path = debug_db_path
@@ -43,7 +46,11 @@ class Logger:
 
     def log_to_console(self, level, message):
         console_log = Log(source=self.source, event=self.event, timestamp=int(time.time()), level=level, message=message)
-        print(console_log)
+        if level == Log.error_level:
+            print(Fore.RED + str(console_log))
+            print(Style.RESET_ALL)
+        else:
+            print(console_log)
 
     def log_to_db(self, level, message):
         self.logs_db.log(source=self.source, event=self.event, level=level, message=message)
