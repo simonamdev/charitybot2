@@ -37,8 +37,8 @@ valid_event_config_path = get_test_config_path('event', 'valid_config.json')
 end_to_end_event_config_path = get_test_config_path('event', 'e2e_config.json')
 
 # Database related Paths
-repository_db_path = TestFilePath().get_repository_db_path()
-repository_db_script_path = TestFilePath().get_repository_script_path()
+test_repository_db_path = TestFilePath().get_repository_db_path()
+test_repository_db_script_path = TestFilePath().get_repository_script_path()
 
-logs_db_path = TestFilePath().get_logs_path()
-logs_script_path = TestFilePath().get_db_path('logs.sql')
+test_logs_db_path = TestFilePath().get_logs_path()
+test_logs_script_path = TestFilePath().get_db_path('logs.sql')
