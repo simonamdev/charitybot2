@@ -83,3 +83,7 @@ class EventConfigurationCreatorFromFile(EventConfigurationCreator):
             file_path=self._file_path,
             keys_required=self._keys_required)
         return config_parser.data
+
+
+class EventConfigurationCreatorFromDatabase(EventConfigurationCreator):
+    pass
