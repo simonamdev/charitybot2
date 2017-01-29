@@ -50,3 +50,7 @@ class ConfigurationParser:
 
     def __key_exists(self, key):
         return key in self._data.keys()
+
+    @property
+    def data(self):
+        return self._data
