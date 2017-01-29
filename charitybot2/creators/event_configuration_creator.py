@@ -1,4 +1,6 @@
 import re
+
+from charitybot2.configurations.configuration_parser import ConfigurationParser
 from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.models.currency import InvalidCurrencyKeyException
 
@@ -69,3 +71,15 @@ class EventConfigurationCreator:
     @property
     def configuration(self):
         return self._configuration
+
+
+class EventConfigurationCreatorFromFile(EventConfigurationCreator):
+    def __init__(self, file_path):
+        self._file_path = file_path
+        super().__init__(configuration_values=self.__get_data_from_file())
+
+    def __get_data_from_file(self):
+        config_parser = ConfigurationParser(
+            file_path=self._file_path,
+            keys_required=self._keys_required)
+        return config_parser.data

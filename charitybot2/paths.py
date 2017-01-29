@@ -10,8 +10,9 @@ db_folder = os.path.join(data_folder, 'db')
 test_folder = os.path.join(root_directory, 'tests')
 test_data_folder = os.path.join(test_folder, 'data')
 test_config_folder = os.path.join(test_data_folder, 'config')
+test_event_config_folder = os.path.join(test_config_folder, 'event')
 
-# Configs
+# Production Configs
 purrcat259_config_path = os.path.join(twitch_config_folder, 'purrcat259.json')
 
 # Databases
@@ -31,3 +32,4 @@ cb2_justgiving_api_key_path = os.path.join(config_folder, 'api', 'cb2_justgiving
 
 # Test file paths
 debug_justgiving_api_key_path = os.path.join(test_config_folder, 'api', 'debug_justgiving_api_key.txt')
+test_event_config_path = os.path.join(test_event_config_folder, 'valid_config.json')
