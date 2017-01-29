@@ -1,6 +1,7 @@
 import copy
 
 import pytest
+from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.creators.event_configuration_creator import InvalidEventConfigurationException, \
     EventConfigurationCreator
 from tests.unit.test_event_configuration import test_event_configuration_values
@@ -34,3 +35,7 @@ class TestEventConfigurationCreator:
     def test_passing_incorrect_values_throws_exception(self, configuration_values):
         with pytest.raises(InvalidEventConfigurationException):
             EventConfigurationCreator(configuration_values=configuration_values)
+
+    def test_retrieving_event_configuration_from_creator(self):
+        event_configuration_creator = EventConfigurationCreator(configuration_values=test_event_configuration_values)
+        assert isinstance(event_configuration_creator.configuration, EventConfiguration)

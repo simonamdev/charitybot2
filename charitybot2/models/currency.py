@@ -3,6 +3,12 @@ class InvalidCurrencyKeyException(Exception):
 
 
 class Currency:
+    currency_keys = (
+        'GBP',
+        'USD',
+        'EUR'
+    )
+
     __currency_symbol_lookup = {
         'GBP': '£',
         'USD': '$',

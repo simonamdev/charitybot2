@@ -21,6 +21,9 @@ class TestCurrencyInstantiation:
         currency = Currency(key=key)
         assert symbol == currency.symbol
 
+    def test_retrieve_all_keys(self):
+        assert sorted(('GBP', 'USD', 'EUR')) == sorted(Currency.currency_keys)
+
 
 class TestCurrencyExceptions:
     @pytest.mark.parametrize('key', [
