@@ -8,6 +8,7 @@ from charitybot2.storage.repository import Repository
 from flask import Flask, request, jsonify, make_response, abort
 from flask import render_template
 from flask_cors import CORS
+from gevent.pywsgi import WSGIServer
 from tests.paths_for_tests import repository_db_path
 
 app = Flask(__name__)
@@ -22,6 +23,7 @@ api_full_url = api_url + ':' + str(api_port) + '/'
 debug_mode = False
 cli_debug_mode = False
 console_version = '0.1.1'
+http_server = WSGIServer((api_address, api_port), app)
 
 api_paths = {
     'api': {
@@ -230,7 +232,7 @@ def debug():
 def destroy():
     global debug_mode
     if debug_mode:
-        shutdown_service()
+        stop_api()
         return 'Shutting down service'
     return 'Not in debug mode - shutting down in unavailable'
 
@@ -251,14 +253,14 @@ def start_api(args):
     else:
         print('--- Starting in production mode ---')
         repository = Repository(db_path=production_repository_db_path, debug=True)
-    app.run(host=api_address, port=api_port, debug=cli_debug_mode)
+    global http_server
+    http_server.serve_forever()
 
 
-def shutdown_service():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
+def stop_api():
+    global http_server
+    http_server.stop()
+
 
 if __name__ == '__main__':
     args = create_api_process_parser().parse_args(['--debug'])
