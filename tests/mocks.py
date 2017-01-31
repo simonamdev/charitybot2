@@ -71,6 +71,9 @@ class WebServer:
         url = urljoin(self.url, '/destroy')
         print('Destroying process for: {} at: {}'.format(self.name, url))
         response = requests.get(url)
+        if not response.status_code == 200:
+            print(response.status_code)
+            print(response.content)
         assert 200 == response.status_code
         sleep(self.stop_delay)
 
@@ -83,7 +86,9 @@ class MockFundraisingWebsite(WebServer):
             name='Mock Fundraising Website',
             url=self.url,
             script_path=mocksite_path,
-            extra_args=extra_args)
+            extra_args=extra_args,
+            start_delay=1,
+            stop_delay=1)
 
     def reset_amount(self):
         url = urljoin(self.url, '/{}/reset'.format(self.fundraiser_name))
@@ -104,7 +109,8 @@ class MockExternalAPI(WebServer):
             url=self.url,
             script_path=external_api_cli_path,
             extra_args=extra_args,
-            start_delay=5)
+            start_delay=1,
+            stop_delay=1)
 
     def start(self):
         super().start()

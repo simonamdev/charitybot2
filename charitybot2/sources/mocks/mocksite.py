@@ -1,6 +1,7 @@
 from urllib.parse import urljoin
 
 from flask import Flask, request, redirect, url_for, render_template, Markup, jsonify
+from gevent.pywsgi import WSGIServer
 from werkzeug.exceptions import abort
 
 app = Flask(__name__)
@@ -15,6 +16,7 @@ mock_justgiving_api_url = mock_justgiving_url + 'api/'
 actual_justgiving_fundraising_url = 'https://www.justgiving.com/fundraising/FrontierDev'
 actual_justgiving_campaign_url = 'https://www.justgiving.com/campaigns/charity/specialeffect/gameblast17'
 actual_justgiving_api_url = 'https://api.justgiving.com/v1/campaigns/specialeffect/gameblast17'
+http_server = WSGIServer((mocksite_url, mocksite_port), app)
 
 justgiving_amount = 100
 
@@ -106,20 +108,21 @@ def user_agent():
 
 @app.route('/destroy')
 def destroy():
-    shutdown_service()
+    stop_mocksite()
     return 'Shutting down service'
 
 
-def start_service():
-    app.run(host=mocksite_url, port=mocksite_port, debug=True)
+def start_mocksite():
+    print('Starting Mocksite')
+    global http_server
+    http_server.serve_forever()
 
 
-def shutdown_service():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
+def stop_mocksite():
+    print('Stopping Mocksite')
+    global http_server
+    http_server.stop()
 
 
 if __name__ == '__main__':
-    start_service()
+    start_mocksite()

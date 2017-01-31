@@ -8,6 +8,7 @@ from charitybot2.storage.repository import Repository
 from flask import Flask, request, jsonify, make_response, abort
 from flask import render_template
 from flask_cors import CORS
+from gevent.pywsgi import WSGIServer
 from tests.paths_for_tests import repository_db_path
 
 app = Flask(__name__)
@@ -22,6 +23,7 @@ api_full_url = api_url + ':' + str(api_port) + '/'
 debug_mode = False
 cli_debug_mode = False
 console_version = '0.1.1'
+http_server = WSGIServer((api_address, api_port), app)
 
 api_paths = {
     'api': {
@@ -118,9 +120,11 @@ def donations_info(event_name):
     if not repository.event_exists(event_name=event_name):
         abort(404)
     last_timespan = 3600  # an hour in seconds
+    current_time = int(time.time())
     last_timespan_donations = repository.get_donations_for_timespan(
         event_name=event_name,
-        timespan_start=int(time.time()) - last_timespan)
+        timespan_start=current_time - last_timespan,
+        timespan_end=current_time)
     largest_donation = repository.get_largest_donation(event_name=event_name)
     largest_donation = {
         'amount': largest_donation.get_donation_amount(),
@@ -228,7 +232,7 @@ def debug():
 def destroy():
     global debug_mode
     if debug_mode:
-        shutdown_service()
+        stop_api()
         return 'Shutting down service'
     return 'Not in debug mode - shutting down in unavailable'
 
@@ -249,14 +253,14 @@ def start_api(args):
     else:
         print('--- Starting in production mode ---')
         repository = Repository(db_path=production_repository_db_path, debug=True)
-    app.run(host=api_address, port=api_port, debug=cli_debug_mode)
+    global http_server
+    http_server.serve_forever()
 
 
-def shutdown_service():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
+def stop_api():
+    global http_server
+    http_server.stop()
+
 
 if __name__ == '__main__':
     args = create_api_process_parser().parse_args(['--debug'])
