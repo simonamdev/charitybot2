@@ -1,4 +1,6 @@
 import datetime
+from colorama import Style, Fore
+from colorama import init as init_colorama
 
 
 class InvalidLogException(Exception):
@@ -33,6 +35,7 @@ class Log:
         self._event = event
         self._message = message
         self.__validate_log()
+        init_colorama()
 
     def __str__(self):
         readable_timestamp = datetime.datetime.fromtimestamp(self.timestamp).strftime('%H:%M:%S')
@@ -47,6 +50,8 @@ class Log:
             self._message)
         if len(log_string) >= 80:
             log_string = log_string[:80]
+        if self.level == LogLevel.error:
+            log_string = Fore.RED + log_string + Style.RESET_ALL
         return log_string
 
     @property
