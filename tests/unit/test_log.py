@@ -16,7 +16,18 @@ class TestLogInstantiation:
         assert expected == actual
 
     def test_string_version_only_80_characters_long(self):
-        assert 80 == len(test_log)
+        print(test_log)
+        assert len(str(test_log)) <= 80
+
+    def test_log_with_long_string_gets_truncated_to_80(self):
+        big_log = Log(
+            timestamp=1,
+            level=LogLevel.verbose,
+            source='source',
+            event='event',
+            message='abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz')
+        print(big_log)
+        assert len(str(big_log)) == 80
 
 
 class TestLogExceptions:

@@ -1,3 +1,6 @@
+import datetime
+
+
 class InvalidLogException(Exception):
     pass
 
@@ -14,6 +17,13 @@ class LogLevel:
 
     all_levels = (verbose, info, warning, error)
 
+    level_names = (
+        'VERBOSE',
+        'INFO',
+        'WARNING',
+        'ERROR'
+    )
+
 
 class Log:
     def __init__(self, timestamp, level, source, event, message):
@@ -22,6 +32,22 @@ class Log:
         self._source = source
         self._event = event
         self._message = message
+        self.__validate_log()
+
+    def __str__(self):
+        readable_timestamp = datetime.datetime.fromtimestamp(self.timestamp).strftime('%H:%M:%S')
+        abbreviated_level = LogLevel.level_names[self.level][0:3]
+        abbreviated_source = self.source[0:5]
+        abbreviated_event = self.event[0:5]
+        log_string = '[{}]-[{}]-[{}]-[{}]: {}'.format(
+            readable_timestamp,
+            abbreviated_level,
+            abbreviated_source,
+            abbreviated_event,
+            self._message)
+        if len(log_string) >= 80:
+            log_string = log_string[:80]
+        return log_string
 
     @property
     def timestamp(self):
@@ -44,5 +70,11 @@ class Log:
         return self._message
 
     def __validate_log(self):
-        pass
-        # if None in (self.timestamp, self.)
+        if self.timestamp is None or self.timestamp < 0:
+            raise InvalidLogException('Timestamp value cannot be invalid (less than zero or null)')
+        if self.level not in LogLevel.all_levels:
+            raise InvalidLogLevelException('Log Level passed is invalid')
+        if '' in (self.source, self.event, self.message):
+            raise InvalidLogException('No Log parameters can be empty strings')
+        if None in (self.timestamp, self.level, self.source, self.event, self.message):
+            raise InvalidLogException('No Log parameters can be null')
