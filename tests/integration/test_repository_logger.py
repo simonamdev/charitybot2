@@ -1,16 +1,15 @@
-import pytest
-from charitybot2.models.log import LogLevel, Log
+from charitybot2.models.log import LogLevel
 from charitybot2.paths import production_logs_db_path
 from charitybot2.persistence.repository_logger import RepositoryLogger
 from tests.mocks import WipeSQLiteDB
 
-test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
 sqlite_db_wipe = WipeSQLiteDB(db_path=production_logs_db_path)
 
 
 class TestRepositoryLogger:
     def test_get_all_logs(self):
         sqlite_db_wipe.wipe_db()
+        test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
         test_repository_logger.log_verbose(timestamp=1, message='all log test')
         test_repository_logger.log_info(timestamp=1, message='all log test')
         test_repository_logger.log_warning(timestamp=1, message='all log test')
@@ -23,8 +22,22 @@ class TestRepositoryLogger:
             assert 'test_source' == log.source
             assert 'test_event' == log.event
 
+    def test_getting_specific_logs_without_params_returns_all_logs(self):
+        sqlite_db_wipe.wipe_db()
+        test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
+        test_repository_logger.log_verbose(timestamp=1, message='no params test')
+        test_repository_logger.log_info(timestamp=1, message='no params test')
+        all_logs = test_repository_logger.get_specific_logs()
+        assert 2 == len(all_logs)
+        for log in all_logs:
+            assert 'no params test' == log.message
+            assert 1 == log.timestamp
+            assert 'test_source' == log.source
+            assert 'test_event' == log.event
+
     def test_getting_logs_by_single_timestamp(self):
         sqlite_db_wipe.wipe_db()
+        test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
         test_repository_logger.log_verbose(timestamp=2, message='one timestamp test')
         test_repository_logger.log_info(timestamp=3, message='one timestamp test')
         timestamp_logs = test_repository_logger.get_specific_logs(timestamp=2)
@@ -36,6 +49,7 @@ class TestRepositoryLogger:
 
     def test_getting_logs_by_timestamp_range(self):
         sqlite_db_wipe.wipe_db()
+        test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
         test_repository_logger.log_verbose(timestamp=4, message='timestamp test')
         test_repository_logger.log_info(timestamp=5, message='timestamp test')
         test_repository_logger.log_warning(timestamp=6, message='timestamp test')
@@ -47,6 +61,7 @@ class TestRepositoryLogger:
 
     def test_getting_logs_by_level(self):
         sqlite_db_wipe.wipe_db()
+        test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
         test_repository_logger.log_verbose(timestamp=10, message='verbose')
         test_repository_logger.log_verbose(timestamp=10, message='verbose')
         test_repository_logger.log_verbose(timestamp=10, message='verbose')
@@ -59,6 +74,7 @@ class TestRepositoryLogger:
 
     def test_getting_logs_by_event(self):
         sqlite_db_wipe.wipe_db()
+        test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
         test_repository_logger.log_verbose(timestamp=1, message='event')
         test_repository_logger.log_info(timestamp=1, message='event')
         test_repository_logger.log_warning(timestamp=1, message='event')
@@ -71,6 +87,7 @@ class TestRepositoryLogger:
 
     def test_getting_logs_by_source(self):
         sqlite_db_wipe.wipe_db()
+        test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
         test_repository_logger.log_verbose(timestamp=1, message='source')
         test_repository_logger.log_info(timestamp=1, message='source')
         test_repository_logger.log_warning(timestamp=1, message='source')
