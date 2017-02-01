@@ -23,7 +23,8 @@ class TestEventConfigurationInstantiation:
         (test_event_configuration_values['target_amount'], test_event_configuration.target_amount),
         (test_event_configuration_values['update_delay'], test_event_configuration.update_delay),
         (test_event_configuration_values['currency_key'], test_event_configuration.currency.key),
-        (test_event_configuration_values['source_url'], test_event_configuration.source_url)
+        (test_event_configuration_values['source_url'], test_event_configuration.source_url),
+        (test_event_configuration_values, test_event_configuration.configuration_values)
     ])
     def test_retrieval(self, expected, actual):
         assert expected == actual

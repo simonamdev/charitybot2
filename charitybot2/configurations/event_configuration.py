@@ -36,3 +36,7 @@ class EventConfiguration:
     @property
     def source_url(self):
         return self._configuration_values['source_url']
+
+    @property
+    def configuration_values(self):
+        return self._configuration_values
