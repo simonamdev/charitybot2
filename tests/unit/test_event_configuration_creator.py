@@ -3,7 +3,7 @@ import copy
 import pytest
 from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.creators.event_configuration_creator import InvalidEventConfigurationException, \
-    EventConfigurationCreator, EventConfigurationCreatorFromFile
+    EventConfigurationCreator, EventConfigurationCreatorFromFile, EventConfigurationCreatorFromRepository
 from tests.paths_for_tests import valid_event_config_path
 from tests.unit.test_event_configuration import test_event_configuration_values
 
@@ -81,3 +81,13 @@ class TestEventConfigurationCreatorFromFile:
     ])
     def test_passing_valid_file_path_values_match_valid_values(self, expected, actual):
         assert expected == actual
+
+
+# class TestEventConfigurationCreatorFromRepository:
+#     @pytest.mark.parametrize('db_path', [
+#         '',
+#         'bla'
+#     ])
+#     def test_passing_incorrect_db_paths_throw_exception(self, db_path):
+#         with pytest.raises(FileNotFoundError):
+#             EventConfigurationCreatorFromRepository(db_path=db_path)
