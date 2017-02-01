@@ -24,5 +24,5 @@ class TestEventRepositoryInstantiation:
 
 class TestEventRepository:
     def test_get_event_configuration(self):
-        event_Configuration = test_event_repository.get_event_configuration(identifier='test_event_1')
-        assert isinstance(event_Configuration, EventConfiguration)
+        event_configuration = test_event_repository.get_event_configuration(identifier='test_event_1')
+        assert isinstance(event_configuration, EventConfiguration)
