@@ -10,9 +10,9 @@ from charitybot2.reporter.external_api.external_api import api_full_url
 from charitybot2.reporter.twitch import ChatBot
 from selenium import webdriver
 from tests.e2e.test_reporter_twitch import navigate_to_twitch_channel, get_twitch_chat_box_contents
-from tests.integration.test_event_loop_with_mocksite import MockEvent
-from tests.paths_for_tests import end_to_end_config_path, repository_db_path, repository_db_script_path
 from tests.mocks import AdjustTestConfig, ResetDB, MockFundraisingWebsite, MockExternalAPI
+from tests.old_integration.test_event_loop_with_mocksite import MockEvent
+from tests.paths_for_tests import end_to_end_config_path, repository_db_path, repository_db_script_path
 
 driver = None
 parser = create_cb_process_parser()

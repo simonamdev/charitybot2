@@ -1,14 +1,14 @@
-import uuid
 import time
+import uuid
 
 import pytest
-from charitybot2.events.event_loop import TwitchEventLoop
 from charitybot2.events.currency import Currency
+from charitybot2.events.event_loop import TwitchEventLoop
 from charitybot2.reporter.purrbot_config import purrbot_config
 from charitybot2.reporter.twitch import TwitchAccount, TwitchChatBot, ChatBot
 from selenium import webdriver
-from tests.integration.test_event_loop_with_mocksite import MockEvent
 from tests.mocks import MockFundraisingWebsite
+from tests.old_integration.test_event_loop_with_mocksite import MockEvent
 from tests.paths_for_tests import end_to_end_config_path
 
 

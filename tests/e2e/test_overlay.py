@@ -1,13 +1,13 @@
 import time
-import requests
 
+import requests
 from bs4 import BeautifulSoup
 from charitybot2.botconfig.event_config import EventConfigurationFromFile
 from charitybot2.events.event_loop import EventLoop
 from charitybot2.reporter.external_api.external_api import api_full_url
 from selenium import webdriver
-from tests.integration.test_event_loop_with_mocksite import MockEvent
 from tests.mocks import ResetDB, AdjustTestConfig, MockFundraisingWebsite, MockExternalAPI
+from tests.old_integration.test_event_loop_with_mocksite import MockEvent
 from tests.paths_for_tests import end_to_end_config_path, repository_db_path, repository_db_script_path
 
 driver = None
