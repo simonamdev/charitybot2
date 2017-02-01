@@ -6,10 +6,13 @@ from charitybot2.creators.event_configuration_creator import EventConfigurationC
 from charitybot2.paths import production_repository_db_path
 from charitybot2.persistence.event_repository import EventRepository, EventAlreadyRegisteredException, \
     EventNotRegisteredException
-from tests.paths_for_tests import test_repository_db_path, valid_event_config_path
+from tests.mocks import WipeSQLiteDB
+from tests.paths_for_tests import test_repository_db_path
 from tests.unit.test_event_configuration import test_event_configuration_values
 
 test_event_repository = EventRepository(debug=True)
+sqlite_db_wipe = WipeSQLiteDB(db_path=test_repository_db_path)
+sqlite_db_wipe.wipe_db()
 
 
 class TestEventRepositoryInstantiation:
@@ -27,6 +30,9 @@ class TestEventRepositoryInstantiation:
 
 
 class TestEventRepository:
+    def test_checking_if_event_is_already_registered(self):
+        assert test_event_repository.event_already_registered(identifier='registration_check') is False
+
     def test_get_event_configuration(self):
         event_configuration = test_event_repository.get_event_configuration(identifier='test_event_1')
         assert isinstance(event_configuration, EventConfiguration)
@@ -39,6 +45,7 @@ class TestEventRepository:
         retrieved_configuration = test_event_repository.get_event_configuration(test_configuration.identifier)
         assert test_configuration.identifier == retrieved_configuration.identifier
         assert test_configuration.source_url == retrieved_configuration.source_url
+        assert test_event_repository.event_already_registered(identifier='event_registration_test') is True
 
     def test_updating_event(self):
         config_values = copy.deepcopy(test_event_configuration_values)

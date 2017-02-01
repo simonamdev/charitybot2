@@ -24,11 +24,11 @@ class EventRepository(SQLiteRepository):
     def __validate_repository(self):
         event_table_create_query = 'CREATE TABLE IF NOT EXISTS `events` (' \
                                    '`eventId`          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' \
-                                   '`internalName`     TEXT NOT NULL,' \
-                                   '`externalName`     TEXT NOT NULL,' \
+                                   '`identifier`       TEXT NOT NULL,' \
+                                   '`title`            TEXT NOT NULL,' \
                                    '`startTime`        INTEGER NOT NULL,' \
                                    '`endTime`          INTEGER NOT NULL,' \
-                                   '`currencyId`       TEXT NOT NULL,' \
+                                   '`currencyKey`      TEXT NOT NULL,' \
                                    '`startingAmount`   REAL,' \
                                    '`targetAmount`     REAL NOT NULL,' \
                                    '`sourceUrl`        TEXT NOT NULL,' \
@@ -36,6 +36,14 @@ class EventRepository(SQLiteRepository):
         self.open_connection()
         self.execute_query(query=event_table_create_query, commit=True)
         self.close_connection()
+
+    def event_already_registered(self, identifier):
+        query = 'SELECT COUNT(*) FROM `events` WHERE identifier = ?'
+        data = (identifier, )
+        self.open_connection()
+        count = self.execute_query(query=query, data=data).fetchall()
+        self.close_connection()
+        return count[0][0] > 1
 
     def get_event_configuration(self, identifier):
         pass
