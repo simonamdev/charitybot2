@@ -5,10 +5,32 @@ import sys
 from time import sleep
 
 import requests
+import sqlite3
 from charitybot2.paths import mocksite_path, external_api_cli_path
 from charitybot2.reporter.external_api.external_api import api_full_url
 from neopysqlite import neopysqlite
 from urllib.parse import urljoin
+
+
+class WipeSQLiteDB:
+    def __init__(self, db_path):
+        self._db_path = db_path
+
+    def wipe_db(self):
+        print('Wiping database at path: {}'.format(self._db_path))
+        enable_pragma_query = 'PRAGMA writable_schema = 1;'
+        delete_query = 'DELETE FROM sqlite_master WHERE type IN ("table", "index", "trigger");'
+        disable_pragma_query = 'PRAGMA writeable_schema = 0;'
+        vacuum_query = 'VACUUM;'
+        connection = sqlite3.connect(self._db_path)
+        cursor = connection.cursor()
+        for query in (enable_pragma_query, delete_query, disable_pragma_query, vacuum_query):
+            print('Executing: {}'.format(query))
+            cursor.execute(query)
+        connection.commit()
+        cursor.close()
+        connection.close()
+        print('Wipe complete')
 
 
 class ResetDB:

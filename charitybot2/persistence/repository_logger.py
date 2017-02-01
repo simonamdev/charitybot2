@@ -22,5 +22,5 @@ class RepositoryLogger(Logger):
     def get_all_logs(self):
         pass
 
-    def get_specific_logs(self):
+    def get_specific_logs(self, timestamp=None, level=None, source=None, event=None):
         pass
