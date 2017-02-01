@@ -59,6 +59,24 @@ class TestRepositoryLogger:
         for log in timestamp_logs:
             assert 'timestamp test' == log.message
 
+    def test_getting_logs_by_timestamp_range_with_incorrect_parameters(self):
+        sqlite_db_wipe.wipe_db()
+        test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
+        test_repository_logger.log_verbose(timestamp=4, message='timestamp test')
+        test_repository_logger.log_info(timestamp=5, message='timestamp test')
+        test_repository_logger.log_warning(timestamp=6, message='timestamp test')
+        test_repository_logger.log_error(timestamp=7, message='timestamp test')
+        # passing timestamp range in wrong order
+        timestamp_logs = test_repository_logger.get_specific_logs(timestamp=(7, 4))
+        assert 4 == len(timestamp_logs)
+        for log in timestamp_logs:
+            assert 'timestamp test' == log.message
+        # passing more than two numbers
+        timestamp_logs = test_repository_logger.get_specific_logs(timestamp=(5, 7, 1))
+        assert 3 == len(timestamp_logs)
+        for log in timestamp_logs:
+            assert 'timestamp test' == log.message
+
     def test_getting_logs_by_level(self):
         sqlite_db_wipe.wipe_db()
         test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
@@ -68,22 +86,9 @@ class TestRepositoryLogger:
         test_repository_logger.log_info(timestamp=10, message='info')
         info_logs = test_repository_logger.get_specific_logs(level=LogLevel.info)
         assert 1 == len(info_logs)
-        assert 'info' == info_logs.message
+        assert 'info' == info_logs[0].message
         error_logs = test_repository_logger.get_specific_logs(level=LogLevel.error)
         assert 0 == len(error_logs)
-
-    def test_getting_logs_by_event(self):
-        sqlite_db_wipe.wipe_db()
-        test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
-        test_repository_logger.log_verbose(timestamp=1, message='event')
-        test_repository_logger.log_info(timestamp=1, message='event')
-        test_repository_logger.log_warning(timestamp=1, message='event')
-        event_logs = test_repository_logger.get_specific_logs(event='test_event')
-        assert 3 == len(event_logs)
-        for log in event_logs:
-            assert 'test_event' == log.message
-        non_existent_event_logs = test_repository_logger.get_specific_logs(event='blabla')
-        assert 0 == len(non_existent_event_logs)
 
     def test_getting_logs_by_source(self):
         sqlite_db_wipe.wipe_db()
@@ -96,6 +101,19 @@ class TestRepositoryLogger:
         source_logs = test_repository_logger.get_specific_logs(source='test_source')
         assert 5 == len(source_logs)
         for log in source_logs:
-            assert 'test_source' == log.message
+            assert 'source' == log.message
         non_existent_source_logs = test_repository_logger.get_specific_logs(source='foobar')
         assert 0 == len(non_existent_source_logs)
+
+    def test_getting_logs_by_event(self):
+        sqlite_db_wipe.wipe_db()
+        test_repository_logger = RepositoryLogger(source='test_source', event='test_event')
+        test_repository_logger.log_verbose(timestamp=1, message='event')
+        test_repository_logger.log_info(timestamp=1, message='event')
+        test_repository_logger.log_warning(timestamp=1, message='event')
+        event_logs = test_repository_logger.get_specific_logs(event='test_event')
+        assert 3 == len(event_logs)
+        for log in event_logs:
+            assert 'event' == log.message
+        non_existent_event_logs = test_repository_logger.get_specific_logs(event='blabla')
+        assert 0 == len(non_existent_event_logs)

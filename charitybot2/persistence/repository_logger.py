@@ -28,12 +28,12 @@ class RepositoryLogger(Logger):
     def __validate_logs_repository(self):
         self._repository.open_connection()
         table_create_query = 'CREATE TABLE IF NOT EXISTS `logs` (' \
-                             '`id`	    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' \
-                             '`time`	INTEGER NOT NULL,' \
-                             '`level`	INTEGER NOT NULL DEFAULT 0,' \
-                             '`source`  TEXT NOT NULL,' \
-                             '`event`	TEXT NOT NULL,' \
-                             '`message` TEXT NOT NULL' \
+                             '`id`	      INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' \
+                             '`timestamp` INTEGER NOT NULL,' \
+                             '`level`	  INTEGER NOT NULL DEFAULT 0,' \
+                             '`source`    TEXT NOT NULL,' \
+                             '`event`	  TEXT NOT NULL,' \
+                             '`message`   TEXT NOT NULL' \
                              ');'
         self._repository.execute_query(query=table_create_query, commit=True)
         self._repository.close_connection()
@@ -52,3 +52,40 @@ class RepositoryLogger(Logger):
     def get_specific_logs(self, timestamp=None, level=None, source=None, event=None):
         if all(param is None for param in (timestamp, level, source, event)):
             return self.get_all_logs()
+        filter_query = 'SELECT * from `logs` WHERE'
+        filter_data = []
+        filters_applied = 0
+        if timestamp is not None:
+            if isinstance(timestamp, int) or isinstance(timestamp, float):
+                filter_query += ' timestamp <= ?'
+                filter_data.append(timestamp)
+            elif isinstance(timestamp, tuple) or isinstance(timestamp, list):
+                if len(timestamp) > 2:
+                    timestamp = (timestamp[0], timestamp[1])
+                if len(timestamp) == 2 and timestamp[0] > timestamp[1]:
+                    timestamp = list(timestamp)
+                    timestamp.reverse()
+                filter_query += ' timestamp >= ? AND timestamp <= ?'
+                filter_data.extend(timestamp)
+            filters_applied += 1
+        if level is not None:
+            if filters_applied > 1:
+                filter_query += ' AND '
+            filter_query += ' level = ?'
+            filter_data.append(level)
+            filters_applied += 1
+        if source is not None:
+            if filters_applied > 1:
+                filter_query += ' AND '
+            filter_query += ' source = ?'
+            filter_data.append(source)
+            filters_applied += 1
+        if event is not None:
+            if filters_applied > 1:
+                filter_query += ' AND'
+            filter_query += ' event = ?'
+            filter_data.append(event)
+        self._repository.open_connection()
+        filtered_logs = self._repository.execute_query(query=filter_query, data=tuple(filter_data)).fetchall()
+        self._repository.close_connection()
+        return [self.__convert_row_to_log(row=row) for row in filtered_logs]
