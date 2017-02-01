@@ -9,12 +9,11 @@ from flask import Flask, request, jsonify, make_response, abort
 from flask import render_template
 from flask_cors import CORS
 from gevent.pywsgi import WSGIServer
-from tests.paths_for_tests import repository_db_path
+from tests.paths_for_tests import test_repository_db_path
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-test_repository_db_path = repository_db_path
 
 api_address = '127.0.0.1'
 api_port = 8000
