@@ -15,6 +15,7 @@ class EventRepository(SQLiteRepository):
     def __init__(self, debug=False):
         self._db_path = production_repository_db_path if not debug else test_repository_db_path
         super().__init__(db_path=self._db_path)
+        self.open_connection()
         self.__validate_repository()
 
     @property
@@ -33,23 +34,22 @@ class EventRepository(SQLiteRepository):
                                    '`targetAmount`     REAL NOT NULL,' \
                                    '`sourceUrl`        TEXT NOT NULL,' \
                                    '`updateDelay`      INTEGER);'
-        self.open_connection()
         self.execute_query(query=event_table_create_query, commit=True)
-        self.close_connection()
 
     def event_already_registered(self, identifier):
         query = 'SELECT COUNT(*) FROM `events` WHERE identifier = ?'
         data = (identifier, )
-        self.open_connection()
         count = self.execute_query(query=query, data=data).fetchall()
-        self.close_connection()
         return count[0][0] > 1
 
     def get_event_configuration(self, identifier):
-        pass
+        if not self.event_already_registered(identifier=identifier):
+            raise EventNotRegisteredException('Event by {} is not registered yet'.format(identifier))
 
     def register_event(self, event_configuration):
-        pass
+        if self.event_already_registered(identifier=event_configuration.identifier):
+            raise EventAlreadyRegisteredException('Event by {} is already registered'.format(event_configuration.identifier))
 
     def update_event(self, new_event_configuration):
-        pass
+        if not self.event_already_registered(identifier=new_event_configuration.identifier):
+            raise EventNotRegisteredException('Event by {} is not registered yet'.format(new_event_configuration.identifier))
