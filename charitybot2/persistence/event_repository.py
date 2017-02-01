@@ -3,6 +3,10 @@ from charitybot2.persistence.sqlite_repository import SQLiteRepository
 from tests.paths_for_tests import test_repository_db_path
 
 
+class EventAlreadyRegisteredException(Exception):
+    pass
+
+
 class EventNotRegisteredException(Exception):
     pass
 
@@ -34,4 +38,10 @@ class EventRepository(SQLiteRepository):
         self.close_connection()
 
     def get_event_configuration(self, identifier):
+        pass
+
+    def register_event(self, event_configuration):
+        pass
+
+    def update_event(self, new_event_configuration):
         pass
