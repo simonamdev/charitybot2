@@ -1,3 +1,4 @@
+from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
 from charitybot2.paths import production_repository_db_path
 from charitybot2.persistence.sqlite_repository import SQLiteRepository
 from tests.paths_for_tests import test_repository_db_path
@@ -45,11 +46,30 @@ class EventRepository(SQLiteRepository):
     def get_event_configuration(self, identifier):
         if not self.event_already_registered(identifier=identifier):
             raise EventNotRegisteredException('Event by {} is not registered yet'.format(identifier))
+        retrieve_query = 'SELECT * FROM `events` WHERE identifier = ?'
+        retrieve_data = (identifier, )
+        row = self.execute_query(query=retrieve_query, data=retrieve_data)
+        return self.__convert_row_to_event_configuration(row=row)
 
     def register_event(self, event_configuration):
         if self.event_already_registered(identifier=event_configuration.identifier):
             raise EventAlreadyRegisteredException('Event by {} is already registered'.format(event_configuration.identifier))
+        
 
     def update_event(self, new_event_configuration):
         if not self.event_already_registered(identifier=new_event_configuration.identifier):
             raise EventNotRegisteredException('Event by {} is not registered yet'.format(new_event_configuration.identifier))
+
+    @staticmethod
+    def __convert_row_to_event_configuration(row):
+        configuration_values = {
+            'identifier': row[1],
+            'title': row[2],
+            'start_time': row[3],
+            'end_time': row[4],
+            'currency_key': row[5],
+            'target_amount': row[7],
+            'source_url': row[8],
+            'update_delay': row[9]
+        }
+        return EventConfigurationCreator(configuration_values=configuration_values).configuration
