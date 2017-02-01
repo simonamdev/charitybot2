@@ -1,5 +1,5 @@
 import pytest
-from charitybot2.models.event import Event
+from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.paths import production_repository_db_path
 from charitybot2.persistence.event_repository import EventRepository
 from tests.paths_for_tests import test_repository_db_path
@@ -23,6 +23,6 @@ class TestEventRepositoryInstantiation:
 
 
 class TestEventRepository:
-    def test_get_event(self):
-        event = test_event_repository.get_event(identifier='test_event_1')
-        assert isinstance(event, Event)
+    def test_get_event_configuration(self):
+        event_Configuration = test_event_repository.get_event_configuration(identifier='test_event_1')
+        assert isinstance(event_Configuration, EventConfiguration)
