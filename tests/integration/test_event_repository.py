@@ -69,6 +69,22 @@ class TestEventRepository:
         retrieved_configuration = test_event_repository.get_event_configuration(test_configuration.identifier)
         assert retrieved_configuration.end_time == 999
 
+    def test_getting_event_starting_amount(self):
+        config_values = get_updated_config_values(updates={'identifier': 'start_amount_get_test'})
+        test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
+        test_event_repository.register_event(event_configuration=test_configuration)
+        assert 0 == test_event_repository.get_event_starting_amount(identifier=test_configuration.identifier)
+
+    def test_updating_event_starting_amount(self):
+        config_values = get_updated_config_values(updates={'identifier': 'start_amount_update_test'})
+        test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
+        test_event_repository.register_event(event_configuration=test_configuration)
+        assert 0 == test_event_repository.get_event_starting_amount(identifier=test_configuration.identifier)
+        test_event_repository.update_event_starting_amount(identifier=test_configuration.identifier, start_amount=500)
+        assert 500 == test_event_repository.get_event_starting_amount(identifier=test_configuration.identifier)
+        test_event_repository.update_event_starting_amount(identifier=test_configuration.identifier, start_amount=222.2)
+        assert 222.2 == test_event_repository.get_event_starting_amount(identifier=test_configuration.identifier)
+
 
 class TestEventRepositoryExceptions:
     def test_registering_already_registered_event_throws_exception(self):
@@ -83,3 +99,16 @@ class TestEventRepositoryExceptions:
         test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
         with pytest.raises(EventNotRegisteredException):
             test_event_repository.update_event(new_event_configuration=test_configuration)
+
+    def test_getting_starting_amount_of_non_existent_event_throws_exception(self):
+        config_values = get_updated_config_values(updates={'identifier': 'not_registered'})
+        test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
+        with pytest.raises(EventNotRegisteredException):
+            test_event_repository.get_event_starting_amount(identifier=test_configuration.identifier)
+
+    def test_updating_starting_amount_of_non_existent_event_throws_exception(self):
+        config_values = get_updated_config_values(updates={'identifier': 'not_registered'})
+        test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
+        with pytest.raises(EventNotRegisteredException):
+            test_event_repository.update_event_starting_amount(identifier=test_configuration.identifier, start_amount=5)
+
