@@ -83,13 +83,3 @@ class EventConfigurationCreatorFromFile(EventConfigurationCreator):
             file_path=self._file_path,
             keys_required=self._keys_required)
         return config_parser.data
-
-
-class EventConfigurationCreatorFromRepository(EventConfigurationCreator):
-    def __init__(self, db_path):
-        self._db_path = db_path
-        self._repository = None
-        # super().__init__()
-
-    def __get_data_from_repository(self):
-        pass
