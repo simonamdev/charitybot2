@@ -10,9 +10,21 @@ from tests.mocks import WipeSQLiteDB
 from tests.paths_for_tests import test_repository_db_path
 from tests.unit.test_event_configuration import test_event_configuration_values
 
-test_event_repository = EventRepository(debug=True)
+
+def get_updated_config_values(updates=None):
+    config_values = copy.deepcopy(test_event_configuration_values)
+    if updates is not None:
+        config_values.update(updates)
+    return config_values
+
 sqlite_db_wipe = WipeSQLiteDB(db_path=test_repository_db_path)
 sqlite_db_wipe.wipe_db()
+
+starting_test_config = get_updated_config_values(updates={'identifier': 'test_event_1'})
+starting_test_configuration = EventConfigurationCreator(configuration_values=starting_test_config).configuration
+
+test_event_repository = EventRepository(debug=True)
+test_event_repository.register_event(event_configuration=starting_test_configuration)
 
 
 class TestEventRepositoryInstantiation:
@@ -38,22 +50,20 @@ class TestEventRepository:
         assert isinstance(event_configuration, EventConfiguration)
 
     def test_registering_event(self):
-        config_values = copy.deepcopy(test_event_configuration_values)
-        config_values['identifier'] = 'event_registration_test'
+        config_values = get_updated_config_values(updates={'identifier': 'event_registration_test'})
         test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
         test_event_repository.register_event(event_configuration=test_configuration)
+        assert test_event_repository.event_already_registered(identifier='event_registration_test') is True
         retrieved_configuration = test_event_repository.get_event_configuration(test_configuration.identifier)
         assert test_configuration.identifier == retrieved_configuration.identifier
         assert test_configuration.source_url == retrieved_configuration.source_url
-        assert test_event_repository.event_already_registered(identifier='event_registration_test') is True
 
     def test_updating_event(self):
-        config_values = copy.deepcopy(test_event_configuration_values)
-        config_values['identifier'] = 'event_update_test'
+        config_values = get_updated_config_values(updates={'identifier': 'event_update_test'})
         test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
         assert test_configuration.end_time == 1
         test_event_repository.register_event(event_configuration=test_configuration)
-        config_values['end_time'] = 999
+        config_values = get_updated_config_values(updates={'identifier': 'event_update_test', 'end_time': 999})
         new_test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
         test_event_repository.update_event(new_event_configuration=new_test_configuration)
         retrieved_configuration = test_event_repository.get_event_configuration(test_configuration.identifier)
@@ -62,16 +72,14 @@ class TestEventRepository:
 
 class TestEventRepositoryExceptions:
     def test_registering_already_registered_event_throws_exception(self):
-        config_values = copy.deepcopy(test_event_configuration_values)
-        config_values['identifier'] = 'already_registered'
+        config_values = get_updated_config_values(updates={'identifier': 'already_registered'})
         test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
         test_event_repository.register_event(event_configuration=test_configuration)
         with pytest.raises(EventAlreadyRegisteredException):
             test_event_repository.register_event(event_configuration=test_configuration)
 
     def test_updating_non_existent_event_throws_exception(self):
-        config_values = copy.deepcopy(test_event_configuration_values)
-        config_values['identifier'] = 'not_registered'
+        config_values = get_updated_config_values(updates={'identifier': 'not_registered'})
         test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
         with pytest.raises(EventNotRegisteredException):
             test_event_repository.update_event(new_event_configuration=test_configuration)
