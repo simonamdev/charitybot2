@@ -1,0 +1,2 @@
+class EventCreator:
+    pass

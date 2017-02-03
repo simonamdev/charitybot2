@@ -1,0 +1,2 @@
+class TestEventCreatorInstantiation:
+    pass

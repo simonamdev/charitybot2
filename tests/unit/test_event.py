@@ -23,7 +23,7 @@ class TestEventInstantiation:
         assert expected == actual
 
 
-class TestEventSetting:
+class TestEventAmountSetting:
     @pytest.mark.parametrize('amount', [
         20,
         20.52

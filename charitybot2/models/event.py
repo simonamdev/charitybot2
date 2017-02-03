@@ -34,4 +34,3 @@ class Event:
     def set_amount_raised(self, amount_raised):
         self.__verify_amount_passed(amount=amount_raised)
         self._amount_raised = amount_raised
-
