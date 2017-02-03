@@ -1,6 +1,6 @@
 import pytest
 from charitybot2.configurations.event_configuration import EventConfiguration
-from charitybot2.models.event import Event
+from charitybot2.models.event import Event, InvalidEventAmountException
 from tests.unit.test_event_configuration import test_event_configuration_values
 
 test_event_configuration = EventConfiguration(configuration_values=test_event_configuration_values)
@@ -21,3 +21,30 @@ class TestEventInstantiation:
     ])
     def test_retrieval(self, expected, actual):
         assert expected == actual
+
+
+class TestEventSetting:
+    @pytest.mark.parametrize('amount', [
+        20,
+        20.52
+    ])
+    def test_setting_amounts(self, amount):
+        amount_test_event = Event(configuration=test_event_configuration)
+        amount_test_event.set_starting_amount(starting_amount=amount)
+        assert amount == amount_test_event.starting_amount
+
+
+class TestEventExceptions:
+    @pytest.mark.parametrize('amount', [
+        None,
+        -1,
+        '',
+        'bla',
+        object
+    ])
+    def test_setting_incorrect_amounts_throws_exceptions(self, amount):
+        amount_test_event = Event(configuration=test_event_configuration)
+        with pytest.raises(InvalidEventAmountException):
+            amount_test_event.set_starting_amount(starting_amount=amount)
+        with pytest.raises(InvalidEventAmountException):
+            amount_test_event.set_amount_raised(amount_raised=amount)
