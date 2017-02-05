@@ -1,12 +1,32 @@
-from charitybot2.sources.scraper import Scraper, InvalidFundraiserUrlException
+from charitybot2.sources.scraper import Scraper, InvalidFundraiserUrlException, SourceUnavailableException
+from charitybot2.storage.logger import Logger
 
 
 class MyDonateScraper(Scraper):
-    pass
+    def __init__(self, url, scraper_type, debug=False):
+        self.url = url
+        self.scraper_type = scraper_type
+        self.debug = debug
+        self.logger = Logger(source='MyDonateScraper', event='', console_only=self.debug)
+        try:
+            super().__init__(url=self.url, debug=debug)
+        except SourceUnavailableException:
+            raise InvalidFundraiserUrlException
+        self.logger.log_info('MyDonate Scraper URL: {}'.format(self.url))
+
+    def get_type(self):
+        return self.scraper_type
+
+    def scrape_amount_raised(self):
+        pass
 
 
 class MyDonateTeamsScraper(MyDonateScraper):
-    pass
+    def __init__(self, url, debug):
+        super().__init__(url=url, scraper_type='teams', debug=debug)
+
+    def scrape_amount_raised(self):
+        pass
 
 
 class MyDonateScraperCreator:

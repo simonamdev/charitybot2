@@ -14,8 +14,8 @@ class TestMydonateScraperCreation:
             scraper = MyDonateScraperCreator(url=url).get_scraper()
 
     @pytest.mark.parametrize('url,expected_type,expected_class', [
-        (mock_mydonate_teams_url,   'team', MyDonateTeamsScraper),
-        (actual_mydonate_teams_url, 'team', MyDonateTeamsScraper)
+        (mock_mydonate_teams_url,   'teams', MyDonateTeamsScraper),
+        (actual_mydonate_teams_url, 'teams', MyDonateTeamsScraper)
     ])
     def test_receiving_expected_scraper_type(self, url, expected_type, expected_class):
         scraper = MyDonateScraperCreator(url=url, debug=True).get_scraper()
