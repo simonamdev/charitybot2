@@ -5,6 +5,7 @@ from charitybot2.events.donation import Donation, InvalidArgumentException
 from charitybot2.events.event import EventInvalidException, EventAlreadyFinishedException
 from charitybot2.reporter.twitch import ChatBot
 from charitybot2.sources.justgiving import JustGivingScraperCreator
+from charitybot2.sources.mydonate import MyDonateScraperCreator
 from charitybot2.sources.scraper import SourceUnavailableException
 from charitybot2.storage.logger import Logger
 
@@ -30,9 +31,9 @@ class EventLoop:
         if 'justgiving' in source_url:
             self.logger.log_info('Initialising JustGiving Scraper')
             self.scraper = JustGivingScraperCreator(url=source_url, debug=self.debug).get_scraper()
-        elif 'mydonate.bt' in source_url:
-            self.logger.log_error('BTDonate scraper has not been implemented yet')
-            raise NotImplementedError
+        elif 'mydonate' in source_url:
+            self.logger.log_info('Initialising MyDonate Scraper')
+            self.scraper = MyDonateScraperCreator(url=source_url, debug=self.debug).get_scraper()
         else:
             self.logger.log_error('Unable to initialise scraper for event: {}'.format(self.event.name))
             raise EventInvalidException('Unable to initialise scraper for event: {}'.format(self.event.name))
