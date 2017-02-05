@@ -5,7 +5,7 @@ from charitybot2.sources.scraper import InvalidFundraiserUrlException
 
 
 class TestMydonateScraperCreation:
-    @pytest.mark.parametrize('url,except_expected', {
+    @pytest.mark.parametrize('url', {
         '',
         'http://www.mydonate.com/blablalbal'
     })
