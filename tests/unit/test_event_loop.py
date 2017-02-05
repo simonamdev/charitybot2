@@ -12,9 +12,15 @@ valid_event_config_values = EventConfigurationFromFile(file_path=valid_config_pa
 valid_event_configuration = EventConfigurationCreator(config_values=valid_event_config_values).get_event_configuration()
 
 btdonate_config_values = copy.deepcopy(valid_event_config_values)
-no_donations_config_values = copy.deepcopy(valid_event_config_values)
 btdonate_config_values['source_url'] = 'https://mydonate.bt.com/fundraisers/acpi'
 btdonate_configuration = EventConfigurationCreator(config_values=btdonate_config_values).get_event_configuration()
+
+
+def get_updated_configuration(updates=None):
+    no_donations_config_values = copy.deepcopy(valid_event_config_values)
+    if updates is not None:
+        no_donations_config_values.update(updates)
+    return EventConfigurationCreator(no_donations_config_values).get_event_configuration()
 
 
 def setup_module():
@@ -44,8 +50,7 @@ class TestEventLoopValidity:
         assert isinstance(el.scraper, JustGivingScraper)
 
     def test_current_amount_is_equal_to_starting_amount_when_no_donations_present(self):
-        no_donations_config_values['internal_name'] = 'NoDonations'
-        no_donations_config = EventConfigurationCreator(no_donations_config_values).get_event_configuration()
+        no_donations_config = get_updated_configuration({'internal_name': 'NoDonations'})
         no_donations_event = Event(event_configuration=no_donations_config, db_path=repository_db_path)
         el = EventLoop(event=no_donations_event, debug=True)
         assert 100 == el.event.get_amount_raised()
