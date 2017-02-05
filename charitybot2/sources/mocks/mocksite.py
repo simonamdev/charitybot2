@@ -95,6 +95,7 @@ def justgiving_api():
 
 @app.route('/mydonate/teams/')
 def mydonate_teams():
+    global mydonate_amount
     amount_html = '<p class="text-bold display-inline-block font-18 margin-0">' \
                   '<span class="text-primary font-20">£{}.52</span>' \
                   '</p>'.format(mydonate_amount)
@@ -119,14 +120,14 @@ def mydonate_increase():
 def justgiving_reset():
     global justgiving_amount
     justgiving_amount = 100
-    return ''
+    return 'JustGiving reset to {}'.format(justgiving_amount)
 
 
 @app.route('/mydonate/reset/')
 def mydonate_reset():
     global mydonate_amount
     mydonate_amount = 100
-    return ''
+    return 'MyDonate reset to: {}'.format(mydonate_amount)
 
 
 @app.route('/useragent')

@@ -77,21 +77,25 @@ class TestEventRunThrough:
         test_event_loop.start()
         assert cycle_count == test_event_loop.loop_count
 
-    @pytest.mark.parametrize('cycle_count', [
-        1,
-        2,
-        3
+    @pytest.mark.parametrize('event_name,cycle_count,source_url,mocksite', [
+        ('justgiving_cycle_test', 1, mock_justgiving_fundraising_url, mock_justgiving_fundraising_website),
+        ('justgiving_cycle_test', 2, mock_justgiving_fundraising_url, mock_justgiving_fundraising_website),
+        ('justgiving_cycle_test', 3, mock_justgiving_fundraising_url, mock_justgiving_fundraising_website),
+        ('mydonate_cycle_test', 1, mock_mydonate_teams_url, mock_mydonate_fundraising_website),
+        ('mydonate_cycle_test', 2, mock_mydonate_teams_url, mock_mydonate_fundraising_website),
+        ('mydonate_cycle_test', 3, mock_mydonate_teams_url, mock_mydonate_fundraising_website)
     ])
-    def test_event_amount_raised_changes_each_cycle(self, cycle_count):
+    def test_event_amount_raised_changes_each_cycle(self, event_name, cycle_count, source_url, mocksite):
         increment_amount = 50
         test_event = MockEvent(
             config_path=valid_config_path,
-            mock_name='test_three',
-            mock_end_time=int(time.time()) + (2 * cycle_count))
+            mock_name=event_name,
+            mock_end_time=int(time.time()) + (2 * cycle_count),
+            source_url=source_url)
         # first reset the amount on the mocksite so that the amount raised is back to default
-        mock_justgiving_fundraising_website.reset_amount()
+        mocksite.reset_amount()
         for i in range(0, cycle_count):
-            mock_justgiving_fundraising_website.increase_amount()
+            mocksite.increase_amount()
         test_event_loop = EventLoop(event=test_event, debug=True)
         test_event_loop.start()
         expected_amount_raised = round(100.52 + (increment_amount * cycle_count), 2)
