@@ -26,7 +26,10 @@ class MyDonateTeamsScraper(MyDonateScraper):
         super().__init__(url=url, scraper_type='teams', debug=debug)
 
     def scrape_amount_raised(self):
-        pass
+        soup = self.get_soup_from_url()
+        container = soup.find('p', {'class': 'text-bold display-inline-block font-18 margin-0'})
+        amount = container.find('span', {'class': 'text-primary font-20'}).text
+        return amount
 
 
 class MyDonateScraperCreator:

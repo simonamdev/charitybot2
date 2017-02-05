@@ -11,6 +11,10 @@ class SourceUnavailableException(Exception):
     pass
 
 
+class InvalidFundraiserUrlException(Exception):
+    pass
+
+
 class Scraper:
     def __init__(self, url, debug=False):
         self.url = url
@@ -119,7 +123,3 @@ class SoupDataSources:
 
     def get_available_source_names(self):
         return tuple(self.sources.keys())
-
-
-class InvalidFundraiserUrlException(Exception):
-    pass
