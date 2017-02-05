@@ -119,3 +119,7 @@ class SoupDataSources:
 
     def get_available_source_names(self):
         return tuple(self.sources.keys())
+
+
+class InvalidFundraiserUrlException(Exception):
+    pass

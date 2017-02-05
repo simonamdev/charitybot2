@@ -2,21 +2,17 @@ import json
 import os
 
 from charitybot2.paths import cb2_justgiving_api_key_path, debug_justgiving_api_key_path
-from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.common import exceptions as selenium_exceptions
-
+from charitybot2.sources.scraper import InvalidFundraiserUrlException
 from charitybot2.sources.url_call import ConnectionFailedException, return_random_user_agent, UrlCall
 from charitybot2.storage.logger import Logger
+from selenium import webdriver
+from selenium.common import exceptions as selenium_exceptions
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from .scraper import Scraper, SoupDataSources, SourceUnavailableException, ScraperException
 
 
 class NoFundraiserNameGivenException(Exception):
-    pass
-
-
-class InvalidFundraiserUrlException(Exception):
     pass
 
 

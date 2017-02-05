@@ -1,6 +1,7 @@
 import pytest
 from charitybot2.sources.justgiving import JustGivingScraperCreator, JustGivingFundraisingScraper, \
-    JustGivingCampaignScraper, InvalidFundraiserUrlException, JustGivingAPIScraper
+    JustGivingCampaignScraper, JustGivingAPIScraper
+from charitybot2.sources.scraper import InvalidFundraiserUrlException
 from charitybot2.sources.mocks.mocksite import mock_justgiving_fundraising_url, mock_justgiving_campaign_url, \
     mock_justgiving_api_url, actual_justgiving_api_url, actual_justgiving_campaign_url, \
     actual_justgiving_fundraising_url
