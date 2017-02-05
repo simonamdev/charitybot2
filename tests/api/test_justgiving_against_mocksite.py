@@ -1,7 +1,6 @@
 import pytest
 from charitybot2.sources.justgiving import JustGivingScraperCreator
-from charitybot2.sources.mocks.mocksite import mock_justgiving_fundraising_url, mock_justgiving_campaign_url, \
-    actual_justgiving_campaign_url, actual_justgiving_fundraising_url, mock_justgiving_api_url, \
+from charitybot2.sources.mocks.mocksite import mock_justgiving_fundraising_url, actual_justgiving_fundraising_url, mock_justgiving_api_url, \
     actual_justgiving_api_url
 from charitybot2.sources.scraper import SourceUnavailableException
 from charitybot2.sources.url_call import UrlCall, ConnectionFailedException
