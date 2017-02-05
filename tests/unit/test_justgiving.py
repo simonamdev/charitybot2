@@ -1,6 +1,7 @@
 import pytest
 from charitybot2.sources.justgiving import JustGivingScraperCreator, JustGivingFundraisingScraper, \
-    JustGivingCampaignScraper, InvalidFundraiserUrlException, JustGivingAPIScraper
+    JustGivingCampaignScraper, JustGivingAPIScraper
+from charitybot2.sources.scraper import InvalidFundraiserUrlException
 from charitybot2.sources.mocks.mocksite import mock_justgiving_fundraising_url, mock_justgiving_campaign_url, \
     mock_justgiving_api_url, actual_justgiving_api_url, actual_justgiving_campaign_url, \
     actual_justgiving_fundraising_url
@@ -23,7 +24,7 @@ class TestJustGivingScraperCreation:
         (actual_justgiving_campaign_url,    'campaign',    JustGivingCampaignScraper),
         (actual_justgiving_api_url,         'api',         JustGivingAPIScraper)
     ])
-    def test_receiving_expected_mock_fundraising_scraper_type(self, url, expected_type, expected_class):
+    def test_receiving_expected_fundraising_scraper_type(self, url, expected_type, expected_class):
         scraper = JustGivingScraperCreator(url=url, debug=True).get_scraper()
         assert isinstance(scraper, expected_class)
         assert expected_type == scraper.get_type()

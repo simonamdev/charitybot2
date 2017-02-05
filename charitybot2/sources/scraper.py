@@ -11,6 +11,10 @@ class SourceUnavailableException(Exception):
     pass
 
 
+class InvalidFundraiserUrlException(Exception):
+    pass
+
+
 class Scraper:
     def __init__(self, url, debug=False):
         self.url = url

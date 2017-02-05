@@ -91,11 +91,14 @@ class MockFundraisingWebsite(WebServer):
             stop_delay=1)
 
     def reset_amount(self):
+        print('[MOCK] Resetting amount')
         url = urljoin(self.url, '/{}/reset'.format(self.fundraiser_name))
         response = requests.get(url=url)
         assert 200 == response.status_code
+        assert '{} reset to: 100'.format(self.fundraiser_name.lower())
 
     def increase_amount(self):
+        print('[MOCK] Increasing amount')
         response = requests.get(url=self.url + '/{}/increase'.format(self.fundraiser_name))
         assert 200 == response.status_code
 
