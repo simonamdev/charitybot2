@@ -16,6 +16,11 @@ mock_justgiving_api_url = mock_justgiving_url + 'api/'
 actual_justgiving_fundraising_url = 'https://www.justgiving.com/fundraising/FrontierDev'
 actual_justgiving_campaign_url = 'https://www.justgiving.com/campaigns/charity/specialeffect/gameblast17'
 actual_justgiving_api_url = 'https://api.justgiving.com/v1/campaigns/specialeffect/gameblast17'
+
+mock_mydonate_url = urljoin(mocksite_full_url, '/mydonate/')
+mock_mydonate_teams_url = mock_mydonate_url + 'teams'
+actual_mydonate_teams_url = 'https://mydonate.bt.com/teams/hos'
+
 http_server = WSGIServer((mocksite_url, mocksite_port), app)
 
 justgiving_amount = 100
