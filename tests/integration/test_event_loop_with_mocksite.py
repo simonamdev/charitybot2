@@ -81,9 +81,9 @@ class TestEventRunThrough:
         ('justgiving_cycle_test', 1, mock_justgiving_fundraising_url, mock_justgiving_fundraising_website),
         ('justgiving_cycle_test', 2, mock_justgiving_fundraising_url, mock_justgiving_fundraising_website),
         ('justgiving_cycle_test', 3, mock_justgiving_fundraising_url, mock_justgiving_fundraising_website),
-        ('mydonate_cycle_test', 1, mock_mydonate_teams_url, mock_mydonate_fundraising_website),
-        ('mydonate_cycle_test', 2, mock_mydonate_teams_url, mock_mydonate_fundraising_website),
-        ('mydonate_cycle_test', 3, mock_mydonate_teams_url, mock_mydonate_fundraising_website)
+        ('mydonate_cycle_test',   1, mock_mydonate_teams_url,         mock_mydonate_fundraising_website),
+        ('mydonate_cycle_test',   2, mock_mydonate_teams_url,         mock_mydonate_fundraising_website),
+        ('mydonate_cycle_test',   3, mock_mydonate_teams_url,         mock_mydonate_fundraising_website)
     ])
     def test_event_amount_raised_changes_each_cycle(self, event_name, cycle_count, source_url, mocksite):
         increment_amount = 50
@@ -101,18 +101,24 @@ class TestEventRunThrough:
         expected_amount_raised = round(100.52 + (increment_amount * cycle_count), 2)
         assert expected_amount_raised == test_event_loop.event.get_amount_raised()
 
-    def test_event_amount_raising_only_when_amount_is_different(self):
-        test_event = MockEvent(config_path=valid_config_path, mock_name='event_loop_test', mock_end_time=int(time.time()) + 10)
-        mock_justgiving_fundraising_website.reset_amount()
+    @pytest.mark.parametrize('event_name,source_url,mocksite', [
+        ('justgiving_empty_cycle_test', mock_justgiving_fundraising_url, mock_justgiving_fundraising_website),
+        ('mydonate_empty_cycle_test',   mock_mydonate_teams_url,         mock_mydonate_fundraising_website)
+    ])
+    def test_event_amount_raising_only_when_amount_is_different(self, event_name, source_url, mocksite):
+        test_event = MockEvent(
+            config_path=valid_config_path,
+            mock_name=event_name,
+            mock_end_time=int(time.time()) + 10,
+            source_url=source_url)
+        mocksite.reset_amount()
         test_event_loop = EventLoop(event=test_event, debug=True)
-        # avoid first check
-        test_event_loop.check_for_donation()
         # do two cycles without changing amount, amount should be the same
         test_event_loop.check_for_donation()
         assert 100.52 == test_event_loop.event.get_amount_raised()
         test_event_loop.check_for_donation()
         assert 100.52 == test_event_loop.event.get_amount_raised()
         # Change the amount
-        mock_justgiving_fundraising_website.increase_amount()
+        mocksite.increase_amount()
         test_event_loop.check_for_donation()
         assert 150.52 == test_event_loop.event.get_amount_raised()
