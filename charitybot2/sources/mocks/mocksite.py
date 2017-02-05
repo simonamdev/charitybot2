@@ -19,6 +19,7 @@ actual_justgiving_api_url = 'https://api.justgiving.com/v1/campaigns/specialeffe
 http_server = WSGIServer((mocksite_url, mocksite_port), app)
 
 justgiving_amount = 100
+mydonate_amount = 100
 
 
 @app.route('/')
@@ -87,6 +88,14 @@ def justgiving_api():
     return jsonify(api_return)
 
 
+@app.route('/mydonate/teams/')
+def mydonate_teams():
+    amount_html = '<p class="text-bold display-inline-block font-18 margin-0">' \
+                  '<span class="text-primary font-20">£{}.52</span>' \
+                  '</p>'.format(mydonate_amount)
+    return render_template('amount.html', amount_html=Markup(amount_html))
+
+
 @app.route('/justgiving/increase/')
 def justgiving_increase():
     global justgiving_amount
@@ -94,10 +103,24 @@ def justgiving_increase():
     return redirect(url_for('justgiving'))
 
 
+@app.route('/mydonate/increase/')
+def mydonate_increase():
+    global mydonate_amount
+    mydonate_amount += 50
+    return redirect(url_for('mydonate_teams'))
+
+
 @app.route('/justgiving/reset/')
 def justgiving_reset():
     global justgiving_amount
     justgiving_amount = 100
+    return ''
+
+
+@app.route('/mydonate/reset/')
+def mydonate_reset():
+    global mydonate_amount
+    mydonate_amount = 100
     return ''
 
 
