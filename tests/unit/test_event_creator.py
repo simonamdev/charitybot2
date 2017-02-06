@@ -14,6 +14,12 @@ def get_test_configuration(updated_values=None):
     return test_event_configuration_creator.configuration
 
 
+class TestEventInstantiation:
+    def test_default_debug_is_false(self):
+        event_creator = EventCreator(event_configuration=get_test_configuration())
+        assert event_creator.debug is False
+
+
 class TestEventCreation:
     def test_creating_unregistered_event(self):
         registration_test_configuration = get_test_configuration({'identifier': 'registration_test'})

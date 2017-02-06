@@ -3,9 +3,14 @@ from charitybot2.creators.event_configuration_creator import InvalidEventConfigu
 
 
 class EventCreator:
-    def __init__(self, event_configuration):
+    def __init__(self, event_configuration, debug=False):
         self._event_configuration = event_configuration
+        self._debug = debug
         self.__validate_event_configuration()
+
+    @property
+    def debug(self):
+        return self._debug
 
     def __validate_event_configuration(self):
         if not isinstance(self._event_configuration, EventConfiguration):
