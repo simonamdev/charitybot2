@@ -18,7 +18,7 @@ class EventCreator:
         return self._debug
 
     def get_event(self):
-        if self.__event_is_registered():
+        if self.event_is_registered():
             self._update_event()
         else:
             self._register_event()
@@ -34,9 +34,8 @@ class EventCreator:
     def _update_event(self):
         pass
 
-    def __event_is_registered(self):
+    def event_is_registered(self):
         event_repository = EventRepository(debug=self.debug)
-        event_repository.open_connection()
         registered = event_repository.event_already_registered(identifier=self._configuration.identifier)
         event_repository.close_connection()
         if registered:
