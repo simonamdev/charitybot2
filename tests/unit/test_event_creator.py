@@ -2,6 +2,7 @@ import pytest
 from charitybot2.creators.event_configuration_creator import InvalidEventConfigurationException, \
     EventConfigurationCreator
 from charitybot2.creators.event_creator import EventCreator
+from charitybot2.models.event import Event
 from tests.unit.test_event_configuration_creator import get_updated_test_config_values
 
 test_event_configuration = get_updated_test_config_values()
@@ -19,6 +20,7 @@ class TestEventCreation:
         event_creator = EventCreator(event_configuration=test_event_configuration)
         assert event_creator.event_is_registered(event_identifier=registration_test_configuration.identifier) is False
         new_event = event_creator.get_event()
+        assert isinstance(new_event, Event)
         assert new_event.configuration.identifier == registration_test_configuration.identifier
         assert event_creator.event_is_registered(event_identifier=registration_test_configuration.identifier) is True
 
@@ -26,6 +28,7 @@ class TestEventCreation:
         update_test_configuration = get_test_configuration({'identifier': 'update_event_test'})
         event_creator = EventCreator(event_configuration=update_test_configuration)
         test_event = event_creator.get_event()
+        assert isinstance(test_event, Event)
         assert event_creator.event_is_registered(test_event) is True
         update_test_configuration = get_test_configuration({'end_time': 999})
         event_creator = EventCreator(event_configuration=update_test_configuration)
