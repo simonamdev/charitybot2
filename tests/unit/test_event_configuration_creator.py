@@ -8,9 +8,10 @@ from tests.paths_for_tests import valid_event_config_path
 from tests.unit.test_event_configuration import test_event_configuration_values
 
 
-def get_updated_test_config_values(updated_values):
+def get_updated_test_config_values(updated_values=None):
     valid_config_values = copy.deepcopy(test_event_configuration_values)
-    valid_config_values.update(updated_values)
+    if updated_values is not None:
+        valid_config_values.update(updated_values)
     return valid_config_values
 
 test_event_configuration = EventConfiguration(configuration_values=test_event_configuration_values)
