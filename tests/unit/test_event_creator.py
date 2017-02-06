@@ -41,7 +41,8 @@ class TestEventCreation:
         test_event = event_creator.get_event()
         assert event_creator.event_is_registered() is True
         assert isinstance(test_event, Event)
-        update_test_configuration = get_test_configuration({'end_time': 999})
+        update_test_configuration = get_test_configuration(
+            {'identifier': 'update_event_test', 'end_time': 999})
         event_creator = EventCreator(event_configuration=update_test_configuration, debug=True)
         assert event_creator.event_is_registered() is True
         test_event = event_creator.get_event()

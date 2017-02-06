@@ -29,10 +29,15 @@ class EventCreator:
             raise InvalidEventConfigurationException('Event creator can only accept Event Configurations')
 
     def _register_event(self):
-        pass
+        event_repository = EventRepository(debug=self.debug)
+        event_repository.register_event(event_configuration=self._configuration)
+        # TODO: See if starting amount should be set here
+        event_repository.close_connection()
 
     def _update_event(self):
-        pass
+        event_repository = EventRepository(debug=self.debug)
+        event_repository.update_event(new_event_configuration=self._configuration)
+        event_repository.close_connection()
 
     def event_is_registered(self):
         event_repository = EventRepository(debug=self.debug)
