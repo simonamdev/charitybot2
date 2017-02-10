@@ -17,4 +17,8 @@ def teardown_module():
 class TestStartup:
     def test_getting_identity_string(self):
         response = private_api_calls.get_index()
+        assert isinstance(response['identity'], str)
         assert private_api_identity == response['identity']
+        assert isinstance(response['version'], int)
+        assert 1 == response['version']
+        assert isinstance(response['paths'], dict)

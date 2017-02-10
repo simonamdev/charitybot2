@@ -23,7 +23,10 @@ def index():
     return jsonify(
         {
             'identity': private_api_identity,
-            'version': private_api_version
+            'version': private_api_version,
+            'paths': {
+
+            }
         }
     )
 
