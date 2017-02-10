@@ -1,4 +1,5 @@
 from charitybot2.api_calls.private_api_calls import PrivateApiCalls
+from charitybot2.private_api.private_api import private_api_identity
 from tests.mocks import MockPrivateAPI
 
 mock_private_api = MockPrivateAPI()
@@ -14,6 +15,6 @@ def teardown_module():
 
 
 class TestStartup:
-    def test_index_page_returns_200(self):
+    def test_getting_identity_string(self):
         response = private_api_calls.get_index()
-        assert 200 == response.status_code
+        assert private_api_identity == response['identity']

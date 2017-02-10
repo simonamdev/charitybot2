@@ -13,6 +13,7 @@ private_api_version = 1
 
 debug_mode = False
 http_server = WSGIServer((private_api_address, private_api_port), app)
+private_api_identity = 'CB2 Private API'
 
 
 @app.route('/')
@@ -21,7 +22,7 @@ http_server = WSGIServer((private_api_address, private_api_port), app)
 def index():
     return jsonify(
         {
-            'identity': 'CB2 Private API',
+            'identity': private_api_identity,
             'version': private_api_version
         }
     )

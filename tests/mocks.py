@@ -91,7 +91,7 @@ class WebServer:
         self.web_server.kill()
 
     def __destroy(self):
-        url = urljoin(self.url, '/destroy')
+        url = urljoin(self.url, '/destroy/')
         print('Destroying process for: {} at: {}'.format(self.name, url))
         response = requests.get(url)
         if not response.status_code == 200:

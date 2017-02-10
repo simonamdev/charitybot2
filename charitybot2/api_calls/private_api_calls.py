@@ -1,3 +1,5 @@
+import json
+
 from charitybot2.private_api.private_api import private_api_full_url
 from charitybot2.sources.url_call import UrlCall
 
@@ -7,4 +9,4 @@ class PrivateApiCalls:
         self._timeout = timeout
 
     def get_index(self):
-        return UrlCall(url=private_api_full_url, timeout=self._timeout).get()
+        return json.loads(UrlCall(url=private_api_full_url, timeout=self._timeout).get().content.decode('utf-8'))
