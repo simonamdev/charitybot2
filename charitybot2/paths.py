@@ -23,6 +23,8 @@ mocksite_path = os.path.join(current_directory, 'sources', 'mocks', 'mocksite.py
 external_api_cli_path = os.path.join(root_directory, 'api.py')
 external_api_script_path = os.path.join(current_directory, 'reporter', 'external_api', 'external_api.py')
 
+private_api_script_path = os.path.join(current_directory, 'private_api', 'private_api.py')
+
 # Other file paths
 status_console_file_path = os.path.join(current_directory, 'reporter', 'status_console', 'console.html')
 user_agents_file_path = os.path.join(current_directory, 'sources', 'user_agents.txt')

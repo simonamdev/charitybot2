@@ -6,7 +6,8 @@ from time import sleep
 
 import requests
 import sqlite3
-from charitybot2.paths import mocksite_path, external_api_cli_path
+from charitybot2.paths import mocksite_path, external_api_cli_path, private_api_script_path
+from charitybot2.private_api.private_api import private_api_full_url
 from charitybot2.reporter.external_api.external_api import api_full_url
 from neopysqlite import neopysqlite
 from urllib.parse import urljoin
@@ -58,7 +59,7 @@ class ResetDB:
 
 
 class WebServer:
-    def __init__(self, name, url, script_path, extra_args=(), destroy_on_stop=True, start_delay=3, stop_delay=3):
+    def __init__(self, name, url, script_path, extra_args=(), destroy_on_stop=True, start_delay=2, stop_delay=2):
         self.name = name
         self.url = url
         self.script_path = script_path
@@ -122,29 +123,22 @@ class MockFundraisingWebsite(WebServer):
         assert 200 == response.status_code
 
 
-class MockExternalAPI(WebServer):
-    def __init__(self, extra_args=(), enter_debug=True):
-        self.url = api_full_url
-        self.enter_debug = enter_debug
+class MockAPI(WebServer):
+    def __init__(self, name, url, api_script_path, extra_args=()):
         super().__init__(
-            name='Mock External API',
-            url=self.url,
-            script_path=external_api_cli_path,
-            extra_args=extra_args,
-            start_delay=1,
-            stop_delay=1)
+            name=name,
+            url=url,
+            script_path=api_script_path,
+            extra_args=extra_args)
 
-    def start(self):
-        super().start()
-        if self.enter_debug:
-            self.__enter_debug_mode()
 
-    def __enter_debug_mode(self):
-        print('Entering debug mode for: {}'.format(self.name))
-        url = urljoin(self.url, 'debug')
-        response = requests.get(url)
-        assert 200 == response.status_code
-        assert 'Entered API debug mode' == response.content.decode('utf-8')
+class MockPrivateAPI(MockAPI):
+    def __init__(self, args=()):
+        super().__init__(
+            name='Mock Private API',
+            url=private_api_full_url,
+            api_script_path=private_api_script_path,
+            extra_args=args)
 
 
 class AdjustTestConfig:
