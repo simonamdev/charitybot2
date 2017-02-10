@@ -21,4 +21,7 @@ class TestStartup:
         assert private_api_identity == response['identity']
         assert isinstance(response['version'], int)
         assert 1 == response['version']
-        assert isinstance(response['paths'], dict)
+
+    def test_getting_event_info_of_non_existent_returns_false(self):
+        response = private_api_calls.get_event_existence('foobar')
+        assert False is response

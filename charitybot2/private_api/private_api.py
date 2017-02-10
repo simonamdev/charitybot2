@@ -1,6 +1,7 @@
 import argparse
 
-from flask import Flask, jsonify
+from charitybot2.persistence.event_repository import EventRepository
+from flask import Flask, jsonify, g
 from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
@@ -14,6 +15,21 @@ private_api_version = 1
 debug_mode = False
 http_server = WSGIServer((private_api_address, private_api_port), app)
 private_api_identity = 'CB2 Private API'
+event_repository = EventRepository(debug=debug_mode)
+
+
+def get_event_repository():
+    event_repo = getattr(g, '_event_repository', None)
+    if event_repo is None:
+        event_repo = g._event_repository = EventRepository(debug=debug_mode)
+    return event_repo
+
+
+@app.teardown_appcontext
+def close_connection(exception):
+    event_repo = getattr(g, '_event_repository', None)
+    if event_repo is not None:
+        event_repo.close_connection()
 
 
 @app.route('/')
@@ -23,10 +39,16 @@ def index():
     return jsonify(
         {
             'identity': private_api_identity,
-            'version': private_api_version,
-            'paths': {
+            'version': private_api_version
+        }
+    )
 
-            }
+
+@app.route('/api/v1/event/<event_identifier>/')
+def event_info(event_identifier):
+    return jsonify(
+        {
+            'event_exists': get_event_repository().event_already_registered(identifier=event_identifier)
         }
     )
 
@@ -49,8 +71,13 @@ def create_api_process_parser():
 def start_api(args):
     global debug_mode
     debug_mode = args.debug
+    global event_repository
+    event_repository = EventRepository(debug=debug_mode)
     global http_server
-    http_server.serve_forever()
+    if debug_mode:
+        app.run(host=private_api_address, port=private_api_port, debug=True)
+    else:
+        http_server.serve_forever()
 
 
 def stop_api():
