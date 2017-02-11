@@ -11,7 +11,7 @@ Instead of doing this manually, CB2 takes care of checking the donation amount o
 updating the amount raised automatically on the stream overlay, helping the
 charity streamer focus on what they do best: entertaining viewers in aid of a good cause.
 
-CB2 also offers real time feedback 
+CB2 also offers real time feedback to the streamer on their specific fundraiser's page, such as the largest/average donation amount and the progess of donations over time.
 
 ## CharityBot2 beta tests
 
