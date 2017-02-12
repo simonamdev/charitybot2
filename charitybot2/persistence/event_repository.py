@@ -14,7 +14,7 @@ class EventNotRegisteredException(Exception):
 
 class EventRepository(SQLiteRepository):
     def __init__(self, debug=False):
-        self._db_path = production_repository_db_path if not debug else test_repository_db_path
+        self._db_path = production_repository_db_path if not debug else ':memory:'
         super().__init__(db_path=self._db_path)
         self.open_connection()
         self.__validate_repository()

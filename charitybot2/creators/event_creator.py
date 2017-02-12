@@ -11,6 +11,7 @@ class EventCreator:
         self._configuration = event_configuration
         self._debug = debug
         self.__validate_event_configuration()
+        self._event_repository = EventRepository(debug=self.debug)
         self._logger = Logger(source='EventCreator', event=self._configuration.identifier)
 
     @property
@@ -29,20 +30,14 @@ class EventCreator:
             raise InvalidEventConfigurationException('Event creator can only accept Event Configurations')
 
     def _register_event(self):
-        event_repository = EventRepository(debug=self.debug)
-        event_repository.register_event(event_configuration=self._configuration)
+        self._event_repository.register_event(event_configuration=self._configuration)
         # TODO: See if starting amount should be set here
-        event_repository.close_connection()
 
     def _update_event(self):
-        event_repository = EventRepository(debug=self.debug)
-        event_repository.update_event(new_event_configuration=self._configuration)
-        event_repository.close_connection()
+        self._event_repository.update_event(new_event_configuration=self._configuration)
 
     def event_is_registered(self):
-        event_repository = EventRepository(debug=self.debug)
-        registered = event_repository.event_already_registered(identifier=self._configuration.identifier)
-        event_repository.close_connection()
+        registered = self._event_repository.event_already_registered(identifier=self._configuration.identifier)
         if registered:
             self._logger.log_info(timestamp=int(time.time()), message='Event is already registered')
         else:

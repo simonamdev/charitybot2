@@ -8,8 +8,8 @@ from tests.paths_for_tests import test_repository_db_path
 from tests.unit.test_event_configuration_creator import get_updated_test_config_values
 
 
-sqlite_db_wipe = WipeSQLiteDB(db_path=test_repository_db_path)
-sqlite_db_wipe.wipe_db()
+# sqlite_db_wipe = WipeSQLiteDB(db_path=test_repository_db_path)
+# sqlite_db_wipe.wipe_db()
 
 
 def get_test_configuration(updated_values=None):

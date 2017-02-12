@@ -17,8 +17,8 @@ def get_updated_config_values(updates=None):
         config_values.update(updates)
     return config_values
 
-sqlite_db_wipe = WipeSQLiteDB(db_path=test_repository_db_path)
-sqlite_db_wipe.wipe_db()
+# sqlite_db_wipe = WipeSQLiteDB(db_path=test_repository_db_path)
+# sqlite_db_wipe.wipe_db()
 
 starting_test_config = get_updated_config_values(updates={'identifier': 'test_event_1'})
 starting_test_configuration = EventConfigurationCreator(configuration_values=starting_test_config).configuration
@@ -33,7 +33,7 @@ class TestEventRepositoryInstantiation:
         assert event_repository.debug is False
 
     @pytest.mark.parametrize('debug,path', [
-        (True, test_repository_db_path),
+        (True, ':memory:'),
         (False, production_repository_db_path)
     ])
     def test_repository_paths(self, debug, path):

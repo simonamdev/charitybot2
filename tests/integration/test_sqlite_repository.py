@@ -27,7 +27,7 @@ class TestSQLiteRepositoryExceptions:
             SQLiteRepository(db_path='bla/bla.db')
 
 
-test_repository = SQLiteRepository(db_path=test_repository_db_path)
+test_repository = SQLiteRepository(db_path=':memory:')
 
 
 class TestSQLiteRepositoryConnections:

@@ -30,9 +30,9 @@ class SQLiteRepository:
     def __validate_database(self):
         if not isinstance(self._db_path, str):
             raise InvalidRepositoryException('Given path is not a string')
-        if '.db' not in self._db_path and '.sqlite' not in self._db_path:
+        if '.db' not in self._db_path and '.sqlite' not in self._db_path and not self._db_path == ':memory:':
             raise InvalidRepositoryException('Given path does not lead to a valid database file')
-        if not os.path.isfile(self._db_path):
+        if not os.path.isfile(self._db_path) and not self._db_path == ':memory:':
             raise FileNotFoundError('Database file not found at given DB Path')
 
     def open_connection(self):
