@@ -1,9 +1,5 @@
 from charitybot2.models.log import LogLevel
-from charitybot2.paths import production_logs_db_path
 from charitybot2.persistence.repository_logger import RepositoryLogger
-from tests.mocks import WipeSQLiteDB
-
-# sqlite_db_wipe = WipeSQLiteDB(db_path=production_logs_db_path)
 
 
 class TestRepositoryLogger:

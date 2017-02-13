@@ -1,7 +1,5 @@
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
-from charitybot2.paths import production_repository_db_path
-from charitybot2.persistence.sqlite_repository import SQLiteRepository
-from tests.paths_for_tests import test_repository_db_path
+from charitybot2.persistence.sqlite_repository import SQLiteRepository, InvalidDatabasePathException
 
 
 class EventAlreadyRegisteredException(Exception):
@@ -12,9 +10,11 @@ class EventNotRegisteredException(Exception):
     pass
 
 
-class EventRepository(SQLiteRepository):
-    def __init__(self, debug=False):
-        self._db_path = production_repository_db_path if not debug else ':memory:'
+class EventSQLiteRepository(SQLiteRepository):
+    def __init__(self, db_path='', debug=False):
+        self._db_path = db_path
+        self._debug = debug
+        self.__validate_path()
         super().__init__(db_path=self._db_path)
         self.open_connection()
         self.__validate_repository()
@@ -22,6 +22,12 @@ class EventRepository(SQLiteRepository):
     @property
     def db_path(self):
         return self._db_path
+
+    def __validate_path(self):
+        if self._debug:
+            self._db_path = ':memory:'
+        if self._db_path in ('', None) and not self._debug:
+            raise InvalidDatabasePathException('Cannot have empty DB path in production mode')
 
     def __validate_repository(self):
         event_table_create_query = 'CREATE TABLE IF NOT EXISTS `events` (' \

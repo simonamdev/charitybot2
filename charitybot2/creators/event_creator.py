@@ -2,16 +2,15 @@ import time
 from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.creators.event_configuration_creator import InvalidEventConfigurationException
 from charitybot2.models.event import Event
-from charitybot2.persistence.event_repository import EventRepository
 from charitybot2.persistence.logger import Logger
 
 
 class EventCreator:
-    def __init__(self, event_configuration, debug=False):
+    def __init__(self, event_configuration, event_repository, debug=False):
         self._configuration = event_configuration
         self._debug = debug
         self.__validate_event_configuration()
-        self._event_repository = EventRepository(debug=self.debug)
+        self._event_repository = event_repository
         self._logger = Logger(source='EventCreator', event=self._configuration.identifier)
 
     @property

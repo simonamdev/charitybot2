@@ -1,6 +1,7 @@
 import argparse
 
-from charitybot2.persistence.event_repository import EventRepository
+from charitybot2.paths import production_repository_db_path
+from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 from flask import Flask, jsonify, g
 from gevent.pywsgi import WSGIServer
 
@@ -15,13 +16,13 @@ private_api_version = 1
 debug_mode = False
 http_server = WSGIServer((private_api_address, private_api_port), app)
 private_api_identity = 'CB2 Private API'
-event_repository = EventRepository(debug=debug_mode)
+event_repository = EventSQLiteRepository(db_path=production_repository_db_path, debug=debug_mode)
 
 
 def get_event_repository():
     event_repo = getattr(g, '_event_repository', None)
     if event_repo is None:
-        event_repo = g._event_repository = EventRepository(debug=debug_mode)
+        event_repo = g._event_repository = EventSQLiteRepository(None, debug=debug_mode)
     return event_repo
 
 
@@ -72,7 +73,7 @@ def start_api(args):
     global debug_mode
     debug_mode = args.debug
     global event_repository
-    event_repository = EventRepository(debug=debug_mode)
+    event_repository = EventSQLiteRepository(None, debug=debug_mode)
     global http_server
     if debug_mode:
         app.run(host=private_api_address, port=private_api_port, debug=True)

@@ -11,6 +11,10 @@ class InvalidRepositoryQueryException(Exception):
     pass
 
 
+class InvalidDatabasePathException(Exception):
+    pass
+
+
 class SQLiteRepository:
     def __init__(self, db_path, debug=False):
         self._db_path = db_path
