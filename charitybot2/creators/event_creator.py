@@ -6,27 +6,30 @@ from charitybot2.persistence.logger import Logger
 
 
 class EventCreator:
-    def __init__(self, event_configuration, event_repository, debug=False):
+    def __init__(self, event_configuration):
         self._configuration = event_configuration
-        self._debug = debug
         self.__validate_event_configuration()
+
+    def get_event(self):
+        return Event(configuration=self._configuration)
+
+    def __validate_event_configuration(self):
+        if not isinstance(self._configuration, EventConfiguration):
+            raise InvalidEventConfigurationException('Event creator can only accept Event Configurations')
+
+
+class EventRegister(EventCreator):
+    def __init__(self, event_configuration, event_repository):
+        super().__init__(event_configuration=event_configuration)
         self._event_repository = event_repository
         self._logger = Logger(source='EventCreator', event=self._configuration.identifier)
-
-    @property
-    def debug(self):
-        return self._debug
 
     def get_event(self):
         if self.event_is_registered():
             self._update_event()
         else:
             self._register_event()
-        return Event(configuration=self._configuration)
-
-    def __validate_event_configuration(self):
-        if not isinstance(self._configuration, EventConfiguration):
-            raise InvalidEventConfigurationException('Event creator can only accept Event Configurations')
+        return super().get_event()
 
     def _register_event(self):
         self._event_repository.register_event(event_configuration=self._configuration)
