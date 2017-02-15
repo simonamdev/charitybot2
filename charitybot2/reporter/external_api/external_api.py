@@ -62,6 +62,11 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
+@app.route('/')
+def landing():
+    return render_template('index.html')
+
+
 @app.route('/api/v1/', methods=['GET'])
 def index():
     return jsonify(
