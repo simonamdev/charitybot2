@@ -62,3 +62,20 @@ class TestEventRegistration:
         registration_test_configuration = get_test_configuration(updated_values=updated_values)
         response = private_api_calls.register_event(event_configuration=registration_test_configuration)
         assert True is response
+
+    def test_updating_new_event(self):
+        updated_values = {
+            'identifier': 'update_test',
+            'title': 'Update Test Event'
+        }
+        registration_test_configuration = get_test_configuration(updated_values=updated_values)
+        response = private_api_calls.register_event(event_configuration=registration_test_configuration)
+        assert True is response
+        updated_values = {
+            'identifier': 'update_test',
+            'start_time': 500,
+            'end_time': 1000
+        }
+        update_test_configuration = get_test_configuration(updated_values=updated_values)
+        response = private_api_calls.update_event(event_configuration=update_test_configuration)
+        assert True is response
