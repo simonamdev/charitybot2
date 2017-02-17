@@ -17,9 +17,10 @@ def setup_test_database():
         'identifier': 'test',
         'title': 'Test Event'
     }
+    new_test_values = get_test_configuration(updated_values=updated_values)
     event_repository = EventSQLiteRepository(db_path=test_repository_db_path)
     event_register = EventRegister(
-        event_configuration=get_test_configuration(updated_values=updated_values),
+        event_configuration=new_test_values,
         event_repository=event_repository)
     event_register.get_event()
 
@@ -51,6 +52,16 @@ class TestEventInformation:
     def test_getting_event_existence(self):
         response = private_api_calls.get_event_existence(identifier='test')
         assert True is response
+
+    def test_getting_event_info(self):
+        info = private_api_calls.get_event_info(identifier='test')
+        updated_values = {
+            'identifier': 'test',
+            'title': 'Test Event'
+        }
+        new_test_values = get_test_configuration(updated_values=updated_values)
+        for key in info.keys():
+            assert info[key] == new_test_values[key]
 
 
 class TestEventRegistration:
