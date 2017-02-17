@@ -44,11 +44,11 @@ class TestStartup:
 
 
 class TestEventInformation:
-    def test_getting_event_info_of_non_existent_returns_false_existence(self):
+    def test_getting_existence_of_non_existent_returns_false_existence(self):
         response = private_api_calls.get_event_existence('foobar')
         assert False is response
 
-    def test_getting_event_info_for_existence(self):
+    def test_getting_event_existence(self):
         response = private_api_calls.get_event_existence(identifier='test')
         assert True is response
 

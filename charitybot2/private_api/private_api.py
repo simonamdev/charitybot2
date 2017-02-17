@@ -66,8 +66,8 @@ def index():
     )
 
 
-@app.route('/api/v1/event/<event_identifier>/')
-def event_info(event_identifier):
+@app.route('/api/v1/event/exists/<event_identifier>/')
+def event_existence(event_identifier):
     event_exists = get_event_repository().event_already_registered(identifier=event_identifier)
     return jsonify(
         {
