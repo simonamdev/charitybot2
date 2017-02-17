@@ -1,8 +1,10 @@
 import argparse
 
+from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
+from charitybot2.creators.event_creator import EventRegister
 from charitybot2.paths import production_repository_db_path
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
-from flask import Flask, jsonify, g
+from flask import Flask, jsonify, g, request
 from gevent.pywsgi import WSGIServer
 from tests.paths_for_tests import test_repository_db_path
 
@@ -18,6 +20,14 @@ debug_mode = False
 http_server = WSGIServer((private_api_address, private_api_port), app)
 private_api_identity = 'CB2 Private API'
 event_repository = EventSQLiteRepository(db_path=production_repository_db_path, debug=debug_mode)
+
+
+def convert_imdict_to_event_config(imdict):
+    actual_dict = imdict.to_dict()
+    number_keys = EventConfigurationCreator.number_keys
+    for key in number_keys:
+        actual_dict[key] = int(actual_dict[key])
+    return actual_dict
 
 
 def get_repository_path():
@@ -62,6 +72,20 @@ def event_info(event_identifier):
     return jsonify(
         {
             'event_exists': event_exists
+        }
+    )
+
+
+@app.route('/api/v1/event/register/', methods=['POST'])
+def register_event():
+    event_register = EventRegister(
+        event_configuration=EventConfigurationCreator(
+            configuration_values=convert_imdict_to_event_config(request.form)).configuration,
+        event_repository=get_event_repository())
+    event_register.get_event()
+    return jsonify(
+        {
+            'registration_successful': event_register.event_is_registered()
         }
     )
 

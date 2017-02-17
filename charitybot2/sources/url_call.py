@@ -14,6 +14,7 @@ class UrlCall:
         self.params = params if params is not None else {}
         self.headers = headers if headers is not None else {}
         self.user_agent = return_random_user_agent()
+        self.headers.update({'User-Agent': self.user_agent})
         self.timeout = timeout
 
     def make_request(self, request_function):
@@ -29,13 +30,23 @@ class UrlCall:
             raise ConnectionFailedException('No schema passed for the url: {}'.format(self.url))
 
     def get(self):
-        self.headers.update({'User-Agent': self.user_agent})
         return self.make_request(
             request_function=lambda: requests.get(
                 url=self.url,
                 headers=self.headers,
                 params=self.params,
                 timeout=self.timeout))
+
+    def post(self, data):
+        return self.make_request(
+            request_function=lambda: requests.post(
+                url=self.url,
+                headers=self.headers,
+                params=self.params,
+                timeout=self.timeout,
+                data=data
+            )
+        )
 
 
 def return_random_user_agent():

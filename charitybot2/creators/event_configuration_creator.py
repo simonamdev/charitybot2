@@ -21,7 +21,7 @@ class EventConfigurationCreator:
         'update_delay'
     )
 
-    _number_keys = (
+    number_keys = (
         'start_time',
         'end_time',
         'target_amount',
@@ -44,7 +44,7 @@ class EventConfigurationCreator:
             raise InvalidEventConfigurationException('Configuration Values Dictionary cannot be empty')
         if not sorted(self._configuration_values.keys()) == sorted(self._keys_required):
             raise InvalidEventConfigurationException('Passed Configuration keys are incorrect')
-        for key in self._number_keys:
+        for key in self.number_keys:
             if not isinstance(self._configuration_values[key], int):
                 raise InvalidEventConfigurationException('Number keys are required to be integers')
 
