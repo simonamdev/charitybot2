@@ -15,4 +15,5 @@ class PrivateApiCalls:
 
     def get_event_existence(self, identifier):
         url = self.v1_url + 'event/{}/'.format(identifier)
-        return json.loads(UrlCall(url=url, timeout=self._timeout).get().content.decode('utf-8'))['event_exists']
+        decoded_content = UrlCall(url=url, timeout=self._timeout).get().content.decode('utf-8')
+        return json.loads(decoded_content)['event_exists']

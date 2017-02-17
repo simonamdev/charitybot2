@@ -4,6 +4,7 @@ from charitybot2.paths import production_repository_db_path
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 from flask import Flask, jsonify, g
 from gevent.pywsgi import WSGIServer
+from tests.paths_for_tests import test_repository_db_path
 
 app = Flask(__name__)
 
@@ -19,10 +20,19 @@ private_api_identity = 'CB2 Private API'
 event_repository = EventSQLiteRepository(db_path=production_repository_db_path, debug=debug_mode)
 
 
+def get_repository_path():
+    global debug_mode
+    path = production_repository_db_path
+    if debug_mode:
+        path = test_repository_db_path
+    return path
+
+
 def get_event_repository():
     event_repo = getattr(g, '_event_repository', None)
     if event_repo is None:
-        event_repo = g._event_repository = EventSQLiteRepository(None, debug=debug_mode)
+        event_repo = g._event_repository = EventSQLiteRepository(
+            db_path=get_repository_path())
     return event_repo
 
 
@@ -40,16 +50,18 @@ def index():
     return jsonify(
         {
             'identity': private_api_identity,
-            'version': private_api_version
+            'version': private_api_version,
+            'debug': debug_mode
         }
     )
 
 
 @app.route('/api/v1/event/<event_identifier>/')
 def event_info(event_identifier):
+    event_exists = get_event_repository().event_already_registered(identifier=event_identifier)
     return jsonify(
         {
-            'event_exists': get_event_repository().event_already_registered(identifier=event_identifier)
+            'event_exists': event_exists
         }
     )
 
@@ -73,7 +85,7 @@ def start_api(args):
     global debug_mode
     debug_mode = args.debug
     global event_repository
-    event_repository = EventSQLiteRepository(None, debug=debug_mode)
+    event_repository = EventSQLiteRepository(db_path=get_repository_path())
     global http_server
     if debug_mode:
         app.run(host=private_api_address, port=private_api_port, debug=True)
