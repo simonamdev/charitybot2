@@ -59,9 +59,13 @@ class TestEventInformation:
             'identifier': 'test',
             'title': 'Test Event'
         }
-        new_test_values = get_test_configuration(updated_values=updated_values)
+        new_test_values = get_test_configuration(updated_values=updated_values).configuration_values
         for key in info.keys():
             assert info[key] == new_test_values[key]
+
+    def test_getting_event_info_of_non_existent_event_returns_none(self):
+        info = private_api_calls.get_event_info(identifier='foobar')
+        assert None is info
 
 
 class TestEventRegistration:

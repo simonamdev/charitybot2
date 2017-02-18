@@ -19,7 +19,10 @@ class PrivateApiCalls:
         return json.loads(decoded_content)['event_exists']
 
     def get_event_info(self, identifier):
-        pass
+        url = self.v1_url + 'event/{}'.format(identifier)
+        decoded_content = UrlCall(url=url, timeout=self._timeout).get().content.decode('utf-8')
+        content = json.loads(decoded_content)
+        return content if len(content.keys()) > 0 else None
 
     def register_event(self, event_configuration):
         url = self.v1_url + 'event/register/'
