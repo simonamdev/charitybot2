@@ -25,13 +25,13 @@ class PrivateApiCalls:
         return content if len(content.keys()) > 0 else None
 
     def register_event(self, event_configuration):
-        url = self.v1_url + 'event/register/'
+        url = self.v1_url + 'event/'
         response = UrlCall(url=url, timeout=self._timeout).post(data=event_configuration.configuration_values)
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['registration_successful']
 
     def update_event(self, event_configuration):
-        url = self.v1_url + 'event/update/'
+        url = self.v1_url + 'event/'
         response = UrlCall(url=url, timeout=self._timeout).post(data=event_configuration.configuration_values)
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['update_successful']

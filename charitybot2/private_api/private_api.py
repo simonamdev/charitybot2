@@ -84,16 +84,19 @@ def event_existence(event_identifier):
     )
 
 
-@app.route('/api/v1/event/register/', methods=['POST'])
-def register_event():
+@app.route('/api/v1/event/', methods=['POST'])
+def register_or_update_event():
     event_register = EventRegister(
         event_configuration=EventConfigurationCreator(
             configuration_values=convert_imdict_to_event_config(request.form)).configuration,
         event_repository=get_event_repository())
+    already_registered = event_register.event_is_registered()
     event_register.get_event()
+    update_successful = event_register.event_is_registered() and already_registered
     return jsonify(
         {
-            'registration_successful': event_register.event_is_registered()
+            'registration_successful': event_register.event_is_registered(),
+            'update_successful': update_successful
         }
     )
 
