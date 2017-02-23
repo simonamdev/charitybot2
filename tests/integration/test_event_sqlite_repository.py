@@ -5,7 +5,7 @@ from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository, EventAlreadyRegisteredException, \
     EventNotRegisteredException
-from charitybot2.persistence.sqlite_repository import InvalidDatabasePathException
+from charitybot2.persistence.sqlite_repository import InvalidRepositoryException
 from tests.paths_for_tests import test_repository_db_path
 from tests.unit.test_event_configuration import test_event_configuration_values
 
@@ -85,7 +85,7 @@ class TestEventSQLiteRepository:
 
 class TestEventSQLiteRepositoryExceptions:
     def test_passing_no_db_path_in_production_mode_throws_exception(self):
-        with pytest.raises(InvalidDatabasePathException):
+        with pytest.raises(InvalidRepositoryException):
             EventSQLiteRepository(db_path='', debug=False)
 
     def test_registering_already_registered_event_throws_exception(self):

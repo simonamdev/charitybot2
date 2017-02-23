@@ -11,16 +11,13 @@ class InvalidRepositoryQueryException(Exception):
     pass
 
 
-class InvalidDatabasePathException(Exception):
-    pass
-
-
 class SQLiteRepository:
     def __init__(self, db_path, debug=False):
         self._db_path = db_path
         self._debug = debug
         self._connection = None
         self._cursor = None
+        self.__validate_path()
         self.__validate_database()
 
     @property
@@ -38,6 +35,12 @@ class SQLiteRepository:
             raise InvalidRepositoryException('Given path does not lead to a valid database file')
         if not os.path.isfile(self._db_path) and not self._db_path == ':memory:':
             raise FileNotFoundError('Database file not found at given DB Path')
+
+    def __validate_path(self):
+        if self._debug:
+            self._db_path = ':memory:'
+        if self._db_path in ('', None) and not self._debug:
+            raise InvalidRepositoryException('Cannot have empty DB path in production mode')
 
     def open_connection(self):
         self._connection = sqlite3.connect(database=self._db_path)
