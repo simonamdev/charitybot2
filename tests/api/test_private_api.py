@@ -1,3 +1,4 @@
+import pytest
 from charitybot2.api_calls.private_api_calls import PrivateApiCalls
 from charitybot2.creators.event_creator import EventRegister
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
@@ -94,3 +95,22 @@ class TestEventRegistration:
         update_test_configuration = get_test_configuration(updated_values=updated_values)
         response = private_api_calls.update_event(event_configuration=update_test_configuration)
         assert True is response
+
+
+class TestHeartbeat:
+    def test_sending_heartbeat_returns_true(self):
+        received = private_api_calls.send_heartbeat('This is a valid heartbeat string')
+        assert True is received
+
+    @pytest.mark.parametrize('state', [
+        None,
+        0,
+        1.0,
+        object,
+        '',
+        (),
+        []
+    ])
+    def test_sending_illegal_heartbeats_returns_false(self, state):
+        received = private_api_calls.send_heartbeat(state)
+        assert False is received

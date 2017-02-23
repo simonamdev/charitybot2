@@ -35,3 +35,12 @@ class PrivateApiCalls:
         response = UrlCall(url=url, timeout=self._timeout).post(data=event_configuration.configuration_values)
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['update_successful']
+
+    def send_heartbeat(self, state):
+        if not isinstance(state, str) or state == '':
+            return False
+        url = self.v1_url + 'heartbeat/'
+        data = dict(state=state)
+        response = UrlCall(url=url, timeout=self._timeout).post(data=data)
+        decoded_content = response.content.decode('utf-8')
+        return json.loads(decoded_content)['received']
