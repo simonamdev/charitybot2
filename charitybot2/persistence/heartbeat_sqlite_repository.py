@@ -2,4 +2,5 @@ from charitybot2.persistence.sqlite_repository import SQLiteRepository
 
 
 class HeartbeatSQLiteRepository(SQLiteRepository):
-    pass
+    def store_state(self, state, timestamp=None):
+        pass
