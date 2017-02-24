@@ -150,7 +150,7 @@ class API {
         $('#amount-raised').text(numberWithCommas(data['amount_raised']));
         $('#target-amount').text(numberWithCommas(data['target_amount']));
         var amountPercentageComplete = (data['amount_raised'] / data['target_amount']) * 100;
-        amountPercentageComplete = Math.round(amountPercentageComplete * 100) / 100;
+        amountPercentageComplete = Math.round(amountPercentageComplete);
         $('#amount-progress').css('width', amountPercentageComplete + '%').attr('aria-valuenow', amountPercentageComplete).text(amountPercentageComplete + '%');
         if (amountPercentageComplete >= 100) {
             $('#amount-progress').toggleClass('progress-bar-success');
@@ -173,7 +173,23 @@ class API {
         var last_donation = data['last'];
         if (last_donation != null) {
             $('#last-donation').text(last_donation['amount']);
-            $('#last-donation-timestamp').text(convertToTimestamp(last_donation['timestamp']));
+            var timeAgo = Math.round((Date.now() / 1000) - last_donation['timestamp']);
+            var timeAgoUnits = 'seconds';
+            if (timeAgo > 60) {
+                timeAgo = Math.round(timeAgo / 60);
+                timeAgoUnits = 'minutes';
+                if (timeAgo == 1) {
+                    timeAgoUnits = 'minute';
+                }
+            }
+            if (timeAgo > 60) {
+                timeAgo = Math.round(timeAgo / 60);
+                timeAgoUnits = 'hours';
+                if (timeAgo == 1) {
+                    timeAgoUnits = 'hour';
+                }
+            }
+            $('#last-donation-timestamp').text(timeAgo + ' ' + timeAgoUnits + ' ago at ' + convertToTimestamp(last_donation['timestamp']));
         } else {
             $('#last-donation-column').text('Last Donation: Waiting for a donation');
         }
