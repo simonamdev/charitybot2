@@ -22,7 +22,7 @@ api_url = 'http://' + api_address
 api_full_url = api_url + ':' + str(api_port) + '/'
 debug_mode = False
 cli_debug_mode = False
-console_version = '0.1.1'
+console_version = '0.1.2'
 http_server = WSGIServer((api_address, api_port), app)
 
 api_paths = {

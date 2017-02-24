@@ -114,30 +114,37 @@ class API {
     }
 
     writeEventDetailsToPage(data) {
-        console.log(data);
+//        console.log(data);
         // Event Length Data
-        var startTime = data['start_time'];
+        const startTime = data['start_time'];
+        const endTime = data['end_time'];
         $('#event-start').text(convertToTimestamp(startTime));
-        $('#event-end').text(convertToTimestamp(data['end_time']));
-        var eventLength = Math.round(((data['end_time'] - startTime) / (60 * 60)) * 100) / 100;
-        var currentTime = Math.floor(Date.now() / 1000);
-        var eventTimeRemaining = Math.round((data['end_time'] - currentTime) * 100) / 100;
-        var eventPercentageComplete = ((data['end_time'] - currentTime) / (data['end_time'] - startTime)) * 100;
+        $('#event-end').text(convertToTimestamp(endTime));
+        var eventLength = Math.round(((endTime - startTime) / (60 * 60)) * 100) / 100;  // in hours
+        var currentTime = Math.floor(Date.now() / 1000);  // in seconds
+        var eventTimeRemaining = Math.round((endTime - currentTime) * 100) / 100;
+        var eventPercentageComplete = ((endTime - currentTime) / (endTime - startTime)) * 100;
         eventPercentageComplete = Math.abs(Math.round(eventPercentageComplete * 100) / 100);
         if (currentTime < startTime) {
             eventPercentageComplete = 100;
             eventTimeRemaining = startTime - currentTime;
-            $('#event-time-remaining-column').text(numberWithCommas(Math.round(eventTimeRemaining / (60 * 60))) + ' hours till event start');
+            const hoursRemaining = numberWithCommas(Math.round(eventTimeRemaining / (60 * 60)));
+            $('#event-time-remaining-column').text(hoursRemaining + ' hours till event start');
             $('#event-progress').text('Start Pending');
             $('#event-progress').toggleClass('progress-bar-danger');
         } else {
             if (eventPercentageComplete >= 100) {
                 $('#event-progress').toggleClass('progress-bar-success');
+                $('#event-progress').text((eventPercentageComplete) + '%');
+                $('#event-progress').css('width', '100%').attr('aria-valuenow', eventPercentageComplete);
+            } else {
+                const actualPercentageCompleted = Math.round(100 - eventPercentageComplete);
+                const hoursRemaining = numberWithCommas(Math.round(eventTimeRemaining / (60 * 60)));
+                $('#event-remaining').text(numberWithCommas(hoursRemaining));
+                $('#event-progress').text(actualPercentageCompleted + '%');
+                $('#event-progress').css('width', actualPercentageCompleted + '%').attr('aria-valuenow', actualPercentageCompleted);
             }
-            $('#event-remaining').text(numberWithCommas(eventTimeRemaining));
-            $('#event-progress').text(eventPercentageComplete + '%');
         }
-        $('#event-progress').css('width', eventPercentageComplete + '%').attr('aria-valuenow', eventPercentageComplete);
         $('#event-length').text(numberWithCommas(eventLength));
         // Amount Raised Data
         $('#amount-raised').text(numberWithCommas(data['amount_raised']));
@@ -151,7 +158,7 @@ class API {
     }
 
     writeDonationDetailsToPage(data) {
-        console.log(data);
+//        console.log(data);
         $('#total-donation-count').text(data['count']);
         $('#donation-count').text(data['specific']['count']);
         $('#donation-timespan').text(returnTimespanString(data['specific']['timespan']));
