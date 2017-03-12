@@ -1,3 +1,4 @@
+import time
 from charitybot2.persistence.sqlite_repository import SQLiteRepository
 
 
@@ -20,8 +21,30 @@ class HeartbeatSQLiteRepository(SQLiteRepository):
                                        ');'
         self.execute_query(query=heartbeat_table_create_query, commit=True)
 
-    def store_heartbeat(self, source, state, timestamp=None):
+    def __validate_source_exists(self, source):
         pass
 
+    def store_heartbeat(self, source, state, timestamp=None):
+        heartbeat_insert_query = 'INSERT INTO `heartbeats` ' \
+                                 '(source, state, timestamp) ' \
+                                 'VALUES ' \
+                                 '(?, ?, ?);'
+        if timestamp is None:
+            timestamp = int(time.time())
+        heartbeat_insert_data = (source, state, timestamp)
+        self.execute_query(query=heartbeat_insert_query, data=heartbeat_insert_data, commit=True)
+
     def get_last_heartbeat(self, source):
-        pass
+        heartbeat_retrieve_last_query = 'SELECT * ' \
+                                        'FROM `heartbeats` ' \
+                                        'WHERE source = ? ' \
+                                        'ORDER BY timestamp ' \
+                                        'LIMIT 1;'
+        heartbeat_retrieve_last_data = (source, )
+        return_data = self.execute_query(query=heartbeat_retrieve_last_query, data=heartbeat_retrieve_last_data)
+        return_data = return_data.fetchall()[0]
+        return {
+            'source': return_data[1],
+            'state': return_data[2],
+            'timestamp': return_data[3]
+        }
