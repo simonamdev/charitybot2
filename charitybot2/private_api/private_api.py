@@ -101,7 +101,7 @@ def register_or_update_event():
     )
 
 
-@app.route('/api/v1/heartbeat', methods=['POST'])
+@app.route('/api/v1/heartbeat/', methods=['POST'])
 def heartbeat():
     # Needs heartbeat storage code
     return jsonify(
