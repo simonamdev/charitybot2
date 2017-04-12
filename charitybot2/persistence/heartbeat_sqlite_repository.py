@@ -2,7 +2,7 @@ import time
 from charitybot2.persistence.sqlite_repository import SQLiteRepository
 
 
-class NonExistentHeartbeat(Exception):
+class NonExistentHeartbeatSource(Exception):
     pass
 
 
@@ -42,7 +42,10 @@ class HeartbeatSQLiteRepository(SQLiteRepository):
                                         'LIMIT 1;'
         heartbeat_retrieve_last_data = (source, )
         return_data = self.execute_query(query=heartbeat_retrieve_last_query, data=heartbeat_retrieve_last_data)
-        return_data = return_data.fetchall()[0]
+        fetched_data = return_data.fetchall()
+        if len(fetched_data) == 0:
+            raise NonExistentHeartbeatSource('No Heartbeats available by that source')
+        return_data = fetched_data[0]
         return {
             'source': return_data[1],
             'state': return_data[2],

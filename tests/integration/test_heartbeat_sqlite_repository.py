@@ -1,5 +1,5 @@
 import pytest
-from charitybot2.persistence.heartbeat_sqlite_repository import HeartbeatSQLiteRepository, NonExistentHeartbeat
+from charitybot2.persistence.heartbeat_sqlite_repository import HeartbeatSQLiteRepository, NonExistentHeartbeatSource
 
 
 heartbeat_repository = HeartbeatSQLiteRepository(debug=True)
@@ -27,5 +27,5 @@ class TestHeartbeatSQLiteRepository:
 
 class TestHeartbeatSQLiteRepositoryExceptions:
     def test_retrieving_from_non_existent_source_throws_exception(self):
-        with pytest.raises(NonExistentHeartbeat):
+        with pytest.raises(NonExistentHeartbeatSource):
             nonexistent_source_heartbeat = heartbeat_repository.get_last_heartbeat(source='non-existent')
