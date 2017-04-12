@@ -99,7 +99,10 @@ class TestEventRegistration:
 
 class TestHeartbeat:
     def test_sending_heartbeat_returns_true(self):
-        received = private_api_calls.send_heartbeat('This is a valid heartbeat string')
+        received = private_api_calls.send_heartbeat(
+            'This is a valid heartbeat string',
+            'heartbeat_source',
+            1)
         assert True is received
 
     @pytest.mark.parametrize('state', [
@@ -107,10 +110,10 @@ class TestHeartbeat:
         0,
         1.0,
         object,
-        '',
         (),
         []
     ])
-    def test_sending_illegal_heartbeats_returns_false(self, state):
-        received = private_api_calls.send_heartbeat(state)
-        assert False is received
+    def test_sending_illegal_heartbeats_throws_exception(self, state):
+        with pytest.raises(AssertionError):
+            private_api_calls.send_heartbeat(state, 'valid')
+            private_api_calls.send_heartbeat('valid', state)

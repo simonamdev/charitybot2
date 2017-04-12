@@ -4,6 +4,7 @@ from charitybot2.creators.event_configuration_creator import EventConfigurationC
 from charitybot2.creators.event_creator import EventRegister
 from charitybot2.paths import production_repository_db_path
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
+from charitybot2.persistence.heartbeat_sqlite_repository import HeartbeatSQLiteRepository
 from flask import Flask, jsonify, g, request
 from gevent.pywsgi import WSGIServer
 from tests.paths_for_tests import test_repository_db_path
@@ -19,7 +20,16 @@ private_api_version = 1
 debug_mode = False
 http_server = WSGIServer((private_api_address, private_api_port), app)
 private_api_identity = 'CB2 Private API'
-event_repository = EventSQLiteRepository(db_path=production_repository_db_path, debug=debug_mode)
+
+def get_repository_path():
+    global debug_mode
+    path = production_repository_db_path
+    if debug_mode:
+        path = test_repository_db_path
+    return path
+
+event_repository = EventSQLiteRepository(db_path=get_repository_path(), debug=debug_mode)
+heartbeat_repository = HeartbeatSQLiteRepository(db_path=get_repository_path(), debug=debug_mode)
 
 
 def convert_imdict_to_event_config(imdict):
@@ -30,20 +40,21 @@ def convert_imdict_to_event_config(imdict):
     return actual_dict
 
 
-def get_repository_path():
-    global debug_mode
-    path = production_repository_db_path
-    if debug_mode:
-        path = test_repository_db_path
-    return path
-
-
 def get_event_repository():
     event_repo = getattr(g, '_event_repository', None)
     if event_repo is None:
         event_repo = g._event_repository = EventSQLiteRepository(
             db_path=get_repository_path())
     return event_repo
+
+
+def get_heartbeat_repository():
+    heartbeat_repo = getattr(g, '_heartbeat_repository', None)
+    if heartbeat_repo is None:
+        heartbeat_repo = g._heartbeat_repository = HeartbeatSQLiteRepository(
+            db_path=get_repository_path()
+        )
+    return heartbeat_repo
 
 
 @app.teardown_appcontext
@@ -103,10 +114,15 @@ def register_or_update_event():
 
 @app.route('/api/v1/heartbeat/', methods=['POST'])
 def heartbeat():
-    # Needs heartbeat storage code
+    received_data = request.form.to_dict()
+    get_heartbeat_repository().store_heartbeat(
+        source=received_data['source'],
+        state=received_data['state'],
+        timestamp=int(received_data['timestamp'])
+    )
     return jsonify(
         {
-            'received': False
+            'received': True
         }
     )
 

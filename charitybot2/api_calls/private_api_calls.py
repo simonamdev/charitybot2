@@ -1,5 +1,6 @@
 import json
 
+import time
 from charitybot2.private_api.private_api import private_api_full_url
 from charitybot2.sources.url_call import UrlCall
 
@@ -36,11 +37,13 @@ class PrivateApiCalls:
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['update_successful']
 
-    def send_heartbeat(self, state):
-        if not isinstance(state, str) or state == '':
-            return False
+    def send_heartbeat(self, source, state, timestamp=None):
+        assert isinstance(source, str)
+        assert isinstance(state, str)
+        if timestamp is None or not isinstance(timestamp, int):
+            timestamp = int(time.time())
+        data = dict(state=state, source=source, timestamp=timestamp)
         url = self.v1_url + 'heartbeat/'
-        data = dict(state=state)
         response = UrlCall(url=url, timeout=self._timeout).post(data=data)
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['received']
