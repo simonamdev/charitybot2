@@ -47,3 +47,7 @@ class PrivateApiCalls:
         response = UrlCall(url=url, timeout=self._timeout).post(data=data)
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['received']
+
+    def register_donation(self):
+        # TODO: POST request to register donation for a given event
+        pass
