@@ -21,6 +21,7 @@ debug_mode = False
 http_server = WSGIServer((private_api_address, private_api_port), app)
 private_api_identity = 'CB2 Private API'
 
+
 def get_repository_path():
     global debug_mode
     path = production_repository_db_path
