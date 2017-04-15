@@ -1,6 +1,7 @@
 import pytest
 from charitybot2.api_calls.private_api_calls import PrivateApiCalls
 from charitybot2.creators.event_creator import EventRegister
+from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 from charitybot2.private_api.private_api import private_api_identity
 from tests.integration.test_event_register import get_test_configuration
@@ -114,6 +115,23 @@ class TestHeartbeat:
         []
     ])
     def test_sending_illegal_heartbeats_throws_exception(self, state):
-        with pytest.raises(AssertionError):
+        with pytest.raises(IllegalArgumentException):
             private_api_calls.send_heartbeat(state, 'valid')
             private_api_calls.send_heartbeat('valid', state)
+
+
+class TestDonationRegistration:
+    def test_registering_valid_donation(self):
+        pass
+
+    @pytest.mark.parametrize('donation', [
+        None,
+        0,
+        1.0,
+        object,
+        (),
+        []
+    ])
+    def test_sending_illegal_values_throws_exception(self, donation):
+        with pytest.raises(IllegalArgumentException):
+            private_api_calls.register_donation(donation=donation)
