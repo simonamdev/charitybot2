@@ -6,6 +6,7 @@ from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.models.donation import Donation
 from charitybot2.private_api.private_api import private_api_full_url
 from charitybot2.sources.url_call import UrlCall
+from type_assertions import assert_type, assert_types
 
 
 class PrivateApiCalls:
@@ -41,11 +42,12 @@ class PrivateApiCalls:
         return json.loads(decoded_content)['update_successful']
 
     def send_heartbeat(self, source, state, timestamp=None):
-        try:
-            assert isinstance(source, str)
-            assert isinstance(state, str)
-        except AssertionError as e:
-            raise IllegalArgumentException('Source and/or state must be strings')
+        assert_types(
+            (
+                (source, str, "Source can only be a String"),
+                (state, str, "State can only be of type string")
+            )
+        )
         if timestamp is None or not isinstance(timestamp, int):
             timestamp = int(time.time())
         data = dict(state=state, source=source, timestamp=timestamp)
@@ -55,9 +57,6 @@ class PrivateApiCalls:
         return json.loads(decoded_content)['received']
 
     def register_donation(self, donation):
-        try:
-            assert isinstance(donation, Donation)
-        except AssertionError:
-            raise IllegalArgumentException('Donation can only be of type Donation')
+        assert_type(donation, Donation, "Only Donation type accepted for donation registration")
         # TODO: POST request to register donation for a given event
         pass
