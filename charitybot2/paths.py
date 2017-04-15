@@ -15,7 +15,6 @@ test_config_folder = os.path.join(test_data_folder, 'config')
 purrcat259_config_path = os.path.join(twitch_config_folder, 'purrcat259.json')
 
 # Databases
-production_logs_db_path = os.path.join(db_folder, 'logs.db')
 production_repository_db_path = os.path.join(db_folder, 'repository.db')
 
 # Script paths
