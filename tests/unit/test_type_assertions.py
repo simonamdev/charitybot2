@@ -40,7 +40,7 @@ class TestTypeAssertion:
     def test_wrapping_function_with_type_assertion(self):
         @accept_types(str)
         def wrap_test(this_should_be_string):
-            print(this_should_be_string)
+            pass
         wrap_test('bla')
 
     def test_wrapping_function_returns_function_if_types_are_correct(self):
@@ -65,6 +65,15 @@ class TestTypeAssertion:
 
         @accept_types(Foo, Bar)
         def do_re_mi(something_that_is_foo, something_that_is_bar):
-            print(type(something_that_is_foo))
-            print(type(something_that_is_bar))
+            pass
         do_re_mi(Foo(), Bar())
+
+    def test_receiving_keyword_arguments(self):
+        @accept_types(int, float)
+        def add_one(rounded_number=3, decimal_number=5.0):
+            print(decimal_number)
+            return rounded_number + 1
+        assert 4 == add_one(decimal_number=3.333)
+        assert 4 == add_one(rounded_number=3)
+        assert 4 == add_one(rounded_number=3, decimal_number=1.1)
+        assert 4 == add_one(decimal_number=3.3, rounded_number=3)
