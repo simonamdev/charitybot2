@@ -4,11 +4,7 @@ from charitybot2.creators.event_configuration_creator import InvalidEventConfigu
 from charitybot2.creators.event_creator import EventRegister
 from charitybot2.models.event import Event
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
-from tests.mocks import WipeSQLiteDB
-from tests.paths_for_tests import test_repository_db_path
 from tests.unit.test_event_configuration_creator import get_updated_test_config_values
-
-in_memory_event_repository = EventSQLiteRepository(debug=True)
 
 
 def get_test_configuration(updated_values=None):
@@ -18,11 +14,19 @@ def get_test_configuration(updated_values=None):
 
 
 class TestEventRegister:
+    test_event_repository = None
+
+    def setup_method(self):
+        self.test_event_repository = EventSQLiteRepository(debug=True)
+
+    def teardown_method(self):
+        self.test_event_repository.close_connection()
+
     def test_creating_unregistered_event(self):
         registration_test_configuration = get_test_configuration({'identifier': 'registration_test'})
         event_creator = EventRegister(
             event_configuration=registration_test_configuration,
-            event_repository=in_memory_event_repository)
+            event_repository=self.test_event_repository)
         assert event_creator.event_is_registered() is False
         new_event = event_creator.get_event()
         assert isinstance(new_event, Event)
@@ -30,13 +34,10 @@ class TestEventRegister:
         assert new_event.configuration.identifier == registration_test_configuration.identifier
 
     def test_updating_registered_event(self):
-        sqlite_db_wipe = WipeSQLiteDB(db_path=test_repository_db_path)
-        sqlite_db_wipe.wipe_db()
-        test_event_repository = EventSQLiteRepository(db_path=test_repository_db_path)
         update_test_configuration = get_test_configuration({'identifier': 'update_event_test'})
         event_creator = EventRegister(
             event_configuration=update_test_configuration,
-            event_repository=test_event_repository)
+            event_repository=self.test_event_repository)
         assert event_creator.event_is_registered() is False
         test_event = event_creator.get_event()
         assert event_creator.event_is_registered() is True
@@ -45,7 +46,7 @@ class TestEventRegister:
             {'identifier': 'update_event_test', 'end_time': 999})
         event_creator = EventRegister(
             event_configuration=update_test_configuration,
-            event_repository=test_event_repository)
+            event_repository=self.test_event_repository)
         assert event_creator.event_is_registered() is True
         test_event = event_creator.get_event()
         assert event_creator.event_is_registered() is True
