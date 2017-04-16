@@ -65,13 +65,28 @@ class TestEventSQLiteRepository:
 
     def test_updating_event_starting_amount(self):
         assert 0 == self.test_event_repository.get_event_starting_amount(identifier=test_event_identifier)
-        self.test_event_repository.update_event_starting_amount(identifier=test_event_identifier, start_amount=500)
+        self.test_event_repository.update_event_starting_amount(
+            identifier=test_event_identifier,
+            start_amount=500)
         assert 500 == self.test_event_repository.get_event_starting_amount(identifier=test_event_identifier)
-        self.test_event_repository.update_event_starting_amount(identifier=test_event_identifier, start_amount=222.2)
+        self.test_event_repository.update_event_starting_amount(
+            identifier=test_event_identifier,
+            start_amount=222.2)
         assert 222.2 == self.test_event_repository.get_event_starting_amount(identifier=test_event_identifier)
 
+    def test_getting_event_current_amount(self):
+        assert 0.0 == self.test_event_repository.get_event_current_amount(identifier=test_event_identifier)
+
     def test_updating_event_current_amount(self):
-        assert False is True
+        assert 0 == self.test_event_repository.get_event_current_amount(identifier=test_event_identifier)
+        self.test_event_repository.update_event_current_amount(
+            identifier=test_event_identifier,
+            current_amount=500)
+        assert 500 == self.test_event_repository.get_event_current_amount(identifier=test_event_identifier)
+        self.test_event_repository.update_event_current_amount(
+            identifier=test_event_identifier,
+            current_amount=222.2)
+        assert 222.2 == self.test_event_repository.get_event_current_amount(identifier=test_event_identifier)
 
 
 class TestEventSQLiteRepositoryExceptions:

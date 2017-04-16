@@ -99,6 +99,24 @@ class EventSQLiteRepository(SQLiteRepository):
         update_data = (start_amount, identifier)
         self.execute_query(query=update_query, data=update_data, commit=True)
 
+    def get_event_current_amount(self, identifier):
+        if not self.event_already_registered(identifier=identifier):
+            raise EventNotRegisteredException('Event by {} is not registered yet'.format(identifier))
+        retrieve_query = 'SELECT currentAmount ' \
+                         'FROM `events` ' \
+                         'WHERE internalName = ?'
+        retrieve_data = (identifier, )
+        return self.execute_query(query=retrieve_query, data=retrieve_data).fetchall()[0][0]
+
+    def update_event_current_amount(self, identifier, current_amount):
+        if not self.event_already_registered(identifier=identifier):
+            raise EventNotRegisteredException('Event by {} is not registered yet'.format(identifier))
+        update_query = 'UPDATE `events` ' \
+                       'SET currentAmount = ? ' \
+                       'WHERE internalName = ?'
+        update_data = (current_amount, identifier)
+        self.execute_query(query=update_query, data=update_data, commit=True)
+
     @staticmethod
     def __convert_row_to_event_configuration(row):
         configuration_values = {

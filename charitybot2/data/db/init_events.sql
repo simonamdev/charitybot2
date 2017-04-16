@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `events` (
     `endTime`          INTEGER NOT NULL,
     `currencyKey`      TEXT NOT NULL,
     `startingAmount`   REAL,
-    `currentAmount`    REAL,
+    `currentAmount`    REAL NOT NULL,
     `targetAmount`     INTEGER NOT NULL,
     `sourceUrl`        TEXT NOT NULL,
     `updateDelay`      INTEGER
