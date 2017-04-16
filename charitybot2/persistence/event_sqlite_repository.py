@@ -100,7 +100,6 @@ class EventSQLiteRepository(SQLiteRepository):
 
     @staticmethod
     def __convert_row_to_event_configuration(row):
-        print(row)
         configuration_values = {
             'identifier': row[0],
             'title': row[1],
