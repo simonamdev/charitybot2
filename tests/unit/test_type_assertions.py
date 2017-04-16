@@ -77,3 +77,22 @@ class TestTypeAssertion:
         assert 4 == add_one(rounded_number=3)
         assert 4 == add_one(rounded_number=3, decimal_number=1.1)
         assert 4 == add_one(decimal_number=3.3, rounded_number=3)
+
+    def test_receiving_incomplete_arguments_due_to_defaults(self):
+        @accept_types(str, int)
+        def return_one_if_none(message, timestamp=None):
+            if timestamp is None:
+                return 1
+            return timestamp
+        assert 1 == return_one_if_none('foo')
+        assert 1 == return_one_if_none('foo', 1)
+        assert 5 == return_one_if_none('foo', 5)
+
+    def test_passing_same_as_default_throws_exception(self):
+        @accept_types(str, int)
+        def return_two_if_none(message, timestamp=None):
+            if timestamp is None:
+                return 2
+            return timestamp
+        with pytest.raises(IllegalArgumentException):
+            return_two_if_none('bar', None)
