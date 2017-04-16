@@ -9,7 +9,7 @@ class NonExistentHeartbeatSource(Exception):
 class HeartbeatSQLiteRepository(SQLiteRepository):
     def __init__(self, db_path='', debug=False):
         super().__init__(db_path=db_path, debug=debug)
-        self.open_connection()
+        self.__open_connection()
         self.__validate_repository()
 
     def __validate_repository(self):

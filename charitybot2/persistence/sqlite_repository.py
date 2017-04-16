@@ -19,6 +19,7 @@ class SQLiteRepository:
         self._cursor = None
         self.__validate_path()
         self.__validate_database()
+        self.__open_connection()
 
     @property
     def debug(self):
@@ -42,7 +43,7 @@ class SQLiteRepository:
         if self._db_path in ('', None) and not self._debug:
             raise InvalidRepositoryException('Cannot have empty DB path in production mode')
 
-    def open_connection(self):
+    def __open_connection(self):
         self._connection = sqlite3.connect(database=self._db_path)
         self._cursor = self._connection.cursor()
 
