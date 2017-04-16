@@ -126,7 +126,7 @@ class TestDonationRegistration:
         # donation = Donation(amount=50, timestamp=1)
         # private_api_calls.register_donation(donation=donation)
         # TODO: Requires Donation storage code
-        pass
+        assert False is True
 
     @pytest.mark.parametrize('donation', [
         None,
