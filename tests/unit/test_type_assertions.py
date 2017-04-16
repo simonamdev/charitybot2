@@ -55,3 +55,16 @@ class TestTypeAssertion:
             pass
         with pytest.raises(IllegalArgumentException):
             two_strings('Actually a string', 'Also a string')
+
+    def test_receiving_custom_object_types(self):
+        class Foo:
+            pass
+
+        class Bar:
+            pass
+
+        @accept_types(Foo, Bar)
+        def do_re_mi(something_that_is_foo, something_that_is_bar):
+            print(type(something_that_is_foo))
+            print(type(something_that_is_bar))
+        do_re_mi(Foo(), Bar())
