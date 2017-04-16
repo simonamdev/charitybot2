@@ -20,12 +20,6 @@ starting_test_config = get_updated_config_values(updates={'identifier': 'test_ev
 starting_test_configuration = EventConfigurationCreator(configuration_values=starting_test_config).configuration
 
 
-class TestEventSQLiteRepositoryInstantiation:
-    def test_default_debug_is_false(self):
-        event_repository = EventSQLiteRepository(db_path=test_repository_db_path)
-        assert event_repository.debug is False
-
-
 class TestEventSQLiteRepository:
     test_event_repository = None
 
