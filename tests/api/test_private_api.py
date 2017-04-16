@@ -2,6 +2,7 @@ import pytest
 from charitybot2.api_calls.private_api_calls import PrivateApiCalls
 from charitybot2.creators.event_creator import EventRegister
 from charitybot2.exceptions import IllegalArgumentException
+from charitybot2.models.donation import Donation
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 from charitybot2.private_api.private_api import private_api_identity
 from tests.integration.test_event_register import get_test_configuration
@@ -122,7 +123,9 @@ class TestHeartbeat:
 
 class TestDonationRegistration:
     def test_registering_valid_donation(self):
-        assert True is False
+        # donation = Donation(amount=50, timestamp=1)
+        # private_api_calls.register_donation(donation=donation)
+        # TODO: Requires Donation storage code
 
     @pytest.mark.parametrize('donation', [
         None,
