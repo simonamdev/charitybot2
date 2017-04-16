@@ -96,3 +96,17 @@ class TestTypeAssertion:
             return timestamp
         with pytest.raises(IllegalArgumentException):
             return_two_if_none('bar', None)
+
+    def test_passing_various_accepted_types(self):
+        @accept_types((int, float))
+        def return_given_number_plus_one(number):
+            return number + 1
+        assert 2 == return_given_number_plus_one(1)
+        assert 2.1 == return_given_number_plus_one(1.1)
+
+    def test_passing_invalid_args_for_various_types(self):
+        @accept_types((str, int))
+        def string_and_int_only(var):
+            pass
+        with pytest.raises(IllegalArgumentException):
+            string_and_int_only(3.14)
