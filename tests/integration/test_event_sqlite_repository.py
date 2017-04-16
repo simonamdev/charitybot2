@@ -39,8 +39,11 @@ class TestEventSQLiteRepositoryInstantiation:
 
 
 class TestEventSQLiteRepository:
-    def test_checking_if_event_is_already_registered(self):
+    def test_checking_if_non_existent_event_is_already_registered(self):
         assert test_event_repository.event_already_registered(identifier='registration_check') is False
+
+    def test_for_existent_event_registration(self):
+        assert test_event_repository.event_already_registered(identifier='test_event_1') is True
 
     def test_get_event_configuration(self):
         event_configuration = test_event_repository.get_event_configuration(identifier='test_event_1')
