@@ -24,4 +24,4 @@ class TestSQLScript:
     def test_reading_sql_file(self):
         sql_script = SQLScript(path=init_test_sql_script_path)
         sql = sql_script.return_sql()
-        assert 50 == len(sql)
+        assert 125 == len(sql)
