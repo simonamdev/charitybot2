@@ -11,9 +11,8 @@ class EventNotRegisteredException(Exception):
 
 
 class EventSQLiteRepository(SQLiteRepository):
-    def __init__(self, db_path='', debug=False):
+    def __init__(self, db_path='memory', debug=False):
         super().__init__(db_path=db_path, debug=debug)
-        self.__open_connection()
         self.__validate_repository()
 
     @property

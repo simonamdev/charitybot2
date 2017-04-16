@@ -8,9 +8,7 @@ class TestSQLiteRepositoryExceptions:
     @pytest.mark.parametrize('db_path', [
         None,
         123,
-        valid_event_config_path,
-        '',
-        'Bla'
+        valid_event_config_path
     ])
     def test_passing_invalid_path_throws_exception(self, db_path):
         with pytest.raises(InvalidRepositoryException):
@@ -25,7 +23,7 @@ class TestSQLiteRepository:
     test_repository = None
 
     def setup_method(self):
-        self.test_repository = SQLiteRepository(db_path=':memory:')
+        self.test_repository = SQLiteRepository(db_path='memory')
 
     def teardown_method(self):
         self.test_repository.close_connection()

@@ -29,14 +29,6 @@ class TestEventSQLiteRepositoryInstantiation:
         event_repository = EventSQLiteRepository(db_path=test_repository_db_path)
         assert event_repository.debug is False
 
-    @pytest.mark.parametrize('debug,path', [
-        (True, ':memory:'),
-        (False, test_repository_db_path)
-    ])
-    def test_repository_paths(self, debug, path):
-        event_repository = EventSQLiteRepository(db_path=test_repository_db_path, debug=debug)
-        assert event_repository.db_path == path
-
 
 class TestEventSQLiteRepository:
     def test_checking_if_non_existent_event_is_already_registered(self):

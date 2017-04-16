@@ -11,9 +11,8 @@ class RepositoryLogger(Logger):
         self._event = event
         self._debug = debug
         self._console_logger = ConsoleLogger(source=source, event=event)
-        db_path = production_logs_db_path if not self._debug else ':memory:'
+        db_path = production_logs_db_path if not self._debug else 'memory'
         self._repository = SQLiteRepository(db_path=db_path)
-        self._repository.__open_connection()
         self.__validate_logs_repository()
         super().__init__(source=source, event=event)
 

@@ -12,7 +12,7 @@ class InvalidRepositoryQueryException(Exception):
 
 
 class SQLiteRepository:
-    def __init__(self, db_path, debug=False):
+    def __init__(self, db_path='memory', debug=False):
         self._db_path = db_path
         self._debug = debug
         self._connection = None
@@ -29,19 +29,22 @@ class SQLiteRepository:
     def connection_open(self):
         return self._connection is not None
 
-    def __validate_database(self):
-        if not isinstance(self._db_path, str):
-            raise InvalidRepositoryException('Given path is not a string')
-        if '.db' not in self._db_path and '.sqlite' not in self._db_path and not self._db_path == ':memory:':
-            raise InvalidRepositoryException('Given path does not lead to a valid database file')
-        if not os.path.isfile(self._db_path) and not self._db_path == ':memory:':
-            raise FileNotFoundError('Database file not found at given DB Path')
-
     def __validate_path(self):
-        if self._debug:
+        if not isinstance(self._db_path, str) or not isinstance(self._debug, bool):
+            raise InvalidRepositoryException('Invalid argument types passed')
+        if self._db_path in ('', None):
+            raise InvalidRepositoryException('Cannot have empty DB path')
+
+    def __validate_database(self):
+        if self._db_path == 'memory':
             self._db_path = ':memory:'
-        if self._db_path in ('', None) and not self._debug:
-            raise InvalidRepositoryException('Cannot have empty DB path in production mode')
+            return
+        if self._db_path == '':
+            raise InvalidRepositoryException('Empty path passed')
+        if '.db' not in self._db_path and '.sqlite' not in self._db_path:
+            raise InvalidRepositoryException('Given path does not lead to a valid database file')
+        if not self._db_path == 'memory' and not os.path.isfile(self._db_path):
+            raise FileNotFoundError('Database file not found at given DB Path')
 
     def __open_connection(self):
         self._connection = sqlite3.connect(database=self._db_path)
