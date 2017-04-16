@@ -10,15 +10,15 @@ class Donation:
 
     def __init__(self,
                  amount,
+                 event_identifier,
                  timestamp=int(time.time()),
                  identifier=None,
-                 event_identifier=None,
                  notes=None,
                  valid=True):
         self._amount = amount
+        self._event_identifier = event_identifier
         self._timestamp = timestamp
         self._identifier = identifier
-        self._event_identifier = event_identifier
         self._notes = notes
         self._valid = valid
         self.__validate_donation()
@@ -27,6 +27,8 @@ class Donation:
     def __validate_donation(self):
         if self._amount == '':
             raise InvalidDonationException('Donation amount cannot be an empty string')
+        if not isinstance(self._event_identifier, str) or self._event_identifier == '':
+            raise InvalidDonationException('Invalid Event identifier passed')
         if self._amount == 0:
             raise InvalidDonationException('Donation cannot have a value of 0')
         if self._timestamp < 0:
@@ -46,16 +48,16 @@ class Donation:
         return self._amount
 
     @property
+    def event_identifier(self):
+        return self._event_identifier
+
+    @property
     def timestamp(self):
         return self._timestamp
 
     @property
     def identifier(self):
         return self._identifier
-
-    @property
-    def event_identifier(self):
-        return self._event_identifier
 
     @property
     def notes(self):
