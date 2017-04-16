@@ -6,9 +6,8 @@ from time import sleep
 
 import requests
 import sqlite3
-from charitybot2.paths import mocksite_path, external_api_cli_path, private_api_script_path
+from charitybot2.paths import mocksite_path, private_api_script_path
 from charitybot2.private_api.private_api import private_api_full_url
-from charitybot2.reporter.external_api.external_api import api_full_url
 from neopysqlite import neopysqlite
 from urllib.parse import urljoin
 

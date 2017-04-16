@@ -1,5 +1,5 @@
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
-from charitybot2.persistence.sqlite_repository import SQLiteRepository, InvalidRepositoryException
+from charitybot2.persistence.sqlite_repository import SQLiteRepository
 
 
 class EventAlreadyRegisteredException(Exception):
