@@ -44,14 +44,15 @@ class EventSQLiteRepository(SQLiteRepository):
     def register_event(self, event_configuration):
         if self.event_already_registered(identifier=event_configuration.identifier):
             raise EventAlreadyRegisteredException('Event by {} is already registered'.format(event_configuration.identifier))
-        register_query = 'INSERT INTO `events` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);'
+        register_query = 'INSERT INTO `events` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
         register_data = (
             event_configuration.identifier,
             event_configuration.title,
             event_configuration.start_time,
             event_configuration.end_time,
             event_configuration.currency.key,
-            0,
+            0.0,
+            0.0,
             event_configuration.target_amount,
             event_configuration.source_url,
             event_configuration.update_delay)
@@ -106,8 +107,8 @@ class EventSQLiteRepository(SQLiteRepository):
             'start_time': row[2],
             'end_time': row[3],
             'currency_key': row[4],
-            'target_amount': row[6],
-            'source_url': row[7],
-            'update_delay': row[8]
+            'target_amount': row[7],
+            'source_url': row[8],
+            'update_delay': row[9]
         }
         return EventConfigurationCreator(configuration_values=configuration_values).configuration

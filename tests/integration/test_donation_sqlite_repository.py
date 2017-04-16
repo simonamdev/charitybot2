@@ -62,17 +62,3 @@ class TestDonationSQLiteRepositoryExceptions:
         self.test_donation_repository.record_donation(donation=donation)
         with pytest.raises(DonationAlreadyRegisteredException):
             self.test_donation_repository.record_donation(donation=donation)
-
-    @pytest.mark.parametrize('donation', [
-        object,
-        '',
-        'bla',
-        123,
-        1.23,
-        None,
-        [],
-        ()
-    ])
-    def test_passing_incorrect_values_throws_exception(self, donation):
-        with pytest.raises(IllegalArgumentException):
-            self.test_donation_repository.record_donation(donation=donation)
