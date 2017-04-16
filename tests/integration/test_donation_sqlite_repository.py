@@ -1,5 +1,4 @@
 import pytest
-from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.models.donation import Donation
 from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository, \
     DonationAlreadyRegisteredException
@@ -26,6 +25,7 @@ class TestDonationSQLiteRepository:
     def test_getting_all_donations(self):
         values = range(1, 6)
         donations = self.test_donation_repository.get_event_donations(event_identifier='event')
+        assert 5 == len(donations)
         for donation in donations:
             assert donation.amount in values
             assert donation.timestamp in values
@@ -58,7 +58,12 @@ class TestDonationSQLiteRepositoryExceptions:
         self.test_donation_repository.close_connection()
 
     def test_recording_already_recorded_donation(self):
-        donation = Donation(amount=500, event_identifier='wooo', timestamp=500)
+        donation = Donation(amount=500, event_identifier='wooo', timestamp=500, identifier='abcd')
         self.test_donation_repository.record_donation(donation=donation)
         with pytest.raises(DonationAlreadyRegisteredException):
+            self.test_donation_repository.record_donation(donation=donation)
+
+    def test_recording_donations_with_no_identifier_is_valid(self):
+        donation = Donation(amount=500, event_identifier='wooo', timestamp=500, identifier=None)
+        for i in range(5):
             self.test_donation_repository.record_donation(donation=donation)
