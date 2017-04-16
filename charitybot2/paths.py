@@ -22,8 +22,14 @@ production_repository_db_path = os.path.join(db_folder, 'repository.db')
 mocksite_path = os.path.join(current_directory, 'sources', 'mocks', 'mocksite.py')
 external_api_cli_path = os.path.join(root_directory, 'api.py')
 external_api_script_path = os.path.join(current_directory, 'reporter', 'external_api', 'external_api.py')
-
 private_api_script_path = os.path.join(current_directory, 'private_api', 'private_api.py')
+
+# SQL Script paths
+init_database_script_path = os.path.join(db_folder, 'init_database.sql')
+init_donations_script_path = os.path.join(db_folder, 'init_donations.sql')
+init_events_script_path = os.path.join(db_folder, 'init_events.sql')
+init_logs_script_path = os.path.join(db_folder, 'init_logs.sql')
+init_test_sql_script_path = os.path.join(db_folder, 'init_test.sql')
 
 # Other file paths
 status_console_file_path = os.path.join(current_directory, 'reporter', 'status_console', 'console.html')
