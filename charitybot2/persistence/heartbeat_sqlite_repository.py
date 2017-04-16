@@ -1,4 +1,7 @@
 import time
+
+from charitybot2.paths import init_heartbeat_script_path
+from charitybot2.persistence.sql_script import SQLScript
 from charitybot2.persistence.sqlite_repository import SQLiteRepository
 
 
@@ -12,13 +15,8 @@ class HeartbeatSQLiteRepository(SQLiteRepository):
         self.__validate_repository()
 
     def __validate_repository(self):
-        heartbeat_table_create_query = 'CREATE TABLE IF NOT EXISTS `heartbeats` (' \
-                                       '`entryId`       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' \
-                                       '`source`        TEXT NOT NULL,' \
-                                       '`state`         TEXT NOT NULL,' \
-                                       '`timestamp`     INTEGER NOT NULL' \
-                                       ');'
-        self.execute_query(query=heartbeat_table_create_query, commit=True)
+        init_script = SQLScript(path=init_heartbeat_script_path)
+        self.execute_query(query=init_script.return_sql(), commit=True)
 
     def __validate_source_exists(self, source):
         pass

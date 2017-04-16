@@ -36,6 +36,7 @@ private_api_script_path = os.path.join(current_directory, 'private_api', 'privat
 init_donations_script_path = os.path.join(db_folder, 'init_donations.sql')
 init_events_script_path = os.path.join(db_folder, 'init_events.sql')
 init_logs_script_path = os.path.join(db_folder, 'init_logs.sql')
+init_heartbeat_script_path = os.path.join(db_folder, 'init_heartbeat.sql')
 init_test_sql_script_path = os.path.join(db_folder, 'init_test.sql')
 
 # Other file paths
