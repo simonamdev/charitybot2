@@ -2,12 +2,12 @@ import argparse
 
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
 from charitybot2.creators.event_creator import EventRegister
-from charitybot2.paths import production_repository_db_path
+from charitybot2.paths import production_repository_db_path, test_repository_db_path
+from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 from charitybot2.persistence.heartbeat_sqlite_repository import HeartbeatSQLiteRepository
 from flask import Flask, jsonify, g, request
 from gevent.pywsgi import WSGIServer
-from tests.paths_for_tests import test_repository_db_path
 
 app = Flask(__name__)
 
@@ -30,6 +30,7 @@ def get_repository_path():
     return path
 
 event_repository = EventSQLiteRepository(db_path=get_repository_path(), debug=debug_mode)
+donation_repository = DonationSQLiteRepository(db_path=get_repository_path(), debug=debug_mode)
 heartbeat_repository = HeartbeatSQLiteRepository(db_path=get_repository_path(), debug=debug_mode)
 
 
@@ -53,8 +54,7 @@ def get_heartbeat_repository():
     heartbeat_repo = getattr(g, '_heartbeat_repository', None)
     if heartbeat_repo is None:
         heartbeat_repo = g._heartbeat_repository = HeartbeatSQLiteRepository(
-            db_path=get_repository_path()
-        )
+            db_path=get_repository_path())
     return heartbeat_repo
 
 
