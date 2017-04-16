@@ -122,7 +122,7 @@ class TestHeartbeat:
 
 class TestDonationRegistration:
     def test_registering_valid_donation(self):
-        pass
+        assert True is False
 
     @pytest.mark.parametrize('donation', [
         None,
