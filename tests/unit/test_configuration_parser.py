@@ -1,10 +1,10 @@
 import pytest
 from charitybot2.configurations.configuration_parser import ConfigurationParser, InvalidConfigurationException
-from tests.paths_for_tests import valid_config_path, invalid_config_path
+from charitybot2.paths import valid_test_config_path, invalid_test_config_path
 
 valid_test_config_keys = ('key1', 'key2', 'key3')
 valid_test_config_data = {'key1': 'value1', 'key2': 'value2', 'key3': 3}
-valid_config_parser = ConfigurationParser(file_path=valid_config_path, keys_required=valid_test_config_keys)
+valid_config_parser = ConfigurationParser(file_path=valid_test_config_path, keys_required=valid_test_config_keys)
 
 
 class TestConfigurationParserInstantiation:
@@ -33,8 +33,8 @@ class TestConfigurationParserExceptions:
     ])
     def test_passing_incorrect_keys_throws_exception(self, keys):
         with pytest.raises(InvalidConfigurationException):
-            ConfigurationParser(file_path=valid_config_path, keys_required=keys)
+            ConfigurationParser(file_path=valid_test_config_path, keys_required=keys)
 
     def test_incorrectly_formatted_file_throws_exception(self):
         with pytest.raises(InvalidConfigurationException):
-            ConfigurationParser(file_path=invalid_config_path, keys_required=('foo', 'bar'))
+            ConfigurationParser(file_path=invalid_test_config_path, keys_required=('foo', 'bar'))

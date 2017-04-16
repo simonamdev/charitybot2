@@ -10,9 +10,17 @@ db_folder = os.path.join(data_folder, 'db')
 test_folder = os.path.join(root_directory, 'tests')
 test_data_folder = os.path.join(test_folder, 'data')
 test_config_folder = os.path.join(test_data_folder, 'config')
+base_test_config_folder = os.path.join(test_config_folder, 'base')
+event_test_config_folder = os.path.join(test_config_folder, 'event')
 
 # Production Configs
 purrcat259_config_path = os.path.join(twitch_config_folder, 'purrcat259.json')
+
+# Test Configs
+empty_test_config_path = os.path.join(base_test_config_folder, 'empty_config.json')
+invalid_test_config_path = os.path.join(base_test_config_folder, 'invalid_formatted_config.json')
+valid_test_config_path = os.path.join(base_test_config_folder, 'valid_config.json')
+valid_test_event_config_path = os.path.join(event_test_config_folder, 'valid_config.json')
 
 # Databases
 production_logs_db_path = os.path.join(db_folder, 'logs.db')
@@ -25,7 +33,6 @@ external_api_script_path = os.path.join(current_directory, 'reporter', 'external
 private_api_script_path = os.path.join(current_directory, 'private_api', 'private_api.py')
 
 # SQL Script paths
-init_database_script_path = os.path.join(db_folder, 'init_database.sql')
 init_donations_script_path = os.path.join(db_folder, 'init_donations.sql')
 init_events_script_path = os.path.join(db_folder, 'init_events.sql')
 init_logs_script_path = os.path.join(db_folder, 'init_logs.sql')

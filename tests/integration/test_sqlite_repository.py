@@ -1,14 +1,14 @@
 import pytest
+from charitybot2.paths import valid_test_event_config_path
 from charitybot2.persistence.sqlite_repository import SQLiteRepository, InvalidRepositoryException, \
     InvalidRepositoryQueryException
-from tests.paths_for_tests import valid_event_config_path
 
 
 class TestSQLiteRepositoryExceptions:
     @pytest.mark.parametrize('db_path', [
         None,
         123,
-        valid_event_config_path
+        valid_test_event_config_path
     ])
     def test_passing_invalid_path_throws_exception(self, db_path):
         with pytest.raises(InvalidRepositoryException):

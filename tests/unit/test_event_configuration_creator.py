@@ -4,7 +4,7 @@ import pytest
 from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator, \
     InvalidEventConfigurationException, EventConfigurationCreatorFromFile
-from tests.paths_for_tests import valid_event_config_path
+from charitybot2.paths import valid_test_event_config_path
 from tests.unit.test_event_configuration import test_event_configuration_values
 
 
@@ -58,7 +58,7 @@ class TestEventConfigurationCreator:
         event_configuration_creator = EventConfigurationCreator(configuration_values=test_event_configuration_values)
         assert isinstance(event_configuration_creator.configuration, EventConfiguration)
 
-test_event_configuration_creator_from_file = EventConfigurationCreatorFromFile(file_path=valid_event_config_path)
+test_event_configuration_creator_from_file = EventConfigurationCreatorFromFile(file_path=valid_test_event_config_path)
 
 
 class TestEventConfigurationCreatorFromFile:
