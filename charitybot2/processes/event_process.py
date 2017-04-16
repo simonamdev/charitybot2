@@ -1,2 +1,0 @@
-class EventProcess:
-    pass
