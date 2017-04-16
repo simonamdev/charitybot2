@@ -10,6 +10,7 @@ db_folder = os.path.join(data_folder, 'db')
 test_folder = os.path.join(root_directory, 'tests')
 test_data_folder = os.path.join(test_folder, 'data')
 test_config_folder = os.path.join(test_data_folder, 'config')
+test_db_folder = os.path.join(test_data_folder, 'db')
 base_test_config_folder = os.path.join(test_config_folder, 'base')
 event_test_config_folder = os.path.join(test_config_folder, 'event')
 
@@ -25,6 +26,7 @@ valid_test_event_config_path = os.path.join(event_test_config_folder, 'valid_con
 # Databases
 production_logs_db_path = os.path.join(db_folder, 'logs.db')
 production_repository_db_path = os.path.join(db_folder, 'repository.db')
+test_repository_db_path = os.path.join(test_db_folder, 'repository.db')
 
 # Script paths
 mocksite_path = os.path.join(current_directory, 'sources', 'mocks', 'mocksite.py')

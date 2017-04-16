@@ -3,11 +3,11 @@ from charitybot2.api_calls.private_api_calls import PrivateApiCalls
 from charitybot2.creators.event_creator import EventRegister
 from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.models.donation import Donation
+from charitybot2.paths import test_repository_db_path
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 from charitybot2.private_api.private_api import private_api_identity
 from tests.integration.test_event_register import get_test_configuration
 from tests.mocks import MockPrivateAPI, WipeSQLiteDB
-from tests.paths_for_tests import test_repository_db_path
 
 mock_private_api = MockPrivateAPI()
 private_api_calls = PrivateApiCalls()
