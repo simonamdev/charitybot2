@@ -20,8 +20,9 @@ def get_test_configuration(updated_values=None):
 class TestEventRegister:
     def test_creating_unregistered_event(self):
         registration_test_configuration = get_test_configuration({'identifier': 'registration_test'})
-        event_creator = EventRegister(event_configuration=registration_test_configuration,
-                                      event_repository=in_memory_event_repository)
+        event_creator = EventRegister(
+            event_configuration=registration_test_configuration,
+            event_repository=in_memory_event_repository)
         assert event_creator.event_is_registered() is False
         new_event = event_creator.get_event()
         assert isinstance(new_event, Event)

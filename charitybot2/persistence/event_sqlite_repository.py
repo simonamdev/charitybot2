@@ -1,4 +1,6 @@
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
+from charitybot2.paths import init_events_script_path
+from charitybot2.persistence.sql_script import SQLScript
 from charitybot2.persistence.sqlite_repository import SQLiteRepository
 
 
@@ -20,21 +22,11 @@ class EventSQLiteRepository(SQLiteRepository):
         return self._db_path
 
     def __validate_repository(self):
-        event_table_create_query = 'CREATE TABLE IF NOT EXISTS `events` (' \
-                                   '`eventId`          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,' \
-                                   '`identifier`       TEXT NOT NULL,' \
-                                   '`title`            TEXT NOT NULL,' \
-                                   '`startTime`        INTEGER NOT NULL,' \
-                                   '`endTime`          INTEGER NOT NULL,' \
-                                   '`currencyKey`      TEXT NOT NULL,' \
-                                   '`startingAmount`   REAL,' \
-                                   '`targetAmount`     INTEGER NOT NULL,' \
-                                   '`sourceUrl`        TEXT NOT NULL,' \
-                                   '`updateDelay`      INTEGER);'
-        self.execute_query(query=event_table_create_query, commit=True)
+        init_script = SQLScript(path=init_events_script_path)
+        self.execute_query(query=init_script.return_sql(), commit=True)
 
     def event_already_registered(self, identifier):
-        query = 'SELECT COUNT(*) FROM `events` WHERE identifier = ?'
+        query = 'SELECT COUNT(*) FROM `events` WHERE internalName = ?'
         data = (identifier, )
         count = self.execute_query(query=query, data=data).fetchall()
         return count[0][0] >= 1
@@ -42,7 +34,9 @@ class EventSQLiteRepository(SQLiteRepository):
     def get_event_configuration(self, identifier):
         if not self.event_already_registered(identifier=identifier):
             raise EventNotRegisteredException('Event by {} is not registered yet'.format(identifier))
-        retrieve_query = 'SELECT * FROM `events` WHERE identifier = ?'
+        retrieve_query = 'SELECT * ' \
+                         'FROM `events` ' \
+                         'WHERE internalName = ?'
         retrieve_data = (identifier, )
         row = self.execute_query(query=retrieve_query, data=retrieve_data).fetchall()[0]
         return self.__convert_row_to_event_configuration(row=row)
@@ -50,7 +44,7 @@ class EventSQLiteRepository(SQLiteRepository):
     def register_event(self, event_configuration):
         if self.event_already_registered(identifier=event_configuration.identifier):
             raise EventAlreadyRegisteredException('Event by {} is already registered'.format(event_configuration.identifier))
-        register_query = 'INSERT INTO `events` VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
+        register_query = 'INSERT INTO `events` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);'
         register_data = (
             event_configuration.identifier,
             event_configuration.title,
@@ -68,14 +62,14 @@ class EventSQLiteRepository(SQLiteRepository):
             raise EventNotRegisteredException('Event by {} is not registered yet'.format(new_event_configuration.identifier))
         update_query = 'UPDATE `events` ' \
                        'SET ' \
-                       'title = ?, ' \
+                       'externalName = ?, ' \
                        'startTime = ?, ' \
                        'endTime = ?, ' \
                        'currencyKey = ?, ' \
                        'targetAmount = ?, ' \
                        'sourceUrl = ?, ' \
                        'updateDelay = ? ' \
-                       'WHERE identifier = ?'
+                       'WHERE internalName = ?'
         update_data = (new_event_configuration.title,
                        new_event_configuration.start_time,
                        new_event_configuration.end_time,
@@ -89,27 +83,32 @@ class EventSQLiteRepository(SQLiteRepository):
     def get_event_starting_amount(self, identifier):
         if not self.event_already_registered(identifier=identifier):
             raise EventNotRegisteredException('Event by {} is not registered yet'.format(identifier))
-        retrieve_query = 'SELECT startingAmount FROM `events` WHERE identifier = ?'
+        retrieve_query = 'SELECT startingAmount ' \
+                         'FROM `events` ' \
+                         'WHERE internalName = ?'
         retrieve_data = (identifier, )
         return self.execute_query(query=retrieve_query, data=retrieve_data).fetchall()[0][0]
 
     def update_event_starting_amount(self, identifier, start_amount):
         if not self.event_already_registered(identifier=identifier):
             raise EventNotRegisteredException('Event by {} is not registered yet'.format(identifier))
-        update_query = 'UPDATE `events` SET startingAmount = ? WHERE identifier = ?'
+        update_query = 'UPDATE `events` ' \
+                       'SET startingAmount = ? ' \
+                       'WHERE internalName = ?'
         update_data = (start_amount, identifier)
         self.execute_query(query=update_query, data=update_data, commit=True)
 
     @staticmethod
     def __convert_row_to_event_configuration(row):
+        print(row)
         configuration_values = {
-            'identifier': row[1],
-            'title': row[2],
-            'start_time': row[3],
-            'end_time': row[4],
-            'currency_key': row[5],
-            'target_amount': row[7],
-            'source_url': row[8],
-            'update_delay': row[9]
+            'identifier': row[0],
+            'title': row[1],
+            'start_time': row[2],
+            'end_time': row[3],
+            'currency_key': row[4],
+            'target_amount': row[6],
+            'source_url': row[7],
+            'update_delay': row[8]
         }
         return EventConfigurationCreator(configuration_values=configuration_values).configuration

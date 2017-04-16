@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS `events` (
-    `eventId`          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `identifier`       TEXT NOT NULL,
-    `title`            TEXT NOT NULL,
+    `internalName`     TEXT NOT NULL PRIMARY KEY,
+    `externalName`     TEXT NOT NULL,
     `startTime`        INTEGER NOT NULL,
     `endTime`          INTEGER NOT NULL,
     `currencyKey`      TEXT NOT NULL,

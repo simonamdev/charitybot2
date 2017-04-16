@@ -46,7 +46,7 @@ class EventConfigurationCreator:
             raise InvalidEventConfigurationException('Passed Configuration keys are incorrect')
         for key in self.number_keys:
             if not isinstance(self._configuration_values[key], int):
-                raise InvalidEventConfigurationException('Number keys are required to be integers')
+                raise InvalidEventConfigurationException('Number key: {} are required to be integers'.format(key))
 
     def __create_configuration(self):
         try:
