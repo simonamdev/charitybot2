@@ -1,3 +1,5 @@
+import json
+
 import pytest
 import time
 from charitybot2.models.donation import Donation, InvalidDonationException
@@ -65,3 +67,15 @@ class TestDonationExceptions:
                 event_identifier=event_identifier,
                 timestamp=timestamp,
                 identifier=identifier)
+
+
+class TestDonationMethods:
+    def test_conversion_to_json(self):
+        test_donation_json = dict(
+            amount=test_donation.amount,
+            event_identifier=test_donation.event_identifier,
+            timestamp=test_donation.timestamp,
+            identifier=test_donation.identifier,
+            notes=test_donation.notes)
+        test_donation_json = json.dumps(test_donation_json)
+        assert test_donation_json == test_donation.to_json()

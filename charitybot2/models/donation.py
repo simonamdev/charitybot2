@@ -1,3 +1,4 @@
+import json
 import time
 
 
@@ -66,3 +67,12 @@ class Donation:
     @property
     def validity(self):
         return self._valid
+
+    def to_json(self):
+        return json.dumps(
+            dict(
+                amount=self.amount,
+                event_identifier=self.event_identifier,
+                timestamp=self.timestamp,
+                identifier=self.identifier,
+                notes=self.notes))
