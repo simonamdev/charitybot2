@@ -60,4 +60,6 @@ class PrivateApiCalls:
     def register_donation(self, donation):
         # TODO: POST request to register donation for a given event
         url = self.v1_url + 'donation/'
-        pass
+        response = UrlCall(url=url, timeout=self._timeout).post(data=donation.to_json())
+        decoded_content = response.content.decode('utf-8')
+        return json.loads(decoded_content)['received']
