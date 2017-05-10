@@ -127,7 +127,20 @@ class TestDonationRegistration:
     def test_registering_valid_donation(self):
         donation = Donation(amount=50, event_identifier=test_event_identifier)
         response = private_api_calls.register_donation(donation=donation)
-        assert response is True
+        assert True is response
+
+    def test_registering_fully_defined_valid_donation(self):
+        donation = Donation(
+            amount=-30,
+            event_identifier=test_event_identifier,
+            timestamp=123,
+            identifier='foobar',
+            notes='she sells sea shells on the sea shore',
+            valid=False
+        )
+        response = private_api_calls.register_donation(donation=donation)
+        assert True is response
+
 
 # Disabled due to assertion check not working properly for this specific method
     # @pytest.mark.parametrize('donation', [
