@@ -8,6 +8,14 @@ class InvalidDonationException(Exception):
 
 class Donation:
     __rounding_amount = 2
+    keys_required = (
+        'amount',
+        'event_identifier',
+        'timestamp',
+        'identifier',
+        'notes',
+        'valid'
+    )
 
     def __init__(self,
                  amount,
@@ -79,3 +87,29 @@ class Donation:
 
     def to_json(self):
         return json.dumps(self.to_dict())
+
+    @staticmethod
+    def from_dict(donation_dict):
+        if not isinstance(donation_dict, dict):
+            raise InvalidDonationException('To create a donation from a dictionary, a dict is required')
+        try:
+            donation = Donation(
+                amount=float(donation_dict.get('amount')),
+                event_identifier=donation_dict.get('event_identifier'),
+                timestamp=int(donation_dict.get('timestamp')),
+                identifier=donation_dict.get('identifier'),
+                notes=donation_dict.get('notes'),
+                valid=donation_dict.get('valid')
+            )
+        except Exception:
+            raise InvalidDonationException('Unable to create donation from given Dict data')
+        return donation
+
+    @staticmethod
+    def from_json(donation_json):
+        donation = None
+        try:
+            donation = Donation.from_dict(json.loads(donation_json))
+        except Exception:
+            raise InvalidDonationException('Unable to create donation from given JSON data')
+        return donation

@@ -78,6 +78,57 @@ class TestDonationMethods:
         notes=test_donation.notes,
         valid=test_donation.validity)
 
+    def test_conversion_from_valid_dict(self):
+        donation = Donation.from_dict(self.test_donation_dict)
+        assert test_donation.amount == donation.amount
+        assert test_donation.event_identifier == donation.event_identifier
+        assert test_donation.timestamp == donation.timestamp
+        assert test_donation.identifier == donation.identifier
+        assert test_donation.notes == donation.notes
+        assert test_donation.validity == donation.validity
+
+    @pytest.mark.parametrize('donation_dict', [
+        dict(),
+        dict(foo='bar'),
+        dict(amount='-3945'),
+        dict(valid=None),
+        None,
+        1,
+        2.0,
+        object,
+        ''
+    ])
+    def test_conversion_from_invalid_dict_throws_exception(self, donation_dict):
+        with pytest.raises(InvalidDonationException):
+            donation = Donation.from_dict(donation_dict=donation_dict)
+
+    def test_conversion_from_valid_json(self):
+        donation_json = json.dumps(self.test_donation_dict)
+        donation = Donation.from_json(donation_json=donation_json)
+        assert test_donation.amount == donation.amount
+        assert test_donation.event_identifier == donation.event_identifier
+        assert test_donation.timestamp == donation.timestamp
+        assert test_donation.identifier == donation.identifier
+        assert test_donation.notes == donation.notes
+        assert test_donation.validity == donation.validity
+
+    @pytest.mark.parametrize('donation_json', [
+        None,
+        1,
+        1.0,
+        object,
+        '',
+        'bla',
+        '{}',
+        '[]',
+        'foobarr',
+        '{"something" : "or other"}',
+        '{"amount": 9001}'
+    ])
+    def test_conversion_from_invalid_json_throws_exception(self, donation_json):
+        with pytest.raises(InvalidDonationException):
+            donation = Donation.from_json(donation_json=donation_json)
+
     def test_conversion_to_dict(self):
         assert self.test_donation_dict == test_donation.to_dict()
 
