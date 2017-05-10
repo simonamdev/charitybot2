@@ -70,13 +70,17 @@ class TestDonationExceptions:
 
 
 class TestDonationMethods:
+    test_donation_dict = dict(
+        amount=test_donation.amount,
+        event_identifier=test_donation.event_identifier,
+        timestamp=test_donation.timestamp,
+        identifier=test_donation.identifier,
+        notes=test_donation.notes,
+        valid=test_donation.validity)
+
+    def test_conversion_to_dict(self):
+        assert self.test_donation_dict == test_donation.to_dict()
+
     def test_conversion_to_json(self):
-        test_donation_json = dict(
-            amount=test_donation.amount,
-            event_identifier=test_donation.event_identifier,
-            timestamp=test_donation.timestamp,
-            identifier=test_donation.identifier,
-            notes=test_donation.notes,
-            valid=test_donation.validity)
-        test_donation_json = json.dumps(test_donation_json)
+        test_donation_json = json.dumps(self.test_donation_dict)
         assert test_donation_json == test_donation.to_json()

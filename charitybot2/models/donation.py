@@ -68,7 +68,6 @@ class Donation:
     def validity(self):
         return self._valid
 
-    # TODO: Write test!
     def to_dict(self):
         return dict(
             amount=self.amount,

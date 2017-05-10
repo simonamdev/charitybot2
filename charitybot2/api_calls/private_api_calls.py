@@ -3,7 +3,6 @@ import json
 import time
 
 from charitybot2.configurations.event_configuration import EventConfiguration
-from charitybot2.models.donation import Donation
 from charitybot2.private_api.private_api import private_api_full_url
 from charitybot2.sources.url_call import UrlCall
 from type_assertions import accept_types
