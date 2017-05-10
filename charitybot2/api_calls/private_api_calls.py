@@ -6,7 +6,7 @@ from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.models.donation import Donation
 from charitybot2.private_api.private_api import private_api_full_url
 from charitybot2.sources.url_call import UrlCall
-from type_assertions import assert_types, accept_types
+from type_assertions import accept_types
 
 
 class PrivateApiCalls:
@@ -55,7 +55,9 @@ class PrivateApiCalls:
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['received']
 
-    @accept_types(Donation)
+    # Disabled due to assertion check not working properly for this specific method
+    # @accept_types(object, Donation)
     def register_donation(self, donation):
         # TODO: POST request to register donation for a given event
+        url = self.v1_url + 'donation/'
         pass
