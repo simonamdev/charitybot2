@@ -9,6 +9,7 @@ from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepositor
 from charitybot2.persistence.heartbeat_sqlite_repository import HeartbeatSQLiteRepository
 from charitybot2.persistence.sqlite_repository import InvalidRepositoryQueryException
 from flask import Flask, jsonify, g, request
+from flask import json
 from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
@@ -146,21 +147,21 @@ def heartbeat():
 
 @app.route('/api/v1/donation/', methods=['POST'])
 def record_donation():
-    received_data = request.form.to_dict()
-    success = True
+    success = False
     try:
-        # TODO: Write from_json static methods for each model to avoid manually recreating it here. DRY!
-        new_donation = Donation(
-            amount=float(received_data.get('amount')),
-            event_identifier=received_data.get('event_identifier'),
-            timestamp=int(received_data.get('timestamp')),
-            identifier=received_data.get('identifier'),
-            notes=received_data.get('notes'))
+        received_data = request.form.to_dict()
+        new_donation = Donation.from_dict(received_data)
         get_donations_repository().record_donation(new_donation)
-    except InvalidRepositoryQueryException:
-        success = False
-    except InvalidDonationException:
-        success = False
+        success = True
+    except InvalidRepositoryQueryException as e:
+        # TODO: Switch to proper logging
+        print('Unable to complete query properly')
+        print(e)
+    except InvalidDonationException as e:
+        print('Donation was invalid')
+        print(e)
+    except Exception as e:
+        print(e)
     return jsonify(
         {
             'received': success

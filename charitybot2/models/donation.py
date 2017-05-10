@@ -99,7 +99,7 @@ class Donation:
                 timestamp=int(donation_dict.get('timestamp')),
                 identifier=donation_dict.get('identifier'),
                 notes=donation_dict.get('notes'),
-                valid=donation_dict.get('valid')
+                valid=bool(donation_dict.get('valid'))
             )
         except Exception:
             raise InvalidDonationException('Unable to create donation from given Dict data')
