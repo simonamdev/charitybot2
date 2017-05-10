@@ -2,6 +2,7 @@ import argparse
 
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
 from charitybot2.creators.event_creator import EventRegister
+from charitybot2.models.donation import InvalidDonationException, Donation
 from charitybot2.paths import production_repository_db_path, test_repository_db_path
 from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
@@ -57,6 +58,14 @@ def get_heartbeat_repository():
         heartbeat_repo = g._heartbeat_repository = HeartbeatSQLiteRepository(
             db_path=get_repository_path())
     return heartbeat_repo
+
+
+def get_donations_repository():
+    donation_repo = getattr(g, '_donation_repository', None)
+    if donation_repo is None:
+        donation_repo  = g._donation_repository = DonationSQLiteRepository(
+            db_path=get_repository_path())
+    return donation_repo
 
 
 @app.teardown_appcontext
@@ -137,15 +146,24 @@ def heartbeat():
 
 @app.route('/api/v1/donation/', methods=['POST'])
 def record_donation():
+    received_data = request.form.to_dict()
     success = True
-    # TODO: Store donation
     try:
-        pass
+        # TODO: Write from_json static methods for each model to avoid manually recreating it here. DRY!
+        new_donation = Donation(
+            amount=float(received_data.get('amount')),
+            event_identifier=received_data.get('event_identifier'),
+            timestamp=int(received_data.get('timestamp')),
+            identifier=received_data.get('identifier'),
+            notes=received_data.get('notes'))
+        get_donations_repository().record_donation(new_donation)
     except InvalidRepositoryQueryException:
+        success = False
+    except InvalidDonationException:
         success = False
     return jsonify(
         {
-            'received': False  # hard encoded to fail test
+            'received': success
         }
     )
 

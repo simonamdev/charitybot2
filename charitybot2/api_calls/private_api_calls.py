@@ -58,8 +58,7 @@ class PrivateApiCalls:
     # Disabled due to assertion check not working properly for this specific method
     # @accept_types(object, Donation)
     def register_donation(self, donation):
-        # TODO: POST request to register donation for a given event
         url = self.v1_url + 'donation/'
-        response = UrlCall(url=url, timeout=self._timeout).post(data=donation.to_json())
+        response = UrlCall(url=url, timeout=self._timeout).post(data=donation.to_dict())
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['received']
