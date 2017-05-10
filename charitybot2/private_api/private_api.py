@@ -6,6 +6,7 @@ from charitybot2.paths import production_repository_db_path, test_repository_db_
 from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 from charitybot2.persistence.heartbeat_sqlite_repository import HeartbeatSQLiteRepository
+from charitybot2.persistence.sqlite_repository import InvalidRepositoryQueryException
 from flask import Flask, jsonify, g, request
 from gevent.pywsgi import WSGIServer
 
@@ -119,14 +120,32 @@ def register_or_update_event():
 @app.route('/api/v1/heartbeat/', methods=['POST'])
 def heartbeat():
     received_data = request.form.to_dict()
-    get_heartbeat_repository().store_heartbeat(
-        source=received_data['source'],
-        state=received_data['state'],
-        timestamp=int(received_data['timestamp'])
-    )
+    success = True
+    try:
+        get_heartbeat_repository().store_heartbeat(
+            source=received_data['source'],
+            state=received_data['state'],
+            timestamp=int(received_data['timestamp']))
+    except InvalidRepositoryQueryException:
+        success = False
     return jsonify(
         {
-            'received': True
+            'received': success
+        }
+    )
+
+
+@app.route('/api/v1/donation/', methods=['POST'])
+def record_donation():
+    success = True
+    # TODO: Store donation
+    try:
+        pass
+    except InvalidRepositoryQueryException:
+        success = False
+    return jsonify(
+        {
+            'received': False  # hard encoded to fail test
         }
     )
 
