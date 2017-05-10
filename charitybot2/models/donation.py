@@ -68,11 +68,15 @@ class Donation:
     def validity(self):
         return self._valid
 
+    # TODO: Write test!
+    def to_dict(self):
+        return dict(
+            amount=self.amount,
+            event_identifier=self.event_identifier,
+            timestamp=self.timestamp,
+            identifier=self.identifier,
+            notes=self.notes,
+            valid=self.validity)
+
     def to_json(self):
-        return json.dumps(
-            dict(
-                amount=self.amount,
-                event_identifier=self.event_identifier,
-                timestamp=self.timestamp,
-                identifier=self.identifier,
-                notes=self.notes))
+        return json.dumps(self.to_dict())

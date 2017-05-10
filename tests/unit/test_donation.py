@@ -76,6 +76,7 @@ class TestDonationMethods:
             event_identifier=test_donation.event_identifier,
             timestamp=test_donation.timestamp,
             identifier=test_donation.identifier,
-            notes=test_donation.notes)
+            notes=test_donation.notes,
+            valid=test_donation.validity)
         test_donation_json = json.dumps(test_donation_json)
         assert test_donation_json == test_donation.to_json()
