@@ -182,6 +182,32 @@ class TestEventDonations:
             assert isinstance(donation, Donation)
             assert donation.amount == donation.timestamp
 
+    def test_retrieving_valid_time_filtered_donations(self):
+        filtered_donations_identifier = 'filtered_donation_listing_test'
+        updated_values = {
+            'identifier': filtered_donations_identifier,
+            'title': 'Filtered Donation Listing Test Event'
+        }
+        donation_listing_test_configuration = get_test_configuration(updated_values=updated_values)
+        # Register the event
+        private_api_calls.register_event(event_configuration=donation_listing_test_configuration)
+        # Add a few donations
+        donation_count = 7
+        for i in range(1, donation_count):
+            donation = Donation(
+                amount=i,
+                event_identifier=filtered_donations_identifier,
+                timestamp=i)
+            private_api_calls.register_donation(donation=donation)
+        # Retrieve the stored donations and confirm they are correct
+        donations = private_api_calls.get_event_donations(
+            event_identifier=filtered_donations_identifier,
+            time_bounds=(3, 5))
+        assert donation_count == 3
+        for donation in donations:
+            assert isinstance(donation, Donation)
+            assert donation.amount == donation.timestamp
+
     def test_retrieving_donations_from_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):
             private_api_calls.get_event_donations(event_identifier='bla')
