@@ -1,3 +1,7 @@
+class NonExistentEventException(Exception):
+    pass
+
+
 class InvalidEventAmountException(Exception):
     pass
 

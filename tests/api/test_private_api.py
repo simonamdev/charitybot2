@@ -3,6 +3,7 @@ from charitybot2.api_calls.private_api_calls import PrivateApiCalls
 from charitybot2.creators.event_creator import EventRegister
 from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.models.donation import Donation
+from charitybot2.models.event import NonExistentEventException
 from charitybot2.paths import test_repository_db_path
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 from charitybot2.private_api.private_api import private_api_identity
@@ -68,9 +69,9 @@ class TestEventInformation:
         for key in info.keys():
             assert info[key] == new_test_values[key]
 
-    def test_getting_event_info_of_non_existent_event_returns_none(self):
-        info = private_api_calls.get_event_info(identifier='foobar')
-        assert None is info
+    def test_getting_event_info_of_non_existent_event_throws_exception(self):
+        with pytest.raises(NonExistentEventException):
+            info = private_api_calls.get_event_info(identifier='foobar')
 
 
 class TestEventRegistration:
@@ -154,3 +155,33 @@ class TestDonationRegistration:
     # def test_sending_illegal_values_throws_exception(self, donation):
     #     with pytest.raises(IllegalArgumentException):
     #         private_api_calls.register_donation(donation=donation)
+
+
+class TestEventDonations:
+    def test_retrieving_valid_donations(self):
+        donation_listing_test_identifier = 'donation_listing_test'
+        updated_values = {
+            'identifier': donation_listing_test_identifier,
+            'title': 'Donation Listing Test Event'
+        }
+        donation_listing_test_configuration = get_test_configuration(updated_values=updated_values)
+        # Register the event
+        private_api_calls.register_event(event_configuration=donation_listing_test_configuration)
+        # Add a few donations
+        donation_count = 3
+        for i in range(1, donation_count):
+            donation = Donation(
+                amount=i,
+                event_identifier=donation_listing_test_identifier,
+                timestamp=i)
+            private_api_calls.register_donation(donation=donation)
+        # Retrieve the stored donations and confirm they are correct
+        donations = private_api_calls.get_event_donations(event_identifier=donation_listing_test_identifier)
+        assert donation_count == len(donations)
+        for donation in donations:
+            assert isinstance(donation, Donation)
+            assert donation.amount == donation.timestamp
+
+    def test_retrieving_donations_from_non_existent_event_throws_exception(self):
+        with pytest.raises(NonExistentEventException):
+            private_api_calls.get_event_donations(event_identifier='bla')

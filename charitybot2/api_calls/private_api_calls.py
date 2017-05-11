@@ -3,6 +3,7 @@ import json
 import time
 
 from charitybot2.configurations.event_configuration import EventConfiguration
+from charitybot2.models.event import NonExistentEventException
 from charitybot2.private_api.private_api import private_api_full_url
 from charitybot2.sources.url_call import UrlCall
 from type_assertions import accept_types
@@ -28,7 +29,9 @@ class PrivateApiCalls:
         url = self.v1_url + 'event/{}'.format(identifier)
         decoded_content = UrlCall(url=url, timeout=self._timeout).get().content.decode('utf-8')
         content = json.loads(decoded_content)
-        return content if len(content.keys()) > 0 else None
+        if len(content.keys()) == 0:
+            raise NonExistentEventException('Event with identifier {} does not exist'.format(identifier))
+        return content
 
     @accept_types(object, EventConfiguration)
     def register_event(self, event_configuration):
@@ -61,3 +64,6 @@ class PrivateApiCalls:
         response = UrlCall(url=url, timeout=self._timeout).post(data=donation.to_dict())
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['received']
+
+    def get_event_donations(self, event_identifier, time_bounds=()):
+        pass
