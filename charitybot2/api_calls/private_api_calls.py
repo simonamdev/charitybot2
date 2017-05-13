@@ -66,4 +66,9 @@ class PrivateApiCalls:
         return json.loads(decoded_content)['received']
 
     def get_event_donations(self, event_identifier, time_bounds=()):
-        pass
+        if ' ' in event_identifier:
+            raise NonExistentEventException('Event identifiers cannot contain spaces')
+        if not self.get_event_existence(identifier=event_identifier):
+            raise NonExistentEventException('Event with identifier {} does not exist'.format(event_identifier))
+        url = self.v1_url + 'event/{}/donations'.format(event_identifier)
+        

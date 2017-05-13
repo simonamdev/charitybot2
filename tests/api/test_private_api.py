@@ -211,3 +211,7 @@ class TestEventDonations:
     def test_retrieving_donations_from_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):
             private_api_calls.get_event_donations(event_identifier='bla')
+
+    def test_retrieving_donations_from_event_with_spaces_throws_exception(self):
+        with pytest.raises(NonExistentEventException):
+            private_api_calls.get_event_donations(event_identifier='cats are_awesome')
