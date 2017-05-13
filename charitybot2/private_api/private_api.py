@@ -127,6 +127,17 @@ def register_or_update_event():
     )
 
 
+@app.route('/api/v1/event/{}/donations', methods=['GET'])
+def retrieve_event_donations(event_identifier):
+    # TODO: Get donations from database
+    donations = None
+    return jsonify(
+        {
+            'donations': donations
+        }
+    )
+
+
 @app.route('/api/v1/heartbeat/', methods=['POST'])
 def heartbeat():
     received_data = request.form.to_dict()

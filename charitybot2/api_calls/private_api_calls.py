@@ -3,6 +3,7 @@ import json
 import time
 
 from charitybot2.configurations.event_configuration import EventConfiguration
+from charitybot2.models.donation import Donation
 from charitybot2.models.event import NonExistentEventException
 from charitybot2.private_api.private_api import private_api_full_url
 from charitybot2.sources.url_call import UrlCall
@@ -71,4 +72,7 @@ class PrivateApiCalls:
         if not self.get_event_existence(identifier=event_identifier):
             raise NonExistentEventException('Event with identifier {} does not exist'.format(event_identifier))
         url = self.v1_url + 'event/{}/donations'.format(event_identifier)
-        
+        response = UrlCall(url=url, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        donations = [Donation.from_dict(donation) for donation in json.loads(decoded_content)['donations']]
+        return donations
