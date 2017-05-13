@@ -131,7 +131,6 @@ def register_or_update_event():
 def retrieve_event_donations(event_identifier):
     lower_bound, upper_bound = request.args.get('lower'), request.args.get('upper')
     if lower_bound is not None and upper_bound is not None:
-        # TODO: Get filtered donations
         donations = get_donations_repository().get_time_filtered_event_donations(
             event_identifier=event_identifier,
             lower_bound=lower_bound,
