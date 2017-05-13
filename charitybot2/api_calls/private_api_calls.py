@@ -71,8 +71,9 @@ class PrivateApiCalls:
             raise NonExistentEventException('Event identifiers cannot contain spaces')
         if not self.get_event_existence(identifier=event_identifier):
             raise NonExistentEventException('Event with identifier {} does not exist'.format(event_identifier))
-        url = self.v1_url + 'event/{}/donations'.format(event_identifier)
+        url = self.v1_url + 'event/{}/donations/'.format(event_identifier)
         response = UrlCall(url=url, timeout=self._timeout).get()
         decoded_content = response.content.decode('utf-8')
-        donations = [Donation.from_dict(donation) for donation in json.loads(decoded_content)['donations']]
+        converted_content = json.loads(decoded_content)['donations']
+        donations = [Donation.from_json(donation) for donation in converted_content]
         return donations

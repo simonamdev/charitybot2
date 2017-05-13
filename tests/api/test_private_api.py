@@ -169,7 +169,7 @@ class TestEventDonations:
         private_api_calls.register_event(event_configuration=donation_listing_test_configuration)
         # Add a few donations
         donation_count = 3
-        for i in range(1, donation_count):
+        for i in range(1, donation_count + 1):
             donation = Donation(
                 amount=i,
                 event_identifier=donation_listing_test_identifier,

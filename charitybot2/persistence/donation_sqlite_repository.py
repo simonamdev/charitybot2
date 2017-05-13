@@ -43,6 +43,7 @@ class DonationSQLiteRepository(SQLiteRepository):
         self.execute_query(query=query, data=data, commit=True)
 
     def get_event_donations(self, event_identifier):
+        # TODO: Add event identifier validation here
         query = 'SELECT * ' \
                 'FROM `donations` ' \
                 'WHERE eventInternalName = ?;'
