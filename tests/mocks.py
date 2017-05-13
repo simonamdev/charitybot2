@@ -6,8 +6,9 @@ from time import sleep
 
 import requests
 import sqlite3
-from charitybot2.paths import mocksite_path, private_api_script_path
+from charitybot2.paths import mocksite_path, private_api_script_path, console_script_path
 from charitybot2.private_api.private_api import private_api_full_url
+from charitybot2.public_api.console.console import console_full_url
 from neopysqlite import neopysqlite
 from urllib.parse import urljoin
 
@@ -137,6 +138,15 @@ class MockPrivateAPI(MockAPI):
             name='Mock Private API',
             url=private_api_full_url,
             api_script_path=private_api_script_path,
+            extra_args=args)
+
+
+class MockConsole(MockAPI):
+    def __init__(self, args=()):
+        super().__init__(
+            name='Mock Console',
+            url=console_full_url,
+            api_script_path=console_script_path,
             extra_args=args)
 
 
