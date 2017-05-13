@@ -200,13 +200,30 @@ class TestEventDonations:
                 timestamp=i)
             private_api_calls.register_donation(donation=donation)
         # Retrieve the stored donations and confirm they are correct
+        lower_bound = 3
+        upper_bound = 5
+        expected_donation_count = upper_bound - lower_bound + 1
         donations = private_api_calls.get_event_donations(
             event_identifier=filtered_donations_identifier,
             time_bounds=(3, 5))
-        assert donation_count == 3
+        assert expected_donation_count == 3
         for donation in donations:
             assert isinstance(donation, Donation)
             assert donation.amount == donation.timestamp
+
+    @pytest.mark.parametrize('time_bounds', [
+        (1, 'bla'),
+        ('', 2),
+        ('', ''),
+        (object, object),
+        ('', ''),
+        (2.33, 55.5)
+    ])
+    def test_retrieving_donations_from_timeframe_given_wrong_values_throws_exception(self, time_bounds):
+        with pytest.raises(IllegalArgumentException):
+            private_api_calls.get_event_donations(
+                event_identifier=test_event_identifier,
+                time_bounds=time_bounds)
 
     def test_retrieving_donations_from_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):

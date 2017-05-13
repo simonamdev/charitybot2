@@ -61,6 +61,16 @@ class DonationSQLiteRepository(SQLiteRepository):
         row = self.execute_query(query=query, data=data).fetchall()[0]
         return self.__convert_row_to_donation(row=row)
 
+    def get_time_filtered_event_donations(self, event_identifier, lower_bound, upper_bound=None):
+        query = 'SELECT * ' \
+                'FROM `donations` ' \
+                'WHERE eventInternalName = ? ' \
+                'AND timeRecorded BETWEEN ? AND ? ' \
+                'ORDER BY timeRecorded DESC;'
+        data = (event_identifier, lower_bound, upper_bound)
+        rows = self.execute_query(query=query, data=data).fetchall()
+        return [self.__convert_row_to_donation(row) for row in rows]
+
     @staticmethod
     def __convert_row_to_donation(row):
         donation = Donation(
