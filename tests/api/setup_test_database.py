@@ -49,8 +49,8 @@ def register_donations(event_configuration, donation_count):
     donations_repository = DonationSQLiteRepository(db_path=test_repository_db_path)
     shifting_time = current_time + 5
     fake = Faker()
+    print('Adding {} donations'.format(donation_count))
     for i in range(0, donation_count + 1):
-        print('Adding donation #{}'.format(i))
         shifting_time + random.randint(3, 20)
         donator_name = fake.name()
         donation = Donation(

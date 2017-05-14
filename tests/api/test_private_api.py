@@ -15,7 +15,7 @@ test_event_identifier = get_test_event_configuration().identifier
 
 
 def setup_module():
-    setup_test_database()
+    setup_test_database(donation_count=0)
     mock_private_api.start()
 
 
