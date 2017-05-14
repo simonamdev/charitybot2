@@ -5,6 +5,7 @@ eventUI();
 
 function eventUI() {
     getEventDetails(eventIdentifier);
+    getDonations(eventIdentifier);
 }
 
 function debugPrint(log) {
@@ -26,4 +27,18 @@ function getEventDetails(eventIdentifier) {
 function drawEventDetails(data) {
     debugPrint(data);
     $('#event-header').text(data['title']);
+}
+
+function getDonations(eventIdentifier, lowerTimeBound, upperTimeBound) {
+    console.log('Retrieving donation data for: ' + eventIdentifier + ' between ' + lowerTimeBound + ' and ' + upperTimeBound);
+    var url = apiUrl + 'event/' + eventIdentifier + '/donations';
+    $.getJSON(url, data => {
+        drawDonations(data);
+    }).fail(() => {
+        console.error('Could not reach URL: ' + url);
+    });
+}
+
+function drawDonations(data) {
+    debugPrint(data);
 }

@@ -50,8 +50,8 @@ def register_donations(event_configuration, donation_count):
     shifting_time = current_time + 5
     fake = Faker()
     print('Adding {} donations'.format(donation_count))
-    for i in range(0, donation_count + 1):
-        shifting_time + random.randint(3, 20)
+    for i in range(0, donation_count):
+        shifting_time += random.randint(3, 20)
         donator_name = fake.name()
         donation = Donation(
             amount=round(random.uniform(1.0, 500.2), 2),

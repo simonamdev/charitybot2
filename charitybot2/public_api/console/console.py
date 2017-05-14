@@ -35,6 +35,8 @@ def start_console():
     global http_server
     global debug_mode
     if debug_mode:
+        from tests.api.setup_test_database import setup_test_database
+        setup_test_database()
         app.run(host=console_address, port=console_port, debug=True)
     else:
         http_server.serve_forever()
