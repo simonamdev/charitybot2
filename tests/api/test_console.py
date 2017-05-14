@@ -1,8 +1,10 @@
+import pytest
 from charitybot2.public_api.console.console import console_full_url
 from charitybot2.sources.url_call import UrlCall
 from tests.mocks import MockConsole
 
 mock_console = MockConsole()
+test_event_identifier = 'testevent'
 
 
 def setup_module():
@@ -14,7 +16,10 @@ def teardown_module():
 
 
 class TestConsolePaths:
-    def test_index_page_returns_200(self):
-        url = console_full_url
+    @pytest.mark.parametrize('url', [
+        console_full_url,
+        console_full_url + 'event/{}/'.format(test_event_identifier),
+    ])
+    def test_paths_return_200(self, url):
         response = UrlCall(url=url).get()
         assert 200 == response.status_code

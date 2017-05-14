@@ -17,6 +17,11 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/event/<event_identifier>/')
+def event(event_identifier):
+    return render_template('event.html', event_identifier=event_identifier)
+
+
 @app.route('/destroy/')
 def destroy():
     global debug_mode

@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block optional_head %}
+    <script>
+        var eventIdentifier = '{{ event_identifier }}';
+    </script>
+{% endblock %}
+{% block body %}
+    <h1>Event {{ event_identifier }}</h1>
+{% endblock %}

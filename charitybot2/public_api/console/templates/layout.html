@@ -2,10 +2,14 @@
 
 <html lang="en">
     <head>
+        {% block head %}
         <meta charset="utf-8">
         <title>CharityBot</title>
         <meta name="description" content="CharityBot UI">
         <meta name="author" content="Purrcat259">
+        {% endblock %}
+        {% block optional_head %}
+        {% endblock %}
     </head>
     <body>
         {% block body %}
