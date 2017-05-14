@@ -2,12 +2,12 @@ import pytest
 from charitybot2.creators.event_configuration_creator import InvalidEventConfigurationException
 from charitybot2.creators.event_creator import EventCreator
 from charitybot2.models.event import Event
-from tests.integration.test_event_register import get_test_configuration
+from tests.integration.test_event_register import get_test_event_configuration
 
 
 class TestEventCreator:
     def test_getting_event_from_creator(self):
-        event_creator = EventCreator(event_configuration=get_test_configuration())
+        event_creator = EventCreator(event_configuration=get_test_event_configuration())
         event = event_creator.get_event()
         assert isinstance(event, Event)
 

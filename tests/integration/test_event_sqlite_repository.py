@@ -5,11 +5,11 @@ from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository, EventAlreadyRegisteredException, \
     EventNotRegisteredException
-from tests.unit.test_event_configuration import test_event_configuration_values
+from tests.unit.test_event_configuration import test_event_config_values
 
 
 def get_updated_config_values(updates=None):
-    config_values = copy.deepcopy(test_event_configuration_values)
+    config_values = copy.deepcopy(test_event_config_values)
     if updates is not None:
         config_values.update(updates)
     return config_values

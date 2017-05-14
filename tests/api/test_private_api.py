@@ -1,34 +1,17 @@
 import pytest
 from charitybot2.api_calls.private_api_calls import PrivateApiCalls
-from charitybot2.creators.event_creator import EventRegister
 from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.models.donation import Donation
 from charitybot2.models.event import NonExistentEventException
-from charitybot2.paths import test_repository_db_path
-from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 from charitybot2.private_api.private_api import private_api_identity
-from tests.integration.test_event_register import get_test_configuration
-from tests.mocks import MockPrivateAPI, WipeSQLiteDB
+from tests.api.setup_test_database import setup_test_database
+from tests.integration.test_event_register import get_test_event_configuration
+from tests.mocks import MockPrivateAPI
 
 mock_private_api = MockPrivateAPI()
 private_api_calls = PrivateApiCalls()
 
-test_event_identifier = 'test'
-
-
-def setup_test_database():
-    print('Setting up test database ')
-    WipeSQLiteDB(db_path=test_repository_db_path).wipe_db()
-    updated_values = {
-        'identifier': test_event_identifier,
-        'title': 'Test Event'
-    }
-    new_test_values = get_test_configuration(updated_values=updated_values)
-    event_repository = EventSQLiteRepository(db_path=test_repository_db_path)
-    event_register = EventRegister(
-        event_configuration=new_test_values,
-        event_repository=event_repository)
-    event_register.get_event()
+test_event_identifier = get_test_event_configuration().identifier
 
 
 def setup_module():
@@ -56,18 +39,13 @@ class TestEventInformation:
         assert False is response
 
     def test_getting_event_existence(self):
-        response = private_api_calls.get_event_existence(identifier='test')
+        response = private_api_calls.get_event_existence(identifier=test_event_identifier)
         assert True is response
 
     def test_getting_event_info(self):
-        info = private_api_calls.get_event_info(identifier='test')
-        updated_values = {
-            'identifier': 'test',
-            'title': 'Test Event'
-        }
-        new_test_values = get_test_configuration(updated_values=updated_values).configuration_values
-        for key in info.keys():
-            assert info[key] == new_test_values[key]
+        info = private_api_calls.get_event_info(identifier=test_event_identifier)
+        test_config_values = get_test_event_configuration().configuration_values
+        assert test_config_values.get('title') == info.get('title')
 
     def test_getting_event_info_of_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):
@@ -80,7 +58,7 @@ class TestEventRegistration:
             'identifier': 'registration_test',
             'title': 'Registration Test Event'
         }
-        registration_test_configuration = get_test_configuration(updated_values=updated_values)
+        registration_test_configuration = get_test_event_configuration(updated_values=updated_values)
         response = private_api_calls.register_event(event_configuration=registration_test_configuration)
         assert True is response
 
@@ -89,7 +67,7 @@ class TestEventRegistration:
             'identifier': 'update_test',
             'title': 'Update Test Event'
         }
-        registration_test_configuration = get_test_configuration(updated_values=updated_values)
+        registration_test_configuration = get_test_event_configuration(updated_values=updated_values)
         response = private_api_calls.register_event(event_configuration=registration_test_configuration)
         assert True is response
         updated_values = {
@@ -97,7 +75,7 @@ class TestEventRegistration:
             'start_time': 500,
             'end_time': 1000
         }
-        update_test_configuration = get_test_configuration(updated_values=updated_values)
+        update_test_configuration = get_test_event_configuration(updated_values=updated_values)
         response = private_api_calls.update_event(event_configuration=update_test_configuration)
         assert True is response
 
@@ -164,7 +142,7 @@ class TestEventDonations:
             'identifier': donation_listing_test_identifier,
             'title': 'Donation Listing Test Event'
         }
-        donation_listing_test_configuration = get_test_configuration(updated_values=updated_values)
+        donation_listing_test_configuration = get_test_event_configuration(updated_values=updated_values)
         # Register the event
         private_api_calls.register_event(event_configuration=donation_listing_test_configuration)
         # Add a few donations
@@ -188,7 +166,7 @@ class TestEventDonations:
             'identifier': filtered_donations_identifier,
             'title': 'Filtered Donation Listing Test Event'
         }
-        donation_listing_test_configuration = get_test_configuration(updated_values=updated_values)
+        donation_listing_test_configuration = get_test_event_configuration(updated_values=updated_values)
         # Register the event
         private_api_calls.register_event(event_configuration=donation_listing_test_configuration)
         # Add a few donations

@@ -1,6 +1,6 @@
 {
-  "identifier": "identifier",
-  "title": "This is a Title",
+  "identifier": "test",
+  "title": "CB Test Event",
   "start_time": 0,
   "end_time": 1,
   "target_amount": 100,

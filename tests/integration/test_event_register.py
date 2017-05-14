@@ -7,7 +7,7 @@ from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepositor
 from tests.unit.test_event_configuration_creator import get_updated_test_config_values
 
 
-def get_test_configuration(updated_values=None):
+def get_test_event_configuration(updated_values=None):
     test_event_configuration_creator = EventConfigurationCreator(
         configuration_values=get_updated_test_config_values(updated_values=updated_values))
     return test_event_configuration_creator.configuration
@@ -23,7 +23,7 @@ class TestEventRegister:
         self.test_event_repository.close_connection()
 
     def test_creating_unregistered_event(self):
-        registration_test_configuration = get_test_configuration({'identifier': 'registration_test'})
+        registration_test_configuration = get_test_event_configuration({'identifier': 'registration_test'})
         event_creator = EventRegister(
             event_configuration=registration_test_configuration,
             event_repository=self.test_event_repository)
@@ -34,7 +34,7 @@ class TestEventRegister:
         assert new_event.configuration.identifier == registration_test_configuration.identifier
 
     def test_updating_registered_event(self):
-        update_test_configuration = get_test_configuration({'identifier': 'update_event_test'})
+        update_test_configuration = get_test_event_configuration({'identifier': 'update_event_test'})
         event_creator = EventRegister(
             event_configuration=update_test_configuration,
             event_repository=self.test_event_repository)
@@ -42,7 +42,7 @@ class TestEventRegister:
         test_event = event_creator.get_event()
         assert event_creator.event_is_registered() is True
         assert isinstance(test_event, Event)
-        update_test_configuration = get_test_configuration(
+        update_test_configuration = get_test_event_configuration(
             {'identifier': 'update_event_test', 'end_time': 999})
         event_creator = EventRegister(
             event_configuration=update_test_configuration,
