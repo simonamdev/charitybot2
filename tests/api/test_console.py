@@ -4,7 +4,7 @@ from charitybot2.sources.url_call import UrlCall
 from tests.mocks import MockConsole
 
 mock_console = MockConsole()
-test_event_identifier = 'testevent'
+test_event_identifier = 'test'
 
 
 def setup_module():

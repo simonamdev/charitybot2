@@ -3,11 +3,21 @@
     <script>
         var eventIdentifier = '{{ event_identifier }}';
     </script>
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
 {% endblock %}
 {% block body %}
-    <h1>Event {{ event_identifier }}</h1>
+    <div>
+        <h1>
+            <span id="event-header"></span> Donations Console
+        </h1>
+    </div>
+    <div>
+        <table></table>
+    </div>
 {% endblock %}
 {% block after_body %}
-    <script>
-    </script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/event-ui.js')}}"></script>
 {% endblock %}

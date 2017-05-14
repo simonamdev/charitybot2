@@ -9,10 +9,11 @@ from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepositor
 from charitybot2.persistence.heartbeat_sqlite_repository import HeartbeatSQLiteRepository
 from charitybot2.persistence.sqlite_repository import InvalidRepositoryQueryException
 from flask import Flask, jsonify, g, request
-from flask import json
+from flask_cors import CORS, cross_origin
 from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
+CORS(app=app)
 
 private_api_address = '127.0.0.1'
 private_api_port = 8001
