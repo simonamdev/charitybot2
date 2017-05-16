@@ -3,7 +3,9 @@ CREATE TABLE IF NOT EXISTS `donations` (
     `amount`                REAL NOT NULL,
     `eventInternalName`     TEXT NOT NULL,
     `timeRecorded`          INTEGER NOT NULL,
-    `identifier`            TEXT,
+    `internalReference`     TEXT NOT NULL,
+    `externalReference`     TEXT,
+    `donorName`             TEXT,
     `notes`                 TEXT,
     `valid`                 INTEGER NOT NULL CHECK (valid BETWEEN 0 AND 1),
     FOREIGN KEY(eventInternalName) REFERENCES events(internalName)

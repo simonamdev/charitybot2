@@ -4,21 +4,33 @@ import pytest
 import time
 from charitybot2.models.donation import Donation, InvalidDonationException
 
+test_donation_amount = 50
+test_donation_event_identifier = 'event_identifier'
+test_donation_timestamp = 999999
+test_donation_internal_reference = 'internal_reference'
+test_donation_external_reference = 'external_reference'
+test_donation_notes = 'Automated'
+test_donation_donor_name = 'donor'
+
 test_donation = Donation(
-    amount=50,
-    event_identifier='event_identifier',
-    timestamp=999999,
-    identifier='identifier',
-    notes='Automated')
+    amount=test_donation_amount,
+    event_identifier=test_donation_event_identifier,
+    timestamp=test_donation_timestamp,
+    internal_reference=test_donation_internal_reference,
+    external_reference=test_donation_external_reference,
+    donor_name=test_donation_donor_name,
+    notes=test_donation_notes)
 
 
 class TestDonationInstantiation:
     @pytest.mark.parametrize('expected,actual', [
-        (50, test_donation.amount),
-        (999999, test_donation.timestamp),
-        ('identifier', test_donation.identifier),
-        ('event_identifier', test_donation.event_identifier),
-        ('Automated', test_donation.notes),
+        (test_donation_amount, test_donation.amount),
+        (test_donation_event_identifier, test_donation.event_identifier),
+        (test_donation_timestamp, test_donation.timestamp),
+        (test_donation_internal_reference, test_donation.internal_reference),
+        (test_donation_external_reference, test_donation.external_reference),
+        (test_donation_donor_name, test_donation.donor_name),
+        (test_donation_notes, test_donation.notes),
         (True, test_donation.validity)
     ])
     def test_retrieval(self, expected, actual):
@@ -47,26 +59,31 @@ class TestDonationInstantiation:
     def test_donation_optional_defaults(self):
         donation = Donation(amount=1, event_identifier='event')
         assert int(time.time()) + 2 >= donation.timestamp >= int(time.time()) - 2
-        assert None is donation.identifier
         assert None is donation.notes
         assert True is donation.validity
 
+    def test_two_donations_have_different_internal_references(self):
+        donation_one = Donation(amount=1, event_identifier='event')
+        donation_two = Donation(amount=2, event_identifier='event')
+        assert not donation_one.internal_reference == donation_two.internal_reference
+
 
 class TestDonationExceptions:
-    @pytest.mark.parametrize('amount,timestamp,event_identifier,identifier', [
+    @pytest.mark.parametrize('amount,timestamp,event_identifier,internal_reference', [
         (0, 0, 'event', 'bla'),
         (1, 0, None, 'bla'),
-        (50, -20, None, None),
-        ('', 0, None, None),
-        ('foobar', 0, None, None)
+        (test_donation_amount, -20, None, 'bla'),
+        ('', 0, None, 'bla'),
+        ('foobar', 0, None, 'bla'),
+        (1, 0, 'event', 1.234)
     ])
-    def test_incorrect_values_throws_exception(self, amount, timestamp, event_identifier, identifier):
+    def test_incorrect_values_throws_exception(self, amount, timestamp, event_identifier, internal_reference):
         with pytest.raises(InvalidDonationException):
             Donation(
                 amount=amount,
                 event_identifier=event_identifier,
                 timestamp=timestamp,
-                identifier=identifier)
+                internal_reference=internal_reference)
 
 
 class TestDonationMethods:
@@ -74,7 +91,9 @@ class TestDonationMethods:
         amount=test_donation.amount,
         event_identifier=test_donation.event_identifier,
         timestamp=test_donation.timestamp,
-        identifier=test_donation.identifier,
+        internal_reference=test_donation.internal_reference,
+        external_reference=test_donation.external_reference,
+        donor_name=test_donation_donor_name,
         notes=test_donation.notes,
         valid=test_donation.validity)
 
@@ -83,7 +102,9 @@ class TestDonationMethods:
         assert test_donation.amount == donation.amount
         assert test_donation.event_identifier == donation.event_identifier
         assert test_donation.timestamp == donation.timestamp
-        assert test_donation.identifier == donation.identifier
+        assert test_donation.internal_reference == donation.internal_reference
+        assert test_donation.external_reference == donation.external_reference
+        assert test_donation.donor_name == donation.donor_name
         assert test_donation.notes == donation.notes
         assert test_donation.validity == donation.validity
 
@@ -108,7 +129,7 @@ class TestDonationMethods:
         assert test_donation.amount == donation.amount
         assert test_donation.event_identifier == donation.event_identifier
         assert test_donation.timestamp == donation.timestamp
-        assert test_donation.identifier == donation.identifier
+        assert test_donation.internal_reference == donation.internal_reference
         assert test_donation.notes == donation.notes
         assert test_donation.validity == donation.validity
 

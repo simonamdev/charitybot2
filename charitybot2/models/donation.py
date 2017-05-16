@@ -1,5 +1,6 @@
 import json
 import time
+import uuid
 
 
 class InvalidDonationException(Exception):
@@ -12,7 +13,9 @@ class Donation:
         'amount',
         'event_identifier',
         'timestamp',
-        'identifier',
+        'internal_reference',
+        'external_reference',
+        'donor_name',
         'notes',
         'valid'
     )
@@ -21,13 +24,17 @@ class Donation:
                  amount,
                  event_identifier,
                  timestamp=int(time.time()),
-                 identifier=None,
+                 internal_reference=None,
+                 external_reference=None,
+                 donor_name=None,
                  notes=None,
                  valid=True):
         self._amount = amount
         self._event_identifier = event_identifier
         self._timestamp = timestamp
-        self._identifier = identifier
+        self._internal_reference = internal_reference
+        self._external_reference = external_reference
+        self._donor_name = donor_name
         self._notes = notes
         self._valid = valid
         self.__validate_donation()
@@ -42,6 +49,13 @@ class Donation:
             raise InvalidDonationException('Donation cannot have a value of 0')
         if self._timestamp < 0:
             raise InvalidDonationException('Invalid timestamp passed')
+        self.__generate_internal_reference()
+        if not isinstance(self._internal_reference, str) or len(self._internal_reference) == 0:
+            raise InvalidDonationException('Invalid internal reference passed')
+
+    def __generate_internal_reference(self):
+        if self._internal_reference is None:
+            self._internal_reference = str(uuid.uuid4())
 
     def __parse_donation_amount(self):
         if isinstance(self._amount, str):
@@ -65,8 +79,16 @@ class Donation:
         return self._timestamp
 
     @property
-    def identifier(self):
-        return self._identifier
+    def internal_reference(self):
+        return self._internal_reference
+
+    @property
+    def external_reference(self):
+        return self._external_reference
+
+    @property
+    def donor_name(self):
+        return self._donor_name
 
     @property
     def notes(self):
@@ -81,7 +103,9 @@ class Donation:
             amount=self.amount,
             event_identifier=self.event_identifier,
             timestamp=self.timestamp,
-            identifier=self.identifier,
+            internal_reference=self.internal_reference,
+            external_reference=self.external_reference,
+            donor_name=self.donor_name,
             notes=self.notes,
             valid=self.validity)
 
@@ -97,7 +121,9 @@ class Donation:
                 amount=float(donation_dict.get('amount')),
                 event_identifier=donation_dict.get('event_identifier'),
                 timestamp=int(donation_dict.get('timestamp')),
-                identifier=donation_dict.get('identifier'),
+                internal_reference=donation_dict.get('internal_reference'),
+                external_reference=donation_dict.get('external_reference'),
+                donor_name=donation_dict.get('donor_name'),
                 notes=donation_dict.get('notes'),
                 valid=bool(donation_dict.get('valid'))
             )
