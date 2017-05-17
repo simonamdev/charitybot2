@@ -113,7 +113,9 @@ class TestDonationRegistration:
             amount=-30,
             event_identifier=test_event_identifier,
             timestamp=123,
-            identifier='foobar',
+            internal_reference='foobar',
+            external_reference='wat',
+            donor_name='some guy',
             notes='she sells sea shells on the sea shore',
             valid=False
         )

@@ -9,7 +9,7 @@ from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepositor
 from charitybot2.persistence.heartbeat_sqlite_repository import HeartbeatSQLiteRepository
 from charitybot2.persistence.sqlite_repository import InvalidRepositoryQueryException
 from flask import Flask, jsonify, g, request
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
@@ -65,7 +65,7 @@ def get_heartbeat_repository():
 def get_donations_repository():
     donation_repo = getattr(g, '_donation_repository', None)
     if donation_repo is None:
-        donation_repo  = g._donation_repository = DonationSQLiteRepository(
+        donation_repo = g._donation_repository = DonationSQLiteRepository(
             db_path=get_repository_path())
     return donation_repo
 
