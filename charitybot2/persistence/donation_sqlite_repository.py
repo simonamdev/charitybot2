@@ -17,27 +17,29 @@ class DonationSQLiteRepository(SQLiteRepository):
         init_script = SQLScript(path=init_donations_script_path)
         self.execute_query(query=init_script.return_sql(), commit=True)
 
-    def __donation_already_stored(self, identifier):
-        if identifier is None:
+    def __donation_already_stored(self, internal_reference):
+        if internal_reference is None:
             return False
         query = 'SELECT COUNT(*) ' \
                 'FROM `donations` ' \
-                'WHERE identifier = ?;'
-        data = (identifier, )
+                'WHERE internalReference = ?;'
+        data = (internal_reference, )
         count = self.execute_query(query=query, data=data).fetchone()[0]
         return count >= 1
 
     def record_donation(self, donation):
-        if self.__donation_already_stored(identifier=donation.identifier):
+        if self.__donation_already_stored(internal_reference=donation.internal_reference):
             raise DonationAlreadyRegisteredException(
-                'Donation with identifier: {} is already registered'.format(donation.identifier))
+                'Donation with internal reference: {} is already registered'.format(donation.internal_reference))
         query = 'INSERT INTO `donations` ' \
-                'VALUES (NULL, ?, ?, ?, ?, ?, ?);'
+                'VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?);'
         data = (
             donation.amount,
             donation.event_identifier,
             donation.timestamp,
-            donation.identifier,
+            donation.internal_reference,
+            donation.external_reference,
+            donation.donor_name,
             donation.notes,
             donation.validity)
         self.execute_query(query=query, data=data, commit=True)
@@ -77,8 +79,10 @@ class DonationSQLiteRepository(SQLiteRepository):
             amount=row[1],
             event_identifier=row[2],
             timestamp=row[3],
-            identifier=row[4],
-            notes=row[5],
-            valid=row[6]
+            internal_reference=row[4],
+            external_reference=row[5],
+            donor_name=row[6],
+            notes=row[7],
+            valid=row[8]
         )
         return donation

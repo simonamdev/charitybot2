@@ -54,13 +54,21 @@ class TestDonationSQLiteRepository:
         #     assert i == filtered_donations[actual_index].timestamp
 
     def test_recording_donation(self):
-        new_donation = Donation(amount=420, event_identifier='420', timestamp=420, identifier='wololo')
+        new_donation = Donation(
+            amount=420,
+            event_identifier='420',
+            timestamp=420,
+            internal_reference='wololo',
+            external_reference='wooooo',
+            donor_name='donor')
         self.test_donation_repository.record_donation(donation=new_donation)
         latest_donation = self.test_donation_repository.get_latest_event_donation(event_identifier='420')
         assert new_donation.amount == latest_donation.amount
         assert new_donation.timestamp == latest_donation.timestamp
         assert new_donation.event_identifier == latest_donation.event_identifier
-        assert new_donation.identifier == latest_donation.identifier
+        assert new_donation.internal_reference == latest_donation.internal_reference
+        assert new_donation.external_reference == latest_donation.external_reference
+        assert new_donation.donor_name == latest_donation.donor_name
 
 
 class TestDonationSQLiteRepositoryExceptions:
@@ -74,12 +82,12 @@ class TestDonationSQLiteRepositoryExceptions:
         self.test_donation_repository.close_connection()
 
     def test_recording_already_recorded_donation(self):
-        donation = Donation(amount=500, event_identifier='wooo', timestamp=500, identifier='abcd')
+        donation = Donation(amount=500, event_identifier='wooo', timestamp=500, internal_reference='abcd')
         self.test_donation_repository.record_donation(donation=donation)
         with pytest.raises(DonationAlreadyRegisteredException):
             self.test_donation_repository.record_donation(donation=donation)
 
     def test_recording_donations_with_no_identifier_is_valid(self):
-        donation = Donation(amount=500, event_identifier='wooo', timestamp=500, identifier=None)
         for i in range(5):
+            donation = Donation(amount=500, event_identifier='wooo', timestamp=500)
             self.test_donation_repository.record_donation(donation=donation)
