@@ -52,11 +52,10 @@ def register_donations(event_configuration, donation_count):
     print('Adding {} donations'.format(donation_count))
     for i in range(0, donation_count):
         shifting_time += random.randint(3, 20)
-        donator_name = fake.name()
+        donor_name = fake.name()
         donation = Donation(
             amount=round(random.uniform(1.0, 500.2), 2),
             event_identifier=event_configuration.identifier,
             timestamp=shifting_time,
-            identifier='{}-{}'.format(shifting_time, donator_name),
-            notes=donator_name)
+            notes=donor_name)
         donations_repository.record_donation(donation=donation)
