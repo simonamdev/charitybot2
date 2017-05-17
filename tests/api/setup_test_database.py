@@ -55,7 +55,13 @@ def register_donations(event_configuration, donation_count):
         donor_name = fake.name()
         donation = Donation(
             amount=round(random.uniform(1.0, 500.2), 2),
-            event_identifier=event_configuration.identifier,
             timestamp=shifting_time,
-            notes=donor_name)
+            event_identifier=event_configuration.identifier,
+            external_reference='N/A',
+            notes='N/A',
+            donor_name=donor_name)
         donations_repository.record_donation(donation=donation)
+
+
+if __name__ == '__main__':
+    setup_test_database()

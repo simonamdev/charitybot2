@@ -1,6 +1,7 @@
 var apiUrl = 'http://127.0.0.1:8001/api/v1/';
 var debugMode = true;
 var currencyKey = "";
+var currencySymbol = "";
 
 eventUI();
 
@@ -19,15 +20,52 @@ function getEventDetails(eventIdentifier) {
     console.log('Retrieving data for event: ' + eventIdentifier);
     var url = apiUrl + 'event/' + eventIdentifier;
     $.getJSON(url, data => {
-        setupCurrencyKey(data);
+        setupCurrency(data);
         drawEventDetails(data);
     }).fail(() => {
         console.error('Could not reach URL: ' + url);
     });
 }
 
-function setupCurrencyKey(data) {
+function setupCurrency(data) {
     currencyKey = data['currency_key'];
+    // TODO: Move this to a function
+    if (currencyKey == 'EUR') {
+        currencySymbol = '€';
+    } else if (currencyKey == 'USD') {
+        currencySymbol = '$';
+    } else {
+        currencySymbol = '£';
+    }
+}
+
+// TODO: Add switch for standard, european, american timestamp order
+function convertTimestampToDatetime(timestamp) {
+    if (timestamp >= 2147483647) {
+    return 'Heat Death of the Universe';
+  }
+  var d = new Date(timestamp * 1000);
+  var day = d.getDate();
+  var month = d.getMonth() + 1;
+  var hours = d.getHours();
+  var minutes = d.getMinutes();
+  var seconds = d.getSeconds();
+  if (day < 10) {
+     day = '0' + day;
+  }
+  if (month < 10) {
+    month = '0' + month;
+  }
+  if (hours < 10) {
+    hours = '0' + hours;
+  }
+  if (minutes < 10) {
+    minutes = '0' + minutes;
+  }
+  if (seconds < 10) {
+    seconds = '0' + seconds;
+  }
+  return d.getFullYear() + '/' + month + '/' + day + ' ' + hours + ':' + minutes + ':' + seconds;
 }
 
 function drawEventDetails(data) {
@@ -52,13 +90,15 @@ function drawDonations(data) {
     for (i = 0; i < donationsData.length; i++) {
         var rowDonation = JSON.parse(donationsData[i]);
         var rowString = '<tr><td>' +
-                        rowDonation['identifier'] +
+                        i +
                         '</td><td>' +
-                        rowDonation['amount'] +
+                        currencySymbol + rowDonation['amount'] +
                         '</td><td>' +
-                        rowDonation['timestamp'] +
+                        convertTimestampToDatetime(rowDonation['timestamp']) +
                         '</td><td>' +
-                        rowDonation['notes']
+                        rowDonation['donor_name'] +
+                        '</td><td>' +
+                        rowDonation['external_reference']
                         '</td></tr>'
         $('#donations-table').append(rowString);
     }
