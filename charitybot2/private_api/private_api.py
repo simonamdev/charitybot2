@@ -146,6 +146,16 @@ def retrieve_event_donations(event_identifier):
     )
 
 
+@app.route('/api/v1/event/<event_identifier>/total/', methods=['GET'])
+def retrieve_event_total(event_identifier):
+    amount = get_event_repository().get_event_current_amount(identifier=event_identifier)
+    return jsonify(
+        {
+            'total': amount
+        }
+    )
+
+
 @app.route('/api/v1/heartbeat/', methods=['POST'])
 def heartbeat():
     received_data = request.form.to_dict()

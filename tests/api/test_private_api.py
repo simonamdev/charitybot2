@@ -15,7 +15,7 @@ test_event_identifier = get_test_event_configuration().identifier
 
 
 def setup_module():
-    setup_test_database(donation_count=0)
+    setup_test_database(donation_count=10)
     mock_private_api.start()
 
 
@@ -50,6 +50,16 @@ class TestEventInformation:
     def test_getting_event_info_of_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):
             info = private_api_calls.get_event_info(identifier='foobar')
+
+    def test_getting_event_total(self):
+        # hardcoded amount for total, depends on test database setup script
+        expected_total = 5.0
+        actual_total = private_api_calls.get_event_total(event_identifier='test')
+        assert expected_total == actual_total
+
+    def test_getting_event_total_of_non_existent_event_throws_exception(self):
+        with pytest.raises(NonExistentEventException):
+            total = private_api_calls.get_event_total(event_identifier='everything is awesome')
 
 
 class TestEventRegistration:

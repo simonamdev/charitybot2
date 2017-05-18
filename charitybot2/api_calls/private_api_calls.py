@@ -17,6 +17,12 @@ class PrivateApiCalls:
     def __init__(self, timeout=2):
         self._timeout = timeout
 
+    def __validate_event_identifier(self, event_identifier):
+        if ' ' in event_identifier:
+            raise NonExistentEventException('Event identifiers cannot contain spaces')
+        if not self.get_event_existence(identifier=event_identifier):
+            raise NonExistentEventException('Event with identifier {} does not exist'.format(event_identifier))
+
     def get_index(self):
         return json.loads(UrlCall(url=self.v1_url, timeout=self._timeout).get().content.decode('utf-8'))
 
@@ -68,10 +74,7 @@ class PrivateApiCalls:
         return json.loads(decoded_content)['received']
 
     def get_event_donations(self, event_identifier, time_bounds=()):
-        if ' ' in event_identifier:
-            raise NonExistentEventException('Event identifiers cannot contain spaces')
-        if not self.get_event_existence(identifier=event_identifier):
-            raise NonExistentEventException('Event with identifier {} does not exist'.format(event_identifier))
+        self.__validate_event_identifier(event_identifier=event_identifier)
         url = self.v1_url + 'event/{}/donations/'.format(event_identifier)
         if len(time_bounds) == 2:
             lower_bound, upper_bound = time_bounds[0], time_bounds[1]
@@ -83,3 +86,10 @@ class PrivateApiCalls:
         converted_content = json.loads(decoded_content)['donations']
         donations = [Donation.from_json(donation) for donation in converted_content]
         return donations
+
+    def get_event_total(self, event_identifier):
+        self.__validate_event_identifier(event_identifier=event_identifier)
+        url = self.v1_url + 'event/{}/total/'.format(event_identifier)
+        response = UrlCall(url=url, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        return float(json.loads(decoded_content)['total'])
