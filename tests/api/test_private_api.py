@@ -51,16 +51,6 @@ class TestEventInformation:
         with pytest.raises(NonExistentEventException):
             info = private_api_calls.get_event_info(identifier='foobar')
 
-    def test_getting_event_total(self):
-        # hardcoded amount for total, depends on test database setup script
-        expected_total = 5.0
-        actual_total = private_api_calls.get_event_total(event_identifier='test')
-        assert expected_total == actual_total
-
-    def test_getting_event_total_of_non_existent_event_throws_exception(self):
-        with pytest.raises(NonExistentEventException):
-            total = private_api_calls.get_event_total(event_identifier='everything is awesome')
-
 
 class TestEventRegistration:
     def test_registering_new_event(self):
@@ -222,3 +212,23 @@ class TestEventDonations:
     def test_retrieving_donations_from_event_with_spaces_throws_exception(self):
         with pytest.raises(NonExistentEventException):
             private_api_calls.get_event_donations(event_identifier='cats are_awesome')
+
+
+class TestEventTotal:
+    # hardcoded amount for total, depends on test database setup script
+    expected_total = 5.0
+
+    def test_getting_event_total(self):
+        actual_total = private_api_calls.get_event_total(event_identifier='test')
+        assert self.expected_total == actual_total
+
+    def test_getting_event_total_of_non_existent_event_throws_exception(self):
+        with pytest.raises(NonExistentEventException):
+            total = private_api_calls.get_event_total(event_identifier='everything is awesome')
+
+    def test_total_is_updated_when_registering_donation(self):
+        amount_increment = 1.5
+        donation = Donation(amount=amount_increment, timestamp=500, event_identifier=test_event_identifier)
+        private_api_calls.register_donation(donation=donation)
+        new_total = private_api_calls.get_event_total(event_identifier=test_event_identifier)
+        assert (self.expected_total + amount_increment) == new_total
