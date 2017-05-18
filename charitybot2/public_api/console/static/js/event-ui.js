@@ -98,6 +98,8 @@ function drawDonations(data) {
                         '</td><td>' +
                         rowDonation['donor_name'] +
                         '</td><td>' +
+                        rowDonation['notes'] +
+                        '</td><td>' +
                         rowDonation['external_reference']
                         '</td></tr>'
         $('#donations-table').append(rowString);
