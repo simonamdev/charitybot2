@@ -3,32 +3,30 @@
     <script>
         var eventIdentifier = '{{ event_identifier }}';
     </script>
-    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/jui.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jui-theme.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jui-structure.min.css') }}">
     <script
         src="https://code.jquery.com/jquery-3.2.1.min.js"
         integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
         crossorigin="anonymous"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
 {% endblock %}
 {% block body %}
-    <div>
+    <div class="row">
         <h1>
             <span id="event-header"></span> Donations Console
         </h1>
     </div>
-    <div>
-        <table id="donations-table">
-            <tr>
-                <th>#</th>
-                <th>Amount</th>
-                <th>Timestamp</th>
-                <th>Donor</th>
-                <th>Notes</th>
-                <th>External Reference</th>
-            </tr>
-        </table>
+    <div class="row">
+        <div class="large-8 large-offset-2 columns">
+            <table id="donations-table">
+                <tr>
+                    <th>#</th>
+                    <th>Amount</th>
+                    <th>Timestamp</th>
+                    <th>Donor</th>
+                    <th>Notes</th>
+                    <th>External Reference</th>
+                </tr>
+            </table>
+        </div>
     </div>
 {% endblock %}
 {% block after_body %}
