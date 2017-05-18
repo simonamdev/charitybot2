@@ -64,4 +64,8 @@ def register_donations(event_configuration, donation_count):
 
 
 if __name__ == '__main__':
-    setup_test_database()
+    import sys
+    if len(sys.argv) == 2:
+        setup_test_database(donation_count=int(sys.argv[1]))
+    else:
+        setup_test_database()
