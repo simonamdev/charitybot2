@@ -71,6 +71,7 @@ function convertTimestampToDatetime(timestamp) {
 function drawEventDetails(data) {
     debugPrint(data);
     $('#event-header').text(data['title']);
+    $('.currency-symbol').text(currencySymbol);
 }
 
 function getDonations(eventIdentifier, lowerTimeBound, upperTimeBound) {

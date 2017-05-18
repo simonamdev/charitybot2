@@ -11,9 +11,19 @@
 {% block body %}
     <div class="row">
         <div class="large-8 large-centered columns">
-            <h1>
-                <span id="event-header"></span> Donations Console
-            </h1>
+            <h1 id="event-header"></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="large-8 large-centered columns">
+            <div class="row">
+                 <div class="large-6 columns text-center">
+                    Total Raised: <span class="currency-symbol"></span><span id="donation-total"></span>
+                </div>
+                <div class="large-6 columns text-center">
+                    Last Donation: <span id="donation-time-ago"></span> ago
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
