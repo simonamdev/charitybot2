@@ -3,10 +3,14 @@
     <script>
         var eventIdentifier = '{{ event_identifier }}';
     </script>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/jui.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jui-theme.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jui-structure.min.css') }}">
     <script
         src="https://code.jquery.com/jquery-3.2.1.min.js"
         integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
         crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
 {% endblock %}
 {% block body %}
     <div>
@@ -29,4 +33,5 @@
 {% endblock %}
 {% block after_body %}
     <script type="text/javascript" src="{{url_for('static', filename='js/event-ui.js')}}"></script>
+
 {% endblock %}
