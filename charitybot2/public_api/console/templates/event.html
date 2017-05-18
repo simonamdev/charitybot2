@@ -10,13 +10,15 @@
 {% endblock %}
 {% block body %}
     <div class="row">
-        <h1>
-            <span id="event-header"></span> Donations Console
-        </h1>
+        <div class="large-8 large-centered columns">
+            <h1>
+                <span id="event-header"></span> Donations Console
+            </h1>
+        </div>
     </div>
     <div class="row">
-        <div class="large-8 large-offset-2 columns">
-            <table id="donations-table">
+        <div class="large-8 large-centered columns">
+            <table id="donations-table" class="hover">
                 <tr>
                     <th>#</th>
                     <th>Amount</th>
@@ -31,5 +33,4 @@
 {% endblock %}
 {% block after_body %}
     <script type="text/javascript" src="{{url_for('static', filename='js/event-ui.js')}}"></script>
-
 {% endblock %}
