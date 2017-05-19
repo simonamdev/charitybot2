@@ -1,5 +1,3 @@
-import argparse
-
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
 from charitybot2.creators.event_creator import EventRegister
 from charitybot2.models.donation import InvalidDonationException, Donation
@@ -8,34 +6,38 @@ from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRep
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 from charitybot2.persistence.heartbeat_sqlite_repository import HeartbeatSQLiteRepository
 from charitybot2.persistence.sqlite_repository import InvalidRepositoryQueryException
+from charitybot2.start_service import Service
 from flask import Flask, jsonify, g, request
 from flask_cors import CORS
-from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
 CORS(app=app)
 
+private_api_version = 1
+private_api_identity = 'CB2 Private API'
+
+# Defaults
 private_api_address = '127.0.0.1'
 private_api_port = 8001
-private_api_url = 'http://{}'.format(private_api_address)
-private_api_full_url = '{}:{}/'.format(private_api_url, private_api_port)
-private_api_version = 1
-
 debug_mode = False
-http_server = WSGIServer((private_api_address, private_api_port), app)
-private_api_identity = 'CB2 Private API'
+private_api_service = Service(
+    name=private_api_identity,
+    app=app,
+    address=private_api_address,
+    port=private_api_port,
+    debug=debug_mode)
 
 
 def get_repository_path():
-    global debug_mode
+    # global debug_mode
     path = production_repository_db_path
-    if debug_mode:
+    if private_api_service.debug:
         path = test_repository_db_path
     return path
 
-event_repository = EventSQLiteRepository(db_path=get_repository_path(), debug=debug_mode)
-donation_repository = DonationSQLiteRepository(db_path=get_repository_path(), debug=debug_mode)
-heartbeat_repository = HeartbeatSQLiteRepository(db_path=get_repository_path(), debug=debug_mode)
+event_repository = EventSQLiteRepository(db_path=get_repository_path())
+donation_repository = DonationSQLiteRepository(db_path=get_repository_path())
+heartbeat_repository = HeartbeatSQLiteRepository(db_path=get_repository_path())
 
 
 def convert_imdict_to_event_config(imdict):
@@ -88,7 +90,7 @@ def index():
         {
             'identity': private_api_identity,
             'version': private_api_version,
-            'debug': debug_mode
+            'debug': private_api_service.debug
         }
     )
 
@@ -217,35 +219,16 @@ def record_donation():
 
 @app.route('/destroy/')
 def destroy():
-    global debug_mode
-    if debug_mode:
+    if private_api_service.debug:
         stop_api()
         return 'Shutting down API'
-    return 'Debug mode is disables - shutting down is unavailable'
-
-
-def create_api_process_parser():
-    parser = argparse.ArgumentParser(description='CB2 Private API')
-    parser.add_argument('--debug', dest='debug', help='Run CB2 Private API in debug mode', action='store_true')
-    return parser
-
-
-def start_api(args):
-    global debug_mode
-    debug_mode = args.debug
-    global event_repository
-    event_repository = EventSQLiteRepository(db_path=get_repository_path())
-    global http_server
-    if debug_mode:
-        app.run(host=private_api_address, port=private_api_port, debug=True)
-    else:
-        http_server.serve_forever()
+    return 'Debug mode is disabled - shutting down is unavailable'
 
 
 def stop_api():
-    global http_server
-    http_server.stop()
+    private_api_service.stop()
 
 if __name__ == '__main__':
-    cli_args = create_api_process_parser().parse_args(['--debug'])
-    start_api(args=cli_args)
+    cli_args = private_api_service.create_service_argument_parser().parse_args()
+    private_api_service = Service.create_from_args(name=private_api_identity, app=app, cli_args=cli_args)
+    private_api_service.start()

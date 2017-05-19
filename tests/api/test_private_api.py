@@ -3,24 +3,31 @@ from charitybot2.api_calls.private_api_calls import PrivateApiCalls
 from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.models.donation import Donation
 from charitybot2.models.event import NonExistentEventException
-from charitybot2.private_api.private_api import private_api_identity
+from charitybot2.paths import private_api_script_path
+from charitybot2.private_api.private_api import private_api_identity, private_api_service, app
+from charitybot2.start_service import Service, ServiceRunner
 from tests.integration.test_event_register import get_test_event_configuration
-from tests.mocks import MockPrivateAPI
 from tests.setup_test_database import setup_test_database
 
-mock_private_api = MockPrivateAPI()
-private_api_calls = PrivateApiCalls()
 
+private_api_calls = PrivateApiCalls(base_api_url=private_api_service.full_url)
 test_event_identifier = get_test_event_configuration().identifier
+service = Service(
+    name='Test Private API',
+    app=app,
+    address='127.0.0.1',
+    port=8001,
+    debug=True)
+service_runner = ServiceRunner(service=service, file_path=private_api_script_path)
 
 
 def setup_module():
     setup_test_database(donation_count=10)
-    mock_private_api.start()
+    service_runner.run()
 
 
 def teardown_module():
-    mock_private_api.stop()
+    service_runner.stop_running()
 
 
 class TestStartup:

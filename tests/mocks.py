@@ -6,10 +6,8 @@ from time import sleep
 
 import requests
 import sqlite3
-from charitybot2.paths import mocksite_path, private_api_script_path, console_script_path
-from charitybot2.private_api.private_api import private_api_full_url
+from charitybot2.paths import mocksite_path, console_script_path
 from charitybot2.public_api.console.console import console_full_url
-from neopysqlite import neopysqlite
 from urllib.parse import urljoin
 
 
@@ -32,31 +30,6 @@ class WipeSQLiteDB:
         cursor.close()
         connection.close()
         print('Wipe complete')
-
-
-class ResetDB:
-    def __init__(self, db_path, sql_path):
-        self.db_path = db_path
-        self.sql_path = sql_path
-        if not db_path == '' and not sql_path == '':
-            self.reset_db()
-
-    def reset_db(self):
-        print('Resetting Test Database')
-        db = neopysqlite.Neopysqlite(database_name='Test DB', db_path=self.db_path, verbose=True)
-        commands = self.get_reset_sql_script().split(';')
-        for command in commands:
-            print(command)
-            db.execute_sql(command + ';')
-        db.commit_changes()
-
-    def get_reset_sql_script(self):
-        sql_string = ''
-        with open(self.sql_path, 'r') as sql_file:
-            for line in sql_file.readlines():
-                sql_string += line.strip()
-        return sql_string
-
 
 class WebServer:
     def __init__(self, name, url, script_path, extra_args=(), destroy_on_stop=True, start_delay=2, stop_delay=2):
@@ -130,15 +103,6 @@ class MockAPI(WebServer):
             url=url,
             script_path=api_script_path,
             extra_args=extra_args)
-
-
-class MockPrivateAPI(MockAPI):
-    def __init__(self, args=()):
-        super().__init__(
-            name='Mock Private API',
-            url=private_api_full_url,
-            api_script_path=private_api_script_path,
-            extra_args=args)
 
 
 class MockConsole(MockAPI):

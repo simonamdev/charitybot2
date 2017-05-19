@@ -6,16 +6,14 @@ from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.models.donation import Donation
 from charitybot2.models.event import NonExistentEventException
-from charitybot2.private_api.private_api import private_api_full_url
 from charitybot2.sources.url_call import UrlCall
 from type_assertions import accept_types
 
 
 class PrivateApiCalls:
-    v1_url = private_api_full_url + 'api/v1/'
-
-    def __init__(self, timeout=2):
+    def __init__(self, base_api_url, timeout=2):
         self._timeout = timeout
+        self._base_api_url = base_api_url + 'api/v1/'
 
     def __validate_event_identifier(self, event_identifier):
         if ' ' in event_identifier:
@@ -24,17 +22,17 @@ class PrivateApiCalls:
             raise NonExistentEventException('Event with identifier {} does not exist'.format(event_identifier))
 
     def get_index(self):
-        return json.loads(UrlCall(url=self.v1_url, timeout=self._timeout).get().content.decode('utf-8'))
+        return json.loads(UrlCall(url=self._base_api_url, timeout=self._timeout).get().content.decode('utf-8'))
 
     @accept_types(object, str)
     def get_event_existence(self, identifier):
-        url = self.v1_url + 'event/exists/{}/'.format(identifier)
+        url = self._base_api_url + 'event/exists/{}/'.format(identifier)
         decoded_content = UrlCall(url=url, timeout=self._timeout).get().content.decode('utf-8')
         return json.loads(decoded_content)['event_exists']
 
     @accept_types(object, str)
     def get_event_info(self, identifier):
-        url = self.v1_url + 'event/{}'.format(identifier)
+        url = self._base_api_url + 'event/{}'.format(identifier)
         decoded_content = UrlCall(url=url, timeout=self._timeout).get().content.decode('utf-8')
         content = json.loads(decoded_content)
         if len(content.keys()) == 0:
@@ -43,14 +41,14 @@ class PrivateApiCalls:
 
     @accept_types(object, EventConfiguration)
     def register_event(self, event_configuration):
-        url = self.v1_url + 'event/'
+        url = self._base_api_url + 'event/'
         response = UrlCall(url=url, timeout=self._timeout).post(data=event_configuration.configuration_values)
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['registration_successful']
 
     @accept_types(object, EventConfiguration)
     def update_event(self, event_configuration):
-        url = self.v1_url + 'event/'
+        url = self._base_api_url + 'event/'
         response = UrlCall(url=url, timeout=self._timeout).post(data=event_configuration.configuration_values)
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['update_successful']
@@ -60,7 +58,7 @@ class PrivateApiCalls:
         if timestamp is None or not isinstance(timestamp, int):
             timestamp = int(time.time())
         data = dict(state=state, source=source, timestamp=timestamp)
-        url = self.v1_url + 'heartbeat/'
+        url = self._base_api_url + 'heartbeat/'
         response = UrlCall(url=url, timeout=self._timeout).post(data=data)
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['received']
@@ -68,7 +66,7 @@ class PrivateApiCalls:
     # Disabled due to assertion check not working properly for this specific method
     # @accept_types(object, Donation)
     def register_donation(self, donation):
-        url = self.v1_url + 'donation/'
+        url = self._base_api_url + 'donation/'
         response = UrlCall(url=url, timeout=self._timeout).post(data=donation.to_dict())
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['received']
@@ -76,7 +74,7 @@ class PrivateApiCalls:
     def get_event_donations(self, event_identifier, time_bounds=(), limit=None):
         self.__validate_event_identifier(event_identifier=event_identifier)
         params_added = False
-        url = self.v1_url + 'event/{}/donations/'.format(event_identifier)
+        url = self._base_api_url + 'event/{}/donations/'.format(event_identifier)
         if len(time_bounds) == 2:
             lower_bound, upper_bound = time_bounds[0], time_bounds[1]
             if not isinstance(lower_bound, int) or not isinstance(upper_bound, int):
@@ -103,7 +101,7 @@ class PrivateApiCalls:
 
     def get_event_total(self, event_identifier):
         self.__validate_event_identifier(event_identifier=event_identifier)
-        url = self.v1_url + 'event/{}/total/'.format(event_identifier)
+        url = self._base_api_url + 'event/{}/total/'.format(event_identifier)
         response = UrlCall(url=url, timeout=self._timeout).get()
         decoded_content = response.content.decode('utf-8')
         return float(json.loads(decoded_content)['total'])
