@@ -1,5 +1,5 @@
 from charitybot2.models.donation import Donation
-from charitybot2.paths import init_donations_script_path
+from charitybot2.paths import init_donations_script_path, init_events_script_path
 from charitybot2.persistence.sql_script import SQLScript
 from charitybot2.persistence.sqlite_repository import SQLiteRepository
 
@@ -14,8 +14,10 @@ class DonationSQLiteRepository(SQLiteRepository):
         self.__validate_repository()
 
     def __validate_repository(self):
-        init_script = SQLScript(path=init_donations_script_path)
-        self.execute_query(query=init_script.return_sql(), commit=True)
+        donations_init_script = SQLScript(path=init_donations_script_path)
+        self.execute_query(query=donations_init_script.return_sql(), commit=True)
+        events_init_script = SQLScript(path=init_events_script_path)
+        self.execute_query(query=events_init_script.return_sql(), commit=True)
 
     def __donation_already_stored(self, internal_reference):
         if internal_reference is None:
@@ -31,9 +33,9 @@ class DonationSQLiteRepository(SQLiteRepository):
         if self.__donation_already_stored(internal_reference=donation.internal_reference):
             raise DonationAlreadyRegisteredException(
                 'Donation with internal reference: {} is already registered'.format(donation.internal_reference))
-        query = 'INSERT INTO `donations` ' \
-                'VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?);'
-        data = (
+        donation_query = 'INSERT INTO `donations` ' \
+                         'VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?);'
+        donation_data = (
             donation.amount,
             donation.event_identifier,
             donation.timestamp,
@@ -42,7 +44,14 @@ class DonationSQLiteRepository(SQLiteRepository):
             donation.donor_name,
             donation.notes,
             donation.validity)
-        self.execute_query(query=query, data=data, commit=True)
+        event_total_query = 'UPDATE `events` ' \
+                            'SET currentAmount = currentAmount + ? ' \
+                            'WHERE internalName = ?;'
+        event_data = (
+            donation.amount,
+            donation.event_identifier)
+        self.execute_query(query=donation_query, data=donation_data)
+        self.execute_query(query=event_total_query, data=event_data, commit=True)
 
     def get_event_donations(self, event_identifier):
         # TODO: Add event identifier validation here

@@ -48,16 +48,15 @@ def register_donations(event_configuration, donation_count):
     print('Recording donations')
     donations_repository = DonationSQLiteRepository(db_path=test_repository_db_path)
     shifting_time = current_time + 5
-    shifting_total = 0
+    test_donation_amount = 0.5
     fake = Faker()
     print('Adding {} donations'.format(donation_count))
     for i in range(0, donation_count):
         shifting_time += random.randint(3, 20)
-        shifting_total += 0.5
         donor_name = fake.name()
         donation = Donation(
             # amount=round(random.uniform(1.0, 500.2), 2),
-            amount=shifting_total,
+            amount=test_donation_amount,
             timestamp=shifting_time,
             event_identifier=event_configuration.identifier,
             external_reference='N/A',
