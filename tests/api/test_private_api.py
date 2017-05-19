@@ -4,9 +4,9 @@ from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.models.donation import Donation
 from charitybot2.models.event import NonExistentEventException
 from charitybot2.private_api.private_api import private_api_identity
-from tests.api.setup_test_database import setup_test_database
 from tests.integration.test_event_register import get_test_event_configuration
 from tests.mocks import MockPrivateAPI
+from tests.setup_test_database import setup_test_database
 
 mock_private_api = MockPrivateAPI()
 private_api_calls = PrivateApiCalls()
