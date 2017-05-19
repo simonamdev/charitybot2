@@ -170,7 +170,7 @@ def retrieve_event_total(event_identifier):
     amount = get_event_repository().get_event_current_amount(identifier=event_identifier)
     return jsonify(
         {
-            'total': amount
+            'total': round(amount, 2)
         }
     )
 

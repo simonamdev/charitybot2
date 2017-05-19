@@ -12,10 +12,13 @@ from tests.mocks import WipeSQLiteDB
 
 
 current_time = int(time.time())
+# 2 hours long
+start_time = current_time - 3600
+end_time = current_time + 3600
 
 updated_values = {
-    'start_time': current_time,
-    'end_time': current_time + 3600  # 1 hour long
+    'start_time': start_time,
+    'end_time': end_time
 }
 
 
@@ -54,7 +57,7 @@ def register_donations(event_configuration, donation_count, donation_amount):
         randomise_donations = True
     print('Recording donations')
     donations_repository = DonationSQLiteRepository(db_path=test_repository_db_path)
-    shifting_time = current_time + 5
+    shifting_time = start_time + 5
     fake = Faker()
     print('Adding {} donations'.format(donation_count))
     for i in range(0, donation_count):

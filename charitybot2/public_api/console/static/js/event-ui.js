@@ -8,6 +8,7 @@ eventUI();
 function eventUI() {
     getEventDetails(eventIdentifier);
     getDonations(eventIdentifier);
+    getStatistics(eventIdentifier);
 }
 
 function debugPrint(log) {
@@ -105,4 +106,44 @@ function drawDonations(data) {
                         '</td></tr>'
         $('#donations-table').append(rowString);
     }
+}
+
+function getStatistics(eventIdentifier) {
+    calls = [getEventTotal(eventIdentifier), getLastDonation(eventIdentifier)];
+    $.when.apply($, calls).done((total, lastDonation) => {
+        drawStatistics(total[0]['total'], JSON.parse(lastDonation[0]['donations'])['timestamp']);
+    });
+}
+
+function getEventTotal(eventIdentifier) {
+    var url = apiUrl + 'event/' + eventIdentifier + '/total/';
+    return $.getJSON(url);
+}
+
+function getLastDonation(eventIdentifier) {
+    var url = apiUrl + 'event/' + eventIdentifier + '/donations/?limit=1';
+    return $.getJSON(url);
+}
+
+function drawStatistics(total, lastDonationTimestamp) {
+    debugPrint('Total Raised: ' + total);
+    debugPrint('Last Donation Timestamp: ' + lastDonationTimestamp);
+    $('#donation-total').text(total);
+    var currentTime = Math.round((new Date()).getTime() / 1000);
+    var timeDifference = currentTime - lastDonationTimestamp;
+    console.log(timeDifference);
+    units = 'seconds';
+    if (timeDifference > 60) {
+        timeDifference /= 60;
+        units = 'minutes';
+        if (timeDifference > 60) {
+            timeDifference /= 60;
+            units = 'hours';
+            if (timeDifference > 24) {
+                timeDifference /= 24;
+                units = 'days';
+            }
+        }
+    }
+    $('#donation-time-ago').text(timeDifference.toFixed(2) + ' ' + units);
 }
