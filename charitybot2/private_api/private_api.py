@@ -146,7 +146,6 @@ def retrieve_event_donations(event_identifier):
         donations = reduce_to_limit(donation_list=donations, limit=limit)
     elif limit is not None and int(limit) == 1:
         donations = get_donations_repository().get_latest_event_donation(event_identifier=event_identifier)
-        print(donations)
     else:
         donations = get_donations_repository().get_event_donations(event_identifier=event_identifier)
         donations = reduce_to_limit(donation_list=donations, limit=limit)
@@ -154,7 +153,6 @@ def retrieve_event_donations(event_identifier):
         donations = [donation.to_json() for donation in donations]
     else:
         donations = donations.to_json()
-    print(donations)
     return jsonify(
         {
             'donations': donations,
