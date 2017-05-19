@@ -216,12 +216,13 @@ class TestEventDonations:
 
 class TestEventTotal:
     test_event_repository = None
-    # hardcoded amount for total, depends on test database setup script
-    expected_total = 1.0
+    donation_amount = 0.5
+    number_of_donations = 2
+    expected_total = number_of_donations * donation_amount
 
     @classmethod
     def setup_class(cls):
-        setup_test_database(donation_count=2)
+        setup_test_database(donation_count=cls.number_of_donations, donation_amount=cls.donation_amount)
 
     def test_getting_event_total(self):
         actual_total = private_api_calls.get_event_total(event_identifier='test')
