@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from charitybot2.api_calls.private_api_calls import PrivateApiCalls
+from charitybot2.models.donation import Donation
 from charitybot2.paths import overlay_script_path, private_api_script_path
 from charitybot2.private_api.private_api import private_api_service
 from charitybot2.public_api.overlay.overlay import app
@@ -69,4 +70,9 @@ class TestOverlay:
 
     def test_overlay_total_increases_when_donation_is_added(self):
         driver.get(self.overlay_total_url)
-        # TODO: Register donation then recheck amount
+        donation = Donation(amount=5.0, event_identifier=test_event_identifier)
+        private_api_calls.register_donation(donation=donation)
+        from time import sleep
+        sleep(5)
+        total_amount = get_soup_text_by_id('overlay-total')
+        assert '€5.0' == total_amount
