@@ -1,5 +1,7 @@
 import random
 import time
+
+import sqlite3
 from faker import Faker
 
 from charitybot2.creators.event_creator import EventRegister
@@ -8,7 +10,6 @@ from charitybot2.paths import test_repository_db_path
 from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 from tests.integration.test_event_register import get_test_event_configuration
-from tests.mocks import WipeSQLiteDB
 
 
 current_time = int(time.time())
@@ -20,6 +21,28 @@ updated_values = {
     'start_time': start_time,
     'end_time': end_time
 }
+
+
+class WipeSQLiteDB:
+    def __init__(self, db_path):
+        self._db_path = db_path
+
+    def wipe_db(self):
+        print('Wiping database at path: {}'.format(self._db_path))
+        enable_pragma_query = 'PRAGMA writable_schema = 1;'
+        delete_query = 'DELETE FROM sqlite_master WHERE type IN ("table", "index", "trigger");'
+        disable_pragma_query = 'PRAGMA writeable_schema = 0;'
+        vacuum_query = 'VACUUM;'
+        connection = sqlite3.connect(self._db_path)
+        cursor = connection.cursor()
+        for query in (enable_pragma_query, delete_query, disable_pragma_query, vacuum_query):
+            print('Executing: {}'.format(query))
+            cursor.execute(query)
+        connection.commit()
+        cursor.close()
+        connection.close()
+        print('Wipe complete')
+
 
 
 def setup_test_database(event_values=None, donation_count=10, donation_amount=None):
