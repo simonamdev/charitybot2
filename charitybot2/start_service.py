@@ -121,4 +121,8 @@ class ServiceRunner:
             print(response.status_code)
             print(response.content)
         assert 200 == response.status_code
+        sleep(1)
+        # TODO: Add check for system OS. This assumes windows
+        subprocess.call(['taskkill', '/F', '/T', '/PID', str(self._process.pid)])
         sleep(self._stop_delay)
+
