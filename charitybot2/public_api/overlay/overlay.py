@@ -3,6 +3,7 @@ from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepositor
 from charitybot2.start_service import Service
 from flask import Flask
 from flask import g
+from flask import render_template
 
 app = Flask(__name__)
 
@@ -38,7 +39,7 @@ def get_event_repository():
 
 @app.route('/overlay/<event_identifier>/total')
 def event_total(event_identifier):
-    pass
+    return render_template('overlay.html')
 
 
 @app.route('/destroy/')
