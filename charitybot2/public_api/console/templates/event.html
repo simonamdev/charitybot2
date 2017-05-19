@@ -15,8 +15,14 @@
         </div>
     </div>
     <div class="row">
+        <div class="alert callout" id="event-alert">
+              <h5>Error</h5>
+              <p>Event with identifier: {{ event_identifier }} does not exist!</p>
+        </div>
+    </div>
+    <div class="row">
         <div class="large-8 large-centered columns">
-            <div class="row">
+            <div id="statistics-div" class="row">
                  <div class="large-6 columns text-center">
                     Total Raised: <span class="currency-symbol"></span><span id="donation-total"></span>
                 </div>

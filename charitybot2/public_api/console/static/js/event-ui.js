@@ -6,15 +6,37 @@ var currencySymbol = "";
 eventUI();
 
 function eventUI() {
-    getEventDetails(eventIdentifier);
-    getDonations(eventIdentifier);
-    getStatistics(eventIdentifier);
+    $('#event-alert').hide();
+    drawPageIfEventExists(eventIdentifier);
 }
 
 function debugPrint(log) {
     if (debugMode) {
         console.log(log);
     }
+}
+
+function drawPageIfEventExists(eventIdentifier) {
+    var url = apiUrl + 'event/exists/' + eventIdentifier;
+    $.getJSON(url, data => {
+        if (data['event_exists']) {
+            drawPage();
+        } else {
+            console.log('Event with identifier: ' + eventIdentifier + ' does not exist');
+            $('#event-alert').show();
+            $('#donations-table').hide();
+            $('#statistics-div').hide();
+        }
+    }).fail(() => {
+        console.error('Could not reach URL: ' + url);
+        console.error('Could not confirm that event with identifier: ' + eventIdentifier + ' exists');
+    });
+}
+
+function drawPage() {
+    getEventDetails(eventIdentifier);
+    getDonations(eventIdentifier);
+    getStatistics(eventIdentifier);
 }
 
 function getEventDetails(eventIdentifier) {
