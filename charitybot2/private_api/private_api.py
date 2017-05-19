@@ -130,18 +130,37 @@ def register_or_update_event():
 
 @app.route('/api/v1/event/<event_identifier>/donations/', methods=['GET'])
 def retrieve_event_donations(event_identifier):
-    lower_bound, upper_bound = request.args.get('lower'), request.args.get('upper')
+    # TODO: Refactor donations repository to use a generic function which can take any number of filters on top
+    # Rather than slicing and dicing here. Getting 1000 donations only to return 5 is very inefficient
+    def reduce_to_limit(donation_list, limit):
+        if limit is None or isinstance(donation_list, Donation):
+            return donation_list
+        limit = int(limit)
+        return donation_list[:limit] if len(donation_list) > limit else donation_list
+    lower_bound, upper_bound, limit = request.args.get('lower'), request.args.get('upper'), request.args.get('limit')
     if lower_bound is not None and upper_bound is not None:
         donations = get_donations_repository().get_time_filtered_event_donations(
             event_identifier=event_identifier,
             lower_bound=lower_bound,
             upper_bound=upper_bound)
+        donations = reduce_to_limit(donation_list=donations, limit=limit)
+    elif limit is not None and int(limit) == 1:
+        donations = get_donations_repository().get_latest_event_donation(event_identifier=event_identifier)
+        print(donations)
     else:
         donations = get_donations_repository().get_event_donations(event_identifier=event_identifier)
-    donations = [donation.to_json() for donation in donations]
+        donations = reduce_to_limit(donation_list=donations, limit=limit)
+    if isinstance(donations, list):
+        donations = [donation.to_json() for donation in donations]
+    else:
+        donations = donations.to_json()
+    print(donations)
     return jsonify(
         {
-            'donations': donations
+            'donations': donations,
+            'limit': limit,
+            'lower_bound': lower_bound,
+            'upper_bound': upper_bound
         }
     )
 

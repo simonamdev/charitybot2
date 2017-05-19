@@ -73,19 +73,33 @@ class PrivateApiCalls:
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['received']
 
-    def get_event_donations(self, event_identifier, time_bounds=()):
+    def get_event_donations(self, event_identifier, time_bounds=(), limit=None):
         self.__validate_event_identifier(event_identifier=event_identifier)
+        params_added = False
         url = self.v1_url + 'event/{}/donations/'.format(event_identifier)
         if len(time_bounds) == 2:
             lower_bound, upper_bound = time_bounds[0], time_bounds[1]
             if not isinstance(lower_bound, int) or not isinstance(upper_bound, int):
                 raise IllegalArgumentException('Time bounds must be a tuple of 2 integers')
             url += '?lower={}&upper={}'.format(lower_bound, upper_bound)
+            params_added = True
+        if limit is not None:
+            if limit <= 0:
+                raise IllegalArgumentException('Limit must be 1 or more')
+            url += '&' if params_added else '?'
+            url += 'limit={}'.format(limit)
+            params_added = True
         response = UrlCall(url=url, timeout=self._timeout).get()
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)['donations']
-        donations = [Donation.from_json(donation) for donation in converted_content]
+        if isinstance(converted_content, list):
+            donations = [Donation.from_json(donation) for donation in converted_content]
+        else:
+            donations = Donation.from_json(converted_content)
         return donations
+
+    def get_last_event_donation(self, event_identifier):
+        return self.get_event_donations(event_identifier=event_identifier, limit=1)
 
     def get_event_total(self, event_identifier):
         self.__validate_event_identifier(event_identifier=event_identifier)

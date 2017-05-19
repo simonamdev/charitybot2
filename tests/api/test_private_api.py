@@ -191,6 +191,29 @@ class TestEventDonations:
             assert isinstance(donation, Donation)
             assert donation.amount == donation.timestamp
 
+    def test_retrieving_last_donation_only(self):
+        last_donation_identifier = 'last_donation_only'
+        updated_values = {
+            'identifier': last_donation_identifier,
+            'title': 'Last Donation Only Test Event'
+        }
+        last_donation_test_configuration = get_test_event_configuration(updated_values=updated_values)
+        # Register the event
+        private_api_calls.register_event(event_configuration=last_donation_test_configuration)
+        # Add a number of donations
+        donation_count = 5
+        for i in range(1, donation_count):
+            donation = Donation(
+                amount=i,
+                event_identifier=last_donation_identifier,
+                timestamp=i)
+            private_api_calls.register_donation(donation=donation)
+        # retrieve the last donation only
+        last_donation = private_api_calls.get_last_event_donation(event_identifier=last_donation_identifier)
+        assert isinstance(last_donation, Donation)
+        assert (donation_count - 1) == last_donation.amount
+        assert (donation_count - 1) == last_donation.timestamp
+
     @pytest.mark.parametrize('time_bounds', [
         (1, 'bla'),
         ('', 2),
@@ -201,9 +224,7 @@ class TestEventDonations:
     ])
     def test_retrieving_donations_from_timeframe_given_wrong_values_throws_exception(self, time_bounds):
         with pytest.raises(IllegalArgumentException):
-            private_api_calls.get_event_donations(
-                event_identifier=test_event_identifier,
-                time_bounds=time_bounds)
+            private_api_calls.get_event_donations(event_identifier=test_event_identifier, time_bounds=time_bounds)
 
     def test_retrieving_donations_from_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):
