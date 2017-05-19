@@ -77,6 +77,9 @@ def close_connection(exception):
     event_repo = getattr(g, '_event_repository', None)
     if event_repo is not None:
         event_repo.close_connection()
+    donation_repo = getattr(g, '_donation_repository', None)
+    if donation_repo is not None:
+        donation_repo.close_connection()
     heartbeat_repo = getattr(g, '_heartbeat_repository', None)
     if heartbeat_repo is not None:
         heartbeat_repo.close_connection()
