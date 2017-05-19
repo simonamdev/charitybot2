@@ -34,6 +34,7 @@ external_api_cli_path = os.path.join(root_directory, 'api.py')
 external_api_script_path = os.path.join(current_directory, 'reporter', 'external_api', 'external_api.py')
 private_api_script_path = os.path.join(current_directory, 'private_api', 'private_api.py')
 console_script_path = os.path.join(current_directory, 'public_api', 'console', 'console.py')
+overlay_script_path = os.path.join(current_directory, 'public_api', 'overlay', 'overlay.py')
 
 # SQL Script paths
 init_donations_script_path = os.path.join(db_folder, 'init_donations.sql')

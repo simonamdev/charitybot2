@@ -43,7 +43,7 @@ def event_total(event_identifier):
 
 @app.route('/destroy/')
 def destroy():
-    if private_api_service.debug:
+    if overlay_service.debug:
         stop_api()
         return 'Shutting down Overlay Service'
     return 'Debug mode is disabled - shutting down is unavailable'
@@ -55,5 +55,5 @@ def stop_api():
 
 if __name__ == '__main__':
     cli_args = overlay_service.create_service_argument_parser().parse_args()
-    private_api_service = Service.create_from_args(name=overlay_identity, app=app, cli_args=cli_args)
-    private_api_service.start()
+    overlay_service = Service.create_from_args(name=overlay_identity, app=app, cli_args=cli_args)
+    overlay_service.start()
