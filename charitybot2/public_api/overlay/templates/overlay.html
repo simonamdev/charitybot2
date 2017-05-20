@@ -6,9 +6,12 @@
         <meta name="description" content="CharityBot Overlay">
         <meta name="author" content="purrcat259">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/overlay.css') }}">
+        <script>
+            var eventIdentifier = '{{ event_identifier }}';
+        </script>
     </head>
     <body>
-        <h1 id="overlay-total"></h1>
+        <h1 id="overlay-text"><span id="overlay-currency"></span><span id="overlay-amount"></span></h1>
         <script src="{{ url_for('static', filename='js/overlay.js') }}"></script>
     </body>
 </html>

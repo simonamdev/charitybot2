@@ -1,3 +1,5 @@
+from time import sleep
+
 from bs4 import BeautifulSoup
 from charitybot2.api_calls.private_api_calls import PrivateApiCalls
 from charitybot2.models.donation import Donation
@@ -21,7 +23,7 @@ overlay_service = Service(
 overlay_service_runner = ServiceRunner(
     service=overlay_service,
     file_path=overlay_script_path,
-    start_delay=1,
+    start_delay=3,
     stop_delay=1)
 
 private_api_calls = PrivateApiCalls(base_api_url=private_api_service.full_url)
@@ -44,19 +46,19 @@ def get_soup_text_by_id(tag_id):
 
 
 def setup_module():
-    global driver
-    driver = webdriver.Chrome()
-    driver.implicitly_wait(10)
     setup_test_database(donation_count=0)
     overlay_service_runner.run()
     api_service_runner.run()
+    global driver
+    driver = webdriver.Chrome()
+    driver.implicitly_wait(10)
 
 
 def teardown_module():
-    global driver
-    driver.close()
     overlay_service_runner.stop_running()
     api_service_runner.stop_running()
+    global driver
+    driver.close()
 
 
 class TestOverlay:
@@ -65,14 +67,14 @@ class TestOverlay:
     def test_overlay_total_is_as_expected(self):
         # since no donations are added, it *should* be €0
         driver.get(self.overlay_total_url)
-        total_amount = get_soup_text_by_id('overlay-total')
+        total_amount = get_soup_text_by_id('overlay-text')
+        sleep(2)
         assert '€0' == total_amount
 
     def test_overlay_total_increases_when_donation_is_added(self):
         driver.get(self.overlay_total_url)
-        donation = Donation(amount=5.0, event_identifier=test_event_identifier)
+        donation = Donation(amount=5.5, event_identifier=test_event_identifier)
         private_api_calls.register_donation(donation=donation)
-        from time import sleep
         sleep(5)
-        total_amount = get_soup_text_by_id('overlay-total')
-        assert '€5.0' == total_amount
+        total_amount = get_soup_text_by_id('overlay-text')
+        assert '€5.5' == total_amount
