@@ -54,7 +54,7 @@ class Service:
 
     def start(self):
         if self._debug:
-            self._app.run(host=self._address, port=self._port, debug=self._debug)
+            self._app.run(host=self._address, port=self._port, debug=self._debug, threaded=True)
         else:
             self._http_server.serve_forever()
 
