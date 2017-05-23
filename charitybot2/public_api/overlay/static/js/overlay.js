@@ -49,4 +49,5 @@ function getTotal() {
 
 getCurrency();
 getTotal();
-setInterval(getTotal, 2000)
+var updateDelay = 2000; // ms
+setInterval(getTotal, updateDelay)
