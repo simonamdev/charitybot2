@@ -1,6 +1,6 @@
 // Reference:
 // https://stackoverflow.com/questions/14388452/how-do-i-load-a-json-object-from-a-file-with-ajax
-function fetchJSONFile(path, callback) {
+function fetchJSONFile(path, callback, failureCallback) {
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4) {
@@ -10,6 +10,8 @@ function fetchJSONFile(path, callback) {
                 if (callback) {
                     callback(data);
                 }
+            } else {
+                failureCallback();
             }
         }
     };
@@ -44,7 +46,14 @@ function getTotal() {
         console.log(data);
         var header = document.getElementById('overlay-amount');
         header.innerHTML = data['total'];
+    }, () => {
+        markUnavailable();
     });
+}
+
+function markUnavailable() {
+    var header = document.getElementById('overlay-amount');
+    header.innerHTML = 'Unable to connect';
 }
 
 getCurrency();

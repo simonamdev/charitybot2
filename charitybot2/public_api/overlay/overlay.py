@@ -39,7 +39,12 @@ def get_event_repository():
 
 @app.route('/overlay/<event_identifier>/total')
 def event_total(event_identifier):
-    return render_template('overlay.html', event_identifier=event_identifier)
+    return render_template('total.html', event_identifier=event_identifier)
+
+
+@app.route('/overlay/<event_identifier>/ticker')
+def event_ticker(event_identifier):
+    return render_template('ticker.html', event_identifier=event_identifier)
 
 
 @app.route('/destroy/')
