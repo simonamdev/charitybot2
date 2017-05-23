@@ -6,11 +6,15 @@
         <meta name="description" content="CharityBot Overlay">
         <meta name="author" content="purrcat259">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/ticker.css') }}">
+        <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
         <script>
             var eventIdentifier = '{{ event_identifier }}';
         </script>
     </head>
     <body>
+        <div id="ticker-div">
+            <table id="ticker-table"></table>
+        </div>
         <script src="{{ url_for('static', filename='js/ticker.js') }}"></script>
     </body>
 </html>
