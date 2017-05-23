@@ -57,7 +57,8 @@ class DonationSQLiteRepository(SQLiteRepository):
         # TODO: Add event identifier validation here
         query = 'SELECT * ' \
                 'FROM `donations` ' \
-                'WHERE eventInternalName = ?;'
+                'WHERE eventInternalName = ?' \
+                'ORDER BY timeRecorded DESC;'
         data = (event_identifier, )
         rows = self.execute_query(query=query, data=data).fetchall()
         return [self.__convert_row_to_donation(row) for row in rows]
