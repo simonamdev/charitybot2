@@ -1,5 +1,3 @@
-var numberOfDonations = 10;
-
 var apiUrl = 'http://127.0.0.1:8001/api/v1/';
 var eventUrl = apiUrl + 'event/' + eventIdentifier;
 var donationsUrl = eventUrl + '/donations/';

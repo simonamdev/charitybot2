@@ -4,6 +4,7 @@ from charitybot2.start_service import Service
 from flask import Flask
 from flask import g
 from flask import render_template
+from flask import request
 
 app = Flask(__name__)
 
@@ -44,7 +45,15 @@ def event_total(event_identifier):
 
 @app.route('/overlay/<event_identifier>/ticker')
 def event_ticker(event_identifier):
-    return render_template('ticker.html', event_identifier=event_identifier)
+    limit = request.args.get('limit')
+    if limit is not None:
+        try:
+            limit = int(limit)
+        except ValueError:
+            limit = 10
+    else:
+        limit = 10
+    return render_template('ticker.html', event_identifier=event_identifier, limit=limit)
 
 
 @app.route('/destroy/')
