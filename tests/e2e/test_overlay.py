@@ -1,3 +1,4 @@
+import random
 from time import sleep
 
 from bs4 import BeautifulSoup
@@ -100,7 +101,7 @@ class TestOverlayTicker:
             soup.append(dict(timestamp=parsed_soup[0], amount=parsed_soup[1]))
         return soup
 
-    def test_overlay_ticker_has_rows_as_many_as_limit(self):
+    def test_overlay_update(self):
         driver.get(self.overlay_ticker_url)
         rows = self.get_table_rows()
         # Header row only
@@ -110,3 +111,17 @@ class TestOverlayTicker:
         sleep(4)
         rows = self.get_table_rows()
         assert 2 == len(rows)
+
+    def test_overlay_updating_does_not_exceed_default_limit(self):
+        setup_test_database(donation_count=0)
+        driver.get(self.overlay_ticker_url)
+        rows = self.get_table_rows()
+        # Header row only
+        assert 1 == len(rows)
+        amount_added = 15
+        for i in range(0, amount_added):
+            donation = Donation(amount=random.randrange(1.1, 10.0), event_identifier=test_event_identifier)
+            private_api_calls.register_donation(donation=donation)
+        sleep(3)
+        rows = self.get_table_rows()
+        assert 11== len(rows)
