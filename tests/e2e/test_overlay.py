@@ -46,7 +46,6 @@ def get_soup_text_by_id(tag_id):
 
 
 def setup_module():
-    setup_test_database(donation_count=0)
     overlay_service_runner.run()
     api_service_runner.run()
     global driver
@@ -61,8 +60,12 @@ def teardown_module():
     driver.close()
 
 
-class TestOverlay:
+class TestOverlayTotal:
     overlay_total_url = overlay_service.full_url + 'overlay/{}/total'.format(test_event_identifier)
+
+    @classmethod
+    def setup_class(cls):
+        setup_test_database(donation_count=0)
 
     def test_overlay_total_is_as_expected(self):
         # since no donations are added, it *should* be €0
@@ -78,3 +81,32 @@ class TestOverlay:
         sleep(5)
         total_amount = get_soup_text_by_id('overlay-text')
         assert '€5.5' == total_amount
+
+
+class TestOverlayTicker:
+    overlay_ticker_url = overlay_service.full_url + 'overlay/{}/ticker'.format(test_event_identifier)
+
+    @classmethod
+    def setup_class(cls):
+        setup_test_database(donation_count=0)
+
+    @staticmethod
+    def get_table_rows():
+        global driver
+        rows = driver.find_elements_by_tag_name('tr')
+        soup = []
+        for row in rows:
+            parsed_soup = BeautifulSoup(row.text, 'html.parser').text.split(' ')
+            soup.append(dict(timestamp=parsed_soup[0], amount=parsed_soup[1]))
+        return soup
+
+    def test_overlay_ticker_has_rows_as_many_as_limit(self):
+        driver.get(self.overlay_ticker_url)
+        rows = self.get_table_rows()
+        # Header row only
+        assert 1 == len(rows)
+        donation = Donation(amount=5.5, event_identifier=test_event_identifier)
+        private_api_calls.register_donation(donation=donation)
+        sleep(4)
+        rows = self.get_table_rows()
+        assert 2 == len(rows)
