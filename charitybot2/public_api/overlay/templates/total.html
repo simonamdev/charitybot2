@@ -7,12 +7,13 @@
         <meta name="author" content="purrcat259">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/total.css') }}">
         <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
         <script>
             var eventIdentifier = '{{ event_identifier }}';
         </script>
     </head>
     <body>
-        <h1 id="overlay-text"><span id="overlay-currency"></span><span id="overlay-amount"></span></h1>
+        <h1 id="overlay-text"><span class="currency"></span><span id="overlay-amount"></span></h1>
         <script src="{{ url_for('static', filename='js/total.js') }}"></script>
     </body>
 </html>
