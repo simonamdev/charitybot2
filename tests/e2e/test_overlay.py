@@ -120,8 +120,8 @@ class TestOverlayTicker:
         assert 1 == len(rows)
         amount_added = 15
         for i in range(0, amount_added):
-            donation = Donation(amount=random.randrange(1.1, 10.0), event_identifier=test_event_identifier)
+            donation = Donation(amount=random.uniform(1.0, 10.0), event_identifier=test_event_identifier)
             private_api_calls.register_donation(donation=donation)
         sleep(3)
         rows = self.get_table_rows()
-        assert 11== len(rows)
+        assert 11 == len(rows)
