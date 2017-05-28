@@ -6,6 +6,7 @@ var latestDonationUrl = donationsUrl + '?limit=1';
 function getLatestDonation() {
     console.log('Getting Latest Donation');
     fetchJSONFile(latestDonationUrl, (data) => {
+//        console.log(data);
         latest_donation = JSON.parse(data['donations']);
         var latest = document.getElementById('overlay-latest');
         latest.innerHTML =
@@ -27,4 +28,4 @@ function markUnavailable() {
 drawCurrencySymbolOnPage();
 getLatestDonation();
 var updateDelay = 2000; // ms
-//setInterval(getLatestDonation, updateDelay)
+setInterval(getLatestDonation, updateDelay)

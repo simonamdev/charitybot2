@@ -130,8 +130,8 @@ class TestOverlayTicker:
 class TestOverlayLatestDonation:
     overlay_latest_url = overlay_service.full_url + 'overlay/{}/latest'.format(test_event_identifier)
 
-    @classmethod
-    def setup_class(cls):
+    @staticmethod
+    def setup_method():
         setup_test_database(donation_count=0)
 
     @staticmethod
@@ -139,16 +139,15 @@ class TestOverlayLatestDonation:
         return get_soup_text_by_id('overlay-latest')
 
     def test_overlay_latest_with_no_donations_returns_error(self):
-        setup_test_database(donation_count=0)
         driver.get(self.overlay_latest_url)
         latest_donation = self.get_latest_donation()
         assert '' == latest_donation
 
     def test_overlay_latest_with_one_donation(self):
-        setup_test_database(donation_count=0)
         driver.get(self.overlay_latest_url)
         donation = Donation(amount=5, event_identifier=test_event_identifier, timestamp=5, donor_name='donor')
         private_api_calls.register_donation(donation=donation)
+        sleep(2)
         latest_donation = self.get_latest_donation()
         # €5 from DONOR at TIME
         split = latest_donation.split(' ')
@@ -157,21 +156,22 @@ class TestOverlayLatestDonation:
         timestamp = split[4]
         assert 5 == amount
         assert 'donor' == donor
-        assert 5 == timestamp
+        assert 5 == int(timestamp)
 
     def test_overlay_latest_with_several_donations(self):
-        setup_test_database(donation_count=0)
         driver.get(self.overlay_latest_url)
         test_amount = 10
-        for i in range(0, test_amount):
+        for i in range(1, test_amount + 1):
             donation = Donation(amount=i, event_identifier=test_event_identifier, timestamp=i, donor_name='donor')
             private_api_calls.register_donation(donation=donation)
+        sleep(2)
         latest_donation = self.get_latest_donation()
         # €amount from DONOR at TIME
         split = latest_donation.split(' ')
+        print(split)
         amount = int(split[0].replace('€', ''))
         donor = split[2]
         timestamp = split[4]
         assert test_amount == amount
         assert 'donor' == donor
-        assert test_amount == timestamp
+        assert test_amount == int(timestamp)
