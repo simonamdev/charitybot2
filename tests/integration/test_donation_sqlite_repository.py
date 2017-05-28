@@ -12,11 +12,16 @@ def setup_test_donations(repository):
         repository.record_donation(donation=donation)
 
 
+def get_new_test_database():
+    return DonationSQLiteRepository(debug=True)
+
+
 class TestDonationSQLiteRepository:
     test_donation_repository = None
+    test_event_identifier = 'event'
 
     def setup_method(self):
-        self.test_donation_repository = DonationSQLiteRepository(debug=True)
+        self.test_donation_repository = get_new_test_database()
         setup_test_donations(self.test_donation_repository)
 
     def teardown_method(self):
@@ -24,26 +29,34 @@ class TestDonationSQLiteRepository:
 
     def test_getting_all_donations(self):
         values = range(1, 6)
-        donations = self.test_donation_repository.get_event_donations(event_identifier='event')
+        donations = self.test_donation_repository.get_event_donations(
+            event_identifier=self.test_event_identifier)
         assert 5 == len(donations)
         for donation in donations:
             assert donation.amount in values
             assert donation.timestamp in values
-            assert donation.event_identifier == 'event'
+            assert donation.event_identifier == self.test_event_identifier
+
+    def test_getting_all_donations_when_none_present_returns_empty_list(self):
+        self.test_donation_repository = get_new_test_database()
+        donations = self.test_donation_repository.get_latest_event_donation(
+            event_identifier=self.test_event_identifier)
+        assert [] == donations
+        assert 0 == len(donations)
 
     def test_getting_latest_donation(self):
         latest_donation = self.test_donation_repository.get_latest_event_donation(
-            event_identifier='event')
+            event_identifier=self.test_event_identifier)
         assert 5 == latest_donation.amount
         assert 5 == latest_donation.timestamp
-        assert 'event' == latest_donation.event_identifier
+        assert self.test_event_identifier == latest_donation.event_identifier
 
     def test_getting_time_filtered_donations(self):
         lower_bound = 2
         upper_bound = 4
         expected_amount = upper_bound - lower_bound + 1
         filtered_donations = self.test_donation_repository.get_time_filtered_event_donations(
-            event_identifier='event',
+            event_identifier=self.test_event_identifier,
             lower_bound=lower_bound,
             upper_bound=upper_bound)
         assert expected_amount == len(filtered_donations)
