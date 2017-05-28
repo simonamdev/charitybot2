@@ -37,7 +37,7 @@ class TestDonationSQLiteRepository:
             assert donation.timestamp in values
             assert donation.event_identifier == self.test_event_identifier
 
-    def test_getting_all_donations_when_none_present_returns_empty_list(self):
+    def test_getting_latest_donation_when_none_present_returns_empty_list(self):
         self.test_donation_repository = get_new_test_database()
         donations = self.test_donation_repository.get_latest_event_donation(
             event_identifier=self.test_event_identifier)

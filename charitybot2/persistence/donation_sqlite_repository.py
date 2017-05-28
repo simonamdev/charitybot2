@@ -70,8 +70,10 @@ class DonationSQLiteRepository(SQLiteRepository):
                 'ORDER BY timeRecorded DESC ' \
                 'LIMIT 1;'
         data = (event_identifier, )
-        row = self.execute_query(query=query, data=data).fetchall()[0]
-        return self.__convert_row_to_donation(row=row)
+        row = self.execute_query(query=query, data=data).fetchall()
+        if len(row) == 0:
+            return []
+        return self.__convert_row_to_donation(row=row[0])
 
     def get_time_filtered_event_donations(self, event_identifier, lower_bound, upper_bound=None):
         query = 'SELECT * ' \
