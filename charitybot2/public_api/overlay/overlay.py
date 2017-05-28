@@ -56,6 +56,11 @@ def event_ticker(event_identifier):
     return render_template('ticker.html', event_identifier=event_identifier, limit=limit)
 
 
+@app.route('/overlay/<event_identifier>/latest')
+def event_latest(event_identifier):
+    return render_template('latest.html', event_identifier=event_identifier)
+
+
 @app.route('/destroy/')
 def destroy():
     if overlay_service.debug:
