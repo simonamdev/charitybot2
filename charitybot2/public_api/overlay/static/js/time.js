@@ -42,16 +42,16 @@ function returnTimespanString(timespanInSeconds) {
     if (timespanInMinutes < 1) {
         return timespanInSeconds + ' seconds';
     } else if (timespanInMinutes == 1) {
-        return 'second';
+        return '1 second';
     }
     var timespanInHours = timespanInMinutes / 60;
     if (timespanInHours < 1) {
         return timespanInMinutes + ' minutes';
     } else if (timespanInMinutes == 1) {
-        return 'minute';
+        return '1 minute';
     }
     if (timespanInHours == 1) {
-        return 'hour';
+        return '1 hour';
     }
     return timespanInHours + ' hours';
 }
