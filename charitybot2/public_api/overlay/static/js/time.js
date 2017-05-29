@@ -9,7 +9,7 @@ function convertToDate(timestamp) {
     var d = new Date(timestamp * 1000);
     var day = d.getDate();
     var month = d.getMonth() + 1;
-    var year d.getFullYear()
+    var year = d.getFullYear();
 
     if (day < 10) {
         day = '0' + day;

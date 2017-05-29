@@ -13,8 +13,9 @@ function getLatestDonation() {
             latest_donation['amount'] +
             ' from ' +
             latest_donation['donor_name'] +
-            ' at ' +
-            latest_donation['timestamp'];
+            ', ' +
+            returnTimespanString(latest_donation['timestamp']) +
+            ' ago';
     }, () => {
         markUnavailable();
     });
