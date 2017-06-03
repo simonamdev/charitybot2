@@ -124,7 +124,10 @@ function drawDonations(data) {
                         '</td><td>' +
                         rowDonation['notes'] +
                         '</td><td>' +
-                        rowDonation['external_reference']
+                        rowDonation['external_reference'] +
+                        '</td><td>' +
+                        rowDonation['internal_reference'].substring(0, 8) +
+                        '...' +
                         '</td></tr>'
         $('#donations-table').append(rowString);
     }
@@ -168,4 +171,16 @@ function drawStatistics(total, lastDonationTimestamp) {
         }
     }
     $('#donation-time-ago').text(timeDifference.toFixed(2) + ' ' + units);
+}
+
+function submitDonation() {
+    // Get the values from the form
+
+    // Clear form to avoid double clicking
+
+    // POST them to the API
+
+    // If successful, show message
+
+    // If error, show message
 }

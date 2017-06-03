@@ -20,6 +20,35 @@
               <p>Event with identifier: {{ event_identifier }} does not exist!</p>
         </div>
     </div>
+    <!-- Manual donation form -->
+    <div class="row">
+        <h2 class="text-center">New Donation Form</h2>
+    </div>
+    <form>
+        <div class="row">
+            <div class="large-4 columns">
+                <label>Donation Amount
+                    <input type="text" placeholder="Enter Amount Here" />
+                </label>
+            </div>
+            <div class="large-4 columns">
+                <label>Donor Name
+                    <input type="text" placeholder="Enter Name Here" />
+                </label>
+            </div>
+            <div class="large-4 columns">
+                <label>Notes
+                    <input type="text" placeholder="Enter anything else here" />
+                </label>
+            </div>
+            <input class="button large-12" type="button" value="Submit Donation" onclick="submitDonation();" />
+        </div>
+    </form>
+
+    <div class="row">
+        <h2 class="text-center">Donation List</h2>
+    </div>
+    <!-- Data -->
     <div class="row">
         <div class="large-8 large-centered columns">
             <div id="statistics-div" class="row">
@@ -33,7 +62,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="large-8 large-centered columns">
+        <div class="large-10 large-centered columns">
             <table id="donations-table" class="hover">
                 <tr>
                     <th>#</th>
@@ -42,6 +71,7 @@
                     <th>Donor</th>
                     <th>Notes</th>
                     <th>External Reference</th>
+                    <th>Internal Reference</th>
                 </tr>
             </table>
         </div>
