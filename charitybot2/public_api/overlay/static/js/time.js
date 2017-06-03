@@ -37,21 +37,25 @@ function convertToTime(timestamp) {
     return hours + ':' + minutes + ':' + seconds;
 }
 
+function roundUp(number) {
+    return Math.round(number * 100) / 100
+}
+
 function returnTimespanString(timespanInSeconds) {
     var timespanInMinutes = timespanInSeconds / 60;
     if (timespanInMinutes < 1) {
-        return timespanInSeconds + ' seconds';
+        return roundUp(timespanInSeconds) + ' seconds';
     } else if (timespanInMinutes == 1) {
         return '1 second';
     }
     var timespanInHours = timespanInMinutes / 60;
     if (timespanInHours < 1) {
-        return timespanInMinutes + ' minutes';
+        return roundUp(timespanInMinutes) + ' minutes';
     } else if (timespanInMinutes == 1) {
         return '1 minute';
     }
     if (timespanInHours == 1) {
         return '1 hour';
     }
-    return timespanInHours + ' hours';
+    return roundUp(timespanInHours) + ' hours';
 }
