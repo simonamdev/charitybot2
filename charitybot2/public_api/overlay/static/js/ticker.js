@@ -35,14 +35,14 @@ function updateTicker(limit) {
 
 function drawTableRows(data) {
     var table = document.getElementById('ticker-table');
-    var tableHeader = '<tr><th>Timestamp</th><th>Amount</th></tr>';
+    var tableHeader = '<tr><th>Latest Donations</th></tr>';
     table.innerHTML = '';
     table.innerHTML = tableHeader;
     var tableRows = '';
     for (var i = 0; i < data.donations.length; i++) {
         var donation = JSON.parse(data.donations[i]);
-        var tableRow = '<tr><td>' + donation['timestamp'] + '</td><td>' + currencySymbol + donation['amount'] + '</td></tr>';
-        tableRows += tableRow;
+        var donationRow = '<tr><td>' + currencySymbol + donation['amount'] + ', ' + returnTimespanString(donation['timestamp']) + ' ago</td></tr>';
+        tableRows += donationRow;
     }
     table.innerHTML += tableRows;
 }
