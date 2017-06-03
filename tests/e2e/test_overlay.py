@@ -160,7 +160,7 @@ class TestOverlayLatestDonation:
         donor = split[2]
         # timestamp = split[4]
         assert 5 == amount
-        assert 'donor' == donor
+        assert 'donor' == donor.replace(',', '')
         # assert 5 == int(timestamp)
 
     def test_overlay_latest_with_several_donations(self):
@@ -181,5 +181,5 @@ class TestOverlayLatestDonation:
         donor = split[2]
         # timestamp = split[4]
         assert test_amount == amount
-        assert 'donor' == donor
+        assert 'donor' == donor.replace(',', '')
         # assert test_amount == int(timestamp)
