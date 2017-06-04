@@ -102,16 +102,12 @@ def convert_web_element_to_donation_dict(web_element):
     # break up the tr into separate tds
     row_tds = web_element.find_elements_by_tag_name('td')
     return dict(
-        amount=row_tds[1].text,
-        timestamp=row_tds[2].text,
-        donor=row_tds[3].text,
-        notes=row_tds[4].text,
-        external_reference=row_tds[5].text,
-        internal_reference=row_tds[6].text)
-
-
-def get_donation_table_row_count():
-    return len(get_donation_table_rows())
+        amount=row_tds[1].text.strip(),
+        timestamp=row_tds[2].text.strip(),
+        donor=row_tds[3].text.strip(),
+        notes=row_tds[4].text.strip(),
+        external_reference=row_tds[5].text.strip(),
+        internal_reference=row_tds[6].text.strip())
 
 
 def submit_api_donation(amount, donor, notes):
@@ -150,11 +146,23 @@ def submit_form():
     form_submit.send_keys(Keys.ENTER)
 
 
+def generate_test_donation_data(count=5):
+    fake = Faker()
+    test_donations = []
+    for i in range(0, count):
+        test_amount = round(random.uniform(1.0, 100.0), 2)
+        test_name = fake.name()
+        test_notes = fake.text()[0:10].strip()
+        donation = dict(amount=test_amount, name=test_name, notes=test_notes)
+        test_donations.append(donation)
+    return test_donations
+
+
 class TestDonationSubmission:
     def test_total_is_zero_with_no_rows(self):
         setup_test_database(donation_count=0)
         # make sure there are no rows
-        assert 0 == get_donation_table_row_count()
+        assert 0 == len(get_donation_table_rows())
         # make sure the total is 0
         assert '0' == get_total_raised()
 
@@ -177,14 +185,7 @@ class TestDonationSubmission:
     def test_several_donations_from_api(self):
         setup_test_database(donation_count=0)
         donation_count = 5
-        fake = Faker()
-        test_donations = []
-        for i in range(0, donation_count):
-            test_amount = round(random.uniform(1.0, 100.0), 2)
-            test_name = fake.name()
-            test_notes = fake.text()[0:15]
-            donation = dict(amount=test_amount, name=test_name, notes=test_notes)
-            test_donations.append(donation)
+        test_donations = generate_test_donation_data(count=donation_count)
         for i in range(0, donation_count):
             test_donation = test_donations[i]
             submit_api_donation(
@@ -204,14 +205,7 @@ class TestDonationSubmission:
     def test_several_donations_from_form(self):
         setup_test_database(donation_count=0)
         donation_count = 5
-        fake = Faker()
-        test_donations = []
-        for i in range(0, donation_count):
-            test_amount = round(random.uniform(1.0, 100.0), 2)
-            test_name = fake.name()
-            test_notes = fake.text()[0:15]
-            donation = dict(amount=test_amount, name=test_name, notes=test_notes)
-            test_donations.append(donation)
+        test_donations = generate_test_donation_data(count=donation_count)
         # go to the page
         driver.get(test_event_url)
         sleep(1)
@@ -267,31 +261,25 @@ class TestDonationSubmission:
 
         rows = get_donation_table_rows()
         assert 2 == len(rows)
-        # ordered from latest to oldest, so form donation should be first
+        # ordered from latest to oldest, so API donation should be first
 
-        form_donation_row = rows[0]
-        assert round(test_form_donation_amount, 2) == float(form_donation_row['amount'].replace('€', ''))
-        assert test_form_donation_donor == form_donation_row['donor']
-        assert test_form_donation_notes == form_donation_row['notes']
-
-        # now check the API donation
-        api_donation_row = rows[1]
+        api_donation_row = rows[0]
         assert round(test_api_donation_amount, 2) == float(api_donation_row['amount'].replace('€', ''))
         assert test_api_donation_donor == api_donation_row['donor']
         assert test_api_donation_notes == api_donation_row['notes']
 
+        # now check the form donation
+
+        form_donation_row = rows[1]
+        assert round(test_form_donation_amount, 2) == float(form_donation_row['amount'].replace('€', ''))
+        assert test_form_donation_donor == form_donation_row['donor']
+        assert test_form_donation_notes == form_donation_row['notes']
+
     def test_several_mixed_donations(self):
         setup_test_database(donation_count=0)
-        donation_count = 2
+        donation_count = 20
         # generate donation data
-        fake = Faker()
-        test_donations = []
-        for i in range(0, donation_count):
-            test_amount = round(random.uniform(1.0, 100.0), 2)
-            test_name = fake.name()
-            test_notes = fake.text()[0:15]
-            donation = dict(amount=test_amount, name=test_name, notes=test_notes)
-            test_donations.append(donation)
+        test_donations = generate_test_donation_data(count=donation_count)
         # submit donations as either api or form
         for i in range(0, donation_count):
             # True: API
@@ -313,8 +301,6 @@ class TestDonationSubmission:
         rows = get_donation_table_rows()
         assert donation_count == len(rows)
         for i in range(0, donation_count):
-            print(test_donations[i])
-            print(rows[i])
             current_test_donation = test_donations[i]
             donation_row = rows[i]
             assert round(current_test_donation['amount'], 2) == float(donation_row['amount'].replace('€', ''))
