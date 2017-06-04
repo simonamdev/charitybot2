@@ -113,10 +113,6 @@ def get_donation_table_row_count():
 
 
 class TestDonationSubmission:
-    @classmethod
-    def setup_class(cls):
-        setup_test_database(donation_count=0)
-
     def test_total_is_zero_with_no_rows(self):
         setup_test_database(donation_count=0)
         # make sure there are no rows
