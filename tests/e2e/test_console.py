@@ -153,8 +153,6 @@ class TestDonationSubmission:
         test_donation_amount = round(random.uniform(1.0, 50.0), 2)
         test_donation_donor = random.choice(('Joey', 'Ethan', 'Hila', 'Sean'))
         test_notes = random.choice(('Note', 'Notes', 'aaaaaaaa', ''))
-        # Make sure there are no rows before
-        assert 0 == get_donation_table_row_count()
         # enter info in the form
         enter_donation_into_form(test_donation_amount, test_donation_donor, test_notes)
         # Submit the form
@@ -166,3 +164,38 @@ class TestDonationSubmission:
         assert round(test_donation_amount, 2) == float(donation_row['amount'].replace('€', ''))
         assert test_donation_donor == donation_row['donor']
         assert test_notes == donation_row['notes']
+
+    def test_donating_through_api_and_form(self):
+        setup_test_database(donation_count=0)
+        test_api_donation_amount = 10.5
+        test_api_donation_donor = 'Joe'
+        test_api_donation_notes = 'Joe is awesome'
+        test_form_donation_amount = 33.2
+        test_form_donation_donor = 'Blogger'
+        test_form_donation_notes = 'Wolololololo'
+        enter_donation_into_form(
+            test_form_donation_amount,
+            test_form_donation_donor,
+            test_form_donation_notes)
+        submit_form()
+        sleep(1)
+        donation = Donation(
+            amount=test_api_donation_amount,
+            event_identifier=test_event_identifier,
+            donor_name=test_api_donation_donor,
+            notes=test_api_donation_notes)
+        private_api_calls.register_donation(donation=donation)
+        sleep(1)
+        rows = get_donation_table_rows()
+        assert 2 == len(rows)
+        # ordered from latest to oldest, so form donation should be first
+        form_donation_row = rows[0]
+        assert round(test_form_donation_amount, 2) == float(form_donation_row['amount'].replace('€', ''))
+        assert test_form_donation_donor == form_donation_row['donor']
+        assert test_form_donation_notes == form_donation_row['notes']
+        # now check the API donation
+        api_donation_row = rows[1]
+        assert round(test_api_donation_amount, 2) == float(api_donation_row['amount'].replace('€', ''))
+        assert test_api_donation_donor == api_donation_row['donor']
+        assert test_api_donation_notes == api_donation_row['notes']
+
