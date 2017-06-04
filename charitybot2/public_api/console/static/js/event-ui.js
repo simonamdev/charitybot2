@@ -110,7 +110,10 @@ function getDonations(eventIdentifier, lowerTimeBound, upperTimeBound) {
 function drawDonations(data) {
     debugPrint(data);
     var donationsData = data['donations'];
-    var donationsTable = $('#donations-table');
+    var donationsTableBody = $('#donations-table tbody');
+    // Clear the old data
+    donationsTableBody.empty();
+    // Add in the rows
     for (i = 0; i < donationsData.length; i++) {
         var rowDonation = JSON.parse(donationsData[i]);
         var rowString = '<tr><td>' +
@@ -129,7 +132,7 @@ function drawDonations(data) {
                         rowDonation['internal_reference'].substring(0, 8) +
                         '...' +
                         '</td></tr>'
-        $('#donations-table').append(rowString);
+        donationsTableBody.append(rowString);
     }
 }
 
@@ -213,12 +216,14 @@ function submitDonation() {
     request.onload = () => {
         var response = JSON.parse(request.responseText);
         console.log(response);
+        // Redraw the table
+        getDonations(eventIdentifier);
     };
 
     // If network error, show message
     request.onerror = () => {
         console.error('Error');
-    }
+    };
 
     request.send(serializePostObject(data));
 }
