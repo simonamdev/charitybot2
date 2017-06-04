@@ -199,23 +199,24 @@ def heartbeat():
 @app.route('/api/v1/donation/', methods=['POST'])
 def record_donation():
     success = False
+    message = 'Donation successfully added'
+    received_data = {}
     try:
         received_data = request.form.to_dict()
         new_donation = Donation.from_dict(received_data)
         get_donations_repository().record_donation(new_donation)
         success = True
-    except InvalidRepositoryQueryException as e:
-        # TODO: Switch to proper logging
-        print('Unable to complete query properly')
-        print(e)
+    except InvalidRepositoryQueryException:
+        message = 'Donation Repository Error'
     except InvalidDonationException as e:
-        print('Donation was invalid')
-        print(e)
+        message = 'Donation was invalid'
+        print('Error: {} Data: {}'.format(e, received_data))
     except Exception as e:
-        print(e)
+        message = 'Unknown exception: {}'.format(e)
     return jsonify(
         {
-            'received': success
+            'received': success,
+            'message': message
         }
     )
 
