@@ -140,7 +140,11 @@ function drawDonations(data) {
 function getStatistics(eventIdentifier) {
     calls = [getEventTotal(eventIdentifier), getLastDonation(eventIdentifier)];
     $.when.apply($, calls).done((total, lastDonation) => {
-        drawStatistics(total[0]['total'], JSON.parse(lastDonation[0]['donations'])['timestamp']);
+        if (lastDonation[0]['donations'].length == 0) {
+            drawStatistics(0);
+        } else {
+            drawStatistics(total[0]['total'], JSON.parse(lastDonation[0]['donations'])['timestamp']);
+        }
     });
 }
 
@@ -155,26 +159,33 @@ function getLastDonation(eventIdentifier) {
 }
 
 function drawStatistics(total, lastDonationTimestamp) {
+    // Set the total
     debugPrint('Total Raised: ' + total);
-    debugPrint('Last Donation Timestamp: ' + lastDonationTimestamp);
     $('#donation-total').text(total);
-    var currentTime = Math.round((new Date()).getTime() / 1000);
-    var timeDifference = currentTime - lastDonationTimestamp;
-    console.log(timeDifference);
-    units = 'seconds';
-    if (timeDifference > 60) {
-        timeDifference /= 60;
-        units = 'minutes';
+
+    // Set the timespan if it is available
+    if (lastDonationTimestamp) {
+        debugPrint('Last Donation Timestamp: ' + lastDonationTimestamp);
+        var currentTime = Math.round((new Date()).getTime() / 1000);
+        var timeDifference = currentTime - lastDonationTimestamp;
+        console.log(timeDifference);
+        units = 'seconds';
         if (timeDifference > 60) {
             timeDifference /= 60;
-            units = 'hours';
-            if (timeDifference > 24) {
-                timeDifference /= 24;
-                units = 'days';
+            units = 'minutes';
+            if (timeDifference > 60) {
+                timeDifference /= 60;
+                units = 'hours';
+                if (timeDifference > 24) {
+                    timeDifference /= 24;
+                    units = 'days';
+                }
             }
         }
+        $('#donation-time-ago').text(timeDifference.toFixed(2) + ' ' + units + '  ago');
+    } else {
+        $('#donation-time-ago').text('N/A');
     }
-    $('#donation-time-ago').text(timeDifference.toFixed(2) + ' ' + units);
 }
 
 var newDonationUrl = apiUrl + 'donation/';
