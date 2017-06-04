@@ -10,6 +10,7 @@ from charitybot2.private_api.private_api import private_api_service
 from charitybot2.public_api.console.console import app
 from charitybot2.sources.url_call import UrlCall
 from charitybot2.start_service import Service, ServiceRunner
+from selenium.webdriver.common.keys import Keys
 from tests.setup_test_database import setup_test_database
 from selenium import webdriver
 
@@ -87,7 +88,7 @@ def get_total_raised():
 
 def get_donation_table_rows():
     driver.get(test_event_url)
-    sleep(2)
+    sleep(1)
     donations_table_body = driver.find_element_by_id('donations-table-body')
     donations_table_body_text = BeautifulSoup(donations_table_body.text.strip(), 'html.parser')
     if donations_table_body_text == '':
@@ -112,6 +113,23 @@ def get_donation_table_row_count():
     return len(get_donation_table_rows())
 
 
+def enter_donation_into_form(amount, donor, notes):
+    driver.get(test_event_url)
+    sleep(1)
+    form = driver.find_element_by_id('new-donation-amount')
+    form.send_keys(str(amount))
+    form = driver.find_element_by_id('new-donation-donor')
+    form.send_keys(str(donor))
+    if notes is not None:
+        form = driver.find_element_by_id('new-donation-notes')
+        form.send_keys(str(notes))
+
+
+def submit_form():
+    form_submit = driver.find_element_by_id('donation-submit-button')
+    form_submit.send_keys(Keys.ENTER)
+
+
 class TestDonationSubmission:
     def test_total_is_zero_with_no_rows(self):
         setup_test_database(donation_count=0)
@@ -130,5 +148,21 @@ class TestDonationSubmission:
         donation_row = rows[0]
         assert round(test_amount, 2) == float(donation_row['amount'].replace('€', ''))
 
-    # def test_successful_donation(self):
-    #     pass
+    def test_donation_through_form(self):
+        setup_test_database(donation_count=0)
+        test_donation_amount = round(random.uniform(1.0, 50.0), 2)
+        test_donation_donor = random.choice(('Joey', 'Ethan', 'Hila', 'Sean'))
+        test_notes = random.choice(('Note', 'Notes', 'aaaaaaaa', ''))
+        # Make sure there are no rows before
+        assert 0 == get_donation_table_row_count()
+        # enter info in the form
+        enter_donation_into_form(test_donation_amount, test_donation_donor, test_notes)
+        # Submit the form
+        submit_form()
+        sleep(1)
+        rows = get_donation_table_rows()
+        assert 1 == len(rows)
+        donation_row = rows[0]
+        assert round(test_donation_amount, 2) == float(donation_row['amount'].replace('€', ''))
+        assert test_donation_donor == donation_row['donor']
+        assert test_notes == donation_row['notes']

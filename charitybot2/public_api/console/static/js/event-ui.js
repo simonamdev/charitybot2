@@ -23,7 +23,7 @@ function drawPageIfEventExists(eventIdentifier) {
         if (data['event_exists']) {
             drawPage();
         } else {
-            console.log('Event with identifier: ' + eventIdentifier + ' does not exist');
+            debugPrint('Event with identifier: ' + eventIdentifier + ' does not exist');
             $('#event-alert').show();
             $('#donations-table').hide();
             $('#statistics-div').hide();
@@ -41,7 +41,7 @@ function drawPage() {
 }
 
 function getEventDetails(eventIdentifier) {
-    console.log('Retrieving data for event: ' + eventIdentifier);
+    debugPrint('Retrieving data for event: ' + eventIdentifier);
     var url = apiUrl + 'event/' + eventIdentifier;
     $.getJSON(url, data => {
         setupCurrency(data);
@@ -99,7 +99,7 @@ function drawEventDetails(data) {
 }
 
 function getDonations(eventIdentifier, lowerTimeBound, upperTimeBound) {
-    console.log('Retrieving donation data for: ' + eventIdentifier + ' between ' + lowerTimeBound + ' and ' + upperTimeBound);
+    debugPrint('Retrieving donation data for: ' + eventIdentifier + ' between ' + lowerTimeBound + ' and ' + upperTimeBound);
     var url = apiUrl + 'event/' + eventIdentifier + '/donations';
     $.getJSON(url, data => {
         drawDonations(data);
@@ -168,7 +168,7 @@ function drawStatistics(total, lastDonationTimestamp) {
         debugPrint('Last Donation Timestamp: ' + lastDonationTimestamp);
         var currentTime = Math.round((new Date()).getTime() / 1000);
         var timeDifference = currentTime - lastDonationTimestamp;
-        console.log(timeDifference);
+        debugPrint(timeDifference);
         units = 'seconds';
         if (timeDifference > 60) {
             timeDifference /= 60;
@@ -205,9 +205,9 @@ function submitDonation() {
     var donor = $('#new-donation-donor').val();
     var notes = $('#new-donation-notes').val();
     // Clear form to avoid double clicking
-    $('#new-donation-amount').val("");
-    $('#new-donation-donor').val("");
-    $('#new-donation-notes').val("");
+    $('#new-donation-amount').val('');
+    $('#new-donation-donor').val('');
+    $('#new-donation-notes').val('');
     // Validate the inputs
 
     // TODO
@@ -221,13 +221,14 @@ function submitDonation() {
         donor_name: donor,
         notes: notes
     }
+    debugPrint('Submitting following donation: ' + data);
     request.open('POST', newDonationUrl, true);
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
     // On load, handle if successful or not
     request.onload = () => {
         var response = JSON.parse(request.responseText);
-        console.log(response);
+        debugPrint(response);
         // If the donation was successful, redraw the donations
         if (response['received']) {
             getDonations(eventIdentifier);
