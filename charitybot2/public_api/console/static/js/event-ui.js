@@ -7,6 +7,7 @@ eventUI();
 
 function eventUI() {
     $('#event-alert').hide();
+    $('#donation-alert').hide();
     drawPageIfEventExists(eventIdentifier);
 }
 
@@ -216,8 +217,14 @@ function submitDonation() {
     request.onload = () => {
         var response = JSON.parse(request.responseText);
         console.log(response);
-        // Redraw the table
-        getDonations(eventIdentifier);
+        // If the donation was successful, redraw the donations
+        if (response['received']) {
+            getDonations(eventIdentifier);
+        } else {
+            // Show an error with the message
+            $('#donation-alert').show();
+            $('#donation-alert p').text(response['message']);
+        }
     };
 
     // If network error, show message
