@@ -23,7 +23,7 @@ class Donation:
     def __init__(self,
                  amount,
                  event_identifier,
-                 timestamp=int(time.time()),
+                 timestamp=None,
                  internal_reference=None,
                  external_reference=None,
                  donor_name=None,
@@ -31,6 +31,8 @@ class Donation:
                  valid=True):
         self._amount = amount
         self._event_identifier = event_identifier
+        if timestamp is None:
+            timestamp = int(time.time())
         self._timestamp = timestamp
         self._internal_reference = internal_reference
         self._external_reference = external_reference
