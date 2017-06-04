@@ -1,8 +1,12 @@
+import random
 from time import sleep
 
 import pytest
 from bs4 import BeautifulSoup
+from charitybot2.api_calls.private_api_calls import PrivateApiCalls
+from charitybot2.models.donation import Donation
 from charitybot2.paths import console_script_path, private_api_script_path
+from charitybot2.private_api.private_api import private_api_service
 from charitybot2.public_api.console.console import app
 from charitybot2.sources.url_call import UrlCall
 from charitybot2.start_service import Service, ServiceRunner
@@ -12,6 +16,8 @@ from selenium import webdriver
 
 driver = None
 test_event_identifier = 'test'
+private_api_calls = PrivateApiCalls(base_api_url=private_api_service.full_url)
+
 
 console_service = Service(
     name='Test Console',
@@ -39,7 +45,7 @@ api_service_runner = ServiceRunner(
 
 
 def setup_module():
-    setup_test_database()
+    # setup_test_database()
     console_service_runner.run()
     api_service_runner.run()
     global driver
@@ -81,10 +87,25 @@ def get_total_raised():
 
 def get_donation_table_rows():
     driver.get(test_event_url)
-    donations_table_body = BeautifulSoup(driver.find_element_by_id('donations-table-body').text.strip(), 'html.parser')
-    if donations_table_body == '':
+    sleep(2)
+    donations_table_body = driver.find_element_by_id('donations-table-body')
+    donations_table_body_text = BeautifulSoup(donations_table_body.text.strip(), 'html.parser')
+    if donations_table_body_text == '':
         return []
-    return donations_table_body.find_all('tr')
+    table_rows = donations_table_body.find_elements_by_tag_name('tr')
+    return [convert_web_element_to_donation_dict(row) for row in table_rows]
+
+
+def convert_web_element_to_donation_dict(web_element):
+    # break up the tr into separate tds
+    row_tds = web_element.find_elements_by_tag_name('td')
+    return dict(
+        amount=row_tds[1].text,
+        timestamp=row_tds[2].text,
+        donor=row_tds[3].text,
+        notes=row_tds[4].text,
+        external_reference=row_tds[5].text,
+        internal_reference=row_tds[6].text)
 
 
 def get_donation_table_row_count():
@@ -102,6 +123,16 @@ class TestDonationSubmission:
         assert 0 == get_donation_table_row_count()
         # make sure the total is 0
         assert '0' == get_total_raised()
+
+    def test_donation_from_api(self):
+        setup_test_database(donation_count=0)
+        test_amount = random.uniform(1.5, 50.3)
+        donation = Donation(amount=test_amount, event_identifier=test_event_identifier)
+        private_api_calls.register_donation(donation=donation)
+        rows = get_donation_table_rows()
+        assert 1 == len(rows)
+        donation_row = rows[0]
+        assert round(test_amount, 2) == float(donation_row['amount'].replace('€', ''))
 
     # def test_successful_donation(self):
     #     pass
