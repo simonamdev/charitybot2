@@ -26,6 +26,11 @@ def event(event_identifier):
     return render_template('event.html', event_identifier=event_identifier)
 
 
+@app.route('/stats/<event_identifier>/')
+def stats(event_identifier):
+    return render_template('stats.html', event_identifier=event_identifier)
+
+
 @app.route('/destroy/')
 def destroy():
     global debug_mode

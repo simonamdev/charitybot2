@@ -1,0 +1,12 @@
+.blue-box {
+    color: white;
+    background-color: blue;
+    min-height: 75px;
+    text-align: center;
+}
+
+.box-text {
+    text-align: center;
+    margin: auto;
+    vertical-align: middle;
+}

@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block optional_head %}
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/statistics.css')}}" />
+    <script>
+        var eventIdentifier = '{{ event_identifier }}';
+    </script>
+{% endblock %}
+{% block body %}
+    <div class="row">
+        <h1 class="text-center">Charitybot Statistics</h1>
+    </div>
+    <div class="row">
+        <div class="large-2 large-centered columns">
+            <div class="large-6 columns blue-box">
+                <span class="box-text">A</span>
+            </div>
+            <div class="large-6 columns">
+                B
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block after_body %}
+    <script type="text/javascript" src="{{url_for('static', filename='js/statistics.js')}}"></script>
+{% endblock %}
