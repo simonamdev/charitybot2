@@ -1,7 +1,14 @@
-.blue-box {
+.key-box {
     color: white;
     background-color: blue;
-    min-height: 75px;
+    min-height: 20px;
+    text-align: center;
+}
+
+.value-box {
+    color: white;
+    background-color: red;
+    min-height: 20px;
     text-align: center;
 }
 
@@ -9,4 +16,5 @@
     text-align: center;
     margin: auto;
     vertical-align: middle;
+    width: 50%;
 }
