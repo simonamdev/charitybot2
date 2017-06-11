@@ -1,14 +1,54 @@
 var apiUrl = 'http://127.0.0.1:8001/api/v1/';
 var eventUrl = apiUrl + 'event/' + eventIdentifier;
+var eventExistenceUrl = apiUrl + 'event/exists/' + eventIdentifier;
 
 drawUI();
 
 function drawUI() {
-    drawEventDetails();
+    checkEventExists().then((eventExists) => {
+        if (eventExists) {
+            drawEventDetails();
+        }
+    });
 }
 
 function getConsoleElement(id) {
     return document.getElementById(id);
+}
+
+function checkEventExists() {
+    getConsoleElement('event-alert').style.display = 'none';
+    return new Promise((resolve, reject) => {
+        getEventExistence().then(
+            (apiData) => {
+                var data = JSON.parse(apiData);
+                if (!data['event_exists']) {
+                    // Clear the screen and unhide the error
+                    getConsoleElement('event-alert').style.display = 'block';
+                    getConsoleElement('statisticsConsole').style.display = 'none';
+                    resolve(false);
+                }
+                resolve(true);
+            }
+        ).catch((error) => {
+            console.error(error);
+            reject(false);
+        });
+    });
+}
+
+function getEventExistence() {
+    return new Promise((resolve, reject) => {
+        sendGetRequest(
+            eventExistenceUrl,
+            (data) => {
+                resolve(data)
+            },
+            (error) => {
+                reject(error);
+            }
+        );
+    });
 }
 
 function drawEventDetails() {

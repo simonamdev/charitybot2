@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block optional_head %}
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/statistics.css')}}" />
+    <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
     <script>
         var eventIdentifier = '{{ event_identifier }}';
     </script>
@@ -9,79 +10,95 @@
     <div class="row">
         <h1 class="text-center">Charitybot Statistics</h1>
     </div>
-    <!-- Event Header -->
+    <!-- Alerts row -->
     <div class="row">
-        <div class="large-2 large-centered columns">
-            <div class="large-6 columns key-box">
-                <span class="box-text">Event</span>
-            </div>
-            <div class="large-6 columns value-box">
-                <span class="box-text">{{ event_identifier }}</span>
-            </div>
+        <div class="alert callout" id="event-alert">
+              <h5>Event Error</h5>
+              <p>Event with identifier: {{ event_identifier }} does not exist!</p>
         </div>
     </div>
-    <!-- Event Progress -->
-    <div class="row">
-        <div class="large-10 large-centered columns text-center">
-            <div class="large-4 columns">
-                <span>Start Time</span>
-                <span id="eventStartTime"></span>
-            </div>
-            <div class="large-4 columns">
-                <span>Progress Bar</span>
-            </div>
-            <div class="large-4 columns">
-                <span>End Time</span>
-                <span id="eventEndTime"></span>
+    <div id="statisticsConsole">
+        <!-- Event Header -->
+        <div class="row">
+            <div class="large-2 large-centered columns">
+                <div class="large-6 columns key-box">
+                    <span class="box-text">Event</span>
+                </div>
+                <div class="large-6 columns value-box">
+                    <span class="box-text">{{ event_identifier }}</span>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- Donations Progress -->
-    <div class="row">
-        <div class="large-10 large-centered columns text-center">
-            <div class="large-4 columns">
-                <span>Raised</span>
-            </div>
-            <div class="large-4 columns">
-                <span>Progress Bar</span>
-            </div>
-            <div class="large-4 columns">
-                <span>Target</span>
-            </div>
-        </div>
-    </div>
-    <!-- Donation Statistics -->
-    <div class="row">
-        <div class="large-10 large-centered columns text-center">
-            <div class="large-4 columns">
-                <span>Total Count</span>
-            </div>
-            <div class="large-4 columns">
-                <span>Donation count in Timespan</span>
-            </div>
-            <div class="large-4 columns">
-                <span>Average</span>
+        <!-- Event Progress -->
+        <div class="row">
+            <div class="large-10 large-centered columns text-center">
+                <div class="large-4 columns">
+                    <span>Start Time</span>
+                    <span id="eventStartTime"></span>
+                </div>
+                <div class="large-4 columns">
+                    <span>Progress Bar</span>
+                </div>
+                <div class="large-4 columns">
+                    <span>End Time</span>
+                    <span id="eventEndTime"></span>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- Donation largest / latest -->
-    <div class="row">
-        <div class="large-10 large-centered columns text-center">
+        <!-- Donations Progress -->
+        <div class="row">
+            <div class="large-10 large-centered columns text-center">
+                <div class="large-4 columns">
+                    <span>Amount Raised</span>
+                    <span id="eventAmountRaised"></span>
+                </div>
+                <div class="large-4 columns">
+                    <span>Progress Bar</span>
+                </div>
+                <div class="large-4 columns">
+                    <span>Target Amount</span>
+                    <span id="eventTargetRaised"></span>
+                </div>
+            </div>
+        </div>
+        <!-- Donation Statistics -->
+        <div class="row">
+            <div class="large-10 large-centered columns text-center">
+                <div class="large-4 columns">
+                    <span>Total Count</span>
+                    <span id="donationCount"></span>
+                </div>
+                <div class="large-4 columns">
+                    <span>Donation count in Timespan</span>
+                    <span id="donationCountInTimespan"></span>
+                </div>
+                <div class="large-4 columns">
+                    <span>Average</span>
+                    <span id="averageDonationAmount"></span>
+                </div>
+            </div>
+        </div>
+        <!-- Donation largest / latest -->
+        <div class="row">
+            <div class="large-10 large-centered columns text-center">
+                <div class="large-6 columns">
+                    <span>Largest Donation</span>
+                    <span id="largestDonation"></span>
+                </div>
+                <div class="large-6 columns">
+                    <span>Latest Donation</span>
+                    <span id="latestDonation"></span>
+                </div>
+            </div>
+        </div>
+        <!-- Graphs -->
+        <div class="row">
             <div class="large-6 columns">
-                <span>Largest Donation</span>
+                <span>Donations over Time</span>
             </div>
             <div class="large-6 columns">
-                <span>Last Donation</span>
+                <span>Donation distribution</span>
             </div>
-        </div>
-    </div>
-    <!-- Graphs -->
-    <div class="row">
-        <div class="large-6 columns">
-            <span>Donations over Time</span>
-        </div>
-        <div class="large-6 columns">
-            <span>Donation distribution</span>
         </div>
     </div>
 {% endblock %}
