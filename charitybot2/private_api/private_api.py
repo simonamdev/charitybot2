@@ -101,7 +101,11 @@ def index():
 @app.route('/api/v1/event/<event_identifier>')
 def event_info(event_identifier):
     if not get_event_repository().event_already_registered(identifier=event_identifier):
-        return jsonify({})
+        return jsonify(
+            {
+                'message': 'Event not registered'
+            }
+        )
     event_data = get_event_repository().get_event_configuration(identifier=event_identifier)
     return jsonify(event_data.configuration_values)
 
