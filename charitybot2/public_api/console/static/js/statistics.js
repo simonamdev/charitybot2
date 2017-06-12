@@ -1,6 +1,7 @@
 var apiUrl = 'http://127.0.0.1:8001/api/v1/';
 var eventUrl = apiUrl + 'event/' + eventIdentifier;
 var eventExistenceUrl = apiUrl + 'event/exists/' + eventIdentifier;
+var eventTotalUrl = eventUrl + '/total/';
 
 drawUI();
 
@@ -20,8 +21,7 @@ function checkEventExists() {
     getConsoleElement('event-alert').style.display = 'none';
     return new Promise((resolve, reject) => {
         getEventExistence().then(
-            (apiData) => {
-                var data = JSON.parse(apiData);
+            (data) => {
                 if (!data['event_exists']) {
                     // Clear the screen and unhide the error
                     getConsoleElement('event-alert').style.display = 'block';
@@ -42,7 +42,7 @@ function getEventExistence() {
         sendGetRequest(
             eventExistenceUrl,
             (data) => {
-                resolve(data)
+                resolve(JSON.parse(data))
             },
             (error) => {
                 reject(error);
@@ -52,29 +52,46 @@ function getEventExistence() {
 }
 
 function drawEventDetails() {
-    getEventDetails().then(
-        (apiData) => {
-            var data = JSON.parse(apiData);
-            getConsoleElement('eventStartTime').innerHTML = data['start_time'];
-            getConsoleElement('eventEndTime').innerHTML = data['end_time'];
+    getEventData().then(
+        (data) => {
+            var eventDetails = data[0];
+            var eventTotal = data[1]['total'];
+            // Event Details
+            getConsoleElement('eventStartTime').innerHTML = eventDetails['start_time'];
+            getConsoleElement('eventEndTime').innerHTML = eventDetails['end_time'];
+            // Event amounts
+            getConsoleElement('eventAmountRaised').innerHTML = eventTotal;
+            getConsoleElement('eventTargetRaised').innerHTML = eventDetails['target_amount'];
         }
     ).catch((error) => {
         console.error(error);
     });
 }
 
-function getEventDetails() {
-    return new Promise((resolve, reject) => {
+function getEventData() {
+    var eventDetailsPromise = new Promise((resolve, reject) => {
         sendGetRequest(
             eventUrl,
             (data) => {
-                resolve(data)
+                resolve(JSON.parse(data))
             },
             (error) => {
                 reject(error);
             }
         );
     });
+    var eventTotalPromise = new Promise((resolve, reject) => {
+        sendGetRequest(
+            eventTotalUrl,
+            (data) => {
+                resolve(JSON.parse(data))
+            },
+            (error) => {
+                reject(error);
+            }
+        );
+    });
+    return Promise.all([eventDetailsPromise, eventTotalPromise]);
 }
 
 function sendGetRequest(url, successCallback, failureCallback) {
