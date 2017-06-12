@@ -104,6 +104,22 @@ class TestDonationSQLiteRepository:
         assert donation_count == self.test_donation_repository.get_donation_count(
             event_identifier=test_event_identifier)
 
+    def test_getting_donation_count_in_timespan(self):
+        donation_count = 20
+        filtered_count = 10
+        test_event_identifier = 'count_filter'
+        for i in range(1, donation_count):
+            new_donation = Donation(
+                amount=i,
+                timestamp=i,
+                event_identifier=test_event_identifier)
+            self.test_donation_repository.record_donation(donation=new_donation)
+        count = self.test_donation_repository.get_donation_count(
+            event_identifier=test_event_identifier,
+            time_lower_bound=filtered_count,
+            time_upper_bound=donation_count)
+        assert filtered_count == count
+
 
 class TestDonationSQLiteRepositoryExceptions:
     test_donation_repository = None
