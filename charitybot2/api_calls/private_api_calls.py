@@ -105,3 +105,11 @@ class PrivateApiCalls:
         response = UrlCall(url=url, timeout=self._timeout).get()
         decoded_content = response.content.decode('utf-8')
         return float(json.loads(decoded_content)['total'])
+
+    def get_latest_event_donation(self, event_identifier):
+        self.__validate_event_identifier(event_identifier=event_identifier)
+        url = self._base_api_url + 'event/{}/donations/largest'.format(event_identifier)
+        response = UrlCall(url=url, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)
+        return Donation.from_dict(converted_content)

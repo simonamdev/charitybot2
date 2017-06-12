@@ -221,6 +221,42 @@ class TestEventDonations:
         assert (donation_count - 1) == last_donation.amount
         assert (donation_count - 1) == last_donation.timestamp
 
+    def test_retrieving_largest_donation(self):
+        largest_donation_identifier = 'largest_donation'
+        updated_values = {
+            'identifier': largest_donation_identifier,
+            'title': 'Largest Donation Test Event'
+        }
+        largest_donation_test_configuration = get_test_event_configuration(updated_values=updated_values)
+        # Register the event
+        private_api_calls.register_event(event_configuration=largest_donation_test_configuration)
+        # Add a number of donations
+        donation_count = 5
+        for i in range(1, donation_count):
+            donation = Donation(
+                amount=i,
+                event_identifier=largest_donation_identifier,
+                timestamp=i)
+            private_api_calls.register_donation(donation=donation)
+        # add a large one then a small one
+        donation = Donation(
+            amount=500,
+            event_identifier=largest_donation_identifier,
+            timestamp=500)
+        private_api_calls.register_donation(donation=donation)
+        donation = Donation(
+            amount=200,
+            event_identifier=largest_donation_identifier,
+            timestamp=200)
+        private_api_calls.register_donation(donation=donation)
+        # retrieve the largest donation
+        largest = private_api_calls.get_latest_event_donation(event_identifier=largest_donation_identifier)
+        assert isinstance(largest, Donation)
+        assert 500 == largest.amount
+        assert 500 == largest.timestamp
+
+
+class TestEventDonationExceptions:
     @pytest.mark.parametrize('time_bounds', [
         (1, 'bla'),
         ('', 2),

@@ -172,6 +172,12 @@ def retrieve_event_donations(event_identifier):
     )
 
 
+@app.route('/api/v1/event/<event_identifier>/donations/largest', methods=['GET'])
+def retrieve_largest_event_donation(event_identifier):
+    largest_donation = get_donations_repository().get_largest_donation(event_identifier=event_identifier)
+    return largest_donation.to_json()
+
+
 @app.route('/api/v1/event/<event_identifier>/total/', methods=['GET'])
 def retrieve_event_total(event_identifier):
     amount = get_event_repository().get_event_current_amount(identifier=event_identifier)
