@@ -2,6 +2,7 @@ var apiUrl = 'http://127.0.0.1:8001/api/v1/';
 var eventUrl = apiUrl + 'event/' + eventIdentifier;
 var eventExistenceUrl = apiUrl + 'event/exists/' + eventIdentifier;
 var eventTotalUrl = eventUrl + '/total/';
+var donationsUrl = eventUrl + '/donations/';
 
 drawUI();
 
@@ -38,17 +39,7 @@ function checkEventExists() {
 }
 
 function getEventExistence() {
-    return new Promise((resolve, reject) => {
-        sendGetRequest(
-            eventExistenceUrl,
-            (data) => {
-                resolve(JSON.parse(data))
-            },
-            (error) => {
-                reject(error);
-            }
-        );
-    });
+    return getDataFromApi(eventExistenceUrl);
 }
 
 function drawEventDetails() {
@@ -69,29 +60,32 @@ function drawEventDetails() {
 }
 
 function getEventData() {
-    var eventDetailsPromise = new Promise((resolve, reject) => {
-        sendGetRequest(
-            eventUrl,
-            (data) => {
-                resolve(JSON.parse(data))
-            },
-            (error) => {
-                reject(error);
-            }
-        );
-    });
-    var eventTotalPromise = new Promise((resolve, reject) => {
-        sendGetRequest(
-            eventTotalUrl,
-            (data) => {
-                resolve(JSON.parse(data))
-            },
-            (error) => {
-                reject(error);
-            }
-        );
-    });
+    var eventDetailsPromise = getDataFromApi(eventUrl);
+    var eventTotalPromise = getDataFromApi(eventTotalUrl);
     return Promise.all([eventDetailsPromise, eventTotalPromise]);
+}
+
+function drawDonationData() {
+
+}
+
+function getDonationData() {
+    // TODO: Continue from here
+    return getDataFromApi(donationsUrl);
+}
+
+function getDataFromApi(url) {
+    return new Promise((resolve, reject) => {
+        sendGetRequest(
+            url,
+            (data) => {
+                resolve(JSON.parse(data))
+            },
+            (error) => {
+                reject(error);
+            }
+        );
+    });
 }
 
 function sendGetRequest(url, successCallback, failureCallback) {
