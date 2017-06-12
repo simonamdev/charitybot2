@@ -85,6 +85,17 @@ class DonationSQLiteRepository(SQLiteRepository):
         rows = self.execute_query(query=query, data=data).fetchall()
         return [self.__convert_row_to_donation(row) for row in rows]
 
+    def get_largest_donation(self, event_identifier):
+        query = 'SELECT * ' \
+                'FROM `donations` ' \
+                'WHERE eventInternalName = ? ' \
+                'ORDER BY amount DESC ' \
+                'LIMIT 1;'
+        data = (event_identifier, )
+        row = self.execute_query(query=query, data=data).fetchone()
+        print(row)
+        return self.__convert_row_to_donation(row=row)
+
     @staticmethod
     def __convert_row_to_donation(row):
         donation = Donation(

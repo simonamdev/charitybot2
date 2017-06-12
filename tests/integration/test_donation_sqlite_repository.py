@@ -66,6 +66,13 @@ class TestDonationSQLiteRepository:
         #     actual_index = len(filtered_donations) - 1
         #     assert i == filtered_donations[actual_index].timestamp
 
+    def test_getting_largest_donation(self):
+        expected_largest = 5
+        largest_donation = self.test_donation_repository.get_largest_donation(
+            event_identifier=self.test_event_identifier)
+        assert expected_largest == largest_donation.amount
+        assert expected_largest == largest_donation.timestamp
+
     def test_recording_donation(self):
         new_donation = Donation(
             amount=420,
