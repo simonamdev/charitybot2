@@ -3,13 +3,16 @@ var eventUrl = apiUrl + 'event/' + eventIdentifier;
 var eventExistenceUrl = apiUrl + 'event/exists/' + eventIdentifier;
 var eventTotalUrl = eventUrl + '/total/';
 var donationsUrl = eventUrl + '/donations/';
+var donationCountUrl = donationsUrl + 'count';
 
 drawUI();
 
 function drawUI() {
     checkEventExists().then((eventExists) => {
         if (eventExists) {
+            drawCurrencySymbolOnPage();
             drawEventDetails();
+            drawDonationData();
         }
     });
 }
@@ -66,12 +69,41 @@ function getEventData() {
 }
 
 function drawDonationData() {
-
+    getDonationData().then(
+        (data) => {
+            var donationCount = data[0]['count'];
+            var timeBoundCount = data[1]['count'];
+            var largestDonation = data[2];
+            var latestDonation = JSON.parse(data[3]['donations']);
+            getConsoleElement('donationCount').innerHTML = donationCount;
+            getConsoleElement('donationCountInTimespan').innerHTML = timeBoundCount + ' donations in the last 5 minutes';
+            // TODO: Average donation drawing
+            getConsoleElement('largestDonationAmount').innerHTML = largestDonation['amount'];
+            getConsoleElement('latestDonationAmount').innerHTML = latestDonation['amount'];
+        }
+    ).catch((error) => {
+        console.log(error);
+    });
 }
 
 function getDonationData() {
-    // TODO: Continue from here
-    return getDataFromApi(donationsUrl);
+    var donationCountPromise = getDataFromApi(donationCountUrl)
+    // Donation count in last 5 minutes
+    var now = new Date().getTime();
+    var five_minutes_ago = (now / 1000) - (5 * 60);
+    var timeBoundUrl = donationCountUrl + '?lower=' + Math.round(five_minutes_ago) + '&upper=' + Math.round(now);
+    var timeBoundDonationCountPromise = getDataFromApi(timeBoundUrl);
+    var largestDonationPromise = getDataFromApi(donationsUrl + 'largest');
+    var latestDonationPromise = getDataFromApi(donationsUrl + '?limit=1');
+    // TODO: Average donation promise
+    return Promise.all(
+        [
+            donationCountPromise,
+            timeBoundDonationCountPromise,
+            largestDonationPromise,
+            latestDonationPromise
+        ]
+    );
 }
 
 function getDataFromApi(url) {
