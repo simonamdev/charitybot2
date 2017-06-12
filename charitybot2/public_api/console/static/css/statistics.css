@@ -1,3 +1,7 @@
+.row {
+    padding-top: 1em;
+}
+
 .key-box {
     color: white;
     background-color: blue;
