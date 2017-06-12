@@ -1,3 +1,5 @@
+import random
+
 import pytest
 from charitybot2.models.donation import Donation
 from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository, \
@@ -89,6 +91,18 @@ class TestDonationSQLiteRepository:
         assert new_donation.internal_reference == latest_donation.internal_reference
         assert new_donation.external_reference == latest_donation.external_reference
         assert new_donation.donor_name == latest_donation.donor_name
+
+    def test_getting_donation_count(self):
+        donation_count = random.randint(10, 100)
+        test_event_identifier = 'count'
+        for i in range(1, donation_count + 1):
+            new_donation = Donation(
+                amount=i,
+                timestamp=i,
+                event_identifier=test_event_identifier)
+            self.test_donation_repository.record_donation(donation=new_donation)
+        assert donation_count == self.test_donation_repository.get_donation_count(
+            event_identifier=test_event_identifier)
 
 
 class TestDonationSQLiteRepositoryExceptions:

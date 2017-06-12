@@ -95,6 +95,14 @@ class DonationSQLiteRepository(SQLiteRepository):
         row = self.execute_query(query=query, data=data).fetchone()
         return self.__convert_row_to_donation(row=row)
 
+    def get_donation_count(self, event_identifier):
+        query = 'SELECT COUNT(*) ' \
+                'FROM `donations` ' \
+                'WHERE eventInternalName = ?;'
+        data = (event_identifier,)
+        row = self.execute_query(query=query, data=data).fetchone()
+        return int(row[0])
+
     @staticmethod
     def __convert_row_to_donation(row):
         donation = Donation(
