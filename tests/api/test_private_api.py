@@ -255,7 +255,7 @@ class TestEventDonations:
         assert 500 == largest.amount
         assert 500 == largest.timestamp
 
-    def test_getting_donation_count(self):
+    def test_retrieving_donation_count(self):
         donation_count_identifier = 'donation_count'
         updated_values = {
             'identifier': donation_count_identifier,
@@ -275,6 +275,31 @@ class TestEventDonations:
         # retrieve the donation count
         count = private_api_calls.get_donation_count(event_identifier=donation_count_identifier)
         assert donation_count == count
+
+    def test_retrieving_time_bounded_donation_count(self):
+        donation_count_identifier = 'donation_count_time_bounded'
+        updated_values = {
+            'identifier': donation_count_identifier,
+            'title': 'Donation Count Time Bounded Test Event'
+        }
+        donation_count_test_configuration = get_test_event_configuration(updated_values=updated_values)
+        # Register the event
+        private_api_calls.register_event(event_configuration=donation_count_test_configuration)
+        # Add a number of donations
+        donation_count = 5
+        expected_count = 3
+        for i in range(1, donation_count + 1):
+            donation = Donation(
+                amount=i,
+                event_identifier=donation_count_identifier,
+                timestamp=i)
+            private_api_calls.register_donation(donation=donation)
+        # retrieve the donation count
+        count = private_api_calls.get_time_bound_donation_count(
+            event_identifier=donation_count_identifier,
+            lower_time_bound=3,
+            upper_time_bound=5)
+        assert expected_count == count
 
 
 class TestEventDonationExceptions:
@@ -297,6 +322,23 @@ class TestEventDonationExceptions:
     def test_retrieving_donations_from_event_with_spaces_throws_exception(self):
         with pytest.raises(NonExistentEventException):
             private_api_calls.get_event_donations(event_identifier='cats are_awesome')
+
+    @pytest.mark.parametrize('lower,upper', [
+        (None, ''),
+        (1, None),
+        (None, 1),
+        ('', ''),
+        (object, object),
+        (-25, -30),
+        (5, 1),
+        (None, None)
+    ])
+    def test_retrieving_donation_count_with_invalid_timespans_throws_exception(self, lower, upper):
+        with pytest.raises(IllegalArgumentException):
+            private_api_calls.get_time_bound_donation_count(
+                event_identifier=test_event_identifier,
+                lower_time_bound=lower,
+                upper_time_bound=upper)
 
 
 class TestEventTotal:

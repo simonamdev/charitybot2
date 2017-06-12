@@ -121,3 +121,18 @@ class PrivateApiCalls:
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)
         return int(converted_content['count'])
+
+    def get_time_bound_donation_count(self, event_identifier, lower_time_bound, upper_time_bound):
+        self.__validate_event_identifier(event_identifier=event_identifier)
+        if not isinstance(lower_time_bound, int) or not isinstance(upper_time_bound, int):
+            raise IllegalArgumentException('Time bounds must be integers')
+        if not upper_time_bound > lower_time_bound or (lower_time_bound < 0 or upper_time_bound < 0):
+            raise IllegalArgumentException('Time bounds must be positive integers with upper larger than lower')
+        url = self._base_api_url + 'event/{}/donations/count?lower={}&upper={}'.format(
+            event_identifier,
+            lower_time_bound,
+            upper_time_bound)
+        response = UrlCall(url=url, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)
+        return int(converted_content['count'])

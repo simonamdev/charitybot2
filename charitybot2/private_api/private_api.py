@@ -180,9 +180,18 @@ def retrieve_largest_event_donation(event_identifier):
 
 @app.route('/api/v1/event/<event_identifier>/donations/count', methods=['GET'])
 def retrieve_event_donation_count(event_identifier):
+    lower_bound, upper_bound = request.args.get('lower'), request.args.get('upper')
+    count = None
+    if lower_bound is not None and upper_bound is not None:
+        count = get_donations_repository().get_donation_count(
+            event_identifier=event_identifier,
+            time_lower_bound=int(lower_bound),
+            time_upper_bound=int(upper_bound))
+    else:
+        count = get_donations_repository().get_donation_count(event_identifier=event_identifier)
     return jsonify(
         {
-            'count': get_donations_repository().get_donation_count(event_identifier=event_identifier)
+            'count': count
         }
     )
 

@@ -95,13 +95,13 @@ class DonationSQLiteRepository(SQLiteRepository):
         row = self.execute_query(query=query, data=data).fetchone()
         return self.__convert_row_to_donation(row=row)
 
-    def get_donation_count(self, event_identifier, time_lower_bound=None, time_upper_bound=None):
+    def get_donation_count(self, event_identifier, time_lower_bound=-1, time_upper_bound=-1):
         query = 'SELECT COUNT(*) ' \
                 'FROM `donations` ' \
                 'WHERE eventInternalName = ? ' \
                 'AND timeRecorded BETWEEN ? AND ?;'
         data = (event_identifier, time_lower_bound, time_upper_bound)
-        if time_lower_bound is None and time_upper_bound is None:
+        if time_lower_bound == -1 and time_upper_bound == -1:
             query = 'SELECT COUNT(*) ' \
                     'FROM `donations` ' \
                     'WHERE eventInternalName = ?;'
