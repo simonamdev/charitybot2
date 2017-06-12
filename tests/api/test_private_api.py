@@ -255,6 +255,27 @@ class TestEventDonations:
         assert 500 == largest.amount
         assert 500 == largest.timestamp
 
+    def test_getting_donation_count(self):
+        donation_count_identifier = 'donation_count'
+        updated_values = {
+            'identifier': donation_count_identifier,
+            'title': 'Donation Count Test Event'
+        }
+        donation_count_test_configuration = get_test_event_configuration(updated_values=updated_values)
+        # Register the event
+        private_api_calls.register_event(event_configuration=donation_count_test_configuration)
+        # Add a number of donations
+        donation_count = 5
+        for i in range(1, donation_count + 1):
+            donation = Donation(
+                amount=i,
+                event_identifier=donation_count_identifier,
+                timestamp=i)
+            private_api_calls.register_donation(donation=donation)
+        # retrieve the donation count
+        count = private_api_calls.get_donation_count(event_identifier=donation_count_identifier)
+        assert donation_count == count
+
 
 class TestEventDonationExceptions:
     @pytest.mark.parametrize('time_bounds', [
