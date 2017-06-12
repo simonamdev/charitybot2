@@ -35,7 +35,7 @@ class PrivateApiCalls:
         url = self._base_api_url + 'event/{}'.format(identifier)
         decoded_content = UrlCall(url=url, timeout=self._timeout).get().content.decode('utf-8')
         content = json.loads(decoded_content)
-        if len(content.keys()) == 0:
+        if 'message' in content.keys():
             raise NonExistentEventException('Event with identifier {} does not exist'.format(identifier))
         return content
 

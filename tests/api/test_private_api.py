@@ -56,7 +56,7 @@ class TestEventInformation:
 
     def test_getting_event_info_of_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):
-            info = private_api_calls.get_event_info(identifier='foobar')
+            info = private_api_calls.get_event_info(identifier='walalalalalal')
 
 
 class TestEventRegistration:
