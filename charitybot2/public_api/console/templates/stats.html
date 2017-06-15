@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block optional_head %}
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/statistics.css')}}" />
+    <script src="{{ url_for('static', filename='js/time.js') }}"></script>
     <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
     <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
     <script>

@@ -51,8 +51,8 @@ function drawEventDetails() {
             var eventDetails = data[0];
             var eventTotal = data[1]['total'];
             // Event Details
-            getConsoleElement('eventStartTime').innerHTML = eventDetails['start_time'];
-            getConsoleElement('eventEndTime').innerHTML = eventDetails['end_time'];
+            getConsoleElement('eventStartTime').innerHTML = convertToDatetime(eventDetails['start_time']);
+            getConsoleElement('eventEndTime').innerHTML = convertToDatetime(eventDetails['end_time']);
             // Event amounts
             getConsoleElement('eventAmountRaised').innerHTML = eventTotal;
             getConsoleElement('eventTargetRaised').innerHTML = eventDetails['target_amount'];
