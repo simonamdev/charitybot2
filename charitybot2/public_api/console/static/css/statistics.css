@@ -1,3 +1,12 @@
+body {
+    background-color: #ECF0F1;
+}
+
+.header {
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
 .row {
     padding-top: 1em;
 }
@@ -21,4 +30,12 @@
     margin: auto;
     vertical-align: middle;
     width: 50%;
+}
+
+.box {
+    font-size: 1em;
+    background-color: #4B77BE;
+    color: white;
+    height: 50px;
+    padding-top: 1em;
 }
