@@ -4,7 +4,6 @@ body {
 
 .header {
     padding-top: 2em;
-    padding-bottom: 2em;
 }
 
 .row {
@@ -38,4 +37,8 @@ body {
     color: white;
     height: 50px;
     padding-top: 1em;
+}
+
+.progress {
+    margin-top: 1em;
 }

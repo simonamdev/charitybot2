@@ -61,10 +61,22 @@ function drawEventDetails() {
             var completedEventPercentage = (parseInt(eventDetails['end_time']) - currentTime) /
                                       (parseInt(eventDetails['end_time']) - parseInt(eventDetails['start_time']));
             completedEventPercentage = Math.round(completedEventPercentage * 100);
-            // TODO: Progress bar for event
+            completedEventPercentage = 100 - completedEventPercentage;
+            if (completedEventPercentage < 100) {
+                getConsoleElement('eventProgress').style.width = completedEventPercentage + '%';
+            } else {
+                getConsoleElement('eventProgress').style.width = '100%';
+            }
+
+            getConsoleElement('eventProgressText').innerHTML = completedEventPercentage + '%';
             var donationCompletionPercentage = parseInt(eventTotal) / parseInt(eventDetails['target_amount']);
             donationCompletionPercentage = Math.round(donationCompletionPercentage * 100);
-            // TODO: Progress bar for donations
+            if (donationCompletionPercentage < 100) {
+                getConsoleElement('donationProgress').style.width = donationCompletionPercentage + '%';
+            } else {
+                getConsoleElement('donationProgress').style.width = '100%';
+            }
+            getConsoleElement('donationProgressText').innerHTML = donationCompletionPercentage + '%';
         }
     ).catch((error) => {
         console.error(error);
