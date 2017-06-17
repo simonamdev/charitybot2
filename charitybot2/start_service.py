@@ -53,15 +53,15 @@ class Service:
             debug=cli_args.debug)
 
     # TODO: Reevaluate why we pass app as a parameter if the service runner does not even use it
-    # def start(self):
-    #     if self._debug:
-    #         self._app.run(host=self._address, port=self._port, debug=self._debug, threaded=True)
-    #     else:
-    #         self._http_server.serve_forever()
-    #
-    # def stop(self):
-    #     if not self._debug:
-    #         self._http_server.stop()
+    def start(self):
+        if self._debug:
+            self._app.run(host=self._address, port=self._port, debug=self._debug, threaded=True)
+        else:
+            self._http_server.serve_forever()
+
+    def stop(self):
+        if not self._debug:
+            self._http_server.stop()
 
     def create_service_argument_parser(self):
         parser = argparse.ArgumentParser(description=self._name)
