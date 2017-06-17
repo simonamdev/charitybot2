@@ -35,9 +35,7 @@ try:
     api_runner.run()
     console_runner.run()
     while True:
-        sys.stdout.write('.')
-        sys.stdout.flush()
-        sleep(2)
+        sleep(1)
 except KeyboardInterrupt:
     api_runner.stop_running()
     sleep(1)
