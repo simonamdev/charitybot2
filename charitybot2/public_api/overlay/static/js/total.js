@@ -20,5 +20,5 @@ function markUnavailable() {
 
 drawCurrencySymbolOnPage();
 getTotal();
-var updateDelay = 2000; // ms
+var updateDelay = 10000; // ms
 setInterval(getTotal, updateDelay)

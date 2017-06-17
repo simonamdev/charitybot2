@@ -3,7 +3,7 @@ var eventUrl = apiUrl + 'event/' + eventIdentifier;
 var donationsUrl = eventUrl + '/donations/';
 
 var currencySymbol = 'N/A';
-var updateDelay = 2000; // ms
+var updateDelay = 10000; // ms
 
 
 // Get the currency symbol then setup the updating cycle
