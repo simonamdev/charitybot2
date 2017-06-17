@@ -1,11 +1,21 @@
+import argparse
 from time import sleep
 
 from charitybot2.paths import private_api_script_path, console_script_path, overlay_script_path
 from charitybot2.start_service import Service, ServiceRunner
 from tests.setup_test_database import setup_test_database
 
-test_event_identifier = 'test'
-debug = True
+
+parser = argparse.ArgumentParser(description='CharityBot2 Deployment Tool')
+parser.add_argument(
+            '--debug',
+            dest='debug',
+            action='store_true',
+            default=False,
+            help='Run CB2 in debug mode')
+args = parser.parse_args()
+
+debug = args.debug
 
 if debug:
     setup_test_database(donation_count=10)
