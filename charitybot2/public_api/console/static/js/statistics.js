@@ -1,4 +1,4 @@
-var apiUrl = 'http://127.0.0.1:8001/api/v1/';
+var apiUrl = 'https://api.charitybot.net/api/v1/';
 var eventUrl = apiUrl + 'event/' + eventIdentifier;
 var eventExistenceUrl = apiUrl + 'event/exists/' + eventIdentifier;
 var eventTotalUrl = eventUrl + '/total/';
