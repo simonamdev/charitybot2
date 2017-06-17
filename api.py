@@ -34,8 +34,9 @@ try:
     api_runner.run()
     console_runner.run()
     while True:
-        print('.')
+        print('.', end='')
         sleep(1)
 except KeyboardInterrupt:
     api_runner.stop_running()
+    sleep(1)
     console_runner.stop_running()
