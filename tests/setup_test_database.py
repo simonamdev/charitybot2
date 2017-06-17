@@ -108,6 +108,6 @@ if __name__ == '__main__':
         print('Database at path: {} will be wiped'.format(sys.argv[2]))
         input('Are you sure?')
         input('ARE YOU DEFINITELY SURE?')
-        setup_test_database(donation_count=int(sys.argv[1]), path=int(sys.argv[2]))
+        setup_test_database(donation_count=int(sys.argv[1]), path=sys.argv[2])
     else:
         setup_test_database()
