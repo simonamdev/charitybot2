@@ -1,3 +1,5 @@
+from time import sleep
+
 from charitybot2.paths import private_api_script_path, console_script_path
 from charitybot2.start_service import Service, ServiceRunner
 from tests.setup_test_database import setup_test_database
@@ -31,6 +33,9 @@ console_runner = ServiceRunner(
 try:
     api_runner.run()
     console_runner.run()
+    while True:
+        print('.')
+        sleep(1)
 except KeyboardInterrupt:
     api_runner.stop_running()
     console_runner.stop_running()
