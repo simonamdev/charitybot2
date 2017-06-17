@@ -1,4 +1,5 @@
 import argparse
+import os
 
 import sys
 
@@ -52,6 +53,7 @@ class Service:
             port=cli_args.port,
             debug=cli_args.debug)
 
+    # TODO: Reevaluate why we pass app as a parameter if the service runner does not even use it
     def start(self):
         if self._debug:
             self._app.run(host=self._address, port=self._port, debug=self._debug, threaded=True)
@@ -110,7 +112,9 @@ class ServiceRunner:
 
     def stop_running(self):
         print('Stopping Service: {}'.format(self._service.name))
-        self.__destroy_process()
+        # Only run the destroy process if we are on windows
+        if os.name == 'nt':
+            self.__destroy_process()
         self._process.kill()
 
     def __destroy_process(self):

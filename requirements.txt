@@ -6,3 +6,4 @@ click
 locust
 selenium
 gevent
+faker

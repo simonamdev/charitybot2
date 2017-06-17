@@ -44,42 +44,47 @@ class WipeSQLiteDB:
         print('Wipe complete')
 
 
-
-def setup_test_database(event_values=None, donation_count=10, donation_amount=None):
+def setup_test_database(event_values=None, donation_count=10, donation_amount=None, db_path=None):
+    if db_path is None:
+        db_path = test_repository_db_path
     print('--- SETTING UP TEST DATABASE ---')
-    wipe_database()
+    wipe_database(db_path)
     if event_values is None:
         event_values = updated_values
     event_configuration = get_test_event_configuration(updated_values=event_values)
-    register_event(event_configuration)
+    register_event(db_path, event_configuration)
     register_donations(
+        db_path=db_path,
         event_configuration=event_configuration,
         donation_count=donation_count,
         donation_amount=donation_amount)
     print('--- TEST DATABASE SETUP COMPLETE ---')
 
 
-def wipe_database():
-    print('Wiping old database')
-    WipeSQLiteDB(db_path=test_repository_db_path).wipe_db()
+def wipe_database(path):
+    print('Wiping database at path: {}'.format(path))
+    for i in range(5, 0, -1):
+        print('Wiping in: {}'.format(i))
+        time.sleep(1)
+    WipeSQLiteDB(db_path=path).wipe_db()
 
 
-def register_event(event_configuration):
+def register_event(db_path, event_configuration):
     print('Registering event: {}'.format(event_configuration.identifier))
-    event_repository = EventSQLiteRepository(db_path=test_repository_db_path)
+    event_repository = EventSQLiteRepository(db_path=db_path)
     event_register = EventRegister(
         event_configuration=event_configuration,
         event_repository=event_repository)
     event_register.get_event()
 
 
-def register_donations(event_configuration, donation_count, donation_amount):
+def register_donations(db_path, event_configuration, donation_count, donation_amount):
     # TODO: Refactor this!
     randomise_donations = False
     if donation_amount is None:
         randomise_donations = True
     print('Recording donations')
-    donations_repository = DonationSQLiteRepository(db_path=test_repository_db_path)
+    donations_repository = DonationSQLiteRepository(db_path=db_path)
     shifting_time = start_time + 5
     fake = Faker()
     print('Adding {} donations'.format(donation_count))
@@ -102,5 +107,10 @@ if __name__ == '__main__':
     import sys
     if len(sys.argv) == 2:
         setup_test_database(donation_count=int(sys.argv[1]))
+    elif len(sys.argv) == 3:
+        print('Database at path: {} will be wiped'.format(sys.argv[2]))
+        input('Are you sure?')
+        input('ARE YOU DEFINITELY SURE?')
+        setup_test_database(donation_count=int(sys.argv[1]), db_path=sys.argv[2])
     else:
         setup_test_database()

@@ -1,4 +1,4 @@
-var apiUrl = 'http://127.0.0.1:8001/api/v1/';
+var apiUrl = 'https://api.charitybot.net/api/v1/';
 var eventUrl = apiUrl + 'event/' + eventIdentifier;
 var totalUrl = eventUrl + '/total/';
 
@@ -20,5 +20,5 @@ function markUnavailable() {
 
 drawCurrencySymbolOnPage();
 getTotal();
-var updateDelay = 2000; // ms
+var updateDelay = 10000; // ms
 setInterval(getTotal, updateDelay)
