@@ -44,9 +44,9 @@ class WipeSQLiteDB:
         print('Wipe complete')
 
 
-def setup_test_database(event_values=None, donation_count=10, donation_amount=None):
+def setup_test_database(event_values=None, donation_count=10, donation_amount=None, path=None):
     print('--- SETTING UP TEST DATABASE ---')
-    wipe_database()
+    wipe_database(path)
     if event_values is None:
         event_values = updated_values
     event_configuration = get_test_event_configuration(updated_values=event_values)
@@ -58,9 +58,12 @@ def setup_test_database(event_values=None, donation_count=10, donation_amount=No
     print('--- TEST DATABASE SETUP COMPLETE ---')
 
 
-def wipe_database():
-    print('Wiping old database')
-    WipeSQLiteDB(db_path=test_repository_db_path).wipe_db()
+def wipe_database(path):
+    print('Wiping database at path: {}'.format(path))
+    for i in range(5, 0, -1):
+        print('Wiping in: {}'.format(i))
+        time.sleep(1)
+    WipeSQLiteDB(db_path=path).wipe_db()
 
 
 def register_event(event_configuration):
@@ -101,5 +104,10 @@ if __name__ == '__main__':
     import sys
     if len(sys.argv) == 2:
         setup_test_database(donation_count=int(sys.argv[1]))
+    elif len(sys.argv) == 3:
+        print('Database at path: {} will be wiped')
+        input('Are you sure?')
+        input('ARE YOU DEFINITELY SURE?')
+        setup_test_database(donation_count=int(sys.argv[1]), path=int(sys.argv[2]))
     else:
         setup_test_database()
