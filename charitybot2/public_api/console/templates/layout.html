@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        {% block head %}
+            <meta charset="utf-8">
+            <title>CharityBot</title>
+            <meta name="description" content="CharityBot UI">
+            <meta name="author" content="purrcat259">
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.css') }}">
+        {% endblock %}
+        {% block optional_head %}
+        {% endblock %}
+    </head>
+    <body>
+        {% block navbar %}
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <ul class="dropdown menu" data-dropdown-menu>
+                        <li class="menu-text">CharityBot Donations Console</li>
+                    </ul>
+                </div>
+                <!--<div class="top-bar-right">-->
+                    <!--<ul class="menu">-->
+                        <!--<li><input type="search" placeholder="Search"></li>-->
+                        <!--<li><button type="button" class="button">Search</button></li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            </div>
+        {% endblock %}
+        {% block body %}
+        {% endblock %}
+        <script src="{{ url_for('static', filename='js/foundation.min.js') }}"></script>
+        <script>
+            $(document).foundation();
+         </script>
+    </body>
+    {% block after_body %}
+    {% endblock %}
+</html>

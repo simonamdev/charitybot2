@@ -1,13 +1,14 @@
-import os
 import argparse
+import os
 
+from charitybot2 import paths
 from charitybot2.botconfig.event_config import EventConfigurationFromFile
 from charitybot2.botconfig.twitch_config import TwitchAccountConfiguration
 from charitybot2.events.event import Event
 from charitybot2.events.event_loop import TwitchEventLoop, EventLoop
+from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.reporter.twitch import TwitchAccount
 from tests.paths_for_tests import TestFilePath
-from charitybot2 import paths
 
 
 class MissingRequiredFolderException(Exception):
@@ -32,10 +33,6 @@ class BotStartupValidator:
         config_path = os.path.join(self.config_directory, config_type, file_name)
         if not os.path.isfile(config_path):
             raise MissingRequiredFileException('Configuration file does not exist: {}'.format(config_path))
-
-
-class IllegalArgumentException(Exception):
-    pass
 
 
 def create_cb_process_parser():

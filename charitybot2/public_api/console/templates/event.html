@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+{% block optional_head %}
+    <script>
+        var eventIdentifier = '{{ event_identifier }}';
+    </script>
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="large-8 large-centered columns">
+            <h1 id="event-header" class="text-center"></h1>
+        </div>
+    </div>
+    <!-- Alerts row -->
+    <div class="row">
+        <div class="alert callout" id="event-alert">
+              <h5>Event Error</h5>
+              <p>Event with identifier: {{ event_identifier }} does not exist!</p>
+        </div>
+        <div class="alert callout" id="donation-alert">
+              <h5>Donation Error</h5>
+              <p></p>
+        </div>
+    </div>
+    <!-- Manual donation form -->
+    <div class="row">
+        <h2 class="text-center">New Donation Form</h2>
+    </div>
+    <form>
+        <div class="row">
+            <div class="large-4 columns">
+                <label>Donation Amount
+                    <input id="new-donation-amount" type="text" placeholder="Enter Amount Here" />
+                </label>
+            </div>
+            <div class="large-4 columns">
+                <label>Donor Name
+                    <input id="new-donation-donor" type="text" placeholder="Enter Name Here" />
+                </label>
+            </div>
+            <div class="large-4 columns">
+                <label>Notes
+                    <input id="new-donation-notes" type="text" placeholder="Enter anything else here" />
+                </label>
+            </div>
+            <input id="donation-submit-button" class="button large-12" type="button" value="Submit Donation" onclick="submitDonation();" />
+        </div>
+    </form>
+
+    <div class="row">
+        <h2 class="text-center">Donation List</h2>
+    </div>
+    <!-- Data -->
+    <div class="row">
+        <div class="large-8 large-centered columns">
+            <div id="statistics-div" class="row">
+                 <div class="large-6 columns text-center">
+                    Total Raised: <span class="currency-symbol"></span><span id="donation-total"></span>
+                </div>
+                <div class="large-6 columns text-center">
+                    Last Donation: <span id="donation-time-ago"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="large-10 large-centered columns">
+            <table id="donations-table" class="hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Amount</th>
+                        <th>Timestamp</th>
+                        <th>Donor</th>
+                        <th>Notes</th>
+                        <th>External Reference</th>
+                        <th>Internal Reference</th>
+                    </tr>
+                </thead>
+                <tbody id="donations-table-body">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+{% block after_body %}
+    <script type="text/javascript" src="{{url_for('static', filename='js/event-ui.js')}}"></script>
+{% endblock %}

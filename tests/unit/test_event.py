@@ -1,65 +1,50 @@
 import pytest
+from charitybot2.configurations.event_configuration import EventConfiguration
+from charitybot2.models.event import Event, InvalidEventAmountException
+from tests.unit.test_event_configuration import test_event_config_values
 
-from charitybot2.botconfig.event_config import EventConfigurationFromFile, EventConfigurationCreator, EventConfiguration
-from charitybot2.events.event import Event
-from charitybot2.storage.repository import Repository
-from tests.mocks import ResetDB
-from tests.paths_for_tests import valid_config_path, repository_db_script_path, repository_db_path
-
-repository = Repository(db_path=repository_db_path)
-
-valid_event_configuration = EventConfigurationFromFile(file_path=valid_config_path).get_event_configuration()
-valid_event = Event(event_configuration=valid_event_configuration, db_path=repository_db_path)
-valid_event.register_event()
+test_event_configuration = EventConfiguration(configuration_values=test_event_config_values)
+test_event = Event(configuration=test_event_configuration)
 
 
-def setup_module():
-    ResetDB(db_path=repository_db_path, sql_path=repository_db_script_path)
-
-
-class TestEventRegistration:
-    def test_registering_event(self):
-        new_configuration_values = EventConfigurationFromFile(file_path=valid_config_path).get_config_data()
-        new_configuration_values['internal_name'] = 'to_be_registered'
-        new_configuration_values['external_name'] = 'To Be Registered'
-        new_configuration = EventConfigurationCreator(config_values=new_configuration_values).get_event_configuration()
-        new_event = Event(
-            event_configuration=new_configuration,
-            db_path=repository_db_path)
-        assert False is repository.event_exists(event_name='to_be_registered')
-        assert False is new_event.event_already_registered()
-        new_event.register_event()
-        assert True is repository.event_exists(event_name='to_be_registered')
-        assert True is new_event.event_already_registered()
-
-    def test_updating_event_configuration(self):
-        valid_event.register_event()
-        config_data = EventConfigurationFromFile(file_path=valid_config_path).get_config_data()
-        config_data['currency_key'] = 'USD'
-        new_currency_config = EventConfigurationCreator(config_values=config_data).get_event_configuration()
-        valid_event.update_event(event_configuration=new_currency_config)
-        assert 'USD' == valid_event.get_configuration().get_currency().get_key()
-        valid_event.update_event(event_configuration=valid_event_configuration)
-        assert 'GBP' == valid_event.get_configuration().get_currency().get_key()
-
-
-class TestEventRetrieve:
+class TestEventInstantiation:
     @pytest.mark.parametrize('expected,actual', [
-        (True, isinstance(valid_event.get_configuration(), EventConfiguration)),
-        (0, valid_event.get_starting_amount()),
-        (0, valid_event.get_amount_raised())
+        (test_event_configuration, test_event.configuration),
+        (test_event_configuration.identifier, test_event.configuration.identifier),
+        (test_event_configuration.title, test_event.configuration.title),
+        (test_event_configuration.start_time, test_event.configuration.start_time),
+        (test_event_configuration.end_time, test_event.configuration.end_time),
+        (test_event_configuration.update_delay, test_event.configuration.update_delay),
+        (test_event_configuration.currency.key, test_event.configuration.currency.key),
+        (0, test_event.amount_raised),
+        (0, test_event.starting_amount)
     ])
     def test_retrieval(self, expected, actual):
         assert expected == actual
 
 
-class TestEventUpdate:
-    def test_setting_amount_raised(self):
-        valid_event.set_amount_raised(amount=100)
-        assert valid_event.get_amount_raised() == 100
+class TestEventAmountSetting:
+    @pytest.mark.parametrize('amount', [
+        20,
+        20.52
+    ])
+    def test_setting_amounts(self, amount):
+        amount_test_event = Event(configuration=test_event_configuration)
+        amount_test_event.set_starting_amount(starting_amount=amount)
+        assert amount == amount_test_event.starting_amount
 
-    def test_incrementing_amount_raised(self):
-        valid_event.set_amount_raised(amount=200)
-        valid_event.increment_amount_raised(amount_increase=50)
-        assert valid_event.get_amount_raised() == 250
 
+class TestEventExceptions:
+    @pytest.mark.parametrize('amount', [
+        None,
+        -1,
+        '',
+        'bla',
+        object
+    ])
+    def test_setting_incorrect_amounts_throws_exceptions(self, amount):
+        amount_test_event = Event(configuration=test_event_configuration)
+        with pytest.raises(InvalidEventAmountException):
+            amount_test_event.set_starting_amount(starting_amount=amount)
+        with pytest.raises(InvalidEventAmountException):
+            amount_test_event.set_amount_raised(amount_raised=amount)

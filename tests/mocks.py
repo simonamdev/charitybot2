@@ -1,15 +1,7 @@
-import json
-import os
-import subprocess
-import sys
-from time import sleep
+import sqlite3
 
-import requests
-from charitybot2.paths import mocksite_path, external_api_cli_path
-from charitybot2.reporter.external_api.external_api import api_full_url
-from neopysqlite import neopysqlite
-from urllib.parse import urljoin
 
+<<<<<<< HEAD
 
 class ResetDB:
     def __init__(self, db_path, sql_path):
@@ -145,3 +137,5 @@ class AdjustTestConfig:
     def write_data(self):
         with open(self.config_path, 'w') as config_file:
             json.dump(self.data, config_file)
+=======
+>>>>>>> refs/remotes/origin/lavecon-ui
