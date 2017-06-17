@@ -44,7 +44,6 @@ class WipeSQLiteDB:
         print('Wipe complete')
 
 
-
 def setup_test_database(event_values=None, donation_count=10, donation_amount=None):
     print('--- SETTING UP TEST DATABASE ---')
     wipe_database()
