@@ -13,6 +13,12 @@ function drawUI() {
             drawCurrencySymbolOnPage();
             drawEventDetails();
             drawDonationData();
+            // Setup the update loop
+            var updateDelay = 5000; // ms
+            setInterval(() => {
+                drawEventDetails();
+                drawDonationData();
+            }, updateDelay);
         }
     });
 }
