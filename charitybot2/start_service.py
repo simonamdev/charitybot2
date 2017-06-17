@@ -1,4 +1,5 @@
 import argparse
+import os
 
 import sys
 
@@ -111,7 +112,9 @@ class ServiceRunner:
 
     def stop_running(self):
         print('Stopping Service: {}'.format(self._service.name))
-        self.__destroy_process()
+        # Only run the destroy process if we are on windows
+        if os.name == 'nt':
+            self.__destroy_process()
         self._process.kill()
 
     def __destroy_process(self):
