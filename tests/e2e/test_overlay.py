@@ -13,6 +13,7 @@ from tests.integration.test_event_register import get_test_event_configuration
 from tests.setup_test_database import setup_test_database
 
 driver = None
+debug_mode = True
 test_event_identifier = get_test_event_configuration().identifier
 
 overlay_service = Service(
@@ -20,7 +21,7 @@ overlay_service = Service(
     app=app,
     address='127.0.0.1',
     port=7000,
-    debug=True)
+    debug=debug_mode)
 overlay_service_runner = ServiceRunner(
     service=overlay_service,
     file_path=overlay_script_path,
@@ -33,12 +34,12 @@ api_service = Service(
     app=app,
     address='127.0.0.1',
     port=8001,
-    debug=True)
+    debug=debug_mode)
 api_service_runner = ServiceRunner(
     service=api_service,
     file_path=private_api_script_path,
     start_delay=2,
-    stop_delay=1)
+    stop_delay=2)
 
 
 def get_soup_text_by_id(tag_id):

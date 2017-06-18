@@ -1,9 +1,15 @@
-var apiUrl = 'https://api.charitybot.net/api/v1/';
-var eventUrl = apiUrl + 'event/' + eventIdentifier;
+//var apiUrl = 'https://api.charitybot.net/api/v1/';
+apiAddress = apiAddress + '/api/v1';
+var eventUrl = apiAddress + '/event/' + eventIdentifier;
 var totalUrl = eventUrl + '/total/';
 
+console.log('Connecting to API via: ' + apiAddress);
+if (!updateDelay) {
+    var updateDelay = 10000; // ms
+}
+
 function getTotal() {
-    console.log('Getting Total');
+    console.log(totalUrl);
     fetchJSONFile(totalUrl, (data) => {
         console.log(data);
         var header = document.getElementById('overlay-amount');
@@ -20,5 +26,4 @@ function markUnavailable() {
 
 drawCurrencySymbolOnPage();
 getTotal();
-var updateDelay = 10000; // ms
 setInterval(getTotal, updateDelay)

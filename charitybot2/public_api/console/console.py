@@ -23,9 +23,18 @@ def get_api_address():
     return api_address
 
 
+def get_update_delay():
+    delay = 2000
+    if not debug_mode:
+        delay = 10000
+    return delay
+
+
 @app.context_processor
 def inject_api_url():
-    return dict(api_address=get_api_address())
+    return dict(
+        api_address=get_api_address(),
+        update_delay=get_update_delay())
 
 
 @app.route('/')

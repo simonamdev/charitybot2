@@ -1,10 +1,14 @@
-var apiUrl = 'https://api.charitybot.net/api/v1/';
-var eventUrl = apiUrl + 'event/' + eventIdentifier;
+//var apiUrl = 'https://api.charitybot.net/api/v1/';
+apiAddress = apiAddress + '/api/v1';
+var eventUrl = apiAddress + '/event/' + eventIdentifier;
 var donationsUrl = eventUrl + '/donations/';
 
 var currencySymbol = 'N/A';
-var updateDelay = 10000; // ms
+if (!updateDelay) {
+    var updateDelay = 10000; // ms
+}
 
+console.log('Connecting to API via: ' + apiAddress);
 
 // Get the currency symbol then setup the updating cycle
 getCurrencySymbol().then((symbol) => {
