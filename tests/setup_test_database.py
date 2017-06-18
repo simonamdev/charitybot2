@@ -63,9 +63,10 @@ def setup_test_database(event_values=None, donation_count=10, donation_amount=No
 
 def wipe_database(path):
     print('Wiping database at path: {}'.format(path))
-    for i in range(5, 0, -1):
-        print('Wiping in: {}'.format(i))
-        time.sleep(1)
+    if not path == test_repository_db_path:
+        for i in range(5, 0, -1):
+            print('Wiping in: {}'.format(i))
+            time.sleep(1)
     WipeSQLiteDB(db_path=path).wipe_db()
 
 
