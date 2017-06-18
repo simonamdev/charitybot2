@@ -1,8 +1,15 @@
-var apiUrl = 'https://api.charitybot.net/api/v1/';
+//var apiUrl = 'https://api.charitybot.net/api/v1/';
+apiAddress = apiAddress + '/api/v1';
+var eventUrl = apiAddress + '/event/' + eventIdentifier;
+var eventExistenceUrl = apiAddress + '/event/exists/' + eventIdentifier;
+var eventTotalUrl = eventUrl + '/total/';
+var donationsUrl = eventUrl + '/donations/';
+var donationCountUrl = donationsUrl + 'count';
 var debugMode = true;
 var currencyKey = "";
 var currencySymbol = "";
 
+console.log('Connecting to API via: ' + apiAddress);
 eventUI();
 
 function eventUI() {
@@ -18,7 +25,7 @@ function debugPrint(log) {
 }
 
 function drawPageIfEventExists(eventIdentifier) {
-    var url = apiUrl + 'event/exists/' + eventIdentifier;
+    var url = eventExistenceUrl;
     $.getJSON(url, data => {
         if (data['event_exists']) {
             drawPage();
@@ -42,7 +49,7 @@ function drawPage() {
 
 function getEventDetails(eventIdentifier) {
     debugPrint('Retrieving data for event: ' + eventIdentifier);
-    var url = apiUrl + 'event/' + eventIdentifier;
+    var url = eventUrl;
     $.getJSON(url, data => {
         setupCurrency(data);
         drawEventDetails(data);
@@ -100,7 +107,7 @@ function drawEventDetails(data) {
 
 function getDonations(eventIdentifier, lowerTimeBound, upperTimeBound) {
     debugPrint('Retrieving donation data for: ' + eventIdentifier + ' between ' + lowerTimeBound + ' and ' + upperTimeBound);
-    var url = apiUrl + 'event/' + eventIdentifier + '/donations';
+    var url = donationsUrl;
     $.getJSON(url, data => {
         drawDonations(data);
     }).fail(() => {
@@ -149,12 +156,12 @@ function getStatistics(eventIdentifier) {
 }
 
 function getEventTotal(eventIdentifier) {
-    var url = apiUrl + 'event/' + eventIdentifier + '/total/';
+    var url = eventTotalUrl;
     return $.getJSON(url);
 }
 
 function getLastDonation(eventIdentifier) {
-    var url = apiUrl + 'event/' + eventIdentifier + '/donations/?limit=1';
+    var url = donationsUrl + '?limit=1';
     return $.getJSON(url);
 }
 
@@ -188,7 +195,7 @@ function drawStatistics(total, lastDonationTimestamp) {
     }
 }
 
-var newDonationUrl = apiUrl + 'donation/';
+var newDonationUrl = apiAddress + '/donation/';
 
 function serializePostObject(obj) {
     var str = [];

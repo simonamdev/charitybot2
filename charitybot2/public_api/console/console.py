@@ -16,6 +16,18 @@ console_service = Service(
     debug=debug_mode)
 
 
+def get_api_address():
+    api_address = 'http://127.0.0.1:8001'
+    if not debug_mode:
+        api_address = 'https://api.charitybot.net'
+    return api_address
+
+
+@app.context_processor
+def inject_api_url():
+    return dict(api_address=get_api_address())
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -46,5 +58,6 @@ def stop_console():
 
 if __name__ == '__main__':
     cli_args = console_service.create_service_argument_parser().parse_args()
+    debug_mode = cli_args.debug
     console_service = Service.create_from_args(name=console_identity, app=app, cli_args=cli_args)
     console_service.start()

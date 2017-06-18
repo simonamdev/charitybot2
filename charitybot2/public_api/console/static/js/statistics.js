@@ -1,10 +1,11 @@
-var apiUrl = 'https://api.charitybot.net/api/v1/';
-var eventUrl = apiUrl + 'event/' + eventIdentifier;
-var eventExistenceUrl = apiUrl + 'event/exists/' + eventIdentifier;
+//var apiUrl = 'https://api.charitybot.net/api/v1/';
+var eventUrl = apiAddress + 'event/' + eventIdentifier;
+var eventExistenceUrl = apiAddress + 'event/exists/' + eventIdentifier;
 var eventTotalUrl = eventUrl + '/total/';
 var donationsUrl = eventUrl + '/donations/';
 var donationCountUrl = donationsUrl + 'count';
 
+console.log('Connecting to API via: ' + apiAddress);
 drawUI();
 
 function drawUI() {
