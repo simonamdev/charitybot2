@@ -239,6 +239,8 @@ function submitDonation() {
         // If the donation was successful, redraw the donations
         if (response['received']) {
             getDonations(eventIdentifier);
+            // Also redraw the statistics
+            getStatistics(eventIdentifier);
         } else {
             // Show an error with the message
             $('#donation-alert').show();
