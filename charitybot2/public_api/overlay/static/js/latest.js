@@ -1,13 +1,10 @@
-//var apiUrl = 'https://api.charitybot.net/api/v1/';
 apiAddress = apiAddress + '/api/v1';
 var eventUrl = apiAddress + '/event/' + eventIdentifier;
 var donationsUrl = eventUrl + '/donations';
 var latestDonationUrl = donationsUrl + '?limit=1';
 
 console.log('Connecting to API via: ' + apiAddress);
-if (!updateDelay) {
-    var updateDelay = 10000; // ms
-}
+
 
 function getLatestDonation() {
     console.log('Getting Latest Donation');

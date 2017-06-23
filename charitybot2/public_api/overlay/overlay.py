@@ -58,6 +58,7 @@ def inject_api_url():
         api_address=get_api_address(),
         update_delay=get_update_delay())
 
+
 @app.route('/')
 def index():
     return 'Use any of the following: /:event/total, /:event/ticker or /:event/latest'
