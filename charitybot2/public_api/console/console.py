@@ -49,6 +49,8 @@ users = Users(users_path)
 
 @auth.get_password
 def get_pw(username):
+    if debug_mode:
+        return 'charitybot'
     if users.user_exists(user=username):
         password = users.get_password(user=username)
         return password
