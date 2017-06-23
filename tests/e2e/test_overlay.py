@@ -63,7 +63,7 @@ def teardown_module():
 
 
 class TestOverlayTotal:
-    overlay_total_url = overlay_service.full_url + 'overlay/{}/total'.format(test_event_identifier)
+    overlay_total_url = overlay_service.full_url + '{}/total'.format(test_event_identifier)
 
     @classmethod
     def setup_class(cls):
@@ -86,7 +86,7 @@ class TestOverlayTotal:
 
 
 class TestOverlayTicker:
-    overlay_ticker_url = overlay_service.full_url + 'overlay/{}/ticker'.format(test_event_identifier)
+    overlay_ticker_url = overlay_service.full_url + '{}/ticker'.format(test_event_identifier)
 
     @classmethod
     def setup_class(cls):
@@ -129,7 +129,7 @@ class TestOverlayTicker:
 
 
 class TestOverlayLatestDonation:
-    overlay_latest_url = overlay_service.full_url + 'overlay/{}/latest'.format(test_event_identifier)
+    overlay_latest_url = overlay_service.full_url + '{}/latest'.format(test_event_identifier)
 
     @staticmethod
     def setup_method():
