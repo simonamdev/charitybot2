@@ -4,9 +4,6 @@ var eventUrl = apiAddress + '/event/' + eventIdentifier;
 var donationsUrl = eventUrl + '/donations/';
 
 var currencySymbol = 'N/A';
-if (!updateDelay) {
-    var updateDelay = 10000; // ms
-}
 
 console.log('Connecting to API via: ' + apiAddress);
 
@@ -25,7 +22,6 @@ getCurrencySymbol().then((symbol) => {
 });
 
 function updateTicker(limit) {
-    console.log('Updating ticker');
     fetchJSONFile(
         donationsUrl + '?limit=' + limit,
         (response) => {
