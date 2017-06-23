@@ -61,7 +61,7 @@ def teardown_module():
     global driver
     driver.close()
 
-test_event_url = console_service.full_url + 'event/{}/'.format(test_event_identifier)
+test_event_url = console_service.get_url_given_auth(auth='charitybot:charitybot@') + 'event/{}/'.format(test_event_identifier)
 
 
 class TestConsolePaths:
