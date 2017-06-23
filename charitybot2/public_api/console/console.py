@@ -1,8 +1,33 @@
+import os
 from charitybot2.start_service import Service
 from flask import Flask, render_template
 from flask_httpauth import HTTPBasicAuth
 
 app = Flask(__name__)
+
+users_path = os.path.join(os.path.dirname(__file__), 'users.txt')
+
+
+# A very insecure way of storing passwords, but an easy one for quickly setting up something for http auth
+class Users:
+    def __init__(self, path):
+        self._path = path
+        self._users = dict()
+        if not os.path.isfile(self._path):
+            raise FileNotFoundError('Users file does not exist')
+        self.parse_user_file()
+
+    def parse_user_file(self):
+        with open(self._path, 'r') as users_file:
+            for line in users_file.readlines():
+                parts = line.split(' ')
+                self._users[parts[0]] = parts[1]
+
+    def user_exists(self, user):
+        return user in self._users.keys()
+
+    def check_password(self, user, password):
+        return password == self._users[user]
 
 
 console_identity = 'CB2 Donations Console'
