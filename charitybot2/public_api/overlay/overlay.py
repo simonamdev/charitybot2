@@ -58,13 +58,17 @@ def inject_api_url():
         api_address=get_api_address(),
         update_delay=get_update_delay())
 
+@app.route('/')
+def index():
+    return 'Use any of the following: /:event/total, /:event/ticker or /:event/latest'
 
-@app.route('/overlay/<event_identifier>/total')
+
+@app.route('/<event_identifier>/total')
 def event_total(event_identifier):
     return render_template('total.html', event_identifier=event_identifier)
 
 
-@app.route('/overlay/<event_identifier>/ticker')
+@app.route('/<event_identifier>/ticker')
 def event_ticker(event_identifier):
     limit = request.args.get('limit')
     if limit is not None:
@@ -77,7 +81,7 @@ def event_ticker(event_identifier):
     return render_template('ticker.html', event_identifier=event_identifier, limit=limit)
 
 
-@app.route('/overlay/<event_identifier>/latest')
+@app.route('/<event_identifier>/latest')
 def event_latest(event_identifier):
     return render_template('latest.html', event_identifier=event_identifier)
 
@@ -96,5 +100,6 @@ def stop_api():
 
 if __name__ == '__main__':
     cli_args = overlay_service.create_service_argument_parser().parse_args()
+    debug_mode = cli_args.debug
     overlay_service = Service.create_from_args(name=overlay_identity, app=app, cli_args=cli_args)
     overlay_service.start()
