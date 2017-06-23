@@ -21,13 +21,14 @@ class Users:
         with open(self._path, 'r') as users_file:
             for line in users_file.readlines():
                 parts = line.split(' ')
-                self._users[parts[0]] = parts[1]
+                self._users[parts[0]] = parts[1].strip()
+        print('Users found: {}'.format(list(self._users.keys())))
 
     def user_exists(self, user):
         return user in self._users.keys()
 
-    def check_password(self, user, password):
-        return password == self._users[user]
+    def get_password(self, user):
+        return self._users[user]
 
 
 console_identity = 'CB2 Donations Console'
@@ -43,15 +44,14 @@ console_service = Service(
 
 auth = HTTPBasicAuth()
 
-users = {
-    'test': 'test'
-}
+users = Users(users_path)
 
 
 @auth.get_password
 def get_pw(username):
-    if username in users:
-        return users.get(username)
+    if users.user_exists(user=username):
+        password = users.get_password(user=username)
+        return password
     return None
 
 
