@@ -1,8 +1,9 @@
 from charitybot2.start_service import Service
-from flask import Flask
-from flask import render_template
+from flask import Flask, render_template
+from flask_httpauth import HTTPBasicAuth
 
 app = Flask(__name__)
+
 
 console_identity = 'CB2 Donations Console'
 console_address = '127.0.0.1'
@@ -14,6 +15,19 @@ console_service = Service(
     address=console_address,
     port=console_port,
     debug=debug_mode)
+
+auth = HTTPBasicAuth()
+
+users = {
+    'test': 'test'
+}
+
+
+@auth.get_password
+def get_pw(username):
+    if username in users:
+        return users.get(username)
+    return None
 
 
 def get_api_address():
@@ -43,11 +57,13 @@ def index():
 
 
 @app.route('/event/<event_identifier>/')
+@auth.login_required
 def event(event_identifier):
     return render_template('event.html', event_identifier=event_identifier)
 
 
 @app.route('/stats/<event_identifier>/')
+@auth.login_required
 def stats(event_identifier):
     return render_template('stats.html', event_identifier=event_identifier)
 
