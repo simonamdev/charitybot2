@@ -44,6 +44,9 @@ class Service:
     def full_url(self):
         return 'http://{}:{}/'.format(self._address, self._port)
 
+    def get_url_given_auth(self, auth):
+        return 'http://{}{}:{}/'.format(auth, self._address, self._port)
+
     @staticmethod
     def create_from_args(name, app, cli_args):
         return Service(

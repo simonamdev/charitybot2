@@ -2,6 +2,7 @@ pytest
 bs4
 flask
 flask-cors
+flask_httpauth
 click
 locust
 selenium
