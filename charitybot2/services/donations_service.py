@@ -20,3 +20,6 @@ class DonationsService:
 
     def get_all_donations(self, event_identifier):
         return self._donations_repository.get_event_donations(event_identifier=event_identifier)
+
+    def get_latest_donation(self, event_identifier):
+        return self._donations_repository.get_latest_event_donation(event_identifier=event_identifier)
