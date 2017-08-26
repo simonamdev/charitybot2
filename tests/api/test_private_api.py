@@ -326,6 +326,29 @@ class TestEventDonations:
         expected_average = 5.5
         assert expected_average == average_donation_amount
 
+    def test_retrieving_donation_distribution(self):
+        distribution_identifier = 'donation_distribution'
+        updated_values = {
+            'identifier': distribution_identifier,
+            'title': 'Donation Distribution Test Event'
+        }
+        config = get_test_event_configuration(updated_values=updated_values)
+        private_api_calls.register_event(event_configuration=config)
+        donation_values = (0, 2, 5, 9.9, 10, 11, 13, 15, 25, 44, 73, 101)
+        distribution_bounds = ((0, 9), (10, 19), (20, 49), (49, 74), (75, 99), (100, 10000))
+        expected_counts = (3, 4, 1, 2, 0, 1)
+        for i in range(0, len(donation_values)):
+            donation = Donation(
+                amount=donation_values[i],
+                event_identifier=distribution_identifier,
+                timestamp=i
+            )
+            private_api_calls.register_donation(donation=donation)
+        distribution = private_api_calls.get_donation_distribution(event_identifier=distribution_identifier)
+        assert 6 == len(expected_counts)
+        for i in range(0, len(expected_counts)):
+            assert expected_counts[i] == distribution[i]
+
 
 class TestEventDonationExceptions:
     @pytest.mark.parametrize('time_bounds', [
