@@ -5,6 +5,7 @@ var eventExistenceUrl = apiAddress + '/event/exists/' + eventIdentifier;
 var eventTotalUrl = eventUrl + '/total/';
 var donationsUrl = eventUrl + '/donations/';
 var donationCountUrl = donationsUrl + 'count';
+var donationAverageUrl = donationsUrl + 'average';
 
 console.log('Connecting to API via: ' + apiAddress);
 if (!updateDelay) {
@@ -97,6 +98,7 @@ function drawEventDetails() {
 function getEventData() {
     var eventDetailsPromise = getDataFromApi(eventUrl);
     var eventTotalPromise = getDataFromApi(eventTotalUrl);
+    var donationAveragePromise = getDataFromApi();
     return Promise.all([eventDetailsPromise, eventTotalPromise]);
 }
 
@@ -107,9 +109,10 @@ function drawDonationData() {
             var timeBoundCount = data[1]['count'];
             var largestDonation = data[2];
             var latestDonation = JSON.parse(data[3]['donations']);
+            var averageDonation = data[4]['average_donation_amount'];
             getConsoleElement('donationCount').innerHTML = donationCount;
             getConsoleElement('donationCountInTimespan').innerHTML = timeBoundCount + ' donations in the last 5 minutes';
-            // TODO: Average donation drawing
+            getConsoleElement('averageDonationAmount').innerHTML = averageDonation;
             getConsoleElement('largestDonationAmount').innerHTML = largestDonation['amount'];
             getConsoleElement('latestDonationAmount').innerHTML = latestDonation['amount'];
             // TODO: Donation progress bar
@@ -128,13 +131,15 @@ function getDonationData() {
     var timeBoundDonationCountPromise = getDataFromApi(timeBoundUrl);
     var largestDonationPromise = getDataFromApi(donationsUrl + 'largest');
     var latestDonationPromise = getDataFromApi(donationsUrl + '?limit=1');
+    var averageDonationPromise = getDataFromApi(donationAverageUrl);
     // TODO: Average donation promise
     return Promise.all(
         [
             donationCountPromise,
             timeBoundDonationCountPromise,
             largestDonationPromise,
-            latestDonationPromise
+            latestDonationPromise,
+            averageDonationPromise
         ]
     );
 }
