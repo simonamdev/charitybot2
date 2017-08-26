@@ -24,6 +24,7 @@ function drawUI() {
             setInterval(() => {
                 drawEventDetails();
                 drawDonationData();
+                drawCharts();
             }, updateDelay);
         }
     });
@@ -132,7 +133,6 @@ function getDonationData() {
     var largestDonationPromise = getDataFromApi(donationsUrl + 'largest');
     var latestDonationPromise = getDataFromApi(donationsUrl + '?limit=1');
     var averageDonationPromise = getDataFromApi(donationAverageUrl);
-    // TODO: Average donation promise
     return Promise.all(
         [
             donationCountPromise,
@@ -142,6 +142,14 @@ function getDonationData() {
             averageDonationPromise
         ]
     );
+}
+
+function drawCharts() {
+
+}
+
+function getChartData() {
+        
 }
 
 function getDataFromApi(url) {
