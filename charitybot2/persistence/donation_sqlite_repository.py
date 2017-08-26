@@ -109,6 +109,14 @@ class DonationSQLiteRepository(SQLiteRepository):
         row = self.execute_query(query=query, data=data).fetchone()
         return int(row[0])
 
+    def get_average_donation_amount(self, event_identifier):
+        query = 'SELECT AVG(amount) ' \
+                'FROM `donations` ' \
+                'WHERE eventInternalName = ?;'
+        data = (event_identifier, )
+        row = self.execute_query(query=query, data=data).fetchone()
+        return float(row[0])
+
     @staticmethod
     def __convert_row_to_donation(row):
         donation = Donation(
