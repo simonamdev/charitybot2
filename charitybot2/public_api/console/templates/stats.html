@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block optional_head %}
-    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/statistics.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/statistics.css') }}" />
     <script src="{{ url_for('static', filename='js/time.js') }}"></script>
     <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
     <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
@@ -11,54 +11,54 @@
     </script>
 {% endblock %}
 {% block body %}
-        <div class="large-12 text-center header">
-            <h1 class="text-center">Charitybot Statistics</h1>
-            <h2>{{ event_identifier }}</h2>
-        </div>
+    <div>
+        <h1>Charitybot Statistics</h1>
+        <h2>{{ event_identifier }}</h2>
+    </div>
     <!-- Alerts row -->
-    <div class="row">
-        <div class="alert callout" id="event-alert">
-              <h5>Event Error</h5>
-              <p>Event with identifier: {{ event_identifier }} does not exist!</p>
+    <div>
+        <div>
+            <h5>Event Error</h5>
+            <p>Event with identifier: {{ event_identifier }} does not exist!</p>
         </div>
     </div>
     <div id="statisticsConsole">
         <!-- Event Progress -->
-        <div class="row">
-            <div class="large-10 large-centered columns text-center">
-                <div class="large-4 columns box">
+        <div>
+            <div>
+                <div>
                     <span>Start Time:</span>
                     <span id="eventStartTime"></span>
                 </div>
-                <div class="large-4 columns">
+                <div>
                     <div class="progress" role="progressbar" tabindex="0">
                       <span id="eventProgress" class="progress-meter">
                           <p id="eventProgressText" class="progress-meter-text"></p>
                       </span>
                     </div>
                 </div>
-                <div class="large-4 columns box">
+                <div>
                     <span>End Time:</span>
                     <span id="eventEndTime"></span>
                 </div>
             </div>
         </div>
         <!-- Donations Progress -->
-        <div class="row">
-            <div class="large-10 large-centered columns text-center">
-                <div class="large-4 columns box">
+        <div>
+            <div>
+                <div>
                     <span>Amount Raised</span>
                     <span class="currency"></span>
                     <span id="eventAmountRaised"></span>
                 </div>
-                <div class="large-4 columns">
+                <div>
                     <div class="progress" role="progressbar" tabindex="0">
                       <span id="donationProgress" class="progress-meter">
                           <p id="donationProgressText" class="progress-meter-text"></p>
                       </span>
                     </div>
                 </div>
-                <div class="large-4 columns box">
+                <div>
                     <span>Target Amount</span>
                     <span class="currency"></span>
                     <span id="eventTargetRaised"></span>
@@ -66,16 +66,16 @@
             </div>
         </div>
         <!-- Donation Statistics -->
-        <div class="row">
-            <div class="large-10 large-centered columns text-center">
-                <div class="large-4 columns box">
+        <div>
+            <div>
+                <div>
                     <span id="donationCount"></span>
                     <span>donations in total</span>
                 </div>
-                <div class="large-4 columns box">
+                <div>
                     <span id="donationCountInTimespan"></span>
                 </div>
-                <div class="large-4 columns box">
+                <div>
                     <span>Average</span>
                     <span class="currency"></span>
                     <span id="averageDonationAmount"></span>
@@ -83,15 +83,15 @@
             </div>
         </div>
         <!-- Donation largest / latest -->
-        <div class="row">
-            <div class="large-10 large-centered columns text-center">
-                <div class="large-4 columns box">
+        <div>
+            <div>
+                <div>
                     <span>Largest Donation</span>
                     <span class="currency"></span>
                     <span id="largestDonationAmount"></span>
                 </div>
-                <div class="large-2 columns"></div>
-                <div class="large-4 columns box">
+                <div></div>
+                <div>
                     <span>Latest Donation</span>
                     <span class="currency"></span>
                     <span id="latestDonationAmount"></span>
@@ -99,12 +99,12 @@
             </div>
         </div>
         <!-- Graphs -->
-        <div class="row">
-            <div class="large-6 columns text-center">
+        <div>
+            <div>
                 <span>Donations over Time Graph</span>
                 <span>COMING SOON</span>
             </div>
-            <div class="large-6 columns text-center">
+            <div>
                 <span>Donation distribution Graph</span>
                 <span>COMING SOON</span>
             </div>
@@ -112,5 +112,5 @@
     </div>
 {% endblock %}
 {% block after_body %}
-    <script type="text/javascript" src="{{url_for('static', filename='js/statistics.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/statistics.js') }}"></script>
 {% endblock %}
