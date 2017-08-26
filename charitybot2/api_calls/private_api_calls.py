@@ -145,4 +145,4 @@ class PrivateApiCalls:
         response = UrlCall(url=url, timeout=self._timeout).get()
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)
-        return round(float(converted_content), 3)
+        return round(float(converted_content['average_donation_amount']), 3)

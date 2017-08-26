@@ -178,6 +178,16 @@ def retrieve_largest_event_donation(event_identifier):
     return largest_donation.to_json()
 
 
+@app.route('/api/v1/event/<event_identifier>/donations/average', methods=['GET'])
+def retrieve_average_event_donation_amount(event_identifier):
+    average_donation_amount = get_donations_repository().get_average_donation_amount(event_identifier=event_identifier)
+    return jsonify(
+        {
+            'average_donation_amount': average_donation_amount
+        }
+    )
+
+
 @app.route('/api/v1/event/<event_identifier>/donations/count', methods=['GET'])
 def retrieve_event_donation_count(event_identifier):
     lower_bound, upper_bound = request.args.get('lower'), request.args.get('upper')
