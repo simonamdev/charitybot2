@@ -301,6 +301,31 @@ class TestEventDonations:
             upper_time_bound=5)
         assert expected_count == count
 
+    def test_retrieving_donation_average(self):
+        average_donation_identifier = 'donation_average'
+        updated_values = {
+            'identifier': average_donation_identifier,
+            'title': 'Average Donation Test Event'
+        }
+        average_donation_test_configuration = get_test_event_configuration(updated_values=updated_values)
+        # Registration
+        private_api_calls.register_event(event_configuration=average_donation_test_configuration)
+        # Add donations
+        donation_count = 10
+        for i in range(1, donation_count + 1):
+            donation = Donation(
+                amount=i,
+                event_identifier=average_donation_identifier,
+                timestamp=i
+            )
+            private_api_calls.register_donation(donation=donation)
+        # retrieve average donation count
+        average_donation_amount = private_api_calls.get_average_donation_amount(
+            event_identifier=average_donation_identifier
+        )
+        expected_average = 5.5
+        assert expected_average == average_donation_amount
+
 
 class TestEventDonationExceptions:
     @pytest.mark.parametrize('time_bounds', [
