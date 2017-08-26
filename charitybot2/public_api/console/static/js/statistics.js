@@ -149,7 +149,7 @@ function drawCharts() {
 }
 
 function getChartData() {
-        
+
 }
 
 function getDataFromApi(url) {

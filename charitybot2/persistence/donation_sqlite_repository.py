@@ -117,6 +117,18 @@ class DonationSQLiteRepository(SQLiteRepository):
         row = self.execute_query(query=query, data=data).fetchone()
         return float(row[0])
 
+    def get_donation_distribution(self, event_identifier):
+        distribution_bounds = ((0, 10), (10, 20), (20, 50), (50, 75), (75, 100), (100, 10000))
+        donations = self.get_event_donations(event_identifier=event_identifier)
+        distribution = [0, 0, 0, 0, 0, 0]
+        for donation in donations:
+            for bounds in distribution_bounds:
+                if bounds[0] <= donation.amount < bounds[1]:
+                    distribution[distribution_bounds.index(bounds)] += 1
+                    break
+        print(distribution)
+        return distribution
+
     @staticmethod
     def __convert_row_to_donation(row):
         donation = Donation(

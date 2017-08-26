@@ -334,9 +334,9 @@ class TestEventDonations:
         }
         config = get_test_event_configuration(updated_values=updated_values)
         private_api_calls.register_event(event_configuration=config)
-        donation_values = (0, 2, 5, 9.9, 10, 11, 13, 15, 25, 44, 73, 101)
-        distribution_bounds = ((0, 9), (10, 19), (20, 49), (49, 74), (75, 99), (100, 10000))
-        expected_counts = (3, 4, 1, 2, 0, 1)
+        donation_values = (0.1, 2, 5, 9.9, 10, 11, 15, 19.9, 20, 45, 55.5, 205.34)
+        expected_counts = (4, 4, 2, 1, 0, 1)
+        assert len(donation_values) == sum(expected_counts)
         for i in range(0, len(donation_values)):
             donation = Donation(
                 amount=donation_values[i],
