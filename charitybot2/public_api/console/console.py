@@ -90,7 +90,6 @@ def event(event_identifier):
 
 
 @app.route('/stats/<event_identifier>/')
-@auth.login_required
 def stats(event_identifier):
     return render_template('stats.html', event_identifier=event_identifier)
 
