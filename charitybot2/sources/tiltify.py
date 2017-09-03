@@ -18,6 +18,9 @@ class TiltifySource:
     def get_donations(self):
         return self._tiltify.get_donations(order_by=Order.CREATED_AT, donation_order=Order.DESC, limit=self._limit)
 
+    def get_all_donations(self):
+        return self._tiltify.get_donations(order_by=Order.CREATED_AT, donation_order=Order.DESC)
+
     def __convert_to_donation(self, donation):
         # 2014-09-17 16:06:21 -0400
         return Donation(
