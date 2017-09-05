@@ -1,3 +1,7 @@
+import argparse
+import time
+
+from charitybot2.paths import production_repository_db_path
 from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository
 from charitybot2.sources.tiltify import TiltifySource
 
@@ -28,3 +32,44 @@ class TiltifyRunner:
         new_donations = [donation for donation in all_donations if donation.internal_reference in new_ids]
         for donation in new_donations:
             self.store_donation(donation=donation)
+
+    def run_event_loop(self, delay):
+        while True:
+            current_timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+            print('[{}]: Getting donations'.format(current_timestamp))
+            known_donation_ids = [donation.id for donation in self.get_stored_donations()]
+            new_donations = self._tiltify.get_new_donations(known_donation_ids=known_donation_ids)
+            print('[{}]: {} known donations. {} new donations'.format(
+                current_timestamp,
+                len(known_donation_ids),
+                len(new_donations)))
+            for donation in new_donations:
+                print('[{}] Storing donation of: {}{} from {}'.format(
+                    current_timestamp,
+                    '£',
+                    donation.amount,
+                    donation.donor_name
+                ))
+                self.store_donation(donation=donation)
+            time.sleep(delay)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Tiltify Runner')
+    parser.add_argument(
+        '-event',
+        action='store',
+        dest='event',
+        help='Event Identifier')
+    parser.add_argument(
+        '-key',
+        action='store',
+        dest='api_key',
+        help='Tiltify API Key')
+    args = parser.parse_args()
+    tiltify_runner = TiltifyRunner(
+        event_identifier=args.event,
+        repository_path=production_repository_db_path,
+        api_key=args.api_key,
+        limit=25
+    )
