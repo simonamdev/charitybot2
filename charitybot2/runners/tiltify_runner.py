@@ -1,28 +1,33 @@
 import argparse
+import os
 import time
 
-from charitybot2.paths import production_repository_db_path
-from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository
+from charitybot2.api_calls.private_api_calls import PrivateApiCalls
+from charitybot2.creators.event_configuration_creator import EventConfigurationCreatorFromFile
+from charitybot2.paths import event_config_folder
+from charitybot2.private_api.private_api import private_api_service
 from charitybot2.sources.tiltify import TiltifySource
 
 
 def get_donation_ids(donations):
     return [donation.internal_reference for donation in donations]
 
+private_api_calls = PrivateApiCalls(base_api_url=private_api_service.full_url)
+
 
 class TiltifyRunner:
-    def __init__(self, event_identifier, repository_path, api_key, limit):
+    def __init__(self, event_identifier, api_key, limit):
         self._tiltify = TiltifySource(event_identifier=event_identifier, api_key=api_key, limit=limit)
         self._event_identifier = event_identifier
-        self._donations_repository = DonationSQLiteRepository(db_path=repository_path)
         self._tiltify_ids = []
 
     # Getting the stored donations from the donations service
     def get_stored_donations(self):
-        return self._donations_repository.get_event_donations(event_identifier=self._event_identifier)
+        return private_api_calls.get_event_donations(event_identifier=self._event_identifier)
 
-    def store_donation(self, donation):
-        self._donations_repository.record_donation(donation=donation)
+    @staticmethod
+    def store_donation(donation):
+        private_api_calls.register_donation(donation=donation)
 
     def refill_cache(self):
         stored_ids = get_donation_ids(self.get_stored_donations())
@@ -34,6 +39,10 @@ class TiltifyRunner:
             self.store_donation(donation=donation)
 
     def run_event_loop(self, delay):
+        event_config_path = os.path.join(event_config_folder, 'onespecialday.json')
+        event_config_creator = EventConfigurationCreatorFromFile(file_path=event_config_path)
+        print('Registering event')
+        private_api_calls.register_event(event_configuration=event_config_creator.configuration)
         while True:
             current_timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
             print('[{}]: Getting donations'.format(current_timestamp))
@@ -66,10 +75,18 @@ if __name__ == '__main__':
         action='store',
         dest='api_key',
         help='Tiltify API Key')
+    parser.add_argument(
+        '-delay',
+        action='store',
+        type=int,
+        default=30,
+        dest='delay',
+        help='Tiltify API request delay')
     args = parser.parse_args()
     tiltify_runner = TiltifyRunner(
         event_identifier=args.event,
-        repository_path=production_repository_db_path,
         api_key=args.api_key,
         limit=25
     )
+    print('Starting Runner')
+    tiltify_runner.run_event_loop(delay=args.delay)
