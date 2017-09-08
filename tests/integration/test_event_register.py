@@ -1,16 +1,9 @@
 import pytest
-from charitybot2.creators.event_configuration_creator import InvalidEventConfigurationException, \
-    EventConfigurationCreator
+from charitybot2.creators.event_configuration_creator import InvalidEventConfigurationException
 from charitybot2.creators.event_creator import EventRegister
 from charitybot2.models.event import Event
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
-from tests.unit.test_event_configuration_creator import get_updated_test_config_values
-
-
-def get_test_event_configuration(updated_values=None):
-    test_event_configuration_creator = EventConfigurationCreator(
-        configuration_values=get_updated_test_config_values(updated_values=updated_values))
-    return test_event_configuration_creator.configuration
+from helpers.event_config import get_test_event_configuration
 
 
 class TestEventRegister:

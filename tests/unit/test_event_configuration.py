@@ -1,16 +1,7 @@
 import pytest
 from charitybot2.configurations.event_configuration import EventConfiguration
+from helpers.event_config import test_event_config_values
 
-test_event_config_values = {
-    'identifier': 'test',
-    'title': 'CB Test Event',
-    'start_time': 0,
-    'end_time': 1,
-    'target_amount': 100,
-    'update_delay': 5,
-    'currency_key': 'EUR',
-    'source_url': 'http://www.charitybot.net'
-}
 test_event_configuration = EventConfiguration(configuration_values=test_event_config_values)
 
 

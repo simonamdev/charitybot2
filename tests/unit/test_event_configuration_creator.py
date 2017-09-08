@@ -5,14 +5,7 @@ from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator, \
     InvalidEventConfigurationException, EventConfigurationCreatorFromFile
 from charitybot2.paths import valid_test_event_config_path
-from tests.unit.test_event_configuration import test_event_config_values
-
-
-def get_updated_test_config_values(updated_values=None):
-    valid_config_values = copy.deepcopy(test_event_config_values)
-    if updated_values is not None:
-        valid_config_values.update(updated_values)
-    return valid_config_values
+from helpers.event_config import test_event_config_values, get_updated_test_config_values
 
 test_event_configuration = EventConfiguration(configuration_values=test_event_config_values)
 test_event_configuration_creator = EventConfigurationCreator(configuration_values=test_event_config_values)
