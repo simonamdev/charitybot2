@@ -5,22 +5,14 @@ from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository, EventAlreadyRegisteredException, \
     EventNotRegisteredException
-from tests.unit.test_event_configuration import test_event_config_values
-
-
-def get_updated_config_values(updates=None):
-    config_values = copy.deepcopy(test_event_config_values)
-    if updates is not None:
-        config_values.update(updates)
-    return config_values
-
+from helpers.event_config import get_updated_test_config_values
 
 test_event_identifier = 'test_event'
-starting_test_config = get_updated_config_values(updates={'identifier': test_event_identifier})
+starting_test_config = get_updated_test_config_values(updated_values={'identifier': test_event_identifier})
 starting_test_configuration = EventConfigurationCreator(configuration_values=starting_test_config).configuration
 
 non_existent_event_identifier = 'non_existent'
-non_existent_config_values = get_updated_config_values(updates={'identifier': non_existent_event_identifier})
+non_existent_config_values = get_updated_test_config_values(updated_values={'identifier': non_existent_event_identifier})
 non_existent_event_configuration = EventConfigurationCreator(configuration_values=non_existent_config_values).configuration
 
 
@@ -45,7 +37,7 @@ class TestEventSQLiteRepository:
         assert isinstance(event_configuration, EventConfiguration)
 
     def test_registering_event(self):
-        config_values = get_updated_config_values(updates={'identifier': 'new_event'})
+        config_values = get_updated_test_config_values(updated_values={'identifier': 'new_event'})
         test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
         self.test_event_repository.register_event(event_configuration=test_configuration)
         assert self.test_event_repository.event_already_registered(identifier='new_event') is True
@@ -54,7 +46,7 @@ class TestEventSQLiteRepository:
         assert test_configuration.source_url == retrieved_configuration.source_url
 
     def test_updating_event(self):
-        config_values = get_updated_config_values(updates={'identifier': test_event_identifier, 'end_time': 999})
+        config_values = get_updated_test_config_values(updated_values={'identifier': test_event_identifier, 'end_time': 999})
         new_test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
         self.test_event_repository.update_event(new_event_configuration=new_test_configuration)
         retrieved_configuration = self.test_event_repository.get_event_configuration(test_event_identifier)
