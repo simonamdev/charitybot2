@@ -11,10 +11,8 @@ from charitybot2.public_api.console.console import app
 from charitybot2.sources.url_call import UrlCall
 from charitybot2.start_service import Service, ServiceRunner
 from faker import Faker
-from selenium.webdriver.common.keys import Keys
-from tests.setup_test_database import setup_test_database
 from selenium import webdriver
-
+from selenium.webdriver.common.keys import Keys
 
 driver = None
 test_event_identifier = 'test'

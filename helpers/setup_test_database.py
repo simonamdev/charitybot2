@@ -9,8 +9,7 @@ from charitybot2.models.donation import Donation
 from charitybot2.paths import test_repository_db_path
 from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
-from tests.integration.test_event_register import get_test_event_configuration
-
+from helpers.event_config import get_test_event_configuration
 
 current_time = int(time.time())
 # 2 hours long

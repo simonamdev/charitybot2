@@ -8,9 +8,9 @@ from charitybot2.paths import overlay_script_path, private_api_script_path
 from charitybot2.private_api.private_api import private_api_service
 from charitybot2.public_api.overlay.overlay import app
 from charitybot2.start_service import Service, ServiceRunner
+from helpers.setup_test_database import setup_test_database
 from selenium import webdriver
 from tests.integration.test_event_register import get_test_event_configuration
-from tests.setup_test_database import setup_test_database
 
 driver = None
 debug_mode = True
