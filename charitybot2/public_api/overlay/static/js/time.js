@@ -51,7 +51,7 @@ function returnTimespanString(timespanInSeconds) {
     var timespanInHours = timespanInMinutes / 60;
     if (timespanInHours < 1) {
         return Math.floor(timespanInMinutes) + ' minutes';
-    } else if (timespanInMinutes == 1) {
+    } else if (Math.floor(timespanInMinutes) == 1) {
         return '1 minute';
     }
     if (timespanInHours == 1) {
