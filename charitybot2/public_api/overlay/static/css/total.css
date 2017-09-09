@@ -12,15 +12,27 @@ html, body {
   overflow: hidden;
 }
 
-.currency {
-  vertical-align: middle;
-}
-
 #overlay-text {
-  text-align: center;
-  width: 100vw;
-  font-size: 32vw;
+  vertical-align: middle;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  line-height: 100vh;
   top: 0;
   left: 0;
   margin: 0;
+}
+
+#overlay-amount {
+  font-size: 15vw;
+  line-height: 100vh;
+  height: 100%;
+}
+
+.currency {
+  height: 100%;
+  line-height: 100vh;
+  font-size: 15vw;
+  vertical-align: middle;
+
 }
