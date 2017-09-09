@@ -41,7 +41,7 @@ function drawTableRows(data) {
     var tableRows = '';
     for (var i = 0; i < data.donations.length; i++) {
         var donation = JSON.parse(data.donations[i]);
-        var donationRow = '<tr><td>' + currencySymbol + donation['amount'] + ', ' + returnTimespanString(donation['timestamp']) + ' ago</td></tr>';
+        var donationRow = '<tr><td>' + currencySymbol + donation['amount'] + ', ' + returnTimespanString(((new Date()).getTime() / 1000) - donation['timestamp']) + ' ago</td></tr>';
         tableRows += donationRow;
     }
     table.innerHTML += tableRows;
