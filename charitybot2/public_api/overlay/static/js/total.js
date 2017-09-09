@@ -6,9 +6,9 @@ console.log('Connecting to API via: ' + apiAddress);
 
 function getTotal() {
     fetchJSONFile(totalUrl, (data) => {
-        console.log(data);
-        var header = document.getElementById('overlay-amount');
-        header.innerHTML = data['total'];
+//        console.log(data);
+        var amountEl = document.getElementById('overlay-amount');
+        amountEl.innerText = data['total'];
     }, () => {
         markUnavailable();
     });

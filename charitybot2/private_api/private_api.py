@@ -254,10 +254,10 @@ def record_donation():
         new_donation = Donation.from_dict(received_data)
         get_donations_repository().record_donation(new_donation)
         success = True
-    except InvalidRepositoryQueryException:
-        message = 'Donation Repository Error'
+    except InvalidRepositoryQueryException as e:
+        message = 'Donation Repository Error: {}'.format(e)
     except InvalidDonationException as e:
-        message = 'Donation was invalid'
+        message = 'Donation was invalid: {}'.format(e)
         print('Error: {} Data: {}'.format(e, received_data))
     except Exception as e:
         message = 'Unknown exception: {}'.format(e)

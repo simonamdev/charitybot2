@@ -228,13 +228,15 @@ function submitDonation() {
         donor_name: donor,
         notes: notes
     }
-    debugPrint('Submitting following donation: ' + data);
+    debugPrint('Submitting following donation:');
+    debugPrint(data);
     request.open('POST', newDonationUrl, true);
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
     // On load, handle if successful or not
     request.onload = () => {
         var response = JSON.parse(request.responseText);
+        debugPrint('Response:');
         debugPrint(response);
         // If the donation was successful, redraw the donations
         if (response['received']) {
