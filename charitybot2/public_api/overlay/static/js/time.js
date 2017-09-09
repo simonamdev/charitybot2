@@ -38,7 +38,7 @@ function convertToTime(timestamp) {
 }
 
 function roundUp(number) {
-    return Math.round(number * 100) / 100
+    return Math.round(number * 100) / 100;
 }
 
 function returnTimespanString(timespanInSeconds) {
@@ -50,7 +50,7 @@ function returnTimespanString(timespanInSeconds) {
     }
     var timespanInHours = timespanInMinutes / 60;
     if (timespanInHours < 1) {
-        return roundUp(timespanInMinutes) + ' minutes';
+        return Math.floor(timespanInMinutes) + ' minutes';
     } else if (timespanInMinutes == 1) {
         return '1 minute';
     }
