@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>CharityBot</title>
+        <meta name="description" content="CharityBot Overlay">
+        <meta name="author" content="purrcat259">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/sink.css') }}">
+        <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/time.js') }}"></script>
+        <script>
+            var eventIdentifier = '{{ event_identifier }}';
+            var apiAddress = '{{ api_address }}';
+            var updateDelay = {{ update_delay }};
+        </script>
+    </head>
+    <body>
+        <div class="title-wrapper">
+            <h1>Total</h1>
+        </div>
+        <iframe src="http://127.0.0.1:7000/test/total" class="iframe"></iframe>
+        <div class="title-wrapper">
+            <h1>Ticker</h1>
+        </div>
+        <iframe src="http://127.0.0.1:7000/test/ticker" class="iframe"></iframe>
+        <div class="title-wrapper">
+            <h1>Latest</h1>
+        </div>
+        <iframe src="http://127.0.0.1:7000/test/latest" class="iframe"></iframe>
+    </body>
+</html>

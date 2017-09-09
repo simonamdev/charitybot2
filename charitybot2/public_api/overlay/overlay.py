@@ -87,6 +87,11 @@ def event_latest(event_identifier):
     return render_template('latest.html', event_identifier=event_identifier)
 
 
+@app.route('/<event_identifier>/kitchensink')
+def kitchen_sink(event_identifier):
+    return render_template('kitchen_sink.html', event_identifier=event_identifier)
+
+
 @app.route('/destroy/')
 def destroy():
     if overlay_service.debug:
