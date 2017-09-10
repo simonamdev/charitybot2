@@ -5,27 +5,41 @@ var latestDonationUrl = donationsUrl + '?limit=1';
 
 console.log('Connecting to API via: ' + apiAddress);
 
+let previousDonation = null;
+
 
 function getLatestDonation() {
 //    console.log('Getting Latest Donation');
     fetchJSONFile(latestDonationUrl, (data) => {
-        latest_donation = JSON.parse(data['donations']);
+        let latestDonation = JSON.parse(data['donations']);
+        if (!previousDonation) {
+            previousDonation = latestDonation;
+        }
 //        console.log(latest_donation);
-        var latest = document.getElementById('overlay-latest');
-        latest.innerHTML =
-            latest_donation['amount'] +
+        let latestEl = document.getElementById('overlay-latest');
+        latestEl.innerHTML =
+            latestDonation['amount'] +
             ' from ' +
-            latest_donation['donor_name'] +
+            latestDonation['donor_name'] +
             ', ' +
-            returnTimespanString(Math.round((new Date()).getTime() / 1000) - latest_donation['timestamp']) +
+            returnTimespanString(Math.round((new Date()).getTime() / 1000) - latestDonation['timestamp']) +
             ' ago';
+        let latestWrapperEl = document.getElementsByClassName('latest-wrapper')[0];
+        if (previousDonation['internal_reference'] !== latestDonation['internal_reference']) {
+            latestWrapperEl.classList.add('bounce');
+            previousDonation = latestDonation;
+        }
+        // Animate then remove the class
+        setTimeout(() => {
+            latestWrapperEl.classList.remove('bounce');
+        }, 1500);
     }, () => {
         markUnavailable();
     });
 }
 
 function markUnavailable() {
-    var latest = document.getElementById('latest-header');
+    let latest = document.getElementById('latest-header');
     latest.innerHTML = 'Unable to connect';
 }
 
