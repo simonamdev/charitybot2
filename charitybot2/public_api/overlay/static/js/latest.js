@@ -17,10 +17,11 @@ function getLatestDonation() {
         }
 //        console.log(latest_donation);
         let latestEl = document.getElementById('overlay-latest');
+        let name = latestDonation['donor_name'] || 'Anonymous';
         latestEl.innerHTML =
             latestDonation['amount'] +
             ' from ' +
-            latestDonation['donor_name'] +
+            name +
             ', ' +
             returnTimespanString(Math.round((new Date()).getTime() / 1000) - latestDonation['timestamp']) +
             ' ago';
