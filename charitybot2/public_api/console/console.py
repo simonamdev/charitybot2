@@ -84,7 +84,7 @@ def index():
 
 
 @app.route('/event/<event_identifier>/')
-@auth.login_required
+# @auth.login_required
 def event(event_identifier):
     return render_template('event.html', event_identifier=event_identifier)
 

@@ -11,36 +11,32 @@
     </script>
 {% endblock %}
 {% block body %}
-    <div>
-        <h1>Charitybot Statistics</h1>
-        <h2>{{ event_identifier }}</h2>
+    <div class="header dashboard-segment">
+        <h1>Charitybot Statistics Dashboard</h1>
+        <h2>Event: {{ event_identifier }}</h2>
     </div>
     <!-- Alerts row -->
-    <div>
-        <div id="event-alert">
-            <h5>Event Error</h5>
-            <p>Event with identifier: {{ event_identifier }} does not exist!</p>
-        </div>
+    <div class="alert-div">
+        <h1>Event Error</h1>
+        <p id="alertMessageText">Event with identifier: {{ event_identifier }} does not exist!</p>
     </div>
-    <div id="statisticsConsole">
+    <div id="statisticsDashboard">
         <!-- Event Progress -->
-        <div>
-            <div>
-                <div>
-                    <span>Start Time:</span>
-                    <span id="eventStartTime"></span>
+        <div class="dashboard-segment progress-dashboard">
+            <div class="card progress-card start">
+                <span>Start Time:</span>
+                <span id="eventStartTime"></span>
+            </div>
+            <div class="card progress-card event-progress">
+                <div class="progress" role="progressbar" tabindex="0">
+                  <span id="eventProgress" class="progress-meter">
+                      <p id="eventProgressText" class="progress-meter-text"></p>
+                  </span>
                 </div>
-                <div>
-                    <div class="progress" role="progressbar" tabindex="0">
-                      <span id="eventProgress" class="progress-meter">
-                          <p id="eventProgressText" class="progress-meter-text"></p>
-                      </span>
-                    </div>
-                </div>
-                <div>
-                    <span>End Time:</span>
-                    <span id="eventEndTime"></span>
-                </div>
+            </div>
+            <div class="card progress-card end">
+                <span>End Time:</span>
+                <span id="eventEndTime"></span>
             </div>
         </div>
         <!-- Donations Progress -->

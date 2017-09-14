@@ -35,7 +35,6 @@ function getConsoleElement(id) {
 }
 
 function checkEventExists() {
-    getConsoleElement('event-alert').style.display = 'none';
     return new Promise((resolve, reject) => {
         getEventExistence().then(
             (data) => {

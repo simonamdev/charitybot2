@@ -1,44 +1,59 @@
-body {
+html, body {
     background-color: #ECF0F1;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2 {
+    margin: 0;
 }
 
 .header {
-    padding-top: 2em;
+    padding: 1em 1em;
+    margin: 0;
+    background-color: #fff;
 }
 
-.row {
-    padding-top: 1em;
+.alert-div {
+    display: none;
 }
 
-.key-box {
-    color: white;
-    background-color: blue;
-    min-height: 20px;
+.card {
+    font-size: 1.5em;
+    background-color: #ECF0F1;
+    color: #fff;
+    padding: 1em;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.dashboard-segment {
+    margin: .25em 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.16), 0 1px 2px rgba(0,0,0,0.23);
+}
+
+.progress-dashboard {
+    background: #fff;
+    display: inline-block;
+    width: 100%;
+    padding: 1em 0;
     text-align: center;
 }
 
-.value-box {
-    color: white;
-    background-color: red;
-    min-height: 20px;
-    text-align: center;
+.progress-card {
+    margin: 0 auto;
 }
 
-.box-text {
-    text-align: center;
-    margin: auto;
-    vertical-align: middle;
+.start {
+    width: 30%;
+    background-color: #e74c3c;
+}
+
+.event-progress {
     width: 50%;
+    background-color: #27ae60;
 }
 
-.box {
-    font-size: 1em;
-    background-color: #4B77BE;
-    color: white;
-    height: 50px;
-    padding-top: 1em;
-}
-
-.progress {
-    margin-top: 1em;
+.end {
+    width: 30%;
+    background-color: #3498db;
 }
