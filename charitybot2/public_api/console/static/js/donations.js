@@ -36,7 +36,9 @@ function drawDonations(data) {
                         i +
                         '</td><td data-label="Amount">' +
                         currencySymbol + rowDonation['amount'] +
-                        '</td><td data-label="Timestamp">' +
+                        '</td><td data-label="Time Ago">' +
+                        returnTimespanString(Math.round((new Date()).getTime() / 1000) - rowDonation['timestamp']) +
+                        ' ago</td><td data-label="Timestamp">' +
                         convertToDatetime(rowDonation['timestamp']) +
                         '</td><td data-label="Donor Name">' +
                         rowDonation['donor_name'] +
@@ -46,14 +48,12 @@ function drawDonations(data) {
                         rowDonation['external_reference'] +
                         '</td><td data-label="Internal Ref">' +
                         rowDonation['internal_reference'].substring(0, 8) +
-                        '...' +
-                        '</td></tr>';
+                        '...</td></tr>';
         donationsTableBody.innerHTML += rowString;
     }
 }
 
 function getNoteTd(note) {
-    if (note.toLowerCase().indexOf('hunter') !== -1 && note.toLowerCase().indexOf('games') !== -1) {
     if (note.toLowerCase().indexOf('hunter') !== -1 && note.toLowerCase().indexOf('games') !== -1) {
         return '<td class="marked-row" data-label="Message">' + note + '</td>';
     }
