@@ -12,8 +12,6 @@ console.log('Connecting to API via: ' + apiAddress);
 updateDelay = updateDelay || 10000; // ms
 chartUpdateDelay = updateDelay * 3;
 
-//drawUI();
-drawEventPercentage(50);
 checkEventExists().then((eventExists) => {
     // Start updating the UI every updateDelay
     if (eventExists) {
