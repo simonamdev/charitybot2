@@ -6,9 +6,11 @@ var eventTotalUrl = eventUrl + '/total/';
 var donationsUrl = eventUrl + '/donations/';
 var donationCountUrl = donationsUrl + 'count';
 var donationAverageUrl = donationsUrl + 'average';
+var donationDistributionUrl = donationsUrl + 'distribution';
 
 console.log('Connecting to API via: ' + apiAddress);
 updateDelay = updateDelay || 10000; // ms
+chartUpdateDelay = updateDelay * 3;
 
 //drawUI();
 drawEventPercentage(50);
@@ -18,10 +20,15 @@ checkEventExists().then((eventExists) => {
         drawCurrencySymbolOnPage();
         drawEventDetails();
         drawDonationData();
+        drawCharts();
         setInterval(() => {
             console.log('Drawing Console');
             drawDonationData();
         }, updateDelay);
+        setInterval(() => {
+            console.log('Drawing Charts');
+            drawCharts();
+        }, chartUpdateDelay);
     }
 });
 
@@ -130,7 +137,7 @@ function drawDonationData() {
 }
 
 function getDonationData() {
-    var donationCountPromise = getDataFromApi(donationCountUrl)
+    var donationCountPromise = getDataFromApi(donationCountUrl);
     // Donation count in last 5 minutes
     var now = new Date().getTime();
     var five_minutes_ago = (now / 1000) - (5 * 60);
@@ -151,10 +158,57 @@ function getDonationData() {
 }
 
 function drawCharts() {
-
+    var donationsPromise = getDataFromApi(donationsUrl);
+    var distributionPromise = getDataFromApi(donationDistributionUrl);
+    Promise.all([donationsPromise, distributionPromise]).then((data) => {
+        let donations = data[0];
+        let distribution = data[1];
+        drawDonationsChart(donations['donations']);
+        drawDistributionChart(distribution);
+    });
 }
 
-function getChartData() {
+function drawDonationsChart(donations) {
+    // adapt the data
+    // Reverse the donations
+    donations.reverse();
+    let donationPoints = donations.map((donation) => {
+        let parsedDonation = JSON.parse(donation);
+        return {
+            amount: parsedDonation.amount,
+            timestamp: parsedDonation.timestamp
+        };
+    });
+    // console.log(donationPoints);
+    let canvasEl = document.getElementById('donationsOverTimeGraph');
+    canvasEl.classList = 'ct-chart ct-square chart-canvas';
+    // extract the series and labels
+    let labels = donationPoints.map((donation) => {
+        return donation['timestamp'];
+    });
+    let series = donationPoints.map((donation) => {
+        return donation['amount'];
+    });
+    var data = {
+        labels: labels,
+        series: [
+            series
+        ]
+    };
+    return new Chartist.Line('#donationsOverTimeGraph', data);
+}
+
+function drawDistributionChart(distribution) {
+    // console.log(distribution);
+    const bounds = [[0, 10], [10, 20], [20, 50], [50, 75], [75, 100], [100, 10000]];
+    let labels = [];
+    // Generate the bound labels
+    for (let i = 0; i < bounds.length; i++) {
+        labels.push(bounds[i].join(' -> '));
+    }
+    // console.log(labels);
+    let canvasEl = document.getElementById('donationDistributionGraph');
+    canvasEl.classList = 'ct-chart ct-square chart-canvas';
 
 }
 

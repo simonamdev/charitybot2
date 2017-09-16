@@ -4,6 +4,7 @@
     <script src="{{ url_for('static', filename='js/time.js') }}"></script>
     <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
     <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.0/chartist.min.css" integrity="sha256-Te9+aTaL9j0U5PzLhtAHt+SXlgIT8KT9VkyOZn68hak=" crossorigin="anonymous" />
     <script>
         var eventIdentifier = '{{ event_identifier }}';
         var apiAddress = '{{ api_address }}';
@@ -79,12 +80,14 @@
         </div>
         <!-- Graphs -->
         <h1>Graphs</h1>
-        <div class="dashboard-segment progress-dashboard flex-dashboard">
-            <div class="card blue">
+        <div class="dashboard-segment progress-dashboard graph">
+            <div class="card white graph">
                 <h2>Donations over time</h2>
                 <div id="donationsOverTimeGraph"></div>
             </div>
-            <div class="card blue">
+        </div>
+        <div class="dashboard-segment progress-dashboard">
+            <div class="card">
                 <h2>Donation Distribution</h2>
                 <div id="donationDistributionGraph"></div>
             </div>
@@ -92,5 +95,6 @@
     </div>
 {% endblock %}
 {% block after_body %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.0/chartist.min.js" integrity="sha256-UzffRueYhyZDw8Cj39UCnnggvBfa1fPcDQ0auvCbvCc=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/statistics.js') }}"></script>
 {% endblock %}
