@@ -14,8 +14,9 @@ h1, h2 {
     background-color: #fff;
 }
 
-.alert-div {
+#alertDiv {
     display: none;
+    background-color: #e74c3c;
 }
 
 .card {
@@ -39,21 +40,34 @@ h1, h2 {
     text-align: center;
 }
 
+.flex-dashboard {
+    display: flex;
+}
+
+.flex-dashboard div {
+    flex-basis: 100%;
+}
+
 .progress-card {
     margin: 0 auto;
 }
 
-.start {
+.red {
     width: 30%;
     background-color: #e74c3c;
 }
 
-.event-progress {
-    width: 50%;
+.green {
     background-color: #27ae60;
 }
 
-.end {
+.progress-bar {
+    width: 50%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.blue {
     width: 30%;
     background-color: #3498db;
 }

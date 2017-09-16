@@ -16,89 +16,77 @@
         <h2>Event: {{ event_identifier }}</h2>
     </div>
     <!-- Alerts row -->
-    <div class="alert-div">
-        <h1>Event Error</h1>
-        <p id="alertMessageText">Event with identifier: {{ event_identifier }} does not exist!</p>
+    <div class="card" id="alertDiv">
+        <h1>Statistics Console Error</h1>
+        <p id="alertMessageText"></p>
     </div>
     <div id="statisticsDashboard">
         <!-- Event Progress -->
+        <h1>Event Progress</h1>
         <div class="dashboard-segment progress-dashboard">
-            <div class="card progress-card start">
+            <div class="card progress-card red">
                 <span>Start Time:</span>
                 <span id="eventStartTime"></span>
             </div>
-            <div class="card progress-card event-progress" id="eventProgressCard">
+            <div class="card progress-card progress-bar green" id="eventProgressCard">
                 <span id="eventProgressPercentage"></span>
             </div>
-            <div class="card progress-card end">
+            <div class="card progress-card blue">
                 <span>End Time:</span>
                 <span id="eventEndTime"></span>
             </div>
         </div>
         <!-- Donations Progress -->
-        <div>
-            <div>
-                <div>
-                    <span>Amount Raised</span>
-                    <span class="currency"></span>
-                    <span id="eventAmountRaised"></span>
-                </div>
-                <div>
-                    <div class="progress" role="progressbar" tabindex="0">
-                      <span id="donationProgress" class="progress-meter">
-                          <p id="donationProgressText" class="progress-meter-text"></p>
-                      </span>
-                    </div>
-                </div>
-                <div>
-                    <span>Target Amount</span>
-                    <span class="currency"></span>
-                    <span id="eventTargetRaised"></span>
-                </div>
+        <h1>Donation Progress</h1>
+        <div class="dashboard-segment progress-dashboard">
+            <div class="card progress-card red">
+                <span>Amount Raised:</span>
+                <span class="currency"></span><span id="eventAmountRaised"></span>
+            </div>
+            <div class="card progress-card progress-bar green" id="donationProgressCard">
+                <span id="donationProgressPercentage"></span>
+            </div>
+            <div class="card progress-card blue">
+                <span>Donation Target:</span>
+                <span class="currency"></span><span id="eventTargetRaised"></span>
             </div>
         </div>
         <!-- Donation Statistics -->
-        <div>
-            <div>
-                <div>
-                    <span id="donationCount"></span>
-                    <span>donations in total</span>
-                </div>
-                <div>
-                    <span id="donationCountInTimespan"></span>
-                </div>
-                <div>
-                    <span>Average</span>
-                    <span class="currency"></span>
-                    <span id="averageDonationAmount"></span>
-                </div>
+        <h1>Donation Counts</h1>
+        <div class="dashboard-segment progress-dashboard flex-dashboard">
+            <div class="card progress-card red">
+                <span id="donationCount"></span>
+                <span> donations</span>
+            </div>
+           <div class="card progress-card blue">
+                <span id="donationCountInTimespan"></span>
             </div>
         </div>
-        <!-- Donation largest / latest -->
-        <div>
-            <div>
-                <div>
-                    <span>Largest Donation</span>
-                    <span class="currency"></span>
-                    <span id="largestDonationAmount"></span>
-                </div>
-                <div></div>
-                <div>
-                    <span>Latest Donation</span>
-                    <span class="currency"></span>
-                    <span id="latestDonationAmount"></span>
-                </div>
+        <h1>Donation Amounts</h1>
+        <div class="dashboard-segment progress-dashboard flex-dashboard">
+            <div class="card progress-card green">
+                <span>Average donation amount: </span>
+                <span class="currency"></span><span id="averageDonation"></span>
+            </div>
+            <div class="card progress-card green">
+                <span>Largest donation: </span>
+                <span class="currency"></span><span id="largestDonation"></span>
+            </div>
+            <div class="card progress-card green">
+                <span>Latest donation: </span>
+                <span class="currency"></span><span id="latestDonation"></span>
             </div>
         </div>
         <!-- Graphs -->
-        <div>
-            <div>
-                <span>Donations over Time Graph</span>
-                <span>COMING SOON</span>
+        <h1>Graphs</h1>
+        <div class="dashboard-segment progress-dashboard flex-dashboard">
+            <div class="card blue">
+                <h2>Donations over time</h2>
+                <div id="donationsOverTimeGraph"></div>
             </div>
-            <div>
-                <span>Donation distribution Graph</span>
-                <span>COMING SOON</span>
+            <div class="card blue">
+                <h2>Donation Distribution</h2>
+                <div id="donationDistributionGraph"></div>
             </div>
         </div>
     </div>

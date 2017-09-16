@@ -8,14 +8,45 @@ var donationCountUrl = donationsUrl + 'count';
 var donationAverageUrl = donationsUrl + 'average';
 
 console.log('Connecting to API via: ' + apiAddress);
-
-if (!updateDelay) {
-    var updateDelay = 10000; // ms
-}
+updateDelay = updateDelay || 10000; // ms
 
 //drawUI();
 drawEventPercentage(50);
+checkEventExists().then((eventExists) => {
+    // Start updating the UI every updateDelay
+    if (eventExists) {
+        drawCurrencySymbolOnPage();
+        drawEventDetails();
+        drawDonationData();
+        setInterval(() => {
+            console.log('Drawing Console');
+            drawDonationData();
+        }, updateDelay);
+    }
+});
 
+// Check the event exists asynchronously
+function checkEventExists() {
+    return new Promise((resolve, reject) => {
+        getDataFromApi(eventExistenceUrl).then(
+            (data) => {
+                if (!data['event_exists']) {
+                    // Clear the screen and display the alert div
+                    document.getElementById('alertDiv').style.display = 'block';
+                    document.getElementById('alertMessageText').innerText = 'Event: ' + eventIdentifier + ' does not exist';
+                    document.getElementById('statisticsDashboard').style.display = 'none';
+                    resolve(false);
+                }
+                resolve(true);
+            }
+        ).catch((error) => {
+            console.error(error);
+            reject(false);
+        });
+    });
+}
+
+// Given a number, draw the event progress percentage
 function drawEventPercentage(amount) {
     const minimumDivWidth = 12;
     let eventProgressEl = document.getElementById('eventProgressCard');
@@ -30,48 +61,19 @@ function drawEventPercentage(amount) {
     }
 }
 
-function drawUI() {
-    checkEventExists().then((eventExists) => {
-        if (eventExists) {
-            drawCurrencySymbolOnPage();
-            drawEventDetails();
-            drawDonationData();
-            // Setup the update loop
-            var updateDelay = 5000; // ms
-            setInterval(() => {
-                drawEventDetails();
-                drawDonationData();
-                drawCharts();
-            }, updateDelay);
-        }
-    });
-}
-
-function getConsoleElement(id) {
-    return document.getElementById(id);
-}
-
-function checkEventExists() {
-    return new Promise((resolve, reject) => {
-        getEventExistence().then(
-            (data) => {
-                if (!data['event_exists']) {
-                    // Clear the screen and unhide the error
-                    getConsoleElement('event-alert').style.display = 'block';
-                    getConsoleElement('statisticsConsole').style.display = 'none';
-                    resolve(false);
-                }
-                resolve(true);
-            }
-        ).catch((error) => {
-            console.error(error);
-            reject(false);
-        });
-    });
-}
-
-function getEventExistence() {
-    return getDataFromApi(eventExistenceUrl);
+// Given a number, draw the donation progress percentage
+function drawDonationPercentage(amount) {
+    const minimumDivWidth = 19;
+    let donationProgressEl = document.getElementById('donationProgressCard');
+    let donationPercentageEl = document.getElementById('donationProgressPercentage');
+    if (amount > 100) {
+        donationPercentageEl.innerText = 'Target reached! ' + amount + '%';
+        donationProgressEl.style.width = '100%';
+    } else {
+        donationPercentageEl.innerText = amount + '% reached';
+        let width = amount >= minimumDivWidth ? amount : minimumDivWidth;
+        donationProgressEl.style.width = width + '%';
+    }
 }
 
 function drawEventDetails() {
@@ -80,32 +82,22 @@ function drawEventDetails() {
             var eventDetails = data[0];
             var eventTotal = data[1]['total'];
             // Event Details
-            getConsoleElement('eventStartTime').innerHTML = convertToDatetime(eventDetails['start_time']);
-            getConsoleElement('eventEndTime').innerHTML = convertToDatetime(eventDetails['end_time']);
+            document.getElementById('eventStartTime').innerHTML = convertToDatetime(eventDetails['start_time']);
+            document.getElementById('eventEndTime').innerHTML = convertToDatetime(eventDetails['end_time']);
             // Event amounts
-            getConsoleElement('eventAmountRaised').innerHTML = eventTotal;
-            getConsoleElement('eventTargetRaised').innerHTML = eventDetails['target_amount'];
+            document.getElementById('eventAmountRaised').innerHTML = eventTotal;
+            document.getElementById('eventTargetRaised').innerHTML = eventDetails['target_amount'];
             // Progress bar
             var currentTime = Math.floor(Date.now() / 1000);
             var completedEventPercentage = (parseInt(eventDetails['end_time']) - currentTime) /
                                       (parseInt(eventDetails['end_time']) - parseInt(eventDetails['start_time']));
             completedEventPercentage = Math.round(completedEventPercentage * 100);
             completedEventPercentage = 100 - completedEventPercentage;
-            if (completedEventPercentage < 100) {
-                getConsoleElement('eventProgress').style.width = completedEventPercentage + '%';
-            } else {
-                getConsoleElement('eventProgress').style.width = '100%';
-            }
+            drawEventPercentage(completedEventPercentage);
 
-            getConsoleElement('eventProgressText').innerHTML = completedEventPercentage + '%';
             var donationCompletionPercentage = parseInt(eventTotal) / parseInt(eventDetails['target_amount']);
             donationCompletionPercentage = Math.round(donationCompletionPercentage * 100);
-            if (donationCompletionPercentage < 100) {
-                getConsoleElement('donationProgress').style.width = donationCompletionPercentage + '%';
-            } else {
-                getConsoleElement('donationProgress').style.width = '100%';
-            }
-            getConsoleElement('donationProgressText').innerHTML = donationCompletionPercentage + '%';
+            drawDonationPercentage(donationCompletionPercentage);
         }
     ).catch((error) => {
         console.error(error);
@@ -115,7 +107,6 @@ function drawEventDetails() {
 function getEventData() {
     var eventDetailsPromise = getDataFromApi(eventUrl);
     var eventTotalPromise = getDataFromApi(eventTotalUrl);
-    var donationAveragePromise = getDataFromApi();
     return Promise.all([eventDetailsPromise, eventTotalPromise]);
 }
 
@@ -126,13 +117,12 @@ function drawDonationData() {
             var timeBoundCount = data[1]['count'];
             var largestDonation = data[2];
             var latestDonation = JSON.parse(data[3]['donations']);
-            var averageDonation = data[4]['average_donation_amount'];
-            getConsoleElement('donationCount').innerHTML = donationCount;
-            getConsoleElement('donationCountInTimespan').innerHTML = timeBoundCount + ' donations in the last 5 minutes';
-            getConsoleElement('averageDonationAmount').innerHTML = averageDonation;
-            getConsoleElement('largestDonationAmount').innerHTML = largestDonation['amount'];
-            getConsoleElement('latestDonationAmount').innerHTML = latestDonation['amount'];
-            // TODO: Donation progress bar
+            var averageDonation = Math.round(data[4]['average_donation_amount']);
+            document.getElementById('donationCount').innerHTML = donationCount;
+            document.getElementById('donationCountInTimespan').innerHTML = timeBoundCount + ' donations in the last 5 minutes';
+            document.getElementById('averageDonation').innerHTML = averageDonation;
+            document.getElementById('largestDonation').innerHTML = largestDonation['amount'];
+            document.getElementById('latestDonation').innerHTML = latestDonation['amount'];
         }
     ).catch((error) => {
         console.log(error);
