@@ -8,10 +8,27 @@ var donationCountUrl = donationsUrl + 'count';
 var donationAverageUrl = donationsUrl + 'average';
 
 console.log('Connecting to API via: ' + apiAddress);
+
 if (!updateDelay) {
     var updateDelay = 10000; // ms
 }
-drawUI();
+
+//drawUI();
+drawEventPercentage(50);
+
+function drawEventPercentage(amount) {
+    const minimumDivWidth = 12;
+    let eventProgressEl = document.getElementById('eventProgressCard');
+    let eventPercentageEl = document.getElementById('eventProgressPercentage');
+    if (amount > 100) {
+        eventPercentageEl.innerText = 'Event complete!';
+        eventProgressEl.style.width = '100%';
+    } else {
+        eventPercentageEl.innerText = amount + '% complete';
+        let width = amount >= minimumDivWidth ? amount : minimumDivWidth;
+        eventProgressEl.style.width = width + '%';
+    }
+}
 
 function drawUI() {
     checkEventExists().then((eventExists) => {
