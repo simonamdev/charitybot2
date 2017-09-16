@@ -3,6 +3,7 @@ import time
 
 import sqlite3
 from faker import Faker
+from tqdm import tqdm
 
 from charitybot2.creators.event_creator import EventRegister
 from charitybot2.models.donation import Donation
@@ -88,7 +89,7 @@ def register_donations(db_path, event_configuration, donation_count, donation_am
     shifting_time = start_time + 5
     fake = Faker()
     print('Adding {} donations'.format(donation_count))
-    for i in range(0, donation_count):
+    for i in tqdm(range(0, donation_count)):
         shifting_time += random.randint(5, 60)
         donor_name = fake.name()
         if randomise_donations:
