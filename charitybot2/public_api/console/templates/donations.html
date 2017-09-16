@@ -1,95 +1,47 @@
 {% extends "layout.html" %}
 {% block optional_head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/layout.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/donations.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive-table.css') }}" />
     <script>
         var eventIdentifier = '{{ event_identifier }}';
         var apiAddress = '{{ api_address }}';
     </script>
+    <script src="{{ url_for('static', filename='js/time.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
 {% endblock %}
 {% block body %}
     <div class="card" id="alertDiv">
-        <h1>Statistics Console Error</h1>
+        <h1>Error</h1>
         <p id="alertMessageText"></p>
     </div>
 
-    <div class="row">
-        <div class="large-8 large-centered columns">
-            <h1 id="event-header" class="text-center"></h1>
-        </div>
-    </div>
-    <!-- Alerts row -->
-    <div class="row">
-        <div class="alert callout" id="event-alert">
-              <h5>Event Error</h5>
-              <p>Event with identifier: {{ event_identifier }} does not exist!</p>
-        </div>
-        <div class="alert callout" id="donation-alert">
-              <h5>Donation Error</h5>
-              <p></p>
-        </div>
-    </div>
-    <!-- Manual donation form -->
-    <div class="row">
-        <h2 class="text-center">New Donation Form</h2>
-    </div>
-    <form>
-        <div class="row">
-            <div class="large-4 columns">
-                <label>Donation Amount
-                    <input id="new-donation-amount" type="text" placeholder="Enter Amount Here" />
-                </label>
-            </div>
-            <div class="large-4 columns">
-                <label>Donor Name
-                    <input id="new-donation-donor" type="text" placeholder="Enter Name Here" />
-                </label>
-            </div>
-            <div class="large-4 columns">
-                <label>Notes
-                    <input id="new-donation-notes" type="text" placeholder="Enter anything else here" />
-                </label>
-            </div>
-            <input id="donation-submit-button" class="button large-12" type="button" value="Submit Donation" onclick="submitDonation();" />
-        </div>
-    </form>
+    <h1>Charitybot Donations Dashboard</h1>
 
-    <div class="row">
-        <h2 class="text-center">Donation List</h2>
-    </div>
-    <!-- Data -->
-    <div class="row">
-        <div class="large-8 large-centered columns">
-            <div id="statistics-div" class="row">
-                 <div class="large-6 columns text-center">
-                    Total Raised: <span class="currency-symbol"></span><span id="donation-total"></span>
-                </div>
-                <div class="large-6 columns text-center">
-                    Last Donation: <span id="donation-time-ago"></span>
-                </div>
-            </div>
+    <div class="container">
+        <div class="card">
+            <h1 class="header">Donation List</h1>
         </div>
-    </div>
-    <div class="row">
-        <div class="large-10 large-centered columns">
-            <table id="donations-table" class="hover">
+        <div class="card">
+            <table id="donationsTable">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Amount</th>
-                        <th>Timestamp</th>
-                        <th>Donor</th>
-                        <th>Notes</th>
-                        <th>External Reference</th>
-                        <th>Internal Reference</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Timestamp</th>
+                        <th scope="col">Donor</th>
+                        <th scope="col">Message</th>
+                        <th scope="col">External Reference</th>
+                        <th scope="col">Internal Reference</th>
                     </tr>
                 </thead>
-                <tbody id="donations-table-body">
-
+                <tbody id="donationsTableBody">
                 </tbody>
             </table>
         </div>
     </div>
 {% endblock %}
 {% block after_body %}
-    <script type="text/javascript" src="{{url_for('static', filename='js/event-ui.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/donations.js')}}"></script>
 {% endblock %}
