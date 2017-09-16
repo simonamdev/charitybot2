@@ -23,7 +23,7 @@
     </div>
     <div id="statisticsDashboard">
         <!-- Event Progress -->
-        <h1>Event Progress</h1>
+        <h1 class="dashboard-header">Event Progress</h1>
         <div class="dashboard-segment progress-dashboard">
             <div class="card progress-card red">
                 <span>Start Time:</span>
@@ -38,7 +38,7 @@
             </div>
         </div>
         <!-- Donations Progress -->
-        <h1>Donation Progress</h1>
+        <h1 class="dashboard-header">Donation Progress</h1>
         <div class="dashboard-segment progress-dashboard">
             <div class="card progress-card red">
                 <span>Amount Raised:</span>
@@ -53,7 +53,7 @@
             </div>
         </div>
         <!-- Donation Statistics -->
-        <h1>Donation Counts</h1>
+        <h1 class="dashboard-header">Donation Counts</h1>
         <div class="dashboard-segment progress-dashboard flex-dashboard">
             <div class="card progress-card red">
                 <span id="donationCount"></span>
@@ -63,7 +63,7 @@
                 <span id="donationCountInTimespan"></span>
             </div>
         </div>
-        <h1>Donation Amounts</h1>
+        <h1 class="dashboard-header">Donation Amounts</h1>
         <div class="dashboard-segment progress-dashboard flex-dashboard">
             <div class="card progress-card green">
                 <span>Average donation amount: </span>
@@ -79,17 +79,17 @@
             </div>
         </div>
         <!-- Graphs -->
-        <h1>Graphs</h1>
-        <div class="dashboard-segment progress-dashboard">
-            <div class="card white chart">
+        <h1 class="dashboard-header">Graphs</h1>
+        <div class="dashboard-segment progress-dashboard chart-dashboard">
+            <div class="card white chart-card">
                 <h2>Donation Amounts over time</h2>
                 <div id="donationsOverTimeGraph"></div>
             </div>
-            <div class="card white chart">
+            <div class="card white chart-card">
                 <h2>Donation Total over time</h2>
                 <div id="donationsTotalOverTime"></div>
             </div>
-            <div class="card white chart">
+            <div class="card white chart-card">
                 <h2>Donation Distribution</h2>
                 <div id="donationDistributionGraph"></div>
             </div>
