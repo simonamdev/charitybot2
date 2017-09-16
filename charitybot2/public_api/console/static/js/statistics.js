@@ -164,6 +164,7 @@ function drawCharts() {
         let donations = data[0];
         let distribution = data[1];
         drawDonationsChart(donations['donations']);
+        drawDonationsTotalChart(donations['donations']);
         drawDistributionChart(distribution);
     });
 }
@@ -184,7 +185,7 @@ function drawDonationsChart(donations) {
     canvasEl.classList = 'ct-chart ct-square chart-canvas';
     // extract the series and labels
     let labels = donationPoints.map((donation) => {
-        return donation['timestamp'];
+        return convertToDatetime(donation['timestamp']);
     });
     let series = donationPoints.map((donation) => {
         return donation['amount'];
@@ -198,6 +199,46 @@ function drawDonationsChart(donations) {
     return new Chartist.Line('#donationsOverTimeGraph', data);
 }
 
+function drawDonationsTotalChart(donations) {
+    // adapt the data
+    let donationPoints = donations.map((donation) => {
+        let parsedDonation = JSON.parse(donation);
+        return {
+            amount: parsedDonation.amount,
+            timestamp: parsedDonation.timestamp
+        };
+    });
+    // console.log(donationPoints);
+    let canvasEl = document.getElementById('donationsTotalOverTime');
+    canvasEl.classList = 'ct-chart ct-square chart-canvas';
+    let total = 0.0;
+    let dataPoints = donationPoints.map((donation) => {
+        total += parseFloat(donation['amount']);
+        return {
+            x: new Date(donation['timestamp'] * 1000),
+            y: total
+        };
+    });
+    let data = {
+        series: [
+            {
+                name: 'Donation Total over time',
+                data: dataPoints
+            }
+        ]
+    };
+    let options = {
+        axisX: {
+            type: Chartist.FixedScaleAxis,
+            divisor: 5,
+            labelInterpolationFnc: (value) => {
+                return moment(value).format('D MMM YYYY HH:mm:ss');
+            }
+        }
+    };
+    return new Chartist.Line('#donationsTotalOverTime', data, options);
+}
+
 function drawDistributionChart(distribution) {
     // console.log(distribution);
     const bounds = [[0, 10], [10, 20], [20, 50], [50, 75], [75, 100], [100, 10000]];
@@ -209,7 +250,17 @@ function drawDistributionChart(distribution) {
     // console.log(labels);
     let canvasEl = document.getElementById('donationDistributionGraph');
     canvasEl.classList = 'ct-chart ct-square chart-canvas';
-
+    new Chartist.Bar('#donationDistributionGraph', {
+        labels: labels,
+        series: distribution.distribution
+    }, {
+        distributeSeries: true,
+        scales: {
+            xAxes: [{
+                barThickness: 50
+            }]
+        }
+    });
 }
 
 function getDataFromApi(url) {

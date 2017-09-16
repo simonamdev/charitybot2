@@ -4,6 +4,10 @@ html, body {
     padding: 0;
 }
 
+body {
+    height: 100%;
+}
+
 h1, h2 {
     margin: 0;
 }
@@ -77,6 +81,11 @@ h1, h2 {
     background-color: #3498db;
 }
 
-.graph {
-    height: 100%;
+.chart {
+    margin-top: 1em;
+    height: 40vh;
+}
+
+.chart-canvas {
+    height: 35vh;
 }
