@@ -30,7 +30,7 @@ function drawDonations(data) {
     // Clear the old data
     donationsTableBody.innerHTML = '';
     // Add in the rows
-    for (i = 0; i < donationsData.length; i++) {
+    for (i = 0; i < limit; i++) {
         var rowDonation = JSON.parse(donationsData[i]);
         let rowString = '<tr><td data-label="Index">' +
                         i +
@@ -51,6 +51,7 @@ function drawDonations(data) {
                         '...</td></tr>';
         donationsTableBody.innerHTML += rowString;
     }
+    delete donationsData;
 }
 
 function getNoteTd(note) {

@@ -1,6 +1,7 @@
 import os
 from charitybot2.start_service import Service
 from flask import Flask, render_template
+from flask import request
 from flask_httpauth import HTTPBasicAuth
 
 app = Flask(__name__)
@@ -91,7 +92,8 @@ def event(event_identifier):
 
 @app.route('/donations/<event_identifier>/')
 def donations(event_identifier):
-    return render_template('donations.html', event_identifier=event_identifier)
+    limit = request.args.get('limit')
+    return render_template('donations.html', event_identifier=event_identifier, limit=limit)
 
 
 @app.route('/stats/<event_identifier>/')
