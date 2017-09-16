@@ -1,13 +1,3 @@
-html, body {
-    background-color: #ECF0F1;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    height: 100%;
-}
-
 #statisticsDashboard {
     display: flex;
     flex-direction: column;
@@ -15,27 +5,10 @@ body {
     margin: 0 auto;
 }
 
-h1, h2 {
-    margin: 0;
-}
-
 .header {
     padding: 1em 1em;
     margin: 0;
     background-color: #fff;
-}
-
-#alertDiv {
-    display: none;
-    background-color: #e74c3c;
-}
-
-.card {
-    font-size: 1.5em;
-    background-color: #ECF0F1;
-    color: #fff;
-    padding: 1em;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .dashboard-segment {
