@@ -93,6 +93,7 @@ def event(event_identifier):
 @app.route('/donations/<event_identifier>/')
 def donations(event_identifier):
     limit = request.args.get('limit')
+    limit = 100 if limit is None else limit
     return render_template('donations.html', event_identifier=event_identifier, limit=limit)
 
 
