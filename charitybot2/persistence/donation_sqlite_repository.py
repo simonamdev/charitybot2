@@ -126,7 +126,6 @@ class DonationSQLiteRepository(SQLiteRepository):
                 if bounds[0] <= donation.amount < bounds[1]:
                     distribution[distribution_bounds.index(bounds)] += 1
                     break
-        print(distribution)
         return distribution
 
     @staticmethod
