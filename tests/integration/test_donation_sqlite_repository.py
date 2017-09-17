@@ -30,15 +30,16 @@ class TestDonationSQLiteRepository:
         self.test_donation_repository.close_connection()
 
     def test_getting_all_donations(self):
-        # TODO: rewrite this test
         values = range(1, 6)
         donations = self.test_donation_repository.get_event_donations(
             event_identifier=self.test_event_identifier)
         assert 5 == len(donations)
-        for donation in donations:
-            assert donation.amount in values
-            assert donation.timestamp in values
-            assert donation.event_identifier == self.test_event_identifier
+        donations.reverse() # reverse the donations due to them being latest first
+        for i in range(0, len(donations)):
+            donation = donations[i]
+            assert values[i] == donation.amount
+            assert values[i] == donation.timestamp
+            assert self.test_event_identifier == donation.event_identifier
 
     def test_getting_all_donations_given_a_limit(self):
         values = range(1, 6)
