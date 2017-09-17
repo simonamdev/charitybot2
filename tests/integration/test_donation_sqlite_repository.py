@@ -30,6 +30,7 @@ class TestDonationSQLiteRepository:
         self.test_donation_repository.close_connection()
 
     def test_getting_all_donations(self):
+        # TODO: rewrite this test
         values = range(1, 6)
         donations = self.test_donation_repository.get_event_donations(
             event_identifier=self.test_event_identifier)
@@ -38,6 +39,19 @@ class TestDonationSQLiteRepository:
             assert donation.amount in values
             assert donation.timestamp in values
             assert donation.event_identifier == self.test_event_identifier
+
+    def test_getting_all_donations_given_a_limit(self):
+        values = range(1, 6)
+        test_limit = 3
+        donations = self.test_donation_repository.get_event_donations(
+            event_identifier=self.test_event_identifier,
+            limit=test_limit)
+        assert test_limit == len(donations)
+        for i in range(test_limit, len(donations)):
+            donation = donations[i]
+            assert values[i] == donation.amount
+            assert values[i] == donation.timestamp
+            assert self.test_event_identifier == donation.event_identifier
 
     def test_getting_latest_donation_when_none_present_returns_empty_list(self):
         self.test_donation_repository = get_new_test_database()

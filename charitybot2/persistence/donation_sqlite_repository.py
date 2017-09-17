@@ -30,6 +30,8 @@ class DonationSQLiteRepository(SQLiteRepository):
         return count >= 1
 
     def record_donation(self, donation):
+        # TODO: Move this into the donations service layer
+        # The donations repository should not interact with the events repository
         if self.__donation_already_stored(internal_reference=donation.internal_reference):
             raise DonationAlreadyRegisteredException(
                 'Donation with internal reference: {} is already registered'.format(donation.internal_reference))
@@ -53,12 +55,17 @@ class DonationSQLiteRepository(SQLiteRepository):
         self.execute_query(query=donation_query, data=donation_data)
         self.execute_query(query=event_total_query, data=event_data, commit=True)
 
-    def get_event_donations(self, event_identifier):
-        # TODO: Add event identifier validation here
+    def get_event_donations(self, event_identifier, limit=None):
+        # If no limit is provided, then do not set a default and return all the donations
         query = 'SELECT * ' \
                 'FROM `donations` ' \
                 'WHERE eventInternalName = ?' \
-                'ORDER BY timeRecorded DESC;'
+                'ORDER BY timeRecorded DESC'
+        if limit is None or not isinstance(limit, int):
+            # Avoid non integer limits
+            query += ';'
+        else:
+            query += ' LIMIT {};'.format(limit)
         data = (event_identifier, )
         rows = self.execute_query(query=query, data=data).fetchall()
         return [self.__convert_row_to_donation(row) for row in rows]
