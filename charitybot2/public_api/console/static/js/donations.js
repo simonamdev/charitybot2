@@ -30,7 +30,8 @@ function drawDonations(data) {
     // Clear the old data
     donationsTableBody.innerHTML = '';
     // Add in the rows
-    for (let i = 0; i < limit - 1 || i < donationsData.length; i++) {
+    var donationCount = limit < donationsData.length ? limit : donationsData.length ;
+    for (let i = 0; i < donationCount; i++) {
         var rowDonation = JSON.parse(donationsData[i]);
         let rowString = '<tr><td data-label="Index">' +
                         i +
