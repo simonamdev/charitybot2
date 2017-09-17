@@ -71,16 +71,8 @@ class DonationSQLiteRepository(SQLiteRepository):
         return [self.__convert_row_to_donation(row) for row in rows]
 
     def get_latest_event_donation(self, event_identifier):
-        query = 'SELECT * ' \
-                'FROM `donations` ' \
-                'WHERE eventInternalName = ? ' \
-                'ORDER BY timeRecorded DESC ' \
-                'LIMIT 1;'
-        data = (event_identifier, )
-        row = self.execute_query(query=query, data=data).fetchall()
-        if len(row) == 0:
-            return []
-        return self.__convert_row_to_donation(row=row[0])
+        latest_donation = self.get_event_donations(event_identifier=event_identifier, limit=1)
+        return latest_donation[0] if len(latest_donation) > 0 else []
 
     def get_time_filtered_event_donations(self, event_identifier, lower_bound, upper_bound=None):
         query = 'SELECT * ' \
