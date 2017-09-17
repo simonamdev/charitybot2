@@ -101,7 +101,7 @@ function checkEventExists() {
 function getDataFromApi(url) {
     return new Promise((resolve, reject) => {
         sendGetRequest(
-            url,
+            url + '?limit=' + limit,
             (data) => {
                 resolve(JSON.parse(data))
             },
