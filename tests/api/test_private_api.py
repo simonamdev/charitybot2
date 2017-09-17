@@ -169,6 +169,35 @@ class TestEventDonations:
             assert isinstance(donation, Donation)
             assert donation.amount == donation.timestamp
 
+    def test_retrieving_limited_number_of_valid_donations(self):
+        test_identifier = 'limited_donation_listing_test'
+        updated_values = {
+            'identifier': test_identifier,
+            'title': 'Donation Limited Listing Test Event'
+        }
+        test_config = get_test_event_configuration(updated_values=updated_values)
+        # Register the event
+        private_api_calls.register_event(event_configuration=test_config)
+        # Add a few donations
+        donation_count = 10
+        values = range(1, donation_count + 1)
+        for i in values:
+            donation = Donation(
+                amount=i,
+                event_identifier=test_identifier,
+                timestamp=i)
+            private_api_calls.register_donation(donation=donation)
+        # Retrieve the stored donations and confirm they are correct
+        test_limit = 3
+        donations = private_api_calls.get_event_donations(event_identifier=test_identifier, limit=test_limit)
+        assert test_limit == len(donations)
+        for i in range(0, test_limit):
+            donation = donations[i]
+            assert isinstance(donation, Donation)
+            assert values[-1] - i == donation.amount
+            assert values[-1] - i == donation.timestamp
+            assert test_identifier == donation.event_identifier
+
     def test_retrieving_valid_time_filtered_donations(self):
         filtered_donations_identifier = 'filtered_donation_listing_test'
         updated_values = {

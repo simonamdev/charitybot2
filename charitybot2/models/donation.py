@@ -42,6 +42,16 @@ class Donation:
         self.__validate_donation()
         self.__parse_donation_amount()
 
+    def __str__(self):
+        return 'Donation of {} made by {} at {} in event: {} with notes: {} and validity: {}'.format(
+            self._amount,
+            self._donor_name,
+            self._timestamp,
+            self._event_identifier,
+            self._notes,
+            self._valid
+        )
+
     def __validate_donation(self):
         if self._amount == '':
             raise InvalidDonationException('Donation amount cannot be an empty string')

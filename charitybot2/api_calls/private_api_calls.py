@@ -74,6 +74,7 @@ class PrivateApiCalls:
     def get_event_donations(self, event_identifier, time_bounds=(), limit=None):
         self.__validate_event_identifier(event_identifier=event_identifier)
         params_added = False
+        # TODO: Rewrite to properly use query parameters built into requests instead of manually concatenating
         url = self._base_api_url + 'event/{}/donations/'.format(event_identifier)
         if len(time_bounds) == 2:
             lower_bound, upper_bound = time_bounds[0], time_bounds[1]
