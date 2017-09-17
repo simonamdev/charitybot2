@@ -74,7 +74,7 @@ class TestOverlayTotal:
         driver.get(self.overlay_total_url)
         total_amount = get_soup_text_by_id('overlay-text')
         sleep(2)
-        assert '€0' == total_amount.strip()
+        assert '€0' == total_amount.replace('\n', '')
 
     def test_overlay_total_increases_when_donation_is_added(self):
         driver.get(self.overlay_total_url)
@@ -82,7 +82,7 @@ class TestOverlayTotal:
         private_api_calls.register_donation(donation=donation)
         sleep(5)
         total_amount = get_soup_text_by_id('overlay-text')
-        assert '€5.5' == total_amount.strip()
+        assert '€5.5' == total_amount.replace('\n', '')
 
 
 # TODO: Update these tests
