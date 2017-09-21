@@ -5,7 +5,7 @@ import time
 from charitybot2.api_calls.private_api_calls import PrivateApiCalls
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreatorFromFile
 from charitybot2.paths import event_config_folder
-from charitybot2.private_api.private_api import private_api_service
+from charitybot2.api.private_api import private_api_service
 from charitybot2.sources.tiltify import TiltifySource
 
 

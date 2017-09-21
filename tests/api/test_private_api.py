@@ -4,7 +4,7 @@ from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.models.donation import Donation
 from charitybot2.models.event import NonExistentEventException
 from charitybot2.paths import private_api_script_path
-from charitybot2.private_api.private_api import private_api_identity, private_api_service, app
+from charitybot2.api.private_api import private_api_identity, private_api_service, app
 from charitybot2.start_service import Service, ServiceRunner
 from helpers.event_config import get_test_event_configuration
 from helpers.setup_test_database import setup_test_database
