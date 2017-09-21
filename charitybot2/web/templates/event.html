@@ -4,9 +4,9 @@
         var eventIdentifier = '{{ event_identifier }}';
         var apiAddress = '{{ api_address }}';
     </script>
-    <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/layout.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/event.css') }}" />
+    <script src="{{ url_for('static', filename='js/common/ajax.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/common/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/console/event.css') }}" />
 {% endblock %}
 {% block body %}
     <h1 id="eventHeader" class="header">{{ event_identifier }}</h1>
@@ -39,5 +39,5 @@
     </form>
 {% endblock %}
 {% block after_body %}
-    <script type="text/javascript" src="{{url_for('static', filename='js/events.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/console/events.js')}}"></script>
 {% endblock %}

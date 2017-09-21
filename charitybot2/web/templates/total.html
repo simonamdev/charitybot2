@@ -5,10 +5,10 @@
         <title>CharityBot</title>
         <meta name="description" content="CharityBot Overlay">
         <meta name="author" content="purrcat259">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/total.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/overlay/total.css') }}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/odometer@0.4.8/themes/odometer-theme-default.css">
-        <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/common/ajax.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/common/currency.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/odometer@0.4.8/odometer.min.js"></script>
         <script>
             var eventIdentifier = '{{ event_identifier }}';
@@ -23,5 +23,5 @@
             </h1>
         </div>
     </body>
-    <script src="{{ url_for('static', filename='js/total.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/overlay/total.js') }}"></script>
 </html>

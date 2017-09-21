@@ -5,11 +5,11 @@
         <title>CharityBot</title>
         <meta name="description" content="CharityBot Overlay">
         <meta name="author" content="purrcat259">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/latest.css') }}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" integrity="sha256-j+P6EZJVrbXgwSR5Mx+eCS6FvP9Wq27MBRC/ogVriY0=" crossorigin="anonymous" />
-        <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/time.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/overlay/latest.css') }}">
+        <script src="{{ url_for('static', filename='js/common/ajax.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/common/currency.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/common/time.js') }}"></script>
         <script>
             var eventIdentifier = '{{ event_identifier }}';
             var apiAddress = '{{ api_address }}';
@@ -21,5 +21,5 @@
             <h1 id="latest-header"><span class="currency"></span><span id="overlay-latest"></span></h1>
         </div>
     </body>
-    <script src="{{ url_for('static', filename='js/latest.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/overlay/latest.js') }}"></script>
 </html>

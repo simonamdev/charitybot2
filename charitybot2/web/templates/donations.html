@@ -1,16 +1,16 @@
 {% extends "layout.html" %}
 {% block optional_head %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/layout.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/donations.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive-table.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/common/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/common/responsive-table.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/console/donations.css') }}" />
     <script>
         var eventIdentifier = '{{ event_identifier }}';
         var apiAddress = '{{ api_address }}';
         var limit = {{ limit }};
     </script>
-    <script src="{{ url_for('static', filename='js/time.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/time.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/ajax.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/currency.js') }}"></script>
 {% endblock %}
 {% block body %}
     <div class="card" id="alertDiv">
@@ -45,5 +45,5 @@
     </div>
 {% endblock %}
 {% block after_body %}
-    <script type="text/javascript" src="{{url_for('static', filename='js/donations.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/console/donations.js')}}"></script>
 {% endblock %}

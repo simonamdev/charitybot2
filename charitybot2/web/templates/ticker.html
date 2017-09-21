@@ -5,10 +5,10 @@
         <title>CharityBot</title>
         <meta name="description" content="CharityBot Overlay">
         <meta name="author" content="purrcat259">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/ticker.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/overlay/ticker.css') }}" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" integrity="sha256-j+P6EZJVrbXgwSR5Mx+eCS6FvP9Wq27MBRC/ogVriY0=" crossorigin="anonymous" />
-        <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/common/ajax.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/common/currency.js') }}"></script>
         <script>
             var eventIdentifier = '{{ event_identifier }}';
             var numberOfDonations = {{ limit }};
@@ -20,5 +20,5 @@
         <div id="ticker-wrapper">
         </div>
     </body>
-    <script src="{{ url_for('static', filename='js/ticker.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/overlay/ticker.js') }}"></script>
 </html>

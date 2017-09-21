@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block optional_head %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/layout.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/statistics.css') }}" />
-    <script src="{{ url_for('static', filename='js/time.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/common/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/console/statistics.css') }}" />
+    <script src="{{ url_for('static', filename='js/common/time.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/ajax.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/currency.js') }}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.0/chartist.min.css" integrity="sha256-Te9+aTaL9j0U5PzLhtAHt+SXlgIT8KT9VkyOZn68hak=" crossorigin="anonymous" />
     <script>
         var eventIdentifier = '{{ event_identifier }}';
@@ -100,5 +100,5 @@
 {% block after_body %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" integrity="sha256-1hjUhpc44NwiNg8OwMu2QzJXhD8kcj+sJA3aCQZoUjg=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.0/chartist.min.js" integrity="sha256-UzffRueYhyZDw8Cj39UCnnggvBfa1fPcDQ0auvCbvCc=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/statistics.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/console/statistics.js') }}"></script>
 {% endblock %}
