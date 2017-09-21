@@ -157,3 +157,14 @@ class PrivateApiCalls:
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)
         return converted_content['distribution']
+
+    def get_all_events(self):
+        url = self._base_api_url + 'events'
+        response = UrlCall(url=url, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)
+        return [
+            EventConfiguration(configuration_values=config)
+            for config
+            in converted_content['events']
+        ]

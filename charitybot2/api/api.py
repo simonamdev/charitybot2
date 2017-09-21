@@ -98,6 +98,16 @@ def index():
     )
 
 
+@app.route('/api/v1/events')
+def all_events():
+    event_configurations = get_event_repository().get_events()
+    return jsonify(
+        {
+            'events': [config.configuration_values for config in event_configurations]
+        }
+    )
+
+
 @app.route('/api/v1/event/<event_identifier>')
 def event_info(event_identifier):
     if not get_event_repository().event_already_registered(identifier=event_identifier):

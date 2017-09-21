@@ -1,9 +1,14 @@
+import json
+
 from charitybot2.models.currency import Currency
 
 
 class EventConfiguration:
     def __init__(self, configuration_values=None):
         self._configuration_values = configuration_values
+
+    def __str__(self):
+        return json.dumps(self._configuration_values)
 
     @property
     def identifier(self):

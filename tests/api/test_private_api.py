@@ -54,6 +54,11 @@ class TestEventInformation:
         test_config_values = get_test_event_configuration().configuration_values
         assert test_config_values.get('title') == info.get('title')
 
+    def test_getting_info_of_all_events(self):
+        events = private_api_calls.get_all_events()
+        assert 1 == len(events)
+        assert test_event_identifier == events[0].identifier
+
     def test_getting_event_info_of_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):
             info = private_api_calls.get_event_info(identifier='walalalalalal')
