@@ -5,6 +5,7 @@ var eventExistenceUrl = apiAddress + '/event/exists/' + eventIdentifier;
 var eventTotalUrl = eventUrl + '/total/';
 var donationsUrl = eventUrl + '/donations/';
 var donationCountUrl = donationsUrl + 'count';
+var newDonationUrl = apiAddress + '/donation/';
 var currencyKey = "";
 var currencySymbol = "";
 
@@ -13,36 +14,16 @@ drawPageIfEventExists(eventIdentifier);
 
 function drawPageIfEventExists(eventIdentifier) {
     getDataFromApi(eventExistenceUrl).then((data) => {
-         if (data['event_exists']) {
-            getEventDetails(eventIdentifier);
-        } else {
-            $('#event-alert').show();
-            $('#donations-table').hide();
-            $('#statistics-div').hide();
+         if (!data['event_exists']) {
+            showAlert('Event: ' + eventIdentifier + ' does not exist');
         }
     });
 }
 
 function showAlert(message) {
-    document.getElementById('alertDiv').display = 'block';
+    document.getElementById('alertDiv').style.display = 'block';
     document.getElementById('alertDivText').innerText = message;
 }
-
-function getEventDetails(eventIdentifier) {
-    var url = eventUrl;
-    $.getJSON(url, data => {
-        drawEventDetails(data);
-    }).fail(() => {
-        console.error('Could not reach URL: ' + url);
-    });
-}
-
-function drawEventDetails(data) {
-    $('#eventHeader').text(data['title']);
-    $('.currency-symbol').text(currencySymbol);
-}
-
-var newDonationUrl = apiAddress + '/donation/';
 
 function serializePostObject(obj) {
     var str = [];
@@ -55,13 +36,13 @@ function serializePostObject(obj) {
 
 function submitDonation() {
     // Get the values from the form
-    var amount = $('#new-donation-amount').val();
-    var donor = $('#new-donation-donor').val();
-    var notes = $('#new-donation-notes').val();
+    var amount = document.getElementById('newDonationAmount').value;
+    var donor = document.getElementById('newDonationDonor').value;
+    var notes = document.getElementById('newDonationNotes').value;
     // Clear form to avoid double clicking
-    $('#new-donation-amount').val('');
-    $('#new-donation-donor').val('');
-    $('#new-donation-notes').val('');
+    document.getElementById('newDonationAmount').value = '';
+    document.getElementById('newDonationDonor').value = '';
+    document.getElementById('newDonationNotes').value = '';
     // Validate the inputs
 
     // TODO
@@ -81,15 +62,8 @@ function submitDonation() {
     // On load, handle if successful or not
     request.onload = () => {
         var response = JSON.parse(request.responseText);
-        // If the donation was successful, redraw the donations
-        if (response['received']) {
-            getDonations(eventIdentifier);
-            // Also redraw the statistics
-            getStatistics(eventIdentifier);
-        } else {
-            // Show an error with the message
-            $('#donation-alert').show();
-            $('#donation-alert p').text(response['message']);
+        if (!response['received']) {
+            showAlert(response['message']);
         }
     };
 
