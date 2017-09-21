@@ -56,7 +56,7 @@ function drawDonations(data) {
 }
 
 function getNoteTd(note) {
-    if (note.toLowerCase().indexOf('hunter') !== -1 && note.toLowerCase().indexOf('games') !== -1) {
+    if (note && note.toLowerCase().indexOf('hunter') !== -1 && note.toLowerCase().indexOf('games') !== -1) {
         return '<td class="marked-row" data-label="Message">' + note + '</td>';
     }
     return '<td data-label="Message">' + note + '</td>';
