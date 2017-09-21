@@ -8,24 +8,14 @@
         src="https://code.jquery.com/jquery-3.2.1.min.js"
         integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
         crossorigin="anonymous"></script>
-    <!--<script src="{{ url_for('static', filename='js/jquery.js') }}"></script>-->
+    <script src="{{ url_for('static', filename='js/ajax.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/event.css') }}" />
 {% endblock %}
 {% block body %}
-    <div class="row">
-        <div class="large-8 large-centered columns">
-            <h1 id="eventHeader" class="text-center"></h1>
-        </div>
-    </div>
-    <!-- Alerts row -->
-    <div class="row">
-        <div class="alert callout" id="event-alert">
-              <h5>Event Error</h5>
-              <p>Event with identifier: {{ event_identifier }} does not exist!</p>
-        </div>
-        <div class="alert callout" id="donation-alert">
-              <h5>Donation Error</h5>
-              <p></p>
-        </div>
+    <h1 id="eventHeader" class="header">{{ event_identifier }}</h1>
+    <div class="card" id="alertDiv">
+        <p id="alertDivText"></p>
     </div>
     <!-- Manual donation form -->
     <div class="row">

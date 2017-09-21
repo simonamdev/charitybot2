@@ -9,38 +9,28 @@ var currencyKey = "";
 var currencySymbol = "";
 
 console.log('Connecting to API via: ' + apiAddress);
-eventUI();
-
-function eventUI() {
-    $('#event-alert').hide();
-    $('#donation-alert').hide();
-    drawPageIfEventExists(eventIdentifier);
-}
+drawPageIfEventExists(eventIdentifier);
 
 function drawPageIfEventExists(eventIdentifier) {
-    var url = eventExistenceUrl;
-    $.getJSON(url, data => {
-        if (data['event_exists']) {
-            drawPage();
+    getDataFromApi(eventExistenceUrl).then((data) => {
+         if (data['event_exists']) {
+            getEventDetails(eventIdentifier);
         } else {
             $('#event-alert').show();
             $('#donations-table').hide();
             $('#statistics-div').hide();
         }
-    }).fail(() => {
-        console.error('Could not reach URL: ' + url);
-        console.error('Could not confirm that event with identifier: ' + eventIdentifier + ' exists');
     });
 }
 
-function drawPage() {
-    getEventDetails(eventIdentifier);
+function showAlert(message) {
+    document.getElementById('alertDiv').display = 'block';
+    document.getElementById('alertDivText').innerText = message;
 }
 
 function getEventDetails(eventIdentifier) {
     var url = eventUrl;
     $.getJSON(url, data => {
-        setupCurrency(data);
         drawEventDetails(data);
     }).fail(() => {
         console.error('Could not reach URL: ' + url);
