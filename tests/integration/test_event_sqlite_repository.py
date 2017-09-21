@@ -1,5 +1,3 @@
-import copy
-
 import pytest
 from charitybot2.configurations.event_configuration import EventConfiguration
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
@@ -79,6 +77,31 @@ class TestEventSQLiteRepository:
             identifier=test_event_identifier,
             current_amount=222.2)
         assert 222.2 == self.test_event_repository.get_event_current_amount(identifier=test_event_identifier)
+
+    def test_getting_list_of_events(self):
+        # by default, test_event
+        events = self.test_event_repository.get_events()
+        assert 1 == len(events)
+        assert 'test_event' == events[0].identifier
+        # register an event
+        config_values = get_updated_test_config_values(updated_values={'identifier': 'new_event'})
+        test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
+        self.test_event_repository.register_event(event_configuration=test_configuration)
+        # check that the event is in the list now
+        events = self.test_event_repository.get_events()
+        assert 2 == len(events)
+        assert 'new_event' == events[1].identifier
+        # register another event
+        config_values = get_updated_test_config_values(updated_values={'identifier': 'new_event_two'})
+        test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
+        self.test_event_repository.register_event(event_configuration=test_configuration)
+        # check both events exist
+        events = self.test_event_repository.get_events()
+        assert 3 == len(events)
+        # order should be newest first
+        assert 'test_event' == events[0].identifier
+        assert 'new_event' == events[1].identifier
+        assert 'new_event_two' == events[2].identifier
 
 
 class TestEventSQLiteRepositoryExceptions:

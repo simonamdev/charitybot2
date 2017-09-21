@@ -118,6 +118,11 @@ class EventSQLiteRepository(SQLiteRepository):
         update_data = (current_amount, identifier)
         self.execute_query(query=update_query, data=update_data, commit=True)
 
+    def get_events(self):
+        query = 'SELECT * FROM `events`;'
+        events = self.execute_query(query=query).fetchall()
+        return [self.__convert_row_to_event_configuration(row=row) for row in events]
+
     @staticmethod
     def __convert_row_to_event_configuration(row):
         configuration_values = {
@@ -131,3 +136,4 @@ class EventSQLiteRepository(SQLiteRepository):
             'update_delay': row[9]
         }
         return EventConfigurationCreator(configuration_values=configuration_values).configuration
+
