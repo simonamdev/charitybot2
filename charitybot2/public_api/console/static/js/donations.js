@@ -97,36 +97,3 @@ function checkEventExists() {
         });
     });
 }
-
-function getDataFromApi(url) {
-    return new Promise((resolve, reject) => {
-        sendGetRequest(
-            url + '?limit=' + limit,
-            (data) => {
-                resolve(JSON.parse(data))
-            },
-            (error) => {
-                reject(error);
-            }
-        );
-    });
-}
-
-function sendGetRequest(url, successCallback, failureCallback) {
-    var xhr = new XMLHttpRequest();
-
-    xhr.onreadystatechange = () => {
-    var DONE = 4; // readyState 4 means the request is done.
-    var OK = 200; // status 200 is a successful return.
-    if (xhr.readyState === DONE) {
-        if (xhr.status === OK) {
-            successCallback(xhr.responseText);
-        } else {
-            failureCallback('Error: ' + xhr.status);
-        }
-      }
-    };
-
-    xhr.open('GET', url);
-    xhr.send(null);
-}
