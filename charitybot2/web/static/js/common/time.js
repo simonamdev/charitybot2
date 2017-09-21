@@ -1,5 +1,5 @@
 function convertToDatetime(timestamp){
-    if (unixTimestamp >= 2147483647) {
+    if (timestamp >= 2147483647) {
         return 'Heat Death of the Universe';
     }
     return convertToDate(timestamp) + ' ' + convertToTime(timestamp);
