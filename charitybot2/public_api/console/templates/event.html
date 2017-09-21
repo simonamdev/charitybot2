@@ -51,43 +51,6 @@
             <input id="donation-submit-button" class="button large-12" type="button" value="Submit Donation" onclick="submitDonation();" />
         </div>
     </form>
-
-    <div class="row">
-        <h2 class="text-center">Donation List</h2>
-    </div>
-    <!-- Data -->
-    <div class="row">
-        <div class="large-8 large-centered columns">
-            <div id="statistics-div" class="row">
-                 <div class="large-6 columns text-center">
-                    Total Raised: <span class="currency-symbol"></span><span id="donation-total"></span>
-                </div>
-                <div class="large-6 columns text-center">
-                    Last Donation: <span id="donation-time-ago"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="large-10 large-centered columns">
-            <table id="donations-table" class="hover">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Amount</th>
-                        <th>Timestamp</th>
-                        <th>Donor</th>
-                        <th>Notes</th>
-                        <th>External Reference</th>
-                        <th>Internal Reference</th>
-                    </tr>
-                </thead>
-                <tbody id="donations-table-body">
-
-                </tbody>
-            </table>
-        </div>
-    </div>
 {% endblock %}
 {% block after_body %}
     <script type="text/javascript" src="{{url_for('static', filename='js/event-ui.js')}}"></script>

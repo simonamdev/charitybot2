@@ -43,8 +43,6 @@ function drawPageIfEventExists(eventIdentifier) {
 
 function drawPage() {
     getEventDetails(eventIdentifier);
-    getDonations(eventIdentifier);
-    getStatistics(eventIdentifier);
 }
 
 function getEventDetails(eventIdentifier) {
@@ -105,56 +103,6 @@ function drawEventDetails(data) {
     $('.currency-symbol').text(currencySymbol);
 }
 
-function getDonations(eventIdentifier, lowerTimeBound, upperTimeBound) {
-    debugPrint('Retrieving donation data for: ' + eventIdentifier + ' between ' + lowerTimeBound + ' and ' + upperTimeBound);
-    var url = donationsUrl;
-    $.getJSON(url, data => {
-        drawDonations(data);
-    }).fail(() => {
-        console.error('Could not reach URL: ' + url);
-    });
-}
-
-function drawDonations(data) {
-    debugPrint(data);
-    var donationsData = data['donations'];
-    var donationsTableBody = $('#donations-table tbody');
-    // Clear the old data
-    donationsTableBody.empty();
-    // Add in the rows
-    for (i = 0; i < donationsData.length; i++) {
-        var rowDonation = JSON.parse(donationsData[i]);
-        var rowString = '<tr><td>' +
-                        i +
-                        '</td><td>' +
-                        currencySymbol + rowDonation['amount'] +
-                        '</td><td>' +
-                        convertTimestampToDatetime(rowDonation['timestamp']) +
-                        '</td><td>' +
-                        rowDonation['donor_name'] +
-                        '</td><td>' +
-                        rowDonation['notes'] +
-                        '</td><td>' +
-                        rowDonation['external_reference'] +
-                        '</td><td>' +
-                        rowDonation['internal_reference'].substring(0, 8) +
-                        '...' +
-                        '</td></tr>'
-        donationsTableBody.append(rowString);
-    }
-}
-
-function getStatistics(eventIdentifier) {
-    calls = [getEventTotal(eventIdentifier), getLastDonation(eventIdentifier)];
-    $.when.apply($, calls).done((total, lastDonation) => {
-        if (lastDonation[0]['donations'].length == 0) {
-            drawStatistics(0);
-        } else {
-            drawStatistics(total[0]['total'], JSON.parse(lastDonation[0]['donations'])['timestamp']);
-        }
-    });
-}
-
 function getEventTotal(eventIdentifier) {
     var url = eventTotalUrl;
     return $.getJSON(url);
@@ -163,36 +111,6 @@ function getEventTotal(eventIdentifier) {
 function getLastDonation(eventIdentifier) {
     var url = donationsUrl + '?limit=1';
     return $.getJSON(url);
-}
-
-function drawStatistics(total, lastDonationTimestamp) {
-    // Set the total
-    debugPrint('Total Raised: ' + total);
-    $('#donation-total').text(total);
-
-    // Set the timespan if it is available
-    if (lastDonationTimestamp) {
-        debugPrint('Last Donation Timestamp: ' + lastDonationTimestamp);
-        var currentTime = Math.round((new Date()).getTime() / 1000);
-        var timeDifference = currentTime - lastDonationTimestamp;
-        debugPrint(timeDifference);
-        units = 'seconds';
-        if (timeDifference > 60) {
-            timeDifference /= 60;
-            units = 'minutes';
-            if (timeDifference > 60) {
-                timeDifference /= 60;
-                units = 'hours';
-                if (timeDifference > 24) {
-                    timeDifference /= 24;
-                    units = 'days';
-                }
-            }
-        }
-        $('#donation-time-ago').text(timeDifference.toFixed(2) + ' ' + units + '  ago');
-    } else {
-        $('#donation-time-ago').text('N/A');
-    }
 }
 
 var newDonationUrl = apiAddress + '/donation/';
