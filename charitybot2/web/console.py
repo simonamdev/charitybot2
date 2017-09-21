@@ -3,6 +3,7 @@ from charitybot2.start_service import Service
 from flask import Flask, render_template
 from flask import request
 from flask_httpauth import HTTPBasicAuth
+from charitybot2.api_calls.private_api_calls import PrivateApiCalls
 
 app = Flask(__name__)
 
@@ -44,7 +45,6 @@ console_service = Service(
     debug=debug_mode)
 
 auth = HTTPBasicAuth()
-
 users = Users(users_path)
 
 
@@ -71,6 +71,8 @@ def get_update_delay():
         delay = 10000
     return delay
 
+private_api_calls = PrivateApiCalls(base_api_url=get_api_address() + '/')
+
 
 @app.context_processor
 def inject_api_url():
@@ -82,6 +84,12 @@ def inject_api_url():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/events')
+def events():
+    all_events = private_api_calls.get_all_events()
+    return render_template('events.html', events=all_events)
 
 
 @app.route('/event/<event_identifier>/')
