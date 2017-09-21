@@ -3,7 +3,7 @@ from time import sleep
 
 import pytest
 from bs4 import BeautifulSoup
-from charitybot2.api.private_api import private_api_service
+from charitybot2.api.api import private_api_service
 from charitybot2.api_calls.private_api_calls import PrivateApiCalls
 from charitybot2.models.donation import Donation
 from charitybot2.paths import console_script_path, private_api_script_path
