@@ -48,7 +48,7 @@ function getEventDetails(eventIdentifier) {
 }
 
 function drawEventDetails(data) {
-    $('#event-header').text(data['title']);
+    $('#eventHeader').text(data['title']);
     $('.currency-symbol').text(currencySymbol);
 }
 
