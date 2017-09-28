@@ -47,10 +47,10 @@ class JustgivingRunner:
     # Register a donation with the donation service
     @staticmethod
     def store_donation(donation):
-        print(private_api_calls.register_donation(donation=donation))
+        private_api_calls.register_donation(donation=donation)
 
     def update_total(self, total):
-        print(private_api_calls.update_event_total(event_identifier=self._event_configuration.identifier, total=total))
+        private_api_calls.update_event_total(event_identifier=self._event_configuration.identifier, total=total)
 
     # Update with all available donations
     def refill_cache(self):
