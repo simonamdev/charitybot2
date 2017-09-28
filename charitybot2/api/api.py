@@ -226,8 +226,22 @@ def retrieve_event_donation_count(event_identifier):
     )
 
 
-@app.route('/api/v1/event/<event_identifier>/total/', methods=['GET'])
+@app.route('/api/v1/event/<event_identifier>/total/', methods=['GET', 'POST'])
 def retrieve_event_total(event_identifier):
+    if request.method == 'POST':
+        received_data = request.form.to_dict()
+        # total update
+        success = True
+        try:
+            get_event_repository().update_event_current_amount(identifier=event_identifier,
+                                                               current_amount=received_data['total'])
+        except InvalidRepositoryQueryException:
+            success = False
+        return jsonify(
+            {
+                'update_successful': success
+            }
+        )
     amount = get_event_repository().get_event_current_amount(identifier=event_identifier)
     return jsonify(
         {

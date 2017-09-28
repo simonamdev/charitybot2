@@ -46,14 +46,14 @@ class DonationSQLiteRepository(SQLiteRepository):
             donation.donor_name,
             donation.notes,
             donation.validity)
-        event_total_query = 'UPDATE `events` ' \
-                            'SET currentAmount = currentAmount + ? ' \
-                            'WHERE internalName = ?;'
-        event_data = (
-            donation.amount,
-            donation.event_identifier)
+        # event_total_query = 'UPDATE `events` ' \
+        #                     'SET currentAmount = currentAmount + ? ' \
+        #                     'WHERE internalName = ?;'
+        # event_data = (
+        #     donation.amount,
+        #     donation.event_identifier)
         self.execute_query(query=donation_query, data=donation_data)
-        self.execute_query(query=event_total_query, data=event_data, commit=True)
+        # self.execute_query(query=event_total_query, data=event_data, commit=True)
 
     def get_event_donations(self, event_identifier, limit=None):
         # If no limit is provided, then do not set a default and return all the donations

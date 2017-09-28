@@ -5,7 +5,8 @@ from charitybot2.models.donation import Donation
 
 
 class JustGivingFundraisingSource:
-    url = 'https://api.justgiving.com/v1/fundraising/pages/{}/donations'
+    fundraising_url = 'https://api.justgiving.com/v1/fundraising/pages/{}/'
+    donations_url = fundraising_url + 'donations'
 
     def __init__(self, event_identifier, page_short_name, api_key, limit=25):
         self._event_identifier = event_identifier
@@ -45,13 +46,25 @@ class JustGivingFundraisingSource:
 
     def get_donations_page(self, page=1):
         response = requests.get(
-            url=self.url.format(self._page_short_name) + '?pageSize={}&pageNum={}'.format(self._page_size, page),
+            url=self.donations_url.format(self._page_short_name) + '?pageSize={}&pageNum={}'.format(self._page_size, page),
             headers=self._headers)
         if not 200 == response.status_code:
             print(response.status_code)
             print(response.text)
         else:
             return json.loads(response.text)
+
+    def get_total_raised(self):
+        response = requests.get(
+            url=self.fundraising_url.format(self._page_short_name),
+            headers=self._headers)
+        if not 200 == response.status_code:
+            print(response.status_code)
+            print(response.text)
+        else:
+            data = json.loads(response.text)
+            return float(data['totalRaisedOffline']) + float(data['totalRaisedOnline'])
+
 
     def _convert_to_donation(self, donation):
         # /Date(1505495742000+0000)/

@@ -49,6 +49,9 @@ class JustgivingRunner:
     def store_donation(donation):
         private_api_calls.register_donation(donation=donation)
 
+    def update_total(self, total):
+        private_api_calls.update_event_total(event_identifier=self._event_configuration.identifier, total=total)
+
     # Update with all available donations
     def refill_cache(self):
         stored_ids = get_donation_ids(self.get_stored_donations())
@@ -61,6 +64,7 @@ class JustgivingRunner:
 
     # run the event loop
     def run_event_loop(self, delay):
+        current_total = 0.0
         while True:
             current_timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
             print('[{}]: Getting donations'.format(current_timestamp))
@@ -78,6 +82,13 @@ class JustgivingRunner:
                     donation.donor_name
                 ))
                 self.store_donation(donation=donation)
+            # update the total because just giving provide it in a separate part
+            print('[{}]: Getting Total'.format(current_timestamp))
+            new_total = self._source.get_total_raised()
+            if not new_total == current_total:
+                print('[{}]: Setting new total: {}'.format(current_timestamp, new_total))
+                self.update_total(new_total)
+                current_total = new_total
             time.sleep(delay)
 
 

@@ -4,9 +4,7 @@ import requests
 
 from pprint import pprint
 
-api_key = 'example'
-charity_name = 'specialeffect'
-campaign_name = 'onespecialday2017'
+api_key = 'sdfsdfsdfsdfsdfs'
 page_size = 5
 
 url = 'https://api.justgiving.com'
@@ -14,8 +12,8 @@ url = 'https://api.justgiving.com'
 
 
 def get_donation_url(page_number):
-    return url + '/v1/fundraising/pages/{}/donations?pageNum={}&pageSize=6'.format(
-        'onespecialdayfootballchallenge',
+    return url + '/v1/fundraising/pages/{}'.format(
+        'osdtwitch',
         page_number,
         page_size
     )
@@ -29,6 +27,8 @@ response = requests.get(url=get_donation_url(1), headers=headers)
 print('Page 1')
 print(response.status_code)
 data = json.loads(response.text)
+pprint(data)
+exit() # test
 pprint(data['donations'])
 pprint(data['pagination'])
 
