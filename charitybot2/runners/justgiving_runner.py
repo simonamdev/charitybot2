@@ -75,7 +75,7 @@ class JustgivingRunner:
                 len(known_donation_ids),
                 len(new_donations)))
             for donation in new_donations:
-                print('[{}] Storing donation of: {}{} from {}'.format(
+                print('[{}]: Storing donation of: {}{} from {}'.format(
                     current_timestamp,
                     self._event_configuration.currency.symbol,
                     donation.amount,
@@ -83,7 +83,7 @@ class JustgivingRunner:
                 ))
                 self.store_donation(donation=donation)
             # update the total because just giving provide it in a separate part
-            print('[{}]: Getting Total'.format(current_timestamp))
+            print('[{}]: Getting total'.format(current_timestamp))
             new_total = self._source.get_total_raised()
             if not new_total == current_total:
                 print('[{}]: Setting new total: {}'.format(current_timestamp, new_total))
