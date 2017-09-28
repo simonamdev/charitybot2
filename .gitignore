@@ -20,3 +20,4 @@ charitybot2/web/static/css/jui-structure.min.css
 charitybot2/web/static/css/jui-theme.min.css
 charitybot2/web/users.txt
 charitybot2/data/config/event/onespecialday.json
+charitybot2/sources/justgiving_api
