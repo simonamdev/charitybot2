@@ -57,5 +57,9 @@ function returnTimespanString(timespanInSeconds) {
     if (timespanInHours == 1) {
         return '1 hour';
     }
+    var timespanInDays = Math.floor(timespanInHours / 24);
+    if (timespanInDays > 1) {
+        return timespanInDays + ' days';
+    }
     return roundUp(timespanInHours) + ' hours';
 }
