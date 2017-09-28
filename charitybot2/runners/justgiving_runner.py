@@ -64,7 +64,7 @@ class JustgivingRunner:
         while True:
             current_timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
             print('[{}]: Getting donations'.format(current_timestamp))
-            known_donation_ids = [donation.id for donation in self.get_stored_donations()]
+            known_donation_ids = [donation.external_reference for donation in self.get_stored_donations()]
             new_donations = self._source.get_new_donations(known_donation_ids=known_donation_ids)
             print('[{}]: {} known donations. {} new donations'.format(
                 current_timestamp,
@@ -73,7 +73,7 @@ class JustgivingRunner:
             for donation in new_donations:
                 print('[{}] Storing donation of: {}{} from {}'.format(
                     current_timestamp,
-                    self._event_configuration.currency,
+                    self._event_configuration.currency.symbol,
                     donation.amount,
                     donation.donor_name
                 ))
