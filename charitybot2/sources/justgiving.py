@@ -22,7 +22,7 @@ class JustGivingFundraisingSource:
         donation_pages = self.request_donations_from_api()
         all_donations = []
         for donations in donation_pages:
-            donations = [donation for donation in donations if donation['id'] not in known_donation_ids]
+            donations = [donation for donation in donations if str(donation['id']) not in known_donation_ids]
             if len(donations) == 0:
                 break
             all_donations.extend(donations)
@@ -39,9 +39,9 @@ class JustGivingFundraisingSource:
         # Get the first page to determine pagination
         data = self.get_donations_page(page=1)
         yield data['donations']
-        for i in range(2, data['totalPages'] + 1):
+        for i in range(2, data['pagination']['totalPages'] + 1):
             data = self.get_donations_page(page=i)
-            yield data
+            yield data['donations']
 
     def get_donations_page(self, page=1):
         response = requests.get(
@@ -63,3 +63,12 @@ class JustGivingFundraisingSource:
             donor_name=donation['donorDisplayName'],
             notes=donation['message']
         )
+
+if __name__ == '__main__':
+    source = JustGivingFundraisingSource(event_identifier='onespecialday2017', page_short_name='elite-aid', api_key='bla', limit=25)
+    donations = source.get_all_donations()
+    print(donations)
+    print(len(donations))
+    new_donations = source.get_new_donations(known_donation_ids=['1009835731'])
+    print(new_donations)
+    print(len(new_donations))
