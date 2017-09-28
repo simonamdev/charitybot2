@@ -52,7 +52,7 @@ class DonationSQLiteRepository(SQLiteRepository):
         # event_data = (
         #     donation.amount,
         #     donation.event_identifier)
-        self.execute_query(query=donation_query, data=donation_data)
+        self.execute_query(query=donation_query, data=donation_data, commit=True)
         # self.execute_query(query=event_total_query, data=event_data, commit=True)
 
     def get_event_donations(self, event_identifier, limit=None):
