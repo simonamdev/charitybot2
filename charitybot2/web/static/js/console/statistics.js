@@ -75,7 +75,7 @@ function drawDonationPercentage(amount) {
         donationPercentageEl.innerText = 'Target reached! ' + amount + '%';
         donationProgressEl.style.width = '100%';
     } else {
-        donationPercentageEl.innerText = amount + '% reached';
+        donationPercentageEl.innerText = amount + '% of target reached';
         let width = amount >= minimumDivWidth ? amount : minimumDivWidth;
         donationProgressEl.style.width = width + '%';
     }
