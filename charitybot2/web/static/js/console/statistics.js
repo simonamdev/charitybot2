@@ -21,6 +21,7 @@ checkEventExists().then((eventExists) => {
         drawCharts();
         setInterval(() => {
             console.log('Drawing Console');
+            drawEventDetails();
             drawDonationData();
         }, updateDelay);
         setInterval(() => {
@@ -92,14 +93,14 @@ function drawEventDetails() {
             // Event amounts
             document.getElementById('eventAmountRaised').innerHTML = eventTotal;
             document.getElementById('eventTargetRaised').innerHTML = eventDetails['target_amount'];
-            // Progress bar
+            // Event Progress
             var currentTime = Math.floor(Date.now() / 1000);
             var completedEventPercentage = (parseInt(eventDetails['end_time']) - currentTime) /
                                       (parseInt(eventDetails['end_time']) - parseInt(eventDetails['start_time']));
             completedEventPercentage = Math.round(completedEventPercentage * 100);
             completedEventPercentage = 100 - completedEventPercentage;
             drawEventPercentage(completedEventPercentage);
-
+            // Donation Progress
             var donationCompletionPercentage = parseInt(eventTotal) / parseInt(eventDetails['target_amount']);
             donationCompletionPercentage = Math.round(donationCompletionPercentage * 100);
             drawDonationPercentage(donationCompletionPercentage);
