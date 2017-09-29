@@ -23,7 +23,7 @@ api_service = Service(
     name='Private API',
     app=None,
     address='127.0.0.1',
-    port=6000,
+    port=8001,
     debug=debug)
 
 api_runner = ServiceRunner(
