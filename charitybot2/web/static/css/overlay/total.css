@@ -12,7 +12,7 @@ html, body {
   overflow: hidden;
 }
 
-#overlay-text {
+#overlayText {
   vertical-align: middle;
   width: 100%;
   height: auto;
@@ -23,16 +23,24 @@ html, body {
   margin: 0;
 }
 
-#overlay-amount {
+#overlayAmount {
   font-size: 15vw;
-  line-height: 100vh;
   height: 100%;
+  line-height: 50vh;
 }
 
-.currency {
-  height: 100%;
-  line-height: 100vh;
-  font-size: 15vw;
-  vertical-align: middle;
+.usd::before {
+    content: '$';
+}
 
+.eur::before {
+    content: '€';
+}
+
+.gbp::before {
+    content: '£';
+}
+
+.odometer.odometer-auto-theme, .odometer.odometer-theme-default {
+    display: inline-flex;
 }

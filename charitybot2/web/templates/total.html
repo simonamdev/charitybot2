@@ -5,8 +5,8 @@
         <title>CharityBot</title>
         <meta name="description" content="CharityBot Overlay">
         <meta name="author" content="purrcat259">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/overlay/total.css') }}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/odometer@0.4.8/themes/odometer-theme-default.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/overlay/total.css') }}">
         <script src="{{ url_for('static', filename='js/common/ajax.js') }}"></script>
         <script src="{{ url_for('static', filename='js/common/currency.js') }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/odometer@0.4.8/odometer.min.js"></script>
@@ -18,8 +18,8 @@
     </head>
     <body>
         <div id="wrapper">
-            <h1 id="overlay-text">
-                <span class="currency"></span><span id="overlay-amount" class="odometer"></span>
+            <h1 id="overlayText">
+                <span id="overlayAmount" class="odometer"></span>
             </h1>
         </div>
     </body>
