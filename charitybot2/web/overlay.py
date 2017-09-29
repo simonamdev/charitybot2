@@ -46,9 +46,9 @@ def get_api_address():
 
 
 def get_update_delay():
-    delay = 2000
+    delay = 1000
     if not debug_mode:
-        delay = 10000
+        delay = 3000
     return delay
 
 
