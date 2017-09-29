@@ -63,9 +63,13 @@ class JustGivingFundraisingSource:
             yield data['donations']
 
     def get_donations_page(self, page=1):
-        response = requests.get(
-            url=self.donations_url.format(self._page_short_name) + '?pageSize={}&pageNum={}'.format(self._page_size, page),
-            headers=self._headers)
+        try:
+            response = requests.get(
+                url=self.donations_url.format(self._page_short_name) + '?pageSize={}&pageNum={}'.format(self._page_size, page),
+                headers=self._headers)
+        except Exception:
+            print('Connection Error!')
+            return None
         if not 200 == response.status_code:
             print(response.status_code)
             print(response.text)
@@ -74,9 +78,13 @@ class JustGivingFundraisingSource:
             return json.loads(response.text)
 
     def get_total_raised(self):
-        response = requests.get(
-            url=self.fundraising_url.format(self._page_short_name),
-            headers=self._headers)
+        try:
+            response = requests.get(
+                url=self.fundraising_url.format(self._page_short_name),
+                headers=self._headers)
+        except:
+            print('Connection Error!')
+            return None
         if not 200 == response.status_code:
             print(response.status_code)
             print(response.text)
