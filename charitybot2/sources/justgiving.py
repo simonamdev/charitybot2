@@ -1,7 +1,7 @@
 import json
 import requests
 
-from charitybot2.models.donation import Donation
+from charitybot2.models.donation import Donation, InvalidDonationException
 
 
 class JustGivingFundraisingSource:
@@ -27,18 +27,34 @@ class JustGivingFundraisingSource:
             if len(donations) == 0:
                 break
             all_donations.extend(donations)
-        return [self._convert_to_donation(donation) for donation in all_donations]
+        converted_donations = []
+        for donation in all_donations:
+            try:
+                converted_donation = self._convert_to_donation(donation)
+                converted_donations.append(converted_donation)
+            except InvalidDonationException:
+                pass
+        return converted_donations
 
     def get_all_donations(self):
         donation_pages = self.request_donations_from_api()
         all_donations = []
         for donations in donation_pages:
             all_donations.extend(donations)
-        return [self._convert_to_donation(donation) for donation in all_donations]
+        converted_donations = []
+        for donation in all_donations:
+            try:
+                converted_donation = self._convert_to_donation(donation)
+                converted_donations.append(converted_donation)
+            except InvalidDonationException:
+                pass
+        return converted_donations
 
     def request_donations_from_api(self):
         # Get the first page to determine pagination
         data = self.get_donations_page(page=1)
+        if data is None:
+            return None
         yield data['donations']
         for i in range(2, data['pagination']['totalPages'] + 1):
             data = self.get_donations_page(page=i)
@@ -51,6 +67,7 @@ class JustGivingFundraisingSource:
         if not 200 == response.status_code:
             print(response.status_code)
             print(response.text)
+            return None
         else:
             return json.loads(response.text)
 
@@ -61,10 +78,10 @@ class JustGivingFundraisingSource:
         if not 200 == response.status_code:
             print(response.status_code)
             print(response.text)
+            return None
         else:
             data = json.loads(response.text)
             return float(data['totalRaisedOffline']) + float(data['totalRaisedOnline'])
-
 
     def _convert_to_donation(self, donation):
         # /Date(1505495742000+0000)/
