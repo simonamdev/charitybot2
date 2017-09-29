@@ -70,14 +70,17 @@ class JustgivingRunner:
             print('[{}]: Getting donations'.format(current_timestamp))
             known_donation_ids = [donation.external_reference for donation in self.get_stored_donations()]
             new_donations = self._source.get_new_donations(known_donation_ids=known_donation_ids)
+            if new_donations is None:
+                print('[{}]: Unable to retrieve donations. Skiiping cycle'.format(current_timestamp))
+                continue
             print('[{}]: {} known donations. {} new donations'.format(
                 current_timestamp,
                 len(known_donation_ids),
                 len(new_donations)))
             for donation in new_donations:
-                print('[{}]: Storing donation of: {}{} from {}'.format(
+                print('[{}]: Storing donation of: {} {} from {}'.format(
                     current_timestamp,
-                    self._event_configuration.currency.symbol,
+                    self._event_configuration.currency.key,
                     donation.amount,
                     donation.donor_name
                 ))
@@ -89,6 +92,7 @@ class JustgivingRunner:
                 print('[{}]: Setting new total: {}'.format(current_timestamp, new_total))
                 self.update_total(new_total)
                 current_total = new_total
+            print('[{}]: Next cycle in: {} seconds'.format(current_timestamp, delay))
             time.sleep(delay)
 
 
