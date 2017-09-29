@@ -89,11 +89,13 @@ def register_donations(db_path, event_configuration, donation_count, donation_am
     shifting_time = start_time + 5
     fake = Faker()
     print('Adding {} donations'.format(donation_count))
+    total = 0
     for i in tqdm(range(0, donation_count)):
         shifting_time += random.randint(5, 60)
         donor_name = fake.name()
         if randomise_donations:
             donation_amount = round(random.uniform(1.0, 100.0), 2)
+            total += donation_amount
         donation = Donation(
             amount=donation_amount,
             timestamp=shifting_time,
@@ -102,6 +104,10 @@ def register_donations(db_path, event_configuration, donation_count, donation_am
             notes='N/A',
             donor_name=donor_name)
         donations_repository.record_donation(donation=donation)
+    # set the total
+    print('Setting total to: {}'.format(total))
+    events_repository = EventSQLiteRepository(db_path=db_path)
+    events_repository.update_event_current_amount(identifier='test', current_amount=round(total, 2))
 
 
 if __name__ == '__main__':
