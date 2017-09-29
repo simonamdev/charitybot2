@@ -58,6 +58,8 @@ class JustGivingFundraisingSource:
         yield data['donations']
         for i in range(2, data['pagination']['totalPages'] + 1):
             data = self.get_donations_page(page=i)
+            if data is None:
+                return None
             yield data['donations']
 
     def get_donations_page(self, page=1):
