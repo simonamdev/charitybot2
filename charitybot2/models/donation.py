@@ -53,7 +53,7 @@ class Donation:
         )
 
     def __validate_donation(self):
-        if self._amount == '':
+        if self._amount == '' or self._amount is None:
             raise InvalidDonationException('Donation amount cannot be an empty string')
         if not isinstance(self._event_identifier, str) or self._event_identifier == '':
             raise InvalidDonationException('Invalid Event identifier passed')
