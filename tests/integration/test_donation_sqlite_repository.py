@@ -34,10 +34,26 @@ class TestDonationSQLiteRepository:
         donations = self.test_donation_repository.get_event_donations(
             event_identifier=self.test_event_identifier)
         assert 5 == len(donations)
-        for donation in donations:
-            assert donation.amount in values
-            assert donation.timestamp in values
-            assert donation.event_identifier == self.test_event_identifier
+        donations.reverse() # reverse the donations due to them being latest first
+        for i in range(0, len(donations)):
+            donation = donations[i]
+            assert values[i] == donation.amount
+            assert values[i] == donation.timestamp
+            assert self.test_event_identifier == donation.event_identifier
+
+    def test_getting_all_donations_given_a_limit(self):
+        values = range(1, 6)
+        test_limit = 3
+        donations = self.test_donation_repository.get_event_donations(
+            event_identifier=self.test_event_identifier,
+            limit=test_limit)
+        assert test_limit == len(donations)
+        donations.reverse()
+        for i in range(0, test_limit):
+            donation = donations[i]
+            assert values[i] + test_limit - 1 == donation.amount
+            assert values[i] + test_limit - 1 == donation.timestamp
+            assert self.test_event_identifier == donation.event_identifier
 
     def test_getting_latest_donation_when_none_present_returns_empty_list(self):
         self.test_donation_repository = get_new_test_database()

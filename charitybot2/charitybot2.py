@@ -2,13 +2,13 @@ import argparse
 import os
 
 from charitybot2 import paths
-from charitybot2.botconfig.event_config import EventConfigurationFromFile
-from charitybot2.botconfig.twitch_config import TwitchAccountConfiguration
-from charitybot2.events.event import Event
-from charitybot2.events.event_loop import TwitchEventLoop, EventLoop
-from charitybot2.exceptions import IllegalArgumentException
-from charitybot2.reporter.twitch import TwitchAccount
-from tests.paths_for_tests import TestFilePath
+# from charitybot2.botconfig.event_config import EventConfigurationFromFile
+# from charitybot2.botconfig.twitch_config import TwitchAccountConfiguration
+# from charitybot2.events.event import Event
+# from charitybot2.events.event_loop import TwitchEventLoop, EventLoop
+# from charitybot2.exceptions import IllegalArgumentException
+# from charitybot2.reporter.twitch import TwitchAccount
+# from tests.paths_for_tests import TestFilePath
 
 
 class MissingRequiredFolderException(Exception):
@@ -42,42 +42,42 @@ def create_cb_process_parser():
     parser.add_argument('--debug', dest='debug', help='Run Charitybot in debug mode', action='store_true')
     return parser
 
-
-class CharityBot:
-    def __init__(self, args):
-        self.args = args
-        self.event_config_path = None
-        self.debug = self.args.debug
-        self.db_dir = TestFilePath().db_dir if self.debug else paths.db_folder
-        self.db_path = os.path.join(self.db_dir, 'repository.db')
-        self.config_dir = TestFilePath().config_dir if self.debug else paths.config_folder
-        self.twitch_mode = True if self.args.twitch_config else False
-        self.validate_bot()
-        self.event_loop = None
-
-    def validate_bot(self):
-        if self.args.event == '':
-            raise IllegalArgumentException('Empty event config file name passed')
-        validator = BotStartupValidator(db_directory=self.db_dir, config_directory=self.config_dir)
-        event_config_filename = self.args.event + '.json'
-        validator.confirm_config_exists('event', event_config_filename)
-        self.event_config_path = os.path.join(self.config_dir, 'event', event_config_filename)
-        if self.twitch_mode:
-            validator.confirm_config_exists('twitch', self.args.twitch_config + '.json')
-
-    def initialise_bot(self):
-        event_config = EventConfigurationFromFile(file_path=self.event_config_path).get_event_configuration()
-        event = Event(event_configuration=event_config, db_path=self.db_path)
-        if self.twitch_mode:
-            twitch_config_path = os.path.join(self.config_dir, 'twitch', self.args.twitch_config + '.json')
-            twitch_config = TwitchAccountConfiguration(file_path=twitch_config_path)
-            twitch_account = TwitchAccount(twitch_config=twitch_config)
-            self.event_loop = TwitchEventLoop(event=event, twitch_account=twitch_account, debug=self.debug)
-        else:
-            self.event_loop = EventLoop(event=event, debug=self.debug)
-
-    def start_bot(self):
-        self.event_loop.start()
-
+#
+# class CharityBot:
+#     def __init__(self, args):
+#         self.args = args
+#         self.event_config_path = None
+#         self.debug = self.args.debug
+#         self.db_dir = TestFilePath().db_dir if self.debug else paths.db_folder
+#         self.db_path = os.path.join(self.db_dir, 'repository.db')
+#         self.config_dir = TestFilePath().config_dir if self.debug else paths.config_folder
+#         self.twitch_mode = True if self.args.twitch_config else False
+#         self.validate_bot()
+#         self.event_loop = None
+#
+#     def validate_bot(self):
+#         if self.args.event == '':
+#             raise IllegalArgumentException('Empty event config file name passed')
+#         validator = BotStartupValidator(db_directory=self.db_dir, config_directory=self.config_dir)
+#         event_config_filename = self.args.event + '.json'
+#         validator.confirm_config_exists('event', event_config_filename)
+#         self.event_config_path = os.path.join(self.config_dir, 'event', event_config_filename)
+#         if self.twitch_mode:
+#             validator.confirm_config_exists('twitch', self.args.twitch_config + '.json')
+#
+#     def initialise_bot(self):
+#         event_config = EventConfigurationFromFile(file_path=self.event_config_path).get_event_configuration()
+#         event = Event(event_configuration=event_config, db_path=self.db_path)
+#         if self.twitch_mode:
+#             twitch_config_path = os.path.join(self.config_dir, 'twitch', self.args.twitch_config + '.json')
+#             twitch_config = TwitchAccountConfiguration(file_path=twitch_config_path)
+#             twitch_account = TwitchAccount(twitch_config=twitch_config)
+#             self.event_loop = TwitchEventLoop(event=event, twitch_account=twitch_account, debug=self.debug)
+#         else:
+#             self.event_loop = EventLoop(event=event, debug=self.debug)
+#
+#     def start_bot(self):
+#         self.event_loop.start()
+#
 
 

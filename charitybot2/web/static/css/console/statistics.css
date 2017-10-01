@@ -1,0 +1,87 @@
+#statisticsDashboard {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    margin: 0 auto;
+}
+
+.header {
+    padding: 1em 1em;
+    margin: 0;
+    background-color: #fff;
+}
+
+.dashboard-segment {
+    margin: .25em 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.16), 0 1px 2px rgba(0,0,0,0.23);
+}
+
+.dashboard-header {
+    margin: 0 auto;
+    color: #000;
+    width: 100%;
+    text-align: center;
+    padding: 1em 0;
+}
+
+.progress-dashboard {
+    background: #fff;
+    display: inline-block;
+    width: 90%;
+    padding: 1em 0;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.flex-dashboard {
+    display: flex;
+}
+
+.flex-dashboard div {
+    flex-basis: 100%;
+}
+
+.progress-card {
+    margin: 0 auto;
+}
+
+.red {
+    width: 30%;
+    background-color: #e74c3c;
+}
+
+.green {
+    background-color: #27ae60;
+}
+
+.white {
+    color: #000;
+    background-color: #fff;
+}
+
+.progress-bar {
+    width: 50%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.blue {
+    width: 30%;
+    background-color: #3498db;
+}
+
+.chart-dashboard {
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-card {
+    margin: 1em auto;
+    height: 40vh;
+    width: 90%;
+}
+
+.chart-canvas {
+    height: 35vh;
+    stroke-width: 60px;
+}

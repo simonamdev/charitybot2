@@ -109,6 +109,8 @@ class EventSQLiteRepository(SQLiteRepository):
         return self.execute_query(query=retrieve_query, data=retrieve_data).fetchall()[0][0]
 
     # TODO: Deprecate this method, move it to a transaction in the donation repository
+    # TODO: Take into account that different 3rd party processors do not provide offline donations as a donation but in
+    # a separate total amount, such as just giving
     def update_event_current_amount(self, identifier, current_amount):
         if not self.event_already_registered(identifier=identifier):
             raise EventNotRegisteredException('Event by {} is not registered yet'.format(identifier))
@@ -117,6 +119,11 @@ class EventSQLiteRepository(SQLiteRepository):
                        'WHERE internalName = ?'
         update_data = (current_amount, identifier)
         self.execute_query(query=update_query, data=update_data, commit=True)
+
+    def get_events(self):
+        query = 'SELECT * FROM `events`;'
+        events = self.execute_query(query=query).fetchall()
+        return [self.__convert_row_to_event_configuration(row=row) for row in events]
 
     @staticmethod
     def __convert_row_to_event_configuration(row):
@@ -131,3 +138,4 @@ class EventSQLiteRepository(SQLiteRepository):
             'update_delay': row[9]
         }
         return EventConfigurationCreator(configuration_values=configuration_values).configuration
+

@@ -42,8 +42,18 @@ class Donation:
         self.__validate_donation()
         self.__parse_donation_amount()
 
+    def __str__(self):
+        return 'Donation of {} made by {} at {} in event: {} with notes: {} and validity: {}'.format(
+            self._amount,
+            self._donor_name,
+            self._timestamp,
+            self._event_identifier,
+            self._notes,
+            self._valid
+        )
+
     def __validate_donation(self):
-        if self._amount == '':
+        if self._amount == '' or self._amount is None:
             raise InvalidDonationException('Donation amount cannot be an empty string')
         if not isinstance(self._event_identifier, str) or self._event_identifier == '':
             raise InvalidDonationException('Invalid Event identifier passed')

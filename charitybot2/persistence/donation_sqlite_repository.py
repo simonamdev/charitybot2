@@ -30,6 +30,8 @@ class DonationSQLiteRepository(SQLiteRepository):
         return count >= 1
 
     def record_donation(self, donation):
+        # TODO: Move this into the donations service layer
+        # The donations repository should not interact with the events repository
         if self.__donation_already_stored(internal_reference=donation.internal_reference):
             raise DonationAlreadyRegisteredException(
                 'Donation with internal reference: {} is already registered'.format(donation.internal_reference))
@@ -44,36 +46,33 @@ class DonationSQLiteRepository(SQLiteRepository):
             donation.donor_name,
             donation.notes,
             donation.validity)
-        event_total_query = 'UPDATE `events` ' \
-                            'SET currentAmount = currentAmount + ? ' \
-                            'WHERE internalName = ?;'
-        event_data = (
-            donation.amount,
-            donation.event_identifier)
-        self.execute_query(query=donation_query, data=donation_data)
-        self.execute_query(query=event_total_query, data=event_data, commit=True)
+        # event_total_query = 'UPDATE `events` ' \
+        #                     'SET currentAmount = currentAmount + ? ' \
+        #                     'WHERE internalName = ?;'
+        # event_data = (
+        #     donation.amount,
+        #     donation.event_identifier)
+        self.execute_query(query=donation_query, data=donation_data, commit=True)
+        # self.execute_query(query=event_total_query, data=event_data, commit=True)
 
-    def get_event_donations(self, event_identifier):
-        # TODO: Add event identifier validation here
+    def get_event_donations(self, event_identifier, limit=None):
+        # If no limit is provided, then do not set a default and return all the donations
         query = 'SELECT * ' \
                 'FROM `donations` ' \
                 'WHERE eventInternalName = ?' \
-                'ORDER BY timeRecorded DESC;'
+                'ORDER BY timeRecorded DESC'
+        if limit is None or not isinstance(limit, int):
+            # Avoid non integer limits
+            query += ';'
+        else:
+            query += ' LIMIT {};'.format(limit)
         data = (event_identifier, )
         rows = self.execute_query(query=query, data=data).fetchall()
         return [self.__convert_row_to_donation(row) for row in rows]
 
     def get_latest_event_donation(self, event_identifier):
-        query = 'SELECT * ' \
-                'FROM `donations` ' \
-                'WHERE eventInternalName = ? ' \
-                'ORDER BY timeRecorded DESC ' \
-                'LIMIT 1;'
-        data = (event_identifier, )
-        row = self.execute_query(query=query, data=data).fetchall()
-        if len(row) == 0:
-            return []
-        return self.__convert_row_to_donation(row=row[0])
+        latest_donation = self.get_event_donations(event_identifier=event_identifier, limit=1)
+        return latest_donation[0] if len(latest_donation) > 0 else []
 
     def get_time_filtered_event_donations(self, event_identifier, lower_bound, upper_bound=None):
         query = 'SELECT * ' \
@@ -108,6 +107,25 @@ class DonationSQLiteRepository(SQLiteRepository):
             data = (event_identifier, )
         row = self.execute_query(query=query, data=data).fetchone()
         return int(row[0])
+
+    def get_average_donation_amount(self, event_identifier):
+        query = 'SELECT AVG(amount) ' \
+                'FROM `donations` ' \
+                'WHERE eventInternalName = ?;'
+        data = (event_identifier, )
+        row = self.execute_query(query=query, data=data).fetchone()
+        return float(row[0])
+
+    def get_donation_distribution(self, event_identifier):
+        distribution_bounds = ((0, 10), (10, 20), (20, 50), (50, 75), (75, 100), (100, 10000))
+        donations = self.get_event_donations(event_identifier=event_identifier)
+        distribution = [0, 0, 0, 0, 0, 0]
+        for donation in donations:
+            for bounds in distribution_bounds:
+                if bounds[0] <= donation.amount < bounds[1]:
+                    distribution[distribution_bounds.index(bounds)] += 1
+                    break
+        return distribution
 
     @staticmethod
     def __convert_row_to_donation(row):

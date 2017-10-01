@@ -70,6 +70,7 @@ class TestDonationInstantiation:
 
 class TestDonationExceptions:
     @pytest.mark.parametrize('amount,timestamp,event_identifier,internal_reference', [
+        (None, 0, 'event', 'bla'),
         (0, 0, 'event', 'bla'),
         (1, 0, None, 'bla'),
         (test_donation_amount, -20, None, 'bla'),

@@ -4,10 +4,10 @@ from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.models.donation import Donation
 from charitybot2.models.event import NonExistentEventException
 from charitybot2.paths import private_api_script_path
-from charitybot2.private_api.private_api import private_api_identity, private_api_service, app
+from charitybot2.api.api import private_api_identity, private_api_service, app
 from charitybot2.start_service import Service, ServiceRunner
-from tests.integration.test_event_register import get_test_event_configuration
-from tests.setup_test_database import setup_test_database
+from helpers.event_config import get_test_event_configuration
+from helpers.setup_test_database import setup_test_database
 
 
 private_api_calls = PrivateApiCalls(base_api_url=private_api_service.full_url)
@@ -53,6 +53,11 @@ class TestEventInformation:
         info = private_api_calls.get_event_info(identifier=test_event_identifier)
         test_config_values = get_test_event_configuration().configuration_values
         assert test_config_values.get('title') == info.get('title')
+
+    def test_getting_info_of_all_events(self):
+        events = private_api_calls.get_all_events()
+        assert 1 == len(events)
+        assert test_event_identifier == events[0].identifier
 
     def test_getting_event_info_of_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):
@@ -168,6 +173,35 @@ class TestEventDonations:
         for donation in donations:
             assert isinstance(donation, Donation)
             assert donation.amount == donation.timestamp
+
+    def test_retrieving_limited_number_of_valid_donations(self):
+        test_identifier = 'limited_donation_listing_test'
+        updated_values = {
+            'identifier': test_identifier,
+            'title': 'Donation Limited Listing Test Event'
+        }
+        test_config = get_test_event_configuration(updated_values=updated_values)
+        # Register the event
+        private_api_calls.register_event(event_configuration=test_config)
+        # Add a few donations
+        donation_count = 10
+        values = range(1, donation_count + 1)
+        for i in values:
+            donation = Donation(
+                amount=i,
+                event_identifier=test_identifier,
+                timestamp=i)
+            private_api_calls.register_donation(donation=donation)
+        # Retrieve the stored donations and confirm they are correct
+        test_limit = 3
+        donations = private_api_calls.get_event_donations(event_identifier=test_identifier, limit=test_limit)
+        assert test_limit == len(donations)
+        for i in range(0, test_limit):
+            donation = donations[i]
+            assert isinstance(donation, Donation)
+            assert values[-1] - i == donation.amount
+            assert values[-1] - i == donation.timestamp
+            assert test_identifier == donation.event_identifier
 
     def test_retrieving_valid_time_filtered_donations(self):
         filtered_donations_identifier = 'filtered_donation_listing_test'
@@ -300,6 +334,54 @@ class TestEventDonations:
             lower_time_bound=3,
             upper_time_bound=5)
         assert expected_count == count
+
+    def test_retrieving_donation_average(self):
+        average_donation_identifier = 'donation_average'
+        updated_values = {
+            'identifier': average_donation_identifier,
+            'title': 'Average Donation Test Event'
+        }
+        average_donation_test_configuration = get_test_event_configuration(updated_values=updated_values)
+        # Registration
+        private_api_calls.register_event(event_configuration=average_donation_test_configuration)
+        # Add donations
+        donation_count = 10
+        for i in range(1, donation_count + 1):
+            donation = Donation(
+                amount=i,
+                event_identifier=average_donation_identifier,
+                timestamp=i
+            )
+            private_api_calls.register_donation(donation=donation)
+        # retrieve average donation count
+        average_donation_amount = private_api_calls.get_average_donation_amount(
+            event_identifier=average_donation_identifier
+        )
+        expected_average = 5.5
+        assert expected_average == average_donation_amount
+
+    def test_retrieving_donation_distribution(self):
+        distribution_identifier = 'donation_distribution'
+        updated_values = {
+            'identifier': distribution_identifier,
+            'title': 'Donation Distribution Test Event'
+        }
+        config = get_test_event_configuration(updated_values=updated_values)
+        private_api_calls.register_event(event_configuration=config)
+        donation_values = (0.1, 2, 5, 9.9, 10, 11, 15, 19.9, 20, 45, 55.5, 205.34)
+        expected_counts = (4, 4, 2, 1, 0, 1)
+        assert len(donation_values) == sum(expected_counts)
+        for i in range(0, len(donation_values)):
+            donation = Donation(
+                amount=donation_values[i],
+                event_identifier=distribution_identifier,
+                timestamp=i
+            )
+            private_api_calls.register_donation(donation=donation)
+        distribution = private_api_calls.get_donation_distribution(event_identifier=distribution_identifier)
+        assert 6 == len(expected_counts)
+        for i in range(0, len(expected_counts)):
+            assert expected_counts[i] == distribution[i]
 
 
 class TestEventDonationExceptions:

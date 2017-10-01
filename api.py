@@ -3,8 +3,7 @@ from time import sleep
 
 from charitybot2.paths import private_api_script_path, console_script_path, overlay_script_path
 from charitybot2.start_service import Service, ServiceRunner
-from tests.setup_test_database import setup_test_database
-
+from helpers.setup_test_database import setup_test_database
 
 parser = argparse.ArgumentParser(description='CharityBot2 Deployment Tool')
 parser.add_argument(
@@ -24,7 +23,7 @@ api_service = Service(
     name='Private API',
     app=None,
     address='127.0.0.1',
-    port=6000,
+    port=8001,
     debug=debug)
 
 api_runner = ServiceRunner(

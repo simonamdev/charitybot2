@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+{% block optional_head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/common/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/console/statistics.css') }}" />
+    <script src="{{ url_for('static', filename='js/common/time.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/ajax.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/currency.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.0/chartist.min.css" integrity="sha256-Te9+aTaL9j0U5PzLhtAHt+SXlgIT8KT9VkyOZn68hak=" crossorigin="anonymous" />
+    <script>
+        var eventIdentifier = '{{ event_identifier }}';
+        var apiAddress = '{{ api_address }}';
+        var updateDelay = '{{ update_delay }}';
+    </script>
+{% endblock %}
+{% block body %}
+    <div class="header dashboard-segment">
+        <h1>Charitybot Statistics Dashboard</h1>
+        <h2>Event: {{ event_identifier }}</h2>
+    </div>
+    <!-- Alerts row -->
+    <div class="card" id="alertDiv">
+        <h1>Statistics Console Error</h1>
+        <p id="alertMessageText"></p>
+    </div>
+    <div id="statisticsDashboard">
+        <!-- Event Progress -->
+        <h1 class="dashboard-header">Event Progress</h1>
+        <div class="dashboard-segment progress-dashboard">
+            <div class="card progress-card red">
+                <span>Start Time:</span>
+                <span id="eventStartTime"></span>
+            </div>
+            <div class="card progress-card progress-bar green" id="eventProgressCard">
+                <span id="eventProgressPercentage"></span>
+            </div>
+            <div class="card progress-card blue">
+                <span>End Time:</span>
+                <span id="eventEndTime"></span>
+            </div>
+        </div>
+        <!-- Donations Progress -->
+        <h1 class="dashboard-header">Donation Progress</h1>
+        <div class="dashboard-segment progress-dashboard">
+            <div class="card progress-card red">
+                <span>Amount Raised:</span>
+                <span class="currency"></span><span id="eventAmountRaised"></span>
+            </div>
+            <div class="card progress-card progress-bar green" id="donationProgressCard">
+                <span id="donationProgressPercentage"></span>
+            </div>
+            <div class="card progress-card blue">
+                <span>Donation Target:</span>
+                <span class="currency"></span><span id="eventTargetRaised"></span>
+            </div>
+        </div>
+        <!-- Donation Statistics -->
+        <h1 class="dashboard-header">Donation Counts</h1>
+        <div class="dashboard-segment progress-dashboard flex-dashboard">
+            <div class="card progress-card red">
+                <span id="donationCount"></span>
+                <span> donations</span>
+            </div>
+           <div class="card progress-card blue">
+                <span id="donationCountInTimespan"></span>
+            </div>
+        </div>
+        <h1 class="dashboard-header">Donation Amounts</h1>
+        <div class="dashboard-segment progress-dashboard flex-dashboard">
+            <div class="card progress-card green">
+                <span>Average donation amount: </span>
+                <span class="currency"></span><span id="averageDonation"></span>
+            </div>
+            <div class="card progress-card green">
+                <span>Largest donation: </span>
+                <span class="currency"></span><span id="largestDonation"></span>
+            </div>
+            <div class="card progress-card green">
+                <span>Latest donation: </span>
+                <span class="currency"></span><span id="latestDonation"></span>
+            </div>
+        </div>
+        <!-- Graphs -->
+        <h1 class="dashboard-header">Graphs</h1>
+        <div class="dashboard-segment progress-dashboard chart-dashboard">
+            <div class="card white chart-card">
+                <h2>Donation Amounts over time</h2>
+                <div id="donationsOverTimeGraph"></div>
+            </div>
+            <div class="card white chart-card">
+                <h2>Donation Total over time</h2>
+                <div id="donationsTotalOverTime"></div>
+            </div>
+            <div class="card white chart-card">
+                <h2>Donation Distribution</h2>
+                <div id="donationDistributionGraph"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block after_body %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" integrity="sha256-1hjUhpc44NwiNg8OwMu2QzJXhD8kcj+sJA3aCQZoUjg=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.11.0/chartist.min.js" integrity="sha256-UzffRueYhyZDw8Cj39UCnnggvBfa1fPcDQ0auvCbvCc=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/console/statistics.js') }}"></script>
+{% endblock %}

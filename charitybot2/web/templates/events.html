@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block optional_head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/common/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/console/events.css') }}" />
+{% endblock %}
+{% block body %}
+    <h1 id="eventHeader" class="header">Charitybot registered events</h1>
+    <div>
+        {% for event in events %}
+            <div class="card">
+                <h2>{{ event.title }}</h2>
+                <a href="/stats/{{ event.identifier }}">Statistics Dashboard</a>
+                <a href="/donations/{{ event.identifier }}">Donations List</a>
+                <a href="/event/{{ event.identifier }}">Donations Console</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+{% block footer %}
+{% endblock %}
