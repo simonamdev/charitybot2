@@ -72,7 +72,7 @@ class DonationSQLiteRepository(SQLiteRepository):
 
     def get_latest_event_donation(self, event_identifier):
         latest_donation = self.get_event_donations(event_identifier=event_identifier, limit=1)
-        return latest_donation[0] if len(latest_donation) > 0 else []
+        return latest_donation[0] if len(latest_donation) > 0 else None
 
     def get_time_filtered_event_donations(self, event_identifier, lower_bound, upper_bound=None):
         query = 'SELECT * ' \

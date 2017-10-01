@@ -41,9 +41,15 @@ class TestDonationsService:
         assert [] == donations
         assert 0 == len(donations)
 
-    def test_get_latest_donations(self):
+    def test_get_latest_donation(self):
         setup_test_donations(self.donations_service._donations_repository)
         latest_donation = self.donations_service.get_latest_donation(test_event_identifier)
         assert test_range[-1] == latest_donation.amount
         assert test_range[-1] == latest_donation.timestamp
         assert test_event_identifier == latest_donation.event_identifier
+
+    def test_get_latest_donation_with_no_donations_present(self):
+        latest_donation = self.donations_service.get_latest_donation(
+            event_identifier=test_event_identifier
+        )
+        assert None is latest_donation
