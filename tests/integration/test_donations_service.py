@@ -1,3 +1,4 @@
+import pytest
 from charitybot2.models.donation import Donation
 from charitybot2.services.donations_service import DonationsService
 
@@ -55,6 +56,26 @@ class TestDonationsService:
             event_identifier=test_event_identifier
         )
         assert None is latest_donation
+
+    @pytest.mark.parametrize('limit', [
+        1,
+        2,
+        3,
+        4,
+        5
+    ])
+    def get_latest_few_donations_given_a_limit(self, limit):
+        setup_test_donations(self.donations_service._donations_repository)
+        latest_donations = self.donations_service.get_latest_donations(
+            event_identifier=test_event_identifier,
+            limit=limit
+        )
+        assert isinstance(latest_donations, list)
+        assert limit == len(latest_donations)
+        for i in range(limit, 1, -1):
+            assert i == latest_donations[i].amount
+            assert i == latest_donations[i].timestamp
+            assert test_event_identifier == latest_donations[i].event_identifer
 
     def test_get_largest_donation(self):
         decreasing_test_range = range(5, 1, -1)

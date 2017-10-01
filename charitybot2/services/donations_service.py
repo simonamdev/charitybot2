@@ -37,6 +37,12 @@ class DonationsService:
         return self._donations_repository.get_latest_event_donation(event_identifier=event_identifier)
 
     """
+    Retrieve the latest few donations for a given event, in descending order by the datetime of donation
+    """
+    def get_latest_donations(self, event_identifier, limit):
+        return None
+
+    """
     Retrieve the largest donation for a given event.
     Largest donation is the donation with the highest amount donated
     """
