@@ -5,10 +5,12 @@ test_range = range(1, 6)
 test_event_identifier = 'event'
 
 
-def setup_test_donations(repository):
+def setup_test_donations(repository, test_range_values=test_range):
     donations = []
-    for i in test_range:
-        donations.append(Donation(amount=i, event_identifier='event', timestamp=i))
+    for i in test_range_values:
+        donations.append(
+            Donation(amount=i, event_identifier=test_event_identifier, timestamp=i)
+        )
     for donation in donations:
         repository.record_donation(donation=donation)
 
@@ -53,3 +55,19 @@ class TestDonationsService:
             event_identifier=test_event_identifier
         )
         assert None is latest_donation
+
+    def test_get_largest_donation(self):
+        decreasing_test_range = range(5, 1, -1)
+        setup_test_donations(self.donations_service._donations_repository, test_range_values=decreasing_test_range)
+        largest_donation = self.donations_service.get_largest_donation(
+            event_identifier=test_event_identifier
+        )
+        assert decreasing_test_range[0] == largest_donation.amount
+        assert decreasing_test_range[0] == largest_donation.timestamp
+        assert test_event_identifier == largest_donation.event_identifier
+
+    def test_get_largest_donation_with_no_donations_present(self):
+        largest_donation = self.donations_service.get_largest_donation(
+            event_identifier=test_event_identifier
+        )
+        assert None is largest_donation

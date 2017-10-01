@@ -92,7 +92,7 @@ class DonationSQLiteRepository(SQLiteRepository):
                 'LIMIT 1;'
         data = (event_identifier, )
         row = self.execute_query(query=query, data=data).fetchone()
-        return self.__convert_row_to_donation(row=row)
+        return self.__convert_row_to_donation(row=row) if row is not None else None
 
     def get_donation_count(self, event_identifier, time_lower_bound=-1, time_upper_bound=-1):
         query = 'SELECT COUNT(*) ' \

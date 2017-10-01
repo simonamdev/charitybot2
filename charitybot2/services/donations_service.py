@@ -35,3 +35,10 @@ class DonationsService:
     """
     def get_latest_donation(self, event_identifier):
         return self._donations_repository.get_latest_event_donation(event_identifier=event_identifier)
+
+    """
+    Retrieve the largest donation for a given event.
+    Largest donation is the donation with the highest amount donated
+    """
+    def get_largest_donation(self, event_identifier):
+        return self._donations_repository.get_largest_donation(event_identifier=event_identifier)
