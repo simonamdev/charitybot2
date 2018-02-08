@@ -5,6 +5,7 @@ var totalUrl = eventUrl + '/total/';
 console.log('Connecting to API via: ' + apiAddress);
 var amountElementId = 'overlayAmount';
 var amountEl = document.getElementById(amountElementId);
+var oldAmount = 0.0;
 
 getCurrencySymbol().then((symbol) => {
     console.log('Setting up with currency symbol: ' + symbol);
@@ -22,7 +23,11 @@ getCurrencySymbol().then((symbol) => {
 function drawTotal(element) {
     fetchJSONFile(totalUrl, (data) => {
         // console.log(data);
-        amountEl.innerText = data['total'];
+        var newAmount = data['total'];
+        if (newAmount > oldAmount) {
+            amountEl.innerText = data['total'];
+            oldAmount = newAmount;
+        }
     }, () => {
         markUnavailable();
     });
