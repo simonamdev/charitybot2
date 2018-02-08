@@ -82,7 +82,7 @@ class JustgivingRunner:
                     current_timestamp,
                     self._event_configuration.currency.key,
                     donation.amount,
-                    donation.donor_name
+                    donation.donor_name.encode('ascii', 'ignore').decode()
                 ))
                 self.store_donation(donation=donation)
             # update the total because just giving provide it in a separate part
