@@ -42,6 +42,9 @@ function roundUp(number) {
 }
 
 function returnTimespanString(timespanInSeconds) {
+    if (timespanInSeconds <= 0) {
+        return '0';
+    }
     var timespanInMinutes = timespanInSeconds / 60;
     if (timespanInMinutes < 1) {
         return roundUp(timespanInSeconds) + ' seconds';
