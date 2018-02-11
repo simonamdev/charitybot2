@@ -111,4 +111,13 @@ class TestDonationsService:
         )
         assert None is largest_donation
 
+    def test_get_average_donation(self):
+        setup_test_donations(self.donations_service._donations_repository)
+        # calculate average
+        expected_average = sum(test_range) / len(test_range)
+        actual_average = self.donations_service.get_average_donation(event_identifier=test_event_identifier)
+        assert expected_average == actual_average
 
+    def test_get_average_donation_with_no_donations_present(self):
+        actual_average = self.donations_service.get_average_donation(event_identifier=test_event_identifier)
+        assert 0.0 == actual_average

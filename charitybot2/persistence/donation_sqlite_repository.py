@@ -114,7 +114,7 @@ class DonationSQLiteRepository(SQLiteRepository):
                 'WHERE eventInternalName = ?;'
         data = (event_identifier, )
         row = self.execute_query(query=query, data=data).fetchone()
-        return float(row[0])
+        return float(row[0]) if row[0] else 0.0
 
     def get_donation_distribution(self, event_identifier):
         distribution_bounds = ((0, 10), (10, 20), (20, 50), (50, 75), (75, 100), (100, 10000))

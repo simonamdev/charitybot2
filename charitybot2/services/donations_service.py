@@ -49,3 +49,9 @@ class DonationsService:
     """
     def get_largest_donation(self, event_identifier):
         return self._donations_repository.get_largest_donation(event_identifier=event_identifier)
+
+    """
+    Retrieve the average donation for a given event.
+    """
+    def get_average_donation(self, event_identifier):
+        return self._donations_repository.get_average_donation_amount(event_identifier=event_identifier)
