@@ -31,16 +31,17 @@ class DonationsService:
         return self._donations_repository.get_event_donations(event_identifier=event_identifier)
 
     """
+    Retrieve the latest number of donations for a given event, in descending order by the datetime of donation
+    """
+    def get_latest_donations(self, event_identifier, limit):
+        return self._donations_repository.get_event_donations(event_identifier=event_identifier, limit=limit)
+
+    """
     Retrieve the latest donation for a given event
     """
     def get_latest_donation(self, event_identifier):
-        return self._donations_repository.get_latest_event_donation(event_identifier=event_identifier)
-
-    """
-    Retrieve the latest few donations for a given event, in descending order by the datetime of donation
-    """
-    def get_latest_donations(self, event_identifier, limit):
-        return None
+        latest_donations = self.get_latest_donations(event_identifier=event_identifier, limit=1)
+        return latest_donations[0] if len(latest_donations) == 1 else None
 
     """
     Retrieve the largest donation for a given event.
