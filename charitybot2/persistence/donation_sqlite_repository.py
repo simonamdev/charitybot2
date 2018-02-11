@@ -1,3 +1,4 @@
+import time
 from charitybot2.models.donation import Donation
 from charitybot2.paths import init_donations_script_path, init_events_script_path
 from charitybot2.persistence.sql_script import SQLScript
@@ -74,13 +75,18 @@ class DonationSQLiteRepository(SQLiteRepository):
         latest_donation = self.get_event_donations(event_identifier=event_identifier, limit=1)
         return latest_donation[0] if len(latest_donation) > 0 else None
 
-    def get_time_filtered_event_donations(self, event_identifier, lower_bound, upper_bound=None):
+    def get_time_filtered_event_donations(self, event_identifier, lower_bound=0, upper_bound=None, limit=None):
         query = 'SELECT * ' \
                 'FROM `donations` ' \
                 'WHERE eventInternalName = ? ' \
                 'AND timeRecorded BETWEEN ? AND ? ' \
-                'ORDER BY timeRecorded DESC;'
-        data = (event_identifier, lower_bound, upper_bound)
+                'ORDER BY timeRecorded DESC'
+        if limit is not None:
+            query += ' LIMIT ?;'
+            data = (event_identifier, lower_bound, upper_bound if upper_bound else time.time(), limit)
+        else:
+            query += ';'
+            data = (event_identifier, lower_bound, upper_bound if upper_bound else time.time())
         rows = self.execute_query(query=query, data=data).fetchall()
         return [self.__convert_row_to_donation(row) for row in rows]
 

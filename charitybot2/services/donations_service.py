@@ -55,3 +55,33 @@ class DonationsService:
     """
     def get_average_donation(self, event_identifier):
         return self._donations_repository.get_average_donation_amount(event_identifier=event_identifier)
+
+    """
+    Retrieve donations for a given event between certain time bounds.
+    Return all donations if no limit or time bounds are given.
+    """
+    def get_time_bounded_donations(self, event_identifier, lower_bound=None, upper_bound=None, limit=None):
+        # If no parameters are passed, just return all the donations
+        if lower_bound is None and upper_bound is None and limit is None:
+            return self.get_all_donations(event_identifier=event_identifier)
+        if lower_bound is None and upper_bound is None:
+            return self.get_latest_donations(event_identifier=event_identifier, limit=limit)
+        if upper_bound is None and limit is None:
+            return self._donations_repository.get_time_filtered_event_donations(
+                event_identifier=event_identifier,
+                lower_bound=lower_bound)
+        if lower_bound is None and limit is None:
+            return self._donations_repository.get_time_filtered_event_donations(
+                event_identifier=event_identifier,
+                lower_bound=0,
+                upper_bound=upper_bound)
+        if limit is None:
+            return self._donations_repository.get_time_filtered_event_donations(
+                event_identifier=event_identifier,
+                lower_bound=lower_bound,
+                upper_bound=upper_bound)
+        return self._donations_repository.get_time_filtered_event_donations(
+                event_identifier=event_identifier,
+                lower_bound=lower_bound,
+                upper_bound=upper_bound,
+                limit=limit)

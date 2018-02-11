@@ -121,3 +121,101 @@ class TestDonationsService:
     def test_get_average_donation_with_no_donations_present(self):
         actual_average = self.donations_service.get_average_donation(event_identifier=test_event_identifier)
         assert 0.0 == actual_average
+
+    def test_get_time_bounded_donations_with_no_bounds_returns_all_donations(self):
+        setup_test_donations(self.donations_service._donations_repository)
+        donations = self.donations_service.get_time_bounded_donations(event_identifier=test_event_identifier)
+        assert len(test_range) == len(donations)
+        for i in range(test_range_max - 1, 0, -1):
+            donation = donations[i - 1]
+            value = test_range_max - i
+            assert value == donation.amount
+            assert value == donation.timestamp
+            assert test_event_identifier == donation.event_identifier
+
+    def test_get_time_bounded_donations_with_no_bounds_and_limit(self):
+        setup_test_donations(self.donations_service._donations_repository)
+        limit = 3
+        donations = self.donations_service.get_time_bounded_donations(
+            event_identifier=test_event_identifier,
+            limit=limit)
+        assert limit == len(donations)
+        for i in range(0, limit):
+            donation = donations[i]
+            value = test_range_max - 1 - i
+            assert value == donation.amount
+            assert value == donation.timestamp
+            assert test_event_identifier == donation.event_identifier
+
+    def test_get_time_bounded_donations_with_lower_bound_only(self):
+        setup_test_donations(self.donations_service._donations_repository)
+        lower_bound = 2
+        donations = self.donations_service.get_time_bounded_donations(
+            event_identifier=test_event_identifier,
+            lower_bound=lower_bound)
+        assert test_range_max - lower_bound == len(donations)
+        for i in range(0, test_range_max - lower_bound):
+            donation = donations[i]
+            value = test_range_max - i - 1
+            assert value == donation.amount
+            assert value == donation.timestamp
+            assert test_event_identifier == donation.event_identifier
+
+    def test_get_time_bounded_donations_with_upper_bound_only(self):
+        setup_test_donations(self.donations_service._donations_repository)
+        upper_bound = 4
+        donations = self.donations_service.get_time_bounded_donations(
+            event_identifier=test_event_identifier,
+            upper_bound=upper_bound)
+        assert upper_bound == len(donations)
+        for i in range(0, upper_bound):
+            donation = donations[i]
+            value = upper_bound - i
+            assert value == donation.amount
+            assert value == donation.timestamp
+            assert test_event_identifier == donation.event_identifier
+
+    def test_get_time_bounded_donations_with_both_bounds(self):
+        setup_test_donations(self.donations_service._donations_repository)
+        lower_bound = 2
+        upper_bound = 4
+        donations = self.donations_service.get_time_bounded_donations(
+            event_identifier=test_event_identifier,
+            lower_bound=lower_bound,
+            upper_bound=upper_bound)
+        assert upper_bound - lower_bound + 1 == len(donations)
+        for i in range(0, upper_bound - lower_bound + 1):
+            donation = donations[i]
+            value = upper_bound - i
+            assert value == donation.amount
+            assert value == donation.timestamp
+            assert test_event_identifier == donation.event_identifier
+
+    def test_get_time_bounded_donations_with_both_bounds_and_limit(self):
+        setup_test_donations(self.donations_service._donations_repository)
+        limit = 2
+        lower_bound = 2
+        upper_bound = 5
+        donations = self.donations_service.get_time_bounded_donations(
+            event_identifier=test_event_identifier,
+            lower_bound=lower_bound,
+            upper_bound=upper_bound,
+            limit=limit)
+        assert limit == len(donations)
+        for i in range(0, limit):
+            donation = donations[i]
+            value = upper_bound - i
+            assert value == donation.amount
+            assert value == donation.timestamp
+            assert test_event_identifier == donation.event_identifier
+
+    def test_get_time_bounded_donations_with_no_donations_present(self):
+        limit = 2
+        lower_bound = 2
+        upper_bound = 5
+        donations = self.donations_service.get_time_bounded_donations(
+            event_identifier=test_event_identifier,
+            lower_bound=lower_bound,
+            upper_bound=upper_bound,
+            limit=limit)
+        assert 0 == len(donations)
