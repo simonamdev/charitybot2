@@ -253,13 +253,20 @@ class TestDonationsService:
             upper_bound=upper_bound)
         assert upper_bound - lower_bound + 1 == donation_count
 
+    # Bounds: ((0, 10), (10, 20), (20, 50), (50, 75), (75, 100), (100, 10000))
     def test_donation_distribution(self):
-        # TODO
-        assert None is not None
+        distribution_test_range = range(1, 999)
+        setup_test_donations(self.donations_service._donations_repository, distribution_test_range)
+        expected_distribution = [9, 10, 30, 25, 25, 899]
+        actual_distribution = self.donations_service.get_donation_distribution(event_identifier=test_event_identifier)
+        for i in range(0, len(expected_distribution)):
+            assert expected_distribution[i] == actual_distribution[i]
 
     def test_donation_distribution_with_no_donations_present(self):
-        # TODO
-        assert None is not None
+        expected_distribution = [0, 0, 0, 0, 0, 0]
+        actual_distribution = self.donations_service.get_donation_distribution(event_identifier=test_event_identifier)
+        for i in range(0, len(expected_distribution)):
+            assert expected_distribution[i] == actual_distribution[i]
 
     def test_registering_one_donation_with_no_donations_present(self):
         # TODO

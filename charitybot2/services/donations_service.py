@@ -102,10 +102,10 @@ class DonationsService:
                 limit=limit)
 
     """
-    Retrieve the distribution of donations into bins, either by provided or by default bounds
+    Retrieve the distribution of donations into bins
     """
-    def get_donation_distribution(self, event_identifier, bounds=None):
-        pass
+    def get_donation_distribution(self, event_identifier):
+        return self._donations_repository.get_donation_distribution(event_identifier=event_identifier)
 
     """
     Register a new donation
