@@ -34,6 +34,12 @@ class DonationsService:
     Retrieve the number of donations for a given event
     """
     def get_number_of_donations(self, event_identifier):
+        return self._donations_repository.get_donation_count(event_identifier=event_identifier)
+
+    """
+    Retrieve the number of donations between time bounds for a given event
+    """
+    def get_time_bounded_number_of_donations(self, event_identifier, lower_bound=None, upper_bound=None):
         pass
 
     """
@@ -91,3 +97,15 @@ class DonationsService:
                 lower_bound=lower_bound,
                 upper_bound=upper_bound,
                 limit=limit)
+
+    """
+    Retrieve the distribution of donations into bins, either by provided or by default bounds
+    """
+    def get_donation_distribution(self, event_identifier, bounds=None):
+        pass
+
+    """
+    Register a new donation
+    """
+    def register_donation(self, event_identifier, donation):
+        pass

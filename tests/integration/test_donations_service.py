@@ -220,9 +220,45 @@ class TestDonationsService:
             limit=limit)
         assert 0 == len(donations)
 
-    def test_get_number_of_donations(self):
+    def test_get_number_of_donations_with_no_time_bounds(self):
         setup_test_donations(self.donations_service._donations_repository)
         assert len(test_range) == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
 
     def test_get_number_of_donations_with_no_donations_present(self):
         assert 0 == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
+
+    def test_get_number_of_donations_with_lower_bound_only(self):
+        # TODO
+        assert None is not None
+
+    def test_get_number_of_donations_with_upper_bound_only(self):
+        # TODO
+        assert None is not None
+
+    def test_get_number_of_donations_with_time_bounds(self):
+        # TODO
+        assert None is not None
+
+    def test_donation_distribution(self):
+        # TODO
+        assert None is not None
+
+    def test_donation_distribution_with_no_donations_present(self):
+        # TODO
+        assert None is not None
+
+    def test_registering_one_donation_with_no_donations_present(self):
+        # TODO
+        assert None is not None
+
+    def test_registering_several_donations_with_no_donations_present(self):
+        # TODO
+        assert None is not None
+
+    def test_registering_one_donation(self):
+        # TODO
+        assert None is not None
+
+    def test_registering_several_donations(self):
+        # TODO
+        assert None is not None
