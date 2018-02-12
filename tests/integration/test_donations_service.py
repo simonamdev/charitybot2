@@ -219,3 +219,10 @@ class TestDonationsService:
             upper_bound=upper_bound,
             limit=limit)
         assert 0 == len(donations)
+
+    def test_get_number_of_donations(self):
+        setup_test_donations(self.donations_service._donations_repository)
+        assert len(test_range) == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
+
+    def test_get_number_of_donations_with_no_donations_present(self):
+        assert 0 == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)

@@ -31,6 +31,12 @@ class DonationsService:
         return self._donations_repository.get_event_donations(event_identifier=event_identifier)
 
     """
+    Retrieve the number of donations for a given event
+    """
+    def get_number_of_donations(self, event_identifier):
+        pass
+
+    """
     Retrieve the latest number of donations for a given event, in descending order by the datetime of donation
     """
     def get_latest_donations(self, event_identifier, limit):
