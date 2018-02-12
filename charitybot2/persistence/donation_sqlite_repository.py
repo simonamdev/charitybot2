@@ -1,6 +1,6 @@
 import time
 
-from pypika import Query, Table, Field, functions as fn
+from pypika import Query, Order, Table, Field, functions as fn
 
 from charitybot2.models.donation import Donation
 from charitybot2.paths import init_donations_script_path, init_events_script_path
@@ -13,6 +13,10 @@ class DonationAlreadyRegisteredException(Exception):
 
 
 donations_table = Table('donations')
+
+
+def fix_placeholders(query):
+    return str(query).replace('\'', '')
 
 
 class DonationSQLiteRepository(SQLiteRepository):
@@ -30,11 +34,12 @@ class DonationSQLiteRepository(SQLiteRepository):
         if donation_internal_reference is None:
             return False
         q = Query.from_(donations_table).where(
-            donations_table.internalReference == donation_internal_reference
+            donations_table.internalReference == '?'
         ).select(
-            fn.Count('*')
+            fn.Count(fn.Star())
         )
-        count = self.execute_query(query=str(q)).fetchone()[0]
+        data = (donation_internal_reference, )
+        count = self.execute_query(query=fix_placeholders(q), data=data).fetchone()[0]
         return count >= 1
 
     def record_donation(self, donation):
@@ -52,18 +57,14 @@ class DonationSQLiteRepository(SQLiteRepository):
         self.execute_query(query=donation_query, data=donation_data, commit=True)
 
     def get_event_donations(self, event_identifier, limit=None):
-        # If no limit is provided, then do not set a default and return all the donations
-        query = 'SELECT * ' \
-                'FROM `donations` ' \
-                'WHERE eventInternalName = ?' \
-                'ORDER BY timeRecorded DESC'
-        if limit is None or not isinstance(limit, int):
-            # Avoid non integer limits
-            query += ';'
-        else:
-            query += ' LIMIT {};'.format(limit)
+        q = Query.from_(donations_table).where(
+            donations_table.eventInternalName == '?')\
+            .select(fn.Star())\
+            .orderby('timeRecorded', order=Order.desc)
+        if limit is not None and isinstance(limit, int):
+            q = q.limit(limit)
         data = (event_identifier, )
-        rows = self.execute_query(query=query, data=data).fetchall()
+        rows = self.execute_query(query=fix_placeholders(q), data=data).fetchall()
         return [self.__convert_row_to_donation(row) for row in rows]
 
     def get_latest_event_donation(self, event_identifier):
