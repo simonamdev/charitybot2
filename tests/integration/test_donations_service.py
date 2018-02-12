@@ -1,5 +1,6 @@
 import pytest
 from charitybot2.models.donation import Donation
+from charitybot2.persistence.donation_sqlite_repository import DonationAlreadyRegisteredException
 from charitybot2.services.donations_service import DonationsService
 
 test_range_min = 1
@@ -269,17 +270,138 @@ class TestDonationsService:
             assert expected_distribution[i] == actual_distribution[i]
 
     def test_registering_one_donation_with_no_donations_present(self):
-        # TODO
-        assert None is not None
+        amount = 500.5
+        timestamp = 555
+        internal_reference = 'aaaa'
+        external_reference = 'bbb'
+        donor_name = 'bla'
+        notes = 'Yo'
+        donation = Donation(
+            amount=amount,
+            event_identifier=test_event_identifier,
+            timestamp=timestamp,
+            internal_reference=internal_reference,
+            external_reference=external_reference,
+            donor_name=donor_name,
+            notes=notes)
+        # Assert that no donations exist
+        assert 0 == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
+        # Register the donation
+        self.donations_service.register_donation(donation=donation)
+        # Check that the donation exists
+        assert 1 == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
+        donations = self.donations_service.get_all_donations(event_identifier=test_event_identifier)
+        assert 1 == len(donations)
+        stored_donation = donations[0]
+        # Check the values
+        assert amount == stored_donation.amount
+        assert timestamp == stored_donation.timestamp
+        assert internal_reference == stored_donation.internal_reference
+        assert external_reference == stored_donation.external_reference
+        assert donor_name == stored_donation.donor_name
+        assert notes == stored_donation.notes
 
     def test_registering_several_donations_with_no_donations_present(self):
-        # TODO
-        assert None is not None
+        number_of_donations = 5
+        amount = 500.5
+        timestamp = 555
+        external_reference = 'bbb'
+        donor_name = 'bla'
+        notes = 'Yo'
+        donations = []
+        for i in range(0, number_of_donations):
+            donation = Donation(
+                amount=amount,
+                event_identifier=test_event_identifier,
+                timestamp=timestamp,
+                internal_reference=str(i),
+                external_reference=external_reference,
+                donor_name=donor_name,
+                notes=notes)
+            donations.append(donation)
+        assert 0 == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
+        amount = 0
+        for i in range(0, number_of_donations):
+            amount += 1
+            self.donations_service.register_donation(donation=donations[i])
+            assert amount == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
 
-    def test_registering_one_donation(self):
-        # TODO
-        assert None is not None
+    def test_registering_one_donation_with_donations_present(self):
+        setup_test_donations(self.donations_service._donations_repository)
+        amount = 500.5
+        timestamp = 555
+        internal_reference = 'aaaa'
+        external_reference = 'bbb'
+        donor_name = 'bla'
+        notes = 'Yo'
+        donation = Donation(
+            amount=amount,
+            event_identifier=test_event_identifier,
+            timestamp=timestamp,
+            internal_reference=internal_reference,
+            external_reference=external_reference,
+            donor_name=donor_name,
+            notes=notes)
+        # Assert that no donations exist
+        assert len(test_range) == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
+        # Register the donation
+        self.donations_service.register_donation(donation=donation)
+        # Check that the donation exists
+        assert len(test_range) + 1 == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
+        donations = self.donations_service.get_all_donations(event_identifier=test_event_identifier)
+        assert len(test_range) + 1 == len(donations)
+        stored_donation = donations[0]
+        # Check the values
+        assert amount == stored_donation.amount
+        assert timestamp == stored_donation.timestamp
+        assert internal_reference == stored_donation.internal_reference
+        assert external_reference == stored_donation.external_reference
+        assert donor_name == stored_donation.donor_name
+        assert notes == stored_donation.notes
 
-    def test_registering_several_donations(self):
-        # TODO
-        assert None is not None
+    def test_registering_several_donations_with_donations_present(self):
+        setup_test_donations(self.donations_service._donations_repository)
+        number_of_donations = 5
+        amount = 500.5
+        timestamp = 555
+        external_reference = 'bbb'
+        donor_name = 'bla'
+        notes = 'Yo'
+        donations = []
+        for i in range(0, number_of_donations):
+            donation = Donation(
+                amount=amount,
+                event_identifier=test_event_identifier,
+                timestamp=timestamp,
+                internal_reference=str(i),
+                external_reference=external_reference,
+                donor_name=donor_name,
+                notes=notes)
+            donations.append(donation)
+        assert len(test_range) == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
+        amount = len(test_range)
+        for i in range(0, number_of_donations):
+            amount += 1
+            self.donations_service.register_donation(donation=donations[i])
+            assert amount == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
+
+    def test_registering_donation_already_registered_throws_exception(self):
+        with pytest.raises(DonationAlreadyRegisteredException):
+            amount = 500.5
+            timestamp = 555
+            internal_reference = 'aaaa'
+            external_reference = 'bbb'
+            donor_name = 'bla'
+            notes = 'Yo'
+            donation = Donation(
+                amount=amount,
+                event_identifier=test_event_identifier,
+                timestamp=timestamp,
+                internal_reference=internal_reference,
+                external_reference=external_reference,
+                donor_name=donor_name,
+                notes=notes)
+            # Register the donation
+            self.donations_service.register_donation(donation=donation)
+            # Register the donation again
+            self.donations_service.register_donation(donation=donation)

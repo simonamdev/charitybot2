@@ -20,22 +20,17 @@ class DonationSQLiteRepository(SQLiteRepository):
         events_init_script = SQLScript(path=init_events_script_path)
         self.execute_query(query=events_init_script.return_sql(), commit=True)
 
-    def __donation_already_stored(self, internal_reference):
-        if internal_reference is None:
+    def donation_exists(self, donation_internal_reference):
+        if donation_internal_reference is None:
             return False
         query = 'SELECT COUNT(*) ' \
                 'FROM `donations` ' \
                 'WHERE internalReference = ?;'
-        data = (internal_reference, )
+        data = (donation_internal_reference, )
         count = self.execute_query(query=query, data=data).fetchone()[0]
         return count >= 1
 
     def record_donation(self, donation):
-        # TODO: Move this into the donations service layer
-        # The donations repository should not interact with the events repository
-        if self.__donation_already_stored(internal_reference=donation.internal_reference):
-            raise DonationAlreadyRegisteredException(
-                'Donation with internal reference: {} is already registered'.format(donation.internal_reference))
         donation_query = 'INSERT INTO `donations` ' \
                          'VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?);'
         donation_data = (
@@ -47,14 +42,7 @@ class DonationSQLiteRepository(SQLiteRepository):
             donation.donor_name,
             donation.notes,
             donation.validity)
-        # event_total_query = 'UPDATE `events` ' \
-        #                     'SET currentAmount = currentAmount + ? ' \
-        #                     'WHERE internalName = ?;'
-        # event_data = (
-        #     donation.amount,
-        #     donation.event_identifier)
         self.execute_query(query=donation_query, data=donation_data, commit=True)
-        # self.execute_query(query=event_total_query, data=event_data, commit=True)
 
     def get_event_donations(self, event_identifier, limit=None):
         # If no limit is provided, then do not set a default and return all the donations

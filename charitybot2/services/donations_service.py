@@ -1,4 +1,5 @@
-from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository
+from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository, \
+    DonationAlreadyRegisteredException
 from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
 
 
@@ -110,5 +111,8 @@ class DonationsService:
     """
     Register a new donation
     """
-    def register_donation(self, event_identifier, donation):
-        pass
+    def register_donation(self, donation):
+        if self._donations_repository.donation_exists(donation_internal_reference=donation.internal_reference):
+            raise DonationAlreadyRegisteredException(
+                'Donation with internal reference: {} is already registered'.format(donation.internal_reference))
+        self._donations_repository.record_donation(donation=donation)
