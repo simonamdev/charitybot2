@@ -1,4 +1,7 @@
 import time
+
+from pypika import Query, Table, Field, functions as fn
+
 from charitybot2.models.donation import Donation
 from charitybot2.paths import init_donations_script_path, init_events_script_path
 from charitybot2.persistence.sql_script import SQLScript
@@ -7,6 +10,9 @@ from charitybot2.persistence.sqlite_repository import SQLiteRepository
 
 class DonationAlreadyRegisteredException(Exception):
     pass
+
+
+donations_table = Table('donations')
 
 
 class DonationSQLiteRepository(SQLiteRepository):
@@ -23,11 +29,12 @@ class DonationSQLiteRepository(SQLiteRepository):
     def donation_exists(self, donation_internal_reference):
         if donation_internal_reference is None:
             return False
-        query = 'SELECT COUNT(*) ' \
-                'FROM `donations` ' \
-                'WHERE internalReference = ?;'
-        data = (donation_internal_reference, )
-        count = self.execute_query(query=query, data=data).fetchone()[0]
+        q = Query.from_(donations_table).where(
+            donations_table.internalReference == donation_internal_reference
+        ).select(
+            fn.Count('*')
+        )
+        count = self.execute_query(query=str(q)).fetchone()[0]
         return count >= 1
 
     def record_donation(self, donation):
