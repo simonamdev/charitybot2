@@ -228,16 +228,30 @@ class TestDonationsService:
         assert 0 == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
 
     def test_get_number_of_donations_with_lower_bound_only(self):
-        # TODO
-        assert None is not None
+        setup_test_donations(self.donations_service._donations_repository)
+        lower_bound = 2
+        donation_count = self.donations_service.get_time_bounded_number_of_donations(
+            event_identifier=test_event_identifier,
+            lower_bound=lower_bound)
+        assert test_range_max - lower_bound == donation_count
 
     def test_get_number_of_donations_with_upper_bound_only(self):
-        # TODO
-        assert None is not None
+        setup_test_donations(self.donations_service._donations_repository)
+        upper_bound = 3
+        donation_count = self.donations_service.get_time_bounded_number_of_donations(
+            event_identifier=test_event_identifier,
+            upper_bound=upper_bound)
+        assert upper_bound == donation_count
 
     def test_get_number_of_donations_with_time_bounds(self):
-        # TODO
-        assert None is not None
+        setup_test_donations(self.donations_service._donations_repository)
+        lower_bound = 2
+        upper_bound = 4
+        donation_count = self.donations_service.get_time_bounded_number_of_donations(
+            event_identifier=test_event_identifier,
+            lower_bound=lower_bound,
+            upper_bound=upper_bound)
+        assert upper_bound - lower_bound + 1 == donation_count
 
     def test_donation_distribution(self):
         # TODO

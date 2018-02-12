@@ -39,8 +39,11 @@ class DonationsService:
     """
     Retrieve the number of donations between time bounds for a given event
     """
-    def get_time_bounded_number_of_donations(self, event_identifier, lower_bound=None, upper_bound=None):
-        pass
+    def get_time_bounded_number_of_donations(self, event_identifier, lower_bound=0, upper_bound=None):
+        return self._donations_repository.get_donation_count(
+            event_identifier=event_identifier,
+            time_lower_bound=lower_bound,
+            time_upper_bound=upper_bound)
 
     """
     Retrieve the latest number of donations for a given event, in descending order by the datetime of donation
