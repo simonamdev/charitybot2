@@ -9,3 +9,4 @@ selenium
 gevent
 faker
 tiltify2
+pypika
