@@ -1,7 +1,5 @@
 import os
 
-from type_assertions import accept_types
-
 
 class SQLScript:
     def __init__(self, path):
@@ -10,7 +8,6 @@ class SQLScript:
         self.__validate_file(path)
         self.__read_file()
 
-    @accept_types(object, str)
     def __validate_file(self, path):
         if not os.path.isfile(path):
             raise FileNotFoundError('SQL Script not present at path: {}'.format(path))

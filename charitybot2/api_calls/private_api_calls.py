@@ -7,7 +7,6 @@ from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.models.donation import Donation
 from charitybot2.models.event import NonExistentEventException
 from charitybot2.sources.url_call import UrlCall
-from type_assertions import accept_types
 
 
 class PrivateApiCalls:
@@ -24,13 +23,11 @@ class PrivateApiCalls:
     def get_index(self):
         return json.loads(UrlCall(url=self._base_api_url, timeout=self._timeout).get().content.decode('utf-8'))
 
-    @accept_types(object, str)
     def get_event_existence(self, identifier):
         url = self._base_api_url + 'event/exists/{}/'.format(identifier)
         decoded_content = UrlCall(url=url, timeout=self._timeout).get().content.decode('utf-8')
         return json.loads(decoded_content)['event_exists']
 
-    @accept_types(object, str)
     def get_event_info(self, identifier):
         url = self._base_api_url + 'event/{}'.format(identifier)
         decoded_content = UrlCall(url=url, timeout=self._timeout).get().content.decode('utf-8')
@@ -39,21 +36,18 @@ class PrivateApiCalls:
             raise NonExistentEventException('Event with identifier {} does not exist'.format(identifier))
         return content
 
-    @accept_types(object, EventConfiguration)
     def register_event(self, event_configuration):
         url = self._base_api_url + 'event/'
         response = UrlCall(url=url, timeout=self._timeout).post(data=event_configuration.configuration_values)
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['registration_successful']
 
-    @accept_types(object, EventConfiguration)
     def update_event(self, event_configuration):
         url = self._base_api_url + 'event/'
         response = UrlCall(url=url, timeout=self._timeout).post(data=event_configuration.configuration_values)
         decoded_content = response.content.decode('utf-8')
         return json.loads(decoded_content)['update_successful']
 
-    @accept_types(object, str, str, (int, float))
     def send_heartbeat(self, source, state, timestamp=None):
         if timestamp is None or not isinstance(timestamp, int):
             timestamp = int(time.time())
