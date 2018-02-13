@@ -45,9 +45,13 @@ class EventSQLiteRepository(SQLiteRepository):
         return [row[0] for row in rows]
 
     def event_already_registered(self, identifier):
-        query = 'SELECT COUNT(*) FROM `events` WHERE internalName = ?'
+        q = Query.from_(events_table).where(
+            events_table.internalName == '?'
+        ).select(
+            fn.Count(fn.Star())
+        )
         data = (identifier, )
-        count = self.execute_query(query=query, data=data).fetchall()
+        count = self.execute_query(query=fix_placeholders(q), data=data).fetchall()
         return count[0][0] >= 1
 
     def get_event_configuration(self, identifier):

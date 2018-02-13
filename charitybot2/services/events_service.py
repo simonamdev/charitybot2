@@ -29,7 +29,7 @@ class EventsService:
     Check if an event is registered
     """
     def event_is_registered(self, event_identifier):
-        pass
+        return self._event_repository.event_already_registered(identifier=event_identifier)
 
     """
     If an event exists, retrieve its configuration
