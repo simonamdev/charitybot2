@@ -13,6 +13,7 @@ test_range_min = 1
 test_range_max = 6
 test_range = range(test_range_min, test_range_max)
 test_event_identifier = 'event'
+non_existent_event = 'blabalabla'
 
 
 def get_test_event_config():
@@ -65,6 +66,10 @@ class TestDonationsService:
         assert [] == donations
         assert 0 == len(donations)
 
+    def test_get_all_donations_of_non_existent_event_throws_exception(self):
+        with pytest.raises(EventNotRegisteredException):
+            self.donations_service.get_all_donations(event_identifier=non_existent_event)
+
     def test_get_latest_donation(self):
         setup_test_donations(self.donations_service)
         latest_donation = self.donations_service.get_latest_donation(test_event_identifier)
@@ -77,6 +82,10 @@ class TestDonationsService:
             event_identifier=test_event_identifier
         )
         assert None is latest_donation
+
+    def test_get_latest_donation_of_non_existent_event_throws_exception(self):
+        with pytest.raises(EventNotRegisteredException):
+            self.donations_service.get_latest_donation(event_identifier=non_existent_event)
 
     def test_get_number_of_latest_donations(self):
         setup_test_donations(self.donations_service)
@@ -114,6 +123,10 @@ class TestDonationsService:
             assert i == latest_donations[i].timestamp
             assert test_event_identifier == latest_donations[i].event_identifer
 
+    def test_get_latest_donations_of_non_existent_event_throws_exception(self):
+        with pytest.raises(EventNotRegisteredException):
+            self.donations_service.get_latest_donations(event_identifier=non_existent_event, limit=5)
+
     def test_get_largest_donation(self):
         decreasing_test_range = range(5, 1, -1)
         setup_test_donations(self.donations_service, test_range_values=decreasing_test_range)
@@ -130,6 +143,10 @@ class TestDonationsService:
         )
         assert None is largest_donation
 
+    def test_get_largest_donation_of_non_existent_event_throws_exception(self):
+        with pytest.raises(EventNotRegisteredException):
+            self.donations_service.get_largest_donation(event_identifier=non_existent_event)
+
     def test_get_average_donation(self):
         setup_test_donations(self.donations_service)
         # calculate average
@@ -140,6 +157,10 @@ class TestDonationsService:
     def test_get_average_donation_with_no_donations_present(self):
         actual_average = self.donations_service.get_average_donation(event_identifier=test_event_identifier)
         assert 0.0 == actual_average
+
+    def test_get_average_donation_of_non_existent_event_throws_exception(self):
+        with pytest.raises(EventNotRegisteredException):
+            self.donations_service.get_average_donation(event_identifier=non_existent_event)
 
     def test_get_time_bounded_donations_with_no_bounds_returns_all_donations(self):
         setup_test_donations(self.donations_service)
@@ -239,6 +260,14 @@ class TestDonationsService:
             limit=limit)
         assert 0 == len(donations)
 
+    def test_get_time_bounded_donations_of_non_existent_event_throws_exception(self):
+        with pytest.raises(EventNotRegisteredException):
+            self.donations_service.get_time_bounded_donations(
+                event_identifier=non_existent_event,
+                lower_bound=2,
+                upper_bound=5,
+                limit=2)
+
     def test_get_number_of_donations_with_no_time_bounds(self):
         setup_test_donations(self.donations_service)
         assert len(test_range) == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
@@ -272,6 +301,10 @@ class TestDonationsService:
             upper_bound=upper_bound)
         assert upper_bound - lower_bound + 1 == donation_count
 
+    def test_get_number_of_donations_of_non_existent_event_throws_exception(self):
+        with pytest.raises(EventNotRegisteredException):
+            self.donations_service.get_number_of_donations(event_identifier=non_existent_event)
+
     # Bounds: ((0, 10), (10, 20), (20, 50), (50, 75), (75, 100), (100, 10000))
     def test_donation_distribution(self):
         distribution_test_range = range(1, 999)
@@ -286,6 +319,10 @@ class TestDonationsService:
         actual_distribution = self.donations_service.get_donation_distribution(event_identifier=test_event_identifier)
         for i in range(0, len(expected_distribution)):
             assert expected_distribution[i] == actual_distribution[i]
+
+    def test_get_donation_distribution_of_non_existent_event_throws_exception(self):
+        with pytest.raises(EventNotRegisteredException):
+            self.donations_service.get_donation_distribution(event_identifier=non_existent_event)
 
     def test_registering_one_donation_with_no_donations_present(self):
         amount = 500.5
@@ -426,7 +463,6 @@ class TestDonationsService:
             self.donations_service.register_donation(donation=donation)
 
     def test_registering_donation_of_non_existent_event_throws_exception(self):
-        non_existent_event = 'blabalabla'
         amount = 500.5
         timestamp = 555
         internal_reference = 'aaaa'
