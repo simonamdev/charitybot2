@@ -1,5 +1,4 @@
 import pytest
-from charitybot2.exceptions import IllegalArgumentException
 from charitybot2.paths import init_test_sql_script_path
 from charitybot2.persistence.sql_script import SQLScript
 
