@@ -1,7 +1,13 @@
 import pytest
+from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
+
 from charitybot2.models.donation import Donation
 from charitybot2.persistence.donation_sqlite_repository import DonationAlreadyRegisteredException
+from charitybot2.persistence.event_sqlite_repository import EventNotRegisteredException
 from charitybot2.services.donations_service import DonationsService
+
+from helpers.event_config import get_updated_test_config_values
+
 
 test_range_min = 1
 test_range_max = 6
@@ -9,14 +15,24 @@ test_range = range(test_range_min, test_range_max)
 test_event_identifier = 'event'
 
 
-def setup_test_donations(repository, test_range_values=test_range):
+def get_test_event_config():
+    test_config_values = get_updated_test_config_values(updated_values={'identifier': test_event_identifier})
+    return EventConfigurationCreator(configuration_values=test_config_values).configuration
+
+
+def register_test_event(service):
+    service._event_repository.register_event(get_test_event_config())
+
+
+def setup_test_donations(service, test_range_values=test_range):
+    # Register donations
     donations = []
     for i in test_range_values:
         donations.append(
             Donation(amount=i, event_identifier=test_event_identifier, timestamp=i)
         )
     for donation in donations:
-        repository.record_donation(donation=donation)
+        service._donations_repository.record_donation(donation=donation)
 
 
 class TestDonationsService:
@@ -25,12 +41,14 @@ class TestDonationsService:
     def setup_method(self):
         self.donations_service = DonationsService(repository_path='memory')
         self.donations_service.open_connections()
+        # Register the test event
+        register_test_event(self.donations_service)
 
     def teardown_method(self):
         self.donations_service.close_connections()
 
     def test_get_all_donations(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         donations = self.donations_service.get_all_donations(
             event_identifier=test_event_identifier
         )
@@ -48,7 +66,7 @@ class TestDonationsService:
         assert 0 == len(donations)
 
     def test_get_latest_donation(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         latest_donation = self.donations_service.get_latest_donation(test_event_identifier)
         assert test_range[-1] == latest_donation.amount
         assert test_range[-1] == latest_donation.timestamp
@@ -61,7 +79,7 @@ class TestDonationsService:
         assert None is latest_donation
 
     def test_get_number_of_latest_donations(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         limit = 3
         latest_donations = self.donations_service.get_latest_donations(test_event_identifier, limit=limit)
         for i in range(0, limit):
@@ -84,7 +102,7 @@ class TestDonationsService:
         5
     ])
     def get_latest_few_donations_given_a_limit(self, limit):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         latest_donations = self.donations_service.get_latest_donations(
             event_identifier=test_event_identifier,
             limit=limit
@@ -98,7 +116,7 @@ class TestDonationsService:
 
     def test_get_largest_donation(self):
         decreasing_test_range = range(5, 1, -1)
-        setup_test_donations(self.donations_service._donations_repository, test_range_values=decreasing_test_range)
+        setup_test_donations(self.donations_service, test_range_values=decreasing_test_range)
         largest_donation = self.donations_service.get_largest_donation(
             event_identifier=test_event_identifier
         )
@@ -113,7 +131,7 @@ class TestDonationsService:
         assert None is largest_donation
 
     def test_get_average_donation(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         # calculate average
         expected_average = sum(test_range) / len(test_range)
         actual_average = self.donations_service.get_average_donation(event_identifier=test_event_identifier)
@@ -124,7 +142,7 @@ class TestDonationsService:
         assert 0.0 == actual_average
 
     def test_get_time_bounded_donations_with_no_bounds_returns_all_donations(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         donations = self.donations_service.get_time_bounded_donations(event_identifier=test_event_identifier)
         assert len(test_range) == len(donations)
         for i in range(test_range_max - 1, 0, -1):
@@ -135,7 +153,7 @@ class TestDonationsService:
             assert test_event_identifier == donation.event_identifier
 
     def test_get_time_bounded_donations_with_no_bounds_and_limit(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         limit = 3
         donations = self.donations_service.get_time_bounded_donations(
             event_identifier=test_event_identifier,
@@ -149,7 +167,7 @@ class TestDonationsService:
             assert test_event_identifier == donation.event_identifier
 
     def test_get_time_bounded_donations_with_lower_bound_only(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         lower_bound = 2
         donations = self.donations_service.get_time_bounded_donations(
             event_identifier=test_event_identifier,
@@ -163,7 +181,7 @@ class TestDonationsService:
             assert test_event_identifier == donation.event_identifier
 
     def test_get_time_bounded_donations_with_upper_bound_only(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         upper_bound = 4
         donations = self.donations_service.get_time_bounded_donations(
             event_identifier=test_event_identifier,
@@ -177,7 +195,7 @@ class TestDonationsService:
             assert test_event_identifier == donation.event_identifier
 
     def test_get_time_bounded_donations_with_both_bounds(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         lower_bound = 2
         upper_bound = 4
         donations = self.donations_service.get_time_bounded_donations(
@@ -193,7 +211,7 @@ class TestDonationsService:
             assert test_event_identifier == donation.event_identifier
 
     def test_get_time_bounded_donations_with_both_bounds_and_limit(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         limit = 2
         lower_bound = 2
         upper_bound = 5
@@ -222,14 +240,14 @@ class TestDonationsService:
         assert 0 == len(donations)
 
     def test_get_number_of_donations_with_no_time_bounds(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         assert len(test_range) == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
 
     def test_get_number_of_donations_with_no_donations_present(self):
         assert 0 == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
 
     def test_get_number_of_donations_with_lower_bound_only(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         lower_bound = 2
         donation_count = self.donations_service.get_time_bounded_number_of_donations(
             event_identifier=test_event_identifier,
@@ -237,7 +255,7 @@ class TestDonationsService:
         assert test_range_max - lower_bound == donation_count
 
     def test_get_number_of_donations_with_upper_bound_only(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         upper_bound = 3
         donation_count = self.donations_service.get_time_bounded_number_of_donations(
             event_identifier=test_event_identifier,
@@ -245,7 +263,7 @@ class TestDonationsService:
         assert upper_bound == donation_count
 
     def test_get_number_of_donations_with_time_bounds(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         lower_bound = 2
         upper_bound = 4
         donation_count = self.donations_service.get_time_bounded_number_of_donations(
@@ -257,7 +275,7 @@ class TestDonationsService:
     # Bounds: ((0, 10), (10, 20), (20, 50), (50, 75), (75, 100), (100, 10000))
     def test_donation_distribution(self):
         distribution_test_range = range(1, 999)
-        setup_test_donations(self.donations_service._donations_repository, distribution_test_range)
+        setup_test_donations(self.donations_service, distribution_test_range)
         expected_distribution = [9, 10, 30, 25, 25, 899]
         actual_distribution = self.donations_service.get_donation_distribution(event_identifier=test_event_identifier)
         for i in range(0, len(expected_distribution)):
@@ -302,6 +320,7 @@ class TestDonationsService:
         assert notes == stored_donation.notes
 
     def test_registering_several_donations_with_no_donations_present(self):
+        setup_test_donations(self.donations_service, range(0, 0))
         number_of_donations = 5
         amount = 500.5
         timestamp = 555
@@ -327,7 +346,7 @@ class TestDonationsService:
             assert amount == self.donations_service.get_number_of_donations(event_identifier=test_event_identifier)
 
     def test_registering_one_donation_with_donations_present(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         amount = 500.5
         timestamp = 555
         internal_reference = 'aaaa'
@@ -360,7 +379,7 @@ class TestDonationsService:
         assert notes == stored_donation.notes
 
     def test_registering_several_donations_with_donations_present(self):
-        setup_test_donations(self.donations_service._donations_repository)
+        setup_test_donations(self.donations_service)
         number_of_donations = 5
         amount = 500.5
         timestamp = 555
@@ -404,4 +423,23 @@ class TestDonationsService:
             # Register the donation
             self.donations_service.register_donation(donation=donation)
             # Register the donation again
+            self.donations_service.register_donation(donation=donation)
+
+    def test_registering_donation_of_non_existent_event_throws_exception(self):
+        non_existent_event = 'blabalabla'
+        amount = 500.5
+        timestamp = 555
+        internal_reference = 'aaaa'
+        external_reference = 'bbb'
+        donor_name = 'bla'
+        notes = 'Yo'
+        donation = Donation(
+            amount=amount,
+            event_identifier=non_existent_event,
+            timestamp=timestamp,
+            internal_reference=internal_reference,
+            external_reference=external_reference,
+            donor_name=donor_name,
+            notes=notes)
+        with pytest.raises(EventNotRegisteredException):
             self.donations_service.register_donation(donation=donation)

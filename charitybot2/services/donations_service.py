@@ -1,6 +1,6 @@
 from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository, \
     DonationAlreadyRegisteredException
-from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
+from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository, EventNotRegisteredException
 
 
 class DonationsService:
@@ -26,21 +26,31 @@ class DonationsService:
         self._donations_repository.close_connection()
 
     """
+    Check if an event exists. For internal usage before nearly any action.
+    """
+    def __check_event_exists(self, event_identifier):
+        if not self._event_repository.event_already_registered(identifier=event_identifier):
+            raise EventNotRegisteredException('Event with identifier: {} does not exist'.format(event_identifier))
+
+    """
     Retrieve all donations for a given event
     """
     def get_all_donations(self, event_identifier):
+        self.__check_event_exists(event_identifier=event_identifier)
         return self._donations_repository.get_event_donations(event_identifier=event_identifier)
 
     """
     Retrieve the number of donations for a given event
     """
     def get_number_of_donations(self, event_identifier):
+        self.__check_event_exists(event_identifier=event_identifier)
         return self._donations_repository.get_donation_count(event_identifier=event_identifier)
 
     """
     Retrieve the number of donations between time bounds for a given event
     """
     def get_time_bounded_number_of_donations(self, event_identifier, lower_bound=0, upper_bound=None):
+        self.__check_event_exists(event_identifier=event_identifier)
         return self._donations_repository.get_donation_count(
             event_identifier=event_identifier,
             time_lower_bound=lower_bound,
@@ -50,12 +60,14 @@ class DonationsService:
     Retrieve the latest number of donations for a given event, in descending order by the datetime of donation
     """
     def get_latest_donations(self, event_identifier, limit):
+        self.__check_event_exists(event_identifier=event_identifier)
         return self._donations_repository.get_event_donations(event_identifier=event_identifier, limit=limit)
 
     """
     Retrieve the latest donation for a given event
     """
     def get_latest_donation(self, event_identifier):
+        self.__check_event_exists(event_identifier=event_identifier)
         latest_donations = self.get_latest_donations(event_identifier=event_identifier, limit=1)
         return latest_donations[0] if len(latest_donations) == 1 else None
 
@@ -64,12 +76,14 @@ class DonationsService:
     Largest donation is the donation with the highest amount donated
     """
     def get_largest_donation(self, event_identifier):
+        self.__check_event_exists(event_identifier=event_identifier)
         return self._donations_repository.get_largest_donation(event_identifier=event_identifier)
 
     """
     Retrieve the average donation for a given event.
     """
     def get_average_donation(self, event_identifier):
+        self.__check_event_exists(event_identifier=event_identifier)
         return self._donations_repository.get_average_donation_amount(event_identifier=event_identifier)
 
     """
@@ -77,6 +91,7 @@ class DonationsService:
     Return all donations if no limit or time bounds are given.
     """
     def get_time_bounded_donations(self, event_identifier, lower_bound=None, upper_bound=None, limit=None):
+        self.__check_event_exists(event_identifier=event_identifier)
         # If no parameters are passed, just return all the donations
         if lower_bound is None and upper_bound is None and limit is None:
             return self.get_all_donations(event_identifier=event_identifier)
@@ -106,6 +121,7 @@ class DonationsService:
     Retrieve the distribution of donations into bins
     """
     def get_donation_distribution(self, event_identifier):
+        self.__check_event_exists(event_identifier=event_identifier)
         return self._donations_repository.get_donation_distribution(event_identifier=event_identifier)
 
     """
@@ -115,4 +131,5 @@ class DonationsService:
         if self._donations_repository.donation_exists(donation_internal_reference=donation.internal_reference):
             raise DonationAlreadyRegisteredException(
                 'Donation with internal reference: {} is already registered'.format(donation.internal_reference))
+        self.__check_event_exists(event_identifier=donation.event_identifier)
         self._donations_repository.record_donation(donation=donation)
