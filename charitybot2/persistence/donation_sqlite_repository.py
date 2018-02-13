@@ -1,6 +1,6 @@
 import time
 
-from pypika import Query, Order, Table, Field, functions as fn
+from pypika import Query, Order, Table, functions as fn
 
 from charitybot2.models.donation import Donation
 from charitybot2.paths import init_donations_script_path, init_events_script_path

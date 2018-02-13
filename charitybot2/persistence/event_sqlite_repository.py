@@ -1,3 +1,5 @@
+from pypika import Query, Order, Table, functions as fn
+
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
 from charitybot2.paths import init_events_script_path
 from charitybot2.persistence.sql_script import SQLScript
@@ -12,6 +14,17 @@ class EventNotRegisteredException(Exception):
     pass
 
 
+class EventInvalidValueException(Exception):
+    pass
+
+
+events_table = Table('events')
+
+
+def fix_placeholders(query):
+    return str(query).replace('\'', '')
+
+
 class EventSQLiteRepository(SQLiteRepository):
     def __init__(self, db_path='memory', debug=False):
         super().__init__(db_path=db_path, debug=debug)
@@ -24,6 +37,12 @@ class EventSQLiteRepository(SQLiteRepository):
     def __validate_repository(self):
         init_script = SQLScript(path=init_events_script_path)
         self.execute_query(query=init_script.return_sql(), commit=True)
+
+    def get_all_identifiers(self):
+        q = Query.from_(events_table)\
+            .select('internalName')
+        rows = self.execute_query(query=fix_placeholders(q)).fetchall()
+        return [row[0] for row in rows]
 
     def event_already_registered(self, identifier):
         query = 'SELECT COUNT(*) FROM `events` WHERE internalName = ?'

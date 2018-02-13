@@ -23,7 +23,7 @@ class EventsService:
     Get all registered event names
     """
     def get_all_event_identifiers(self):
-        pass
+        return self._event_repository.get_all_identifiers()
 
     """
     Check if an event is registered
@@ -40,13 +40,19 @@ class EventsService:
     """
     Register a new event
     """
-    def register_event(self, event_identifier):
+    def register_event(self, event_configuration):
         pass
 
     """
     Update an existing event
     """
-    def update_event(self, event_identifier):
+    def update_event(self, event_configuration):
+        pass
+
+    """
+    Get the total raised for a given event
+    """
+    def get_event_total(self, event_identifier):
         pass
 
     """

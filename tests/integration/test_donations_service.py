@@ -12,7 +12,7 @@ from helpers.event_config import get_updated_test_config_values
 test_range_min = 1
 test_range_max = 6
 test_range = range(test_range_min, test_range_max)
-test_event_identifier = 'event'
+test_event_identifier = 'donation_service_test_event'
 non_existent_event = 'blabalabla'
 
 
