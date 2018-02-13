@@ -22,7 +22,7 @@ class EventsService:
     """
     Get all registered event names
     """
-    def get_all_events(self):
+    def get_all_event_identifiers(self):
         pass
 
     """
