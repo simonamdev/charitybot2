@@ -8,6 +8,8 @@ class DonationsService:
         self._repository_path = repository_path
         self._event_repository = None
         self._donations_repository = None
+        self._event_identifier_cache = []
+        self._event_identifier_cache_limit = 10
 
     """
     Opens the connections to the repositories required
@@ -29,8 +31,23 @@ class DonationsService:
     Check if an event exists. For internal usage before nearly any action.
     """
     def __check_event_exists(self, event_identifier):
+        # Check if it exists in the cache
+        if event_identifier in self._event_identifier_cache:
+            return
         if not self._event_repository.event_already_registered(identifier=event_identifier):
             raise EventNotRegisteredException('Event with identifier: {} does not exist'.format(event_identifier))
+        # If it does exist, consider caching the identifier
+        self.__cache_event_identifier(identifier=event_identifier)
+
+    """
+    Caching logic for event identifiers
+    """
+    def __cache_event_identifier(self, identifier):
+        if identifier not in self._event_identifier_cache:
+            # Remove one if we are beyond our limit
+            if len(self._event_identifier_cache) >= self._event_identifier_cache_limit:
+                self._event_identifier_cache.pop()
+            self._event_identifier_cache.append(identifier)
 
     """
     Retrieve all donations for a given event
