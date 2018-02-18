@@ -36,6 +36,7 @@ class DonationsService:
     Retrieve all donations for a given event
     """
     def get_all_donations(self, event_identifier):
+        self.__check_event_exists(event_identifier=event_identifier)
         return self._donations_repository.get_event_donations(event_identifier=event_identifier)
 
     """

@@ -55,12 +55,11 @@ class TestDonationSQLiteRepository:
             assert values[i] + test_limit - 1 == donation.timestamp
             assert self.test_event_identifier == donation.event_identifier
 
-    def test_getting_latest_donation_when_none_present_returns_empty_list(self):
+    def test_getting_latest_donation_when_none_present_returns_none(self):
         self.test_donation_repository = get_new_test_database()
-        donations = self.test_donation_repository.get_latest_event_donation(
+        donation = self.test_donation_repository.get_latest_event_donation(
             event_identifier=self.test_event_identifier)
-        assert [] == donations
-        assert 0 == len(donations)
+        assert None is donation
 
     def test_getting_latest_donation(self):
         latest_donation = self.test_donation_repository.get_latest_event_donation(

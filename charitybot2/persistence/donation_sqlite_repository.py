@@ -43,6 +43,8 @@ class DonationSQLiteRepository(SQLiteRepository):
         return count >= 1
 
     def record_donation(self, donation):
+        if self.donation_exists(donation_internal_reference=donation.internal_reference):
+            raise DonationAlreadyRegisteredException('Donation with internal reference: {} already exists'.format(donation.internal_reference))
         donation_query = 'INSERT INTO `donations` ' \
                          'VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?);'
         donation_data = (
