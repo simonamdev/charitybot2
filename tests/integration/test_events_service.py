@@ -119,3 +119,21 @@ class TestEventsService:
     def test_setting_non_existent_event_total_throws_exception(self):
         with pytest.raises(EventNotRegisteredException):
             self.events_service.set_event_total(event_identifier=non_existent_event, total=5.5)
+
+    def test_setting_event_target(self):
+        test_identifier = 'update-total-event'
+        expected_target = 100
+        event_config = get_test_event_config(
+            updated_values={'identifier': test_identifier, 'target_amount': expected_target})
+        self.events_service.register_event(event_configuration=event_config)
+        actual_config = self.events_service.get_event_configuration(event_identifier=test_identifier)
+        assert expected_target == actual_config.target_amount
+        # update the amount
+        expected_new_target = 1000
+        self.events_service.set_event_target(event_identifier=test_identifier, target=expected_new_target)
+        new_actual_config = self.events_service.get_event_configuration(event_identifier=test_identifier)
+        assert expected_new_target == new_actual_config.target_amount
+
+    def test_setting_non_existent_event_target_throws_exception(self):
+        with pytest.raises(EventNotRegisteredException):
+            self.events_service.set_event_target(event_identifier=non_existent_event, target=10101.0)

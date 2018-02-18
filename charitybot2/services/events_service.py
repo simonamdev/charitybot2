@@ -61,3 +61,8 @@ class EventsService:
     def set_event_total(self, event_identifier, total):
         self._event_repository.update_event_current_amount(identifier=event_identifier, current_amount=total)
 
+    """
+    Set the event target amount
+    """
+    def set_event_target(self, event_identifier, target):
+        self._event_repository.update_event_target_amount(identifier=event_identifier, target_amount=target)

@@ -140,6 +140,15 @@ class EventSQLiteRepository(SQLiteRepository):
         update_data = (current_amount, identifier)
         self.execute_query(query=update_query, data=update_data, commit=True)
 
+    def update_event_target_amount(self, identifier, target_amount):
+        if not self.event_already_registered(identifier=identifier):
+            raise EventNotRegisteredException('Event by {} is not registered yet'.format(identifier))
+        update_query = 'UPDATE `events` ' \
+                       'SET targetAmount = ? ' \
+                       'WHERE internalName = ?'
+        update_data = (target_amount, identifier)
+        self.execute_query(query=update_query, data=update_data, commit=True)
+
     def get_events(self):
         query = 'SELECT * FROM `events`;'
         events = self.execute_query(query=query).fetchall()
