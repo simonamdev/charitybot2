@@ -14,6 +14,10 @@ test_event_identifier = 'event_service-test_event'
 non_existent_event = 'foofoofoo'
 
 
+def dictionaries_are_the_same(dict_a, dict_b):
+    return len(set(dict_a.items() ^ dict_b.items())) == 0
+
+
 def get_test_event_config(updated_values=None):
     values = {'identifier': test_event_identifier}
     if updated_values:
@@ -52,10 +56,9 @@ class TestEventsService:
 
     def test_retrieving_existing_event_configuration(self):
         expected_values = get_updated_test_config_values(updated_values={'identifier': test_event_identifier})
-        actual_values = self.events_service.get_event_configuration(event_identifier=test_event_identifier)
-        for expected_key, expected_value, actual_key, actual_value in expected_values.items(), actual_values.items():
-            assert expected_key == actual_key
-            assert expected_value == actual_value
+        actual_configuration = self.events_service.get_event_configuration(event_identifier=test_event_identifier)
+        actual_values = actual_configuration.configuration_values
+        assert True is dictionaries_are_the_same(expected_values, actual_values)
 
     def test_retrieving_non_existent_event_configuration_throws_exception(self):
         with pytest.raises(EventNotRegisteredException):
@@ -63,33 +66,18 @@ class TestEventsService:
 
     def test_register_event(self):
         assert 1 == len(self.events_service.get_all_event_identifiers())
-        event_config = get_test_event_config()
+        test_identifier = 'event_registration_test'
+        event_config = get_test_event_config(updated_values={'identifier': test_identifier})
         self.events_service.register_event(event_configuration=event_config)
         assert 2 == len(self.events_service.get_all_event_identifiers())
-        test_identifier = 'event_registration_test'
         expected_event_config_values = get_updated_test_config_values(updated_values={'identifier': test_identifier})
-        actual_event_config_values = self.events_service.get_event_configuration(event_identifier=test_identifier)
-        for expected_key, expected_value, actual_key, actual_value in expected_event_config_values.items(), actual_event_config_values.items():
-            assert expected_key == actual_key
-            assert expected_value == actual_value
+        actual_event_config = self.events_service.get_event_configuration(event_identifier=test_identifier)
+        actual_event_config_values = actual_event_config.configuration_values
+        assert True is dictionaries_are_the_same(expected_event_config_values, actual_event_config_values)
 
-    def test_registering_already_registered_event_throws_exceptions(self):
+    def test_registering_already_registered_event_throws_exception(self):
         event_config = get_test_event_config()
-        self.events_service.register_event(event_configuration=event_config)
         with pytest.raises(EventAlreadyRegisteredException):
-            self.events_service.register_event(event_configuration=event_config)
-
-    # TODO: Add more invalid values to make test more comprehensive
-    @pytest.mark.parametrize('values', [
-        {'start_time': 1, 'end_time': 0},
-        {'target_amount': 0},
-        {'target_amount': -1},
-        {'identifier': None}
-    ])
-    def test_registering_event_with_invalid_values_throws_exception(self, values):
-        event_config = get_test_event_config(updated_values=values)
-        self.events_service.register_event(event_configuration=event_config)
-        with pytest.raises(EventInvalidValueException):
             self.events_service.register_event(event_configuration=event_config)
 
     def test_updating_existing_event(self):
@@ -99,31 +87,18 @@ class TestEventsService:
         self.events_service.register_event(event_configuration=event_config)
         # Update the event
         test_target_amount = 3333333
-        updated_event_config = get_test_event_config(updated_values={'target_amount': test_target_amount})
+        updated_event_config = get_test_event_config(
+            updated_values={'target_amount': test_target_amount, 'identifier': test_identifier})
         self.events_service.update_event(event_configuration=updated_event_config)
         # retrieve the config
         actual_config = self.events_service.get_event_configuration(event_identifier=test_identifier)
         expected_config_values = updated_event_config.configuration_values
         actual_config_values = actual_config.configuration_values
-        for expected_key, expected_value, actual_key, actual_value in expected_config_values.items(), actual_config_values.items():
-            assert expected_key == actual_key
-            assert expected_value == actual_value
+        assert True is dictionaries_are_the_same(expected_config_values, actual_config_values)
 
     def test_updating_non_existent_event_throws_exception(self):
         event_config = get_test_event_config(updated_values={'identifier': non_existent_event})
         with pytest.raises(EventNotRegisteredException):
-            self.events_service.update_event(event_configuration=event_config)
-
-    # TODO: Add more invalid values to make test more comprehensive
-    @pytest.mark.parametrize('values', [
-        {'start_time': 1, 'end_time': 0},
-        {'target_amount': 0},
-        {'target_amount': -1},
-        {'identifier': None}
-    ])
-    def test_updating_event_with_invalid_values_throws_exception(self, values):
-        event_config = get_test_event_config(updated_values=values)
-        with pytest.raises(EventInvalidValueException):
             self.events_service.update_event(event_configuration=event_config)
 
     def test_getting_event_total(self):

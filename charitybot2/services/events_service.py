@@ -35,29 +35,29 @@ class EventsService:
     If an event exists, retrieve its configuration
     """
     def get_event_configuration(self, event_identifier):
-        pass
+        return self._event_repository.get_event_configuration(identifier=event_identifier)
 
     """
     Register a new event
     """
     def register_event(self, event_configuration):
-        pass
+        self._event_repository.register_event(event_configuration=event_configuration)
 
     """
     Update an existing event
     """
     def update_event(self, event_configuration):
-        pass
+        self._event_repository.update_event(new_event_configuration=event_configuration)
 
     """
     Get the total raised for a given event
     """
     def get_event_total(self, event_identifier):
-        pass
+        return self._event_repository.get_event_current_amount(identifier=event_identifier)
 
     """
     Set the total raised for a given event
     """
     def set_event_total(self, event_identifier, total):
-        pass
+        self._event_repository.update_event_current_amount(identifier=event_identifier, current_amount=total)
 

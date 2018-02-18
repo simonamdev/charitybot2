@@ -131,9 +131,6 @@ class EventSQLiteRepository(SQLiteRepository):
         retrieve_data = (identifier, )
         return self.execute_query(query=retrieve_query, data=retrieve_data).fetchall()[0][0]
 
-    # TODO: Deprecate this method, move it to a transaction in the donation repository
-    # TODO: Take into account that different 3rd party processors do not provide offline donations as a donation but in
-    # a separate total amount, such as just giving
     def update_event_current_amount(self, identifier, current_amount):
         if not self.event_already_registered(identifier=identifier):
             raise EventNotRegisteredException('Event by {} is not registered yet'.format(identifier))
