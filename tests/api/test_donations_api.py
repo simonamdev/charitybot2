@@ -79,3 +79,18 @@ class TestEventDonations:
             test_donation = test_donations[i]
             assert test_donation.internal_reference == donation.internal_reference
 
+    def test_retrieving_donations_with_lower_and_upper_bound(self):
+        # Choose timestamps
+        upper_timestamp = test_donations[2].timestamp
+        lower_timestamp = test_donations[4].timestamp
+        expected_donation_count = 3
+        donations = donations_api_wrapper.get_donations(
+            event_identifier=test_event_identifier,
+            lower_bound=lower_timestamp,
+            upper_bound=upper_timestamp)
+        assert expected_donation_count == len(donations)
+        for i in range(upper_timestamp, lower_timestamp + 1):
+            donation = donations[i - lower_timestamp]
+            assert isinstance(donation, Donation)
+            test_donation = test_donations[i]
+            assert test_donation.internal_reference == donation.internal_reference
