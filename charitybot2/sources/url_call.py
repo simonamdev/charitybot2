@@ -16,6 +16,14 @@ class UrlCall:
         self.user_agent = return_random_user_agent()
         self.headers.update({'User-Agent': self.user_agent})
         self.timeout = timeout
+        self.__remove_none_params()
+
+    def __remove_none_params(self):
+        params = {}
+        for key, value in self.params.items():
+            if value is not None:
+                params[key] = value
+        self.params = params
 
     def make_request(self, request_function):
         try:
