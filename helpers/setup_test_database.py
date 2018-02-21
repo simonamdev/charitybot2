@@ -53,12 +53,14 @@ def setup_test_database(event_values=None, donation_count=10, donation_amount=No
         event_values = updated_values
     event_configuration = get_test_event_configuration(updated_values=event_values)
     register_event(db_path, event_configuration)
-    register_donations(
+    donations = register_donations(
         db_path=db_path,
         event_configuration=event_configuration,
         donation_count=donation_count,
         donation_amount=donation_amount)
     print('--- TEST DATABASE SETUP COMPLETE ---')
+    # return the donations for reference in tests
+    return donations
 
 
 def wipe_database(path):
@@ -90,6 +92,7 @@ def register_donations(db_path, event_configuration, donation_count, donation_am
     fake = Faker()
     print('Adding {} donations'.format(donation_count))
     total = 0
+    donations = []
     for i in tqdm(range(0, donation_count)):
         shifting_time += random.randint(5, 60)
         donor_name = fake.name()
@@ -103,11 +106,13 @@ def register_donations(db_path, event_configuration, donation_count, donation_am
             external_reference='N/A',
             notes='N/A',
             donor_name=donor_name)
+        donations.append(donation)
         donations_repository.record_donation(donation=donation)
     # set the total
     print('Setting total to: {}'.format(total))
     events_repository = EventSQLiteRepository(db_path=db_path)
     events_repository.update_event_current_amount(identifier='test', current_amount=round(total, 2))
+    return donations
 
 
 if __name__ == '__main__':

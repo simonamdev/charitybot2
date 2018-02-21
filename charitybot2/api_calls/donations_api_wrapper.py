@@ -18,5 +18,5 @@ class DonationsApiWrapper:
         response = UrlCall(url=url, timeout=self._timeout).get()
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)['donations']
-        donations = [Donation.from_json(donation) for donation in converted_content]
+        donations = [Donation.from_dict(donation) for donation in converted_content]
         return donations

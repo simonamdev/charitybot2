@@ -29,7 +29,21 @@ def get_repository_path():
         path = test_repository_db_path
     return path
 
-donations_service = DonationsService(repository_path=get_repository_path())
+
+def get_donations_service():
+    donations_service = getattr(g, '_donations_service', None)
+    if donations_service is None:
+        donations_service = g._donations_service = DonationsService(
+            repository_path=get_repository_path())
+        donations_service.open_connections()
+    return donations_service
+
+
+@app.teardown_appcontext
+def close_connection(exception):
+    donations_service = getattr(g, '_donations_service', None)
+    if donations_service is not None:
+        donations_service.close_connections()
 
 
 """
@@ -56,9 +70,12 @@ Donations retrieval Route
 @app.route('/api/v1/event/<event_identifier>/donations/', methods=['GET'])
 def retrieve_event_donations(event_identifier):
     lower_bound, upper_bound, limit = request.args.get('lower'), request.args.get('upper'), request.args.get('limit')
+    donations = get_donations_service().get_time_bounded_donations(event_identifier=event_identifier)
+    # serialise the donations to dictionaries
+    donations = [donation.to_dict() for donation in donations]
     return jsonify(
         {
-            'donations': [],
+            'donations': donations,
             'event_identifier': event_identifier,
             'limit': limit,
             'lower_bound': lower_bound,

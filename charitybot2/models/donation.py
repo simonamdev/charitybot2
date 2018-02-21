@@ -1,6 +1,7 @@
 import json
 import time
 import uuid
+from json import JSONDecodeError
 
 
 class InvalidDonationException(Exception):
@@ -148,6 +149,6 @@ class Donation:
         donation = None
         try:
             donation = Donation.from_dict(json.loads(donation_json))
-        except Exception:
-            raise InvalidDonationException('Unable to create donation from given JSON data')
+        except JSONDecodeError:
+            raise InvalidDonationException('Unable to create donation from given JSON data: {}'.format(donation_json))
         return donation
