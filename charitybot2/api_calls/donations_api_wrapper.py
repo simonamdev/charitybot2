@@ -15,7 +15,12 @@ class DonationsApiWrapper:
 
     def get_donations(self, event_identifier, lower_bound=None, upper_bound=None, limit=None):
         url = self._base_url + 'event/{}/donations/'.format(event_identifier)
-        response = UrlCall(url=url, timeout=self._timeout).get()
+        query_parameters = {
+            'lower': lower_bound,
+            'upper': upper_bound,
+            'limit': limit
+        }
+        response = UrlCall(url=url, params=query_parameters, timeout=self._timeout).get()
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)['donations']
         donations = [Donation.from_dict(donation) for donation in converted_content]
