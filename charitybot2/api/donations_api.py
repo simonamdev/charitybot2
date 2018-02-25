@@ -70,10 +70,15 @@ Donations retrieval Route
 @app.route('/api/v1/event/<event_identifier>/donations/', methods=['GET'])
 def retrieve_event_donations(event_identifier):
     lower_bound, upper_bound, limit = request.args.get('lower'), request.args.get('upper'), request.args.get('limit')
-    donations = get_donations_service().get_time_bounded_donations(
-        event_identifier=event_identifier,
-        lower_bound=lower_bound,
-        upper_bound=upper_bound)
+    # If only the latest one is requested
+    if lower_bound is None and upper_bound is None and limit == 1:
+        donations = [get_donations_service().get_latest_donation(event_identifier=event_identifier)]
+    else:
+        donations = get_donations_service().get_time_bounded_donations(
+            event_identifier=event_identifier,
+            lower_bound=lower_bound,
+            upper_bound=upper_bound,
+            limit=limit)
     # serialise the donations to dictionaries
     donations = [donation.to_dict() for donation in donations]
     return jsonify(

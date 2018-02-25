@@ -25,3 +25,6 @@ class DonationsApiWrapper:
         converted_content = json.loads(decoded_content)['donations']
         donations = [Donation.from_dict(donation) for donation in converted_content]
         return donations
+
+    def get_latest_donation(self, event_identifier):
+        return self.get_donations(event_identifier=event_identifier, limit=1)[0]
