@@ -39,3 +39,10 @@ class DonationsApiWrapper:
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)['count']
         return converted_content
+
+    def get_average_donation_amount(self, event_identifier):
+        url = self._base_url + 'event/{}/donations/average/'.format(event_identifier)
+        response = UrlCall(url=url, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)['amount']
+        return converted_content
