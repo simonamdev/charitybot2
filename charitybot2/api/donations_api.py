@@ -123,7 +123,7 @@ Donation average amount retrieval Route
 
 
 @app.route('/api/v1/event/<event_identifier>/donations/average/', methods=['GET'])
-def retrieve_average_donation_amout(event_identifier):
+def retrieve_average_donation_amount(event_identifier):
     return jsonify(
         {
             'amount': get_donations_service().get_average_donation(event_identifier=event_identifier),
