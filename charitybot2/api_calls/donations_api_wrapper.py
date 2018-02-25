@@ -28,3 +28,14 @@ class DonationsApiWrapper:
 
     def get_latest_donation(self, event_identifier):
         return self.get_donations(event_identifier=event_identifier, limit=1)[0]
+
+    def get_number_of_donations(self, event_identifier, lower_bound=None, upper_bound=None):
+        url = self._base_url + 'event/{}/donations/count/'.format(event_identifier)
+        query_parameters = {
+            'lower': lower_bound,
+            'upper': upper_bound
+        }
+        response = UrlCall(url=url, params=query_parameters, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)['count']
+        return converted_content

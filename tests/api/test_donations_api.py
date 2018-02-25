@@ -116,3 +116,38 @@ class TestEventDonations:
         latest_donation = donations_api_wrapper.get_latest_donation(event_identifier=test_event_identifier)
         assert isinstance(latest_donation, Donation)
         assert test_donations[0].internal_reference == latest_donation.internal_reference
+
+    def test_retrieving_number_of_donations(self):
+        actual_count = donations_api_wrapper.get_number_of_donations(event_identifier=test_event_identifier)
+        assert isinstance(actual_count, int)
+        assert default_number_of_test_donations == actual_count
+
+    def test_retrieving_number_of_donations_with_lower_bound(self):
+        lower_timestamp = test_donations[2].timestamp
+        expected_donation_count = 3
+        actual_count = donations_api_wrapper.get_number_of_donations(
+            event_identifier=test_event_identifier,
+            lower_bound=lower_timestamp)
+        assert isinstance(actual_count, int)
+        assert expected_donation_count == actual_count
+
+    def test_retrieving_number_of_donations_with_upper_bound(self):
+        upper_timestamp = test_donations[2].timestamp
+        excluded_donation_count = 2
+        expected_donation_count = default_number_of_test_donations - excluded_donation_count
+        actual_count = donations_api_wrapper.get_number_of_donations(
+            event_identifier=test_event_identifier,
+            upper_bound=upper_timestamp)
+        assert isinstance(actual_count, int)
+        assert expected_donation_count == actual_count
+
+    def test_retrieving_number_of_donations_with_lower_bound_and_upper_bound(self):
+        upper_timestamp = test_donations[2].timestamp
+        lower_timestamp = test_donations[4].timestamp
+        expected_donation_count = 3
+        actual_count = donations_api_wrapper.get_number_of_donations(
+            event_identifier=test_event_identifier,
+            lower_bound=lower_timestamp,
+            upper_bound=upper_timestamp)
+        assert isinstance(actual_count, int)
+        assert expected_donation_count == actual_count

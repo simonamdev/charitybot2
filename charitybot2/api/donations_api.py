@@ -92,6 +92,31 @@ def retrieve_event_donations(event_identifier):
     )
 
 
+"""
+Donation count retrieval Route
+"""
+
+
+@app.route('/api/v1/event/<event_identifier>/donations/count/', methods=['GET'])
+def retrieve_number_of_event_donations(event_identifier):
+    lower_bound, upper_bound = request.args.get('lower'), request.args.get('upper')
+    if lower_bound is None and upper_bound is None:
+        count = get_donations_service().get_number_of_donations(event_identifier=event_identifier)
+    else:
+        count = get_donations_service().get_time_bounded_number_of_donations(
+            event_identifier=event_identifier,
+            lower_bound=0 if lower_bound is None else lower_bound,
+            upper_bound=upper_bound)
+    return jsonify(
+        {
+            'count': count,
+            'event_identifier': event_identifier,
+            'lower_bound': lower_bound,
+            'upper_bound': upper_bound
+        }
+    )
+
+
 @app.route('/destroy/')
 def destroy():
     if donations_api.debug:
