@@ -46,3 +46,17 @@ class DonationsApiWrapper:
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)['amount']
         return converted_content
+
+    def get_donation_distribution(self, event_identifier):
+        url = self._base_url + 'event/{}/donations/distribution/'.format(event_identifier)
+        response = UrlCall(url=url, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)['distribution']
+        return converted_content
+
+    def record_donation(self, donation):
+        url = self._base_url + 'event/{}/donations/'.format(donation.event_identifier)
+        response = UrlCall(url=url, timeout=self._timeout).post(data=donation.to_dict())
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)
+        return converted_content['message'] if response.status_code == 200 else converted_content['error']

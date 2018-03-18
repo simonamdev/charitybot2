@@ -1,7 +1,8 @@
+from charitybot2.models.donation import Donation, InvalidDonationException
 from charitybot2.paths import production_repository_db_path, test_repository_db_path
 from charitybot2.services.donations_service import DonationsService
 from charitybot2.start_service import Service
-from flask import Flask, jsonify, g, request
+from flask import Flask, jsonify, g, request, abort
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -63,33 +64,52 @@ def index():
 
 
 """
-Donations retrieval Route
+Donations retrieval/registration Route
 """
 
 
-@app.route('/api/v1/event/<event_identifier>/donations/', methods=['GET'])
-def retrieve_event_donations(event_identifier):
-    lower_bound, upper_bound, limit = request.args.get('lower'), request.args.get('upper'), request.args.get('limit')
-    # If only the latest one is requested
-    if lower_bound is None and upper_bound is None and limit == 1:
-        donations = [get_donations_service().get_latest_donation(event_identifier=event_identifier)]
+@app.route('/api/v1/event/<event_identifier>/donations/', methods=['GET', 'POST'])
+def retrieve_or_add_event_donations(event_identifier):
+    if request.method == 'POST':
+        # Attempt to parse the passed donation
+        donation_values = request.form
+        try:
+            donation = Donation.from_dict(donation_values)
+        except InvalidDonationException:
+            # Throw a 500
+            return jsonify(
+                {
+                    'error': 'Unable to parse Donation values'
+                }
+            ), 500
+        get_donations_service().register_donation(donation=donation)
+        return jsonify(
+                {
+                    'message': 'Donation with reference {} successfully added'.format(donation.internal_reference)
+                }
+            )
     else:
-        donations = get_donations_service().get_time_bounded_donations(
-            event_identifier=event_identifier,
-            lower_bound=lower_bound,
-            upper_bound=upper_bound,
-            limit=limit)
-    # serialise the donations to dictionaries
-    donations = [donation.to_dict() for donation in donations]
-    return jsonify(
-        {
-            'donations': donations,
-            'event_identifier': event_identifier,
-            'limit': limit,
-            'lower_bound': lower_bound,
-            'upper_bound': upper_bound
-        }
-    )
+        lower_bound, upper_bound, limit = request.args.get('lower'), request.args.get('upper'), request.args.get('limit')
+        # If only the latest one is requested
+        if lower_bound is None and upper_bound is None and limit == 1:
+            donations = [get_donations_service().get_latest_donation(event_identifier=event_identifier)]
+        else:
+            donations = get_donations_service().get_time_bounded_donations(
+                event_identifier=event_identifier,
+                lower_bound=lower_bound,
+                upper_bound=upper_bound,
+                limit=limit)
+        # serialise the donations to dictionaries
+        donations = [donation.to_dict() for donation in donations]
+        return jsonify(
+            {
+                'donations': donations,
+                'event_identifier': event_identifier,
+                'limit': limit,
+                'lower_bound': lower_bound,
+                'upper_bound': upper_bound
+            }
+        )
 
 
 """
@@ -127,6 +147,22 @@ def retrieve_average_donation_amount(event_identifier):
     return jsonify(
         {
             'amount': get_donations_service().get_average_donation(event_identifier=event_identifier),
+            'event_identifier': event_identifier
+        }
+    )
+
+
+"""
+Donation Distribution retrieval Route
+"""
+
+
+@app.route('/api/v1/event/<event_identifier>/donations/distribution/', methods=['GET'])
+def retrieve_donation_distribution(event_identifier):
+    distribution = get_donations_service().get_donation_distribution(event_identifier=event_identifier)
+    return jsonify(
+        {
+            'distribution': distribution,
             'event_identifier': event_identifier
         }
     )

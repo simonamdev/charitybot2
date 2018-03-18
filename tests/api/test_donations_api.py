@@ -158,3 +158,33 @@ class TestEventDonations:
         ) / default_number_of_test_donations
         actual_average_donation_amount = donations_api_wrapper.get_average_donation_amount(event_identifier=test_event_identifier)
         assert round(expected_average_donation_amount, 2) == round(actual_average_donation_amount, 2)
+
+    def test_get_donation_distribution(self):
+        # test will not actually test the returned values, only the format
+        distribution = donations_api_wrapper.get_donation_distribution(event_identifier=test_event_identifier)
+        assert isinstance(distribution, list)
+        assert 6 == len(distribution)
+        for val in distribution:
+            assert isinstance(val, int)
+
+    def test_recording_new_donation_with_donations_present(self):
+        # Create a donation
+        test_donation_identifier = 'my_adding_donations_test_donation_with_donations_present'
+        new_donation = Donation(
+            amount=5.0,
+            event_identifier=test_event_identifier,
+            internal_reference=test_donation_identifier
+        )
+        donations = donations_api_wrapper.get_donations(
+            event_identifier=test_event_identifier
+        )
+        assert default_number_of_test_donations == len(donations)
+        # add the donation
+        donations_api_wrapper.record_donation(donation=new_donation)
+        # get the donations again to ensure it was recorded
+        donations = donations_api_wrapper.get_donations(
+            event_identifier=test_event_identifier
+        )
+        assert default_number_of_test_donations + 1 == len(donations)
+        latest_donation = donations_api_wrapper.get_latest_donation(event_identifier=test_event_identifier)
+        assert new_donation.internal_reference == latest_donation.internal_reference
