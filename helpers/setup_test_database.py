@@ -22,6 +22,8 @@ updated_values = {
     'end_time': end_time
 }
 
+# TODO: Refactor these helper functions
+
 
 class WipeSQLiteDB:
     def __init__(self, db_path):
@@ -52,7 +54,7 @@ def setup_test_database(event_values=None, donation_count=10, donation_amount=No
     if event_values is None:
         event_values = updated_values
     event_configuration = get_test_event_configuration(updated_values=event_values)
-    register_event(db_path, event_configuration)
+    register_test_event(db_path, event_configuration)
     donations = register_donations(
         db_path=db_path,
         event_configuration=event_configuration,
@@ -72,7 +74,7 @@ def wipe_database(path):
     WipeSQLiteDB(db_path=path).wipe_db()
 
 
-def register_event(db_path, event_configuration):
+def register_test_event(db_path, event_configuration):
     print('Registering event: {}'.format(event_configuration.identifier))
     event_repository = EventSQLiteRepository(db_path=db_path)
     event_register = EventRegister(

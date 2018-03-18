@@ -38,6 +38,7 @@ overlay_script_path = os.path.join(current_directory, 'web', 'overlay.py')
 
 # API Paths
 donation_api_path = os.path.join(current_directory, 'api', 'donations_api.py')
+events_api_path = os.path.join(current_directory, 'api', 'events_api.py')
 
 # SQL Script paths
 init_donations_script_path = os.path.join(db_folder, 'init_donations.sql')
