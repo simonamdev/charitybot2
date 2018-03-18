@@ -1,4 +1,4 @@
-from charitybot2.api.donations_api import donations_api, app, donations_api_identity
+from charitybot2.api.donations_api import donations_api, app, donations_api_identity, port
 from charitybot2.api_calls.donations_api_wrapper import DonationsApiWrapper
 from charitybot2.models.donation import Donation
 from charitybot2.paths import donation_api_path
@@ -13,7 +13,7 @@ service = Service(
     name='Donations Service',
     app=app,
     address='127.0.0.1',
-    port=8001,
+    port=port,
     debug=True)
 service_runner = ServiceRunner(service=service, file_path=donation_api_path)
 
@@ -38,7 +38,7 @@ class TestStartup:
         assert isinstance(response['identity'], str)
         assert donations_api_identity == response['identity']
         assert isinstance(response['version'], int)
-        assert 1 == response['version']
+        assert 2 == response['version']
         assert True is response['debug']
 
 

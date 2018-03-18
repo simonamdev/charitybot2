@@ -8,7 +8,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app=app)
 
-version = 1
+version = 2
 donations_api_identity = 'CB2 Donations Service'
 
 address = '127.0.0.1'
@@ -52,7 +52,7 @@ Identity Route
 """
 
 
-@app.route('/api/v1/')
+@app.route('/api/v2/')
 def index():
     return jsonify(
         {
@@ -68,7 +68,7 @@ Donations retrieval/registration Route
 """
 
 
-@app.route('/api/v1/event/<event_identifier>/donations/', methods=['GET', 'POST'])
+@app.route('/api/v2/event/<event_identifier>/donations/', methods=['GET', 'POST'])
 def retrieve_or_add_event_donations(event_identifier):
     if request.method == 'POST':
         # Attempt to parse the passed donation
@@ -117,7 +117,7 @@ Donation count retrieval Route
 """
 
 
-@app.route('/api/v1/event/<event_identifier>/donations/count/', methods=['GET'])
+@app.route('/api/v2/event/<event_identifier>/donations/count/', methods=['GET'])
 def retrieve_number_of_event_donations(event_identifier):
     lower_bound, upper_bound = request.args.get('lower'), request.args.get('upper')
     if lower_bound is None and upper_bound is None:
@@ -142,7 +142,7 @@ Donation average amount retrieval Route
 """
 
 
-@app.route('/api/v1/event/<event_identifier>/donations/average/', methods=['GET'])
+@app.route('/api/v2/event/<event_identifier>/donations/average/', methods=['GET'])
 def retrieve_average_donation_amount(event_identifier):
     return jsonify(
         {
@@ -157,7 +157,7 @@ Donation Distribution retrieval Route
 """
 
 
-@app.route('/api/v1/event/<event_identifier>/donations/distribution/', methods=['GET'])
+@app.route('/api/v2/event/<event_identifier>/donations/distribution/', methods=['GET'])
 def retrieve_donation_distribution(event_identifier):
     distribution = get_donations_service().get_donation_distribution(event_identifier=event_identifier)
     return jsonify(

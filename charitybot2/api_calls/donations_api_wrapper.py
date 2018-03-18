@@ -5,8 +5,8 @@ from charitybot2.sources.url_call import UrlCall
 
 
 class DonationsApiWrapper:
-    def __init__(self, base_url, timeout=2, maximum_retry_attempts=3):
-        self._base_url = base_url + 'api/v1/'  # TODO: Use path resolving function instead of string concat
+    def __init__(self, base_url, version=2, timeout=2, maximum_retry_attempts=3):
+        self._base_url = base_url + 'api/v{}/'.format(version)  # TODO: Use path resolving function instead of string concat
         self._timeout = timeout
         self._maximum_retry_attempts = maximum_retry_attempts
 
