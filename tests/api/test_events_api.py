@@ -52,3 +52,41 @@ class TestStartup:
         assert isinstance(response['version'], int)
         assert 2 == response['version']
         assert True is response['debug']
+
+
+class TestEvents:
+    def test_get_event_existence_of_existing_event(self):
+        assert None is not None
+
+    def test_get_event_existence_of_non_existent_event(self):
+        assert None is not None
+
+    def test_get_all_event_identifiers(self):
+        assert None is not None
+
+    def test_get_existing_event_info(self):
+        assert None is not None
+
+    def test_get_non_existent_event_info_returns_none(self):
+        assert None is not None
+
+    def test_register_new_event(self):
+        assert None is not None
+
+    def test_update_existing_event(self):
+        assert None is not None
+
+    def test_update_non_existent_event_throws_exception(self):
+        assert None is not None
+
+    def test_get_event_total(self):
+        assert None is not None
+
+    def test_get_event_total_of_non_existent_event_throws_exception(self):
+        assert None is not None
+
+    def test_update_event_total(self):
+        assert None is not None
+
+    def test_update_event_total_of_non_existent_event_throws_exception(self):
+        assert None is not None
