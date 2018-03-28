@@ -135,10 +135,6 @@ class TestDonationMethods:
         assert test_donation.validity == donation.validity
 
     @pytest.mark.parametrize('donation_json', [
-        None,
-        1,
-        1.0,
-        object,
         '',
         'bla',
         '{}',
