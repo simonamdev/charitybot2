@@ -106,32 +106,32 @@ Event Identifiers Route
 def event_info(event_identifier):
     event_exists = get_events_service().event_is_registered(event_identifier=event_identifier)
     if request.method == 'POST':
-        # Check if the event exists first, so as to update it rather than create it in that case
-        if event_exists:
-            # Update the event
-            pass
-        else:
-            # Attempt to recreate the event configuration from the values
-            event_configuration_values = request.form.to_dict()
-            try:
-                event_configuration = EventConfigurationCreator(configuration_values=event_configuration_values).configuration
-            except InvalidEventConfigurationException as e:
-                # Return 500
-                return jsonify(
-                    {
-                        'success': False,
-                        'error': str(e)
-                    }
-                ), 500
-                pass
-            # Create the event
-            get_events_service().register_event(event_configuration=event_configuration)
+        # Attempt to recreate the event configuration from the values
+        event_configuration_values = request.form.to_dict()
+        try:
+            event_configuration = EventConfigurationCreator(
+                configuration_values=event_configuration_values).configuration
+        except InvalidEventConfigurationException as e:
+            # Return 500
             return jsonify(
                 {
-                    'event_identifier': event_configuration.identifier,
-                    'success': True
+                    'success': False,
+                    'error': str(e)
                 }
-            )
+            ), 500
+        # Check if the event exists first, so as to update it rather than create it in that case
+        if event_exists:
+            get_events_service().update_event(event_configuration=event_configuration)
+
+        else:
+            # Create the event
+            get_events_service().register_event(event_configuration=event_configuration)
+        return jsonify(
+            {
+                'event_identifier': event_configuration.identifier,
+                'success': True
+            }
+        )
     else:
         # Check if the event exists first
         if not event_exists:

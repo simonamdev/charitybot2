@@ -53,8 +53,16 @@ class EventsApiWrapper:
             return error_message
         return successful
 
-    def update_event_configuration(self, event_configuration):
-        return None
+    def update_event_configuration(self, new_event_configuration):
+        url = self._base_url + 'event/{}/'.format(new_event_configuration.identifier)
+        response = UrlCall(url=url, timeout=self._timeout).post(data=new_event_configuration.configuration_values)
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)
+        successful = converted_content['success']
+        if not successful:
+            error_message = converted_content['error']
+            return error_message
+        return successful
 
     def get_event_total_raised(self, event_identifier):
         return None

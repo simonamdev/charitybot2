@@ -47,7 +47,7 @@ class EventsService:
     Update an existing event
     """
     def update_event(self, event_configuration):
-        self._event_repository.update_event_configuration(new_event_configuration=event_configuration)
+        self._event_repository.update_event(new_event_configuration=event_configuration)
 
     """
     Get the total raised for a given event
