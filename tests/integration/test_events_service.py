@@ -139,7 +139,10 @@ class TestEventsService:
             self.events_service.set_event_target(event_identifier=non_existent_event, target=10101.0)
 
     def test_getting_ongoing_events(self):
-        assert None is not None
+        ongoing_events = self.events_service.get_ongoing_events(current_time=0, buffer_in_minutes=0)
+        assert 1 == len(ongoing_events)
+        ongoing_events = self.events_service.get_ongoing_events(current_time=40, buffer_in_minutes=1)
+        assert 1 == len(ongoing_events)
+        ongoing_events = self.events_service.get_ongoing_events(current_time=600, buffer_in_minutes=1)
+        assert 0 == len(ongoing_events)
 
-    def test_getting_ongoing_events_with_no_events_present(self):
-        assert None is not None

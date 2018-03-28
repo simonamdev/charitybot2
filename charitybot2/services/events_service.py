@@ -73,4 +73,4 @@ class EventsService:
     Optional parameter <buffer_in_minutes> is the amount of leeway to add in minutes at the start and end of a stream
     """
     def get_ongoing_events(self, current_time=None, buffer_in_minutes=15):
-        pass
+        return self._event_repository.get_ongoing_events(current_time=current_time, buffer_in_minutes=buffer_in_minutes)
