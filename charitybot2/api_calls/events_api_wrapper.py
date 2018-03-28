@@ -66,7 +66,14 @@ class EventsApiWrapper:
         return successful
 
     def get_event_total_raised(self, event_identifier):
-        return None
+        url = self._base_url + 'event/{}/total/'.format(event_identifier)
+        response = UrlCall(url=url, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)
+        event_exists = converted_content['exists']
+        if not event_exists:
+            raise NonExistentEventException('Event with identifier: {} does not exist'.format(event_identifier))
+        return converted_content['total']
 
     def update_event_total(self, event_identifier, new_total):
         return None

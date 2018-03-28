@@ -188,6 +188,32 @@ def update_event_info(event_identifier):
     )
 
 
+"""
+Event Total Retrieval Route
+"""
+
+
+@app.route('/api/v2/event/<event_identifier>/total/', methods=['GET'])
+def event_total(event_identifier):
+    exists = get_events_service().event_is_registered(event_identifier=event_identifier)
+    if not exists:
+        return jsonify(
+            {
+                'event_identifier': event_identifier,
+                'exists': False,
+                'total': None
+            }
+        ), 500
+    total = get_events_service().get_event_total(event_identifier=event_identifier)
+    return jsonify(
+        {
+            'event_identifier': event_identifier,
+            'exists': True,
+            'total': total
+        }
+    )
+
+
 @app.route('/destroy/')
 def destroy():
     if events_api.debug:
