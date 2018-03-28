@@ -74,3 +74,11 @@ class EventsService:
     """
     def get_ongoing_events(self, current_time=None, buffer_in_minutes=15):
         return self._event_repository.get_ongoing_events(current_time=current_time, buffer_in_minutes=buffer_in_minutes)
+
+    """
+    Retrieve the upcoming events.
+    Optional parameter <current_time> allows us to get upcoming events after an arbitrary time.
+    Optional parameter <hours in advance> allows us to set
+    """
+    def get_upcoming_events(self, current_time=None, hours_in_advance=24):
+        return self._event_repository.get_upcoming_events(current_time=current_time, hours_in_advance=hours_in_advance)

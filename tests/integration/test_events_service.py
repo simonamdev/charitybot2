@@ -146,3 +146,16 @@ class TestEventsService:
         ongoing_events = self.events_service.get_ongoing_events(current_time=600, buffer_in_minutes=1)
         assert 0 == len(ongoing_events)
 
+    def test_getting_upcoming_events(self):
+        upcoming_events = self.events_service.get_upcoming_events(current_time=0, hours_in_advance=1)
+        assert 0 == len(upcoming_events)
+        test_identifier = 'upcoming_test_event'
+        updated_event_values = {
+            'identifier': test_identifier,
+            'start_time': 3660,
+            'end_time': 3661
+        }
+        event_config = get_test_event_config(updated_values=updated_event_values)
+        self.events_service.register_event(event_configuration=event_config)
+        upcoming_events = self.events_service.get_upcoming_events(current_time=0, hours_in_advance=2)
+        assert 1 == len(upcoming_events)
