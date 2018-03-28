@@ -51,13 +51,13 @@ class EventConfigurationCreator:
                 cannot_cast = False
                 try:
                     self._configuration_values[key] = int(config_value)
-                except TypeError:
+                except (TypeError, ValueError):
                     cannot_cast = True
                 if cannot_cast:
                     raise InvalidEventConfigurationException('Number key: {} are required to be integers, not {} of value: {}'.format(
                         key,
-                        type(key)),
-                        config_value
+                        type(key),
+                        config_value)
                     )
 
     def __create_configuration(self):
