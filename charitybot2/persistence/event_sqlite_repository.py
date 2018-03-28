@@ -156,6 +156,9 @@ class EventSQLiteRepository(SQLiteRepository):
         events = self.execute_query(query=query).fetchall()
         return [self.__convert_row_to_event_configuration(row=row) for row in events]
 
+    def get_ongoing_events(self, current_time, buffer_in_minutes=15):
+        pass
+
     @staticmethod
     def __convert_row_to_event_configuration(row):
         configuration_values = {

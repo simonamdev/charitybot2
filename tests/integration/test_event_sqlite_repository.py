@@ -28,10 +28,10 @@ class TestEventSQLiteRepository:
         assert self.test_event_repository.event_already_registered(identifier='registration_check') is False
 
     def test_for_existent_event_registration(self):
-        assert self.test_event_repository.event_already_registered(identifier='test_event') is True
+        assert self.test_event_repository.event_already_registered(identifier=test_event_identifier) is True
 
     def test_get_event_configuration(self):
-        event_configuration = self.test_event_repository.get_event_configuration(identifier='test_event')
+        event_configuration = self.test_event_repository.get_event_configuration(identifier=test_event_identifier)
         assert isinstance(event_configuration, EventConfiguration)
 
     def test_registering_event(self):
@@ -102,6 +102,35 @@ class TestEventSQLiteRepository:
         assert 'test_event' == events[0].identifier
         assert 'new_event' == events[1].identifier
         assert 'new_event_two' == events[2].identifier
+
+    # An ongoing event is an event of which the current time is within the start and end time, +- some given buffer
+    def test_getting_ongoing_events(self):
+        # Register events
+        number_of_test_events = 5
+        for i in range(0, number_of_test_events):
+            update_values = {
+                'identifier': 'new_event_{}'.format(i),
+                'start_time': 2,
+                'end_time': 4
+            }
+            config_values = get_updated_test_config_values(updated_values=update_values)
+            test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
+            self.test_event_repository.register_event(event_configuration=test_configuration)
+        # Test getting all ongoing events
+        ongoing_events = self.test_event_repository.get_ongoing_events(current_time=3, buffer_in_minutes=0)
+        assert number_of_test_events == len(ongoing_events)
+        ongoing_events = self.test_event_repository.get_ongoing_events(current_time=3, buffer_in_minutes=1)
+        assert number_of_test_events == len(ongoing_events)
+        ongoing_events = self.test_event_repository.get_ongoing_events(current_time=999, buffer_in_minutes=0)
+        assert 0 == len(ongoing_events)
+        ongoing_events = self.test_event_repository.get_ongoing_events(current_time=65, buffer_in_minutes=1)
+        assert 0 == len(ongoing_events)
+        ongoing_events = self.test_event_repository.get_ongoing_events(current_time=64, buffer_in_minutes=1)
+        assert number_of_test_events == len(ongoing_events)
+
+    def test_getting_ongoing_events_with_no_events_present_returns_empty_list(self):
+        ongoing_events = self.test_event_repository.get_ongoing_events(current_time=3, buffer_in_minutes=0)
+        assert 0 == len(ongoing_events)
 
 
 class TestEventSQLiteRepositoryExceptions:
