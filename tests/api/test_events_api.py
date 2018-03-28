@@ -160,4 +160,4 @@ class TestEvents:
 
     def test_update_event_total_of_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):
-             events_api_wrapper.update_event_total(event_identifier=non_existent_event_identifier)
+             events_api_wrapper.update_event_total(event_identifier=non_existent_event_identifier, new_total=10.1)
