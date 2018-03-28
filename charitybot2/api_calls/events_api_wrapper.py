@@ -92,4 +92,13 @@ class EventsApiWrapper:
             raise TypeError(error_message)
         return successful
 
-
+    def get_ongoing_events(self, current_time=None, buffer_in_minutes=15):
+        url = self._base_url + 'events/ongoing/'
+        query_params = {
+            'current_time': current_time,
+            'buffer_time': buffer_in_minutes
+        }
+        response = UrlCall(url=url, params=query_params, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)
+        return converted_content['events']

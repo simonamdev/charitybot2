@@ -168,4 +168,15 @@ class TestEvents:
 
     def test_update_event_total_of_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):
-             events_api_wrapper.update_event_total(event_identifier=non_existent_event_identifier, new_total=10.1)
+            events_api_wrapper.update_event_total(event_identifier=non_existent_event_identifier, new_total=10.1)
+
+    def test_get_ongoing_events(self):
+        setup_test_events()
+        ongoing_events = events_api_wrapper.get_ongoing_events(current_time=1, buffer_in_minutes=0)
+        assert 2 == len(ongoing_events)
+        ongoing_events = events_api_wrapper.get_ongoing_events(current_time=63, buffer_in_minutes=1)
+        assert 1 == len(ongoing_events)
+        ongoing_events = events_api_wrapper.get_ongoing_events(current_time=100, buffer_in_minutes=1)
+        assert 0 == len(ongoing_events)
+        ongoing_events = events_api_wrapper.get_ongoing_events(buffer_in_minutes=5)
+        assert 0 == len(ongoing_events)

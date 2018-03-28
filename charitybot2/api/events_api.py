@@ -1,3 +1,4 @@
+import time
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator, \
     InvalidEventConfigurationException
 from charitybot2.paths import production_repository_db_path, test_repository_db_path
@@ -227,6 +228,34 @@ def event_total(event_identifier):
             'exists': True,
             'success': True,
             'total': total
+        }
+    )
+
+
+"""
+Ongoing Event Retrieval Route
+"""
+
+
+@app.route('/api/v2/events/ongoing/', methods=['GET'])
+def ongoing_events():
+    try:
+        current_time_in_request = request.args.get('current_time')
+        current_time = int(current_time_in_request) if current_time_in_request is not None else int(time.time())
+        buffer_time_in_request = request.args.get('buffer_time')
+        buffer_time = int(buffer_time_in_request) if buffer_time_in_request is not None else 15
+    except ValueError:
+        current_time = int(time.time())
+        buffer_time = 15
+    current_ongoing_events = get_events_service().get_ongoing_events(
+        current_time=current_time,
+        buffer_in_minutes=buffer_time
+    )
+    return jsonify(
+        {
+            'events': current_ongoing_events,
+            'current_time': current_time,
+            'buffer': buffer_time
         }
     )
 
