@@ -63,6 +63,17 @@ def index():
     )
 
 
+@app.route('/api/v2/event/<event_identifier>/exists/', methods=['GET'])
+def event_exists(event_identifier):
+    exists = get_events_service().event_is_registered(event_identifier=event_identifier)
+    return jsonify(
+        {
+            'event_identifier': event_identifier,
+            'exists': exists
+        }
+    )
+
+
 @app.route('/destroy/')
 def destroy():
     if events_api.debug:

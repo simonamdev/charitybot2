@@ -13,7 +13,11 @@ class EventsApiWrapper:
         return json.loads(UrlCall(url=self._base_url, timeout=self._timeout).get().content.decode('utf-8'))
 
     def get_event_exists(self, event_identifier):
-        return None
+        url = self._base_url + 'event/{}/exists/'.format(event_identifier)
+        response = UrlCall(url=url, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        event_exists = json.loads(decoded_content)['exists']
+        return event_exists
 
     # This may require paging in future
     def get_event_identifiers(self):
