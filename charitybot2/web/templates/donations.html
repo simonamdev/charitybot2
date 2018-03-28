@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block optional_head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/common/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/common/responsive-table.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/console/donations.css') }}" />
+    <script>
+        var eventIdentifier = '{{ event_identifier }}';
+        var apiAddress = '{{ api_address }}';
+        var limit = {{ limit }};
+    </script>
+    <script src="{{ url_for('static', filename='js/common/time.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/ajax.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/currency.js') }}"></script>
+{% endblock %}
+{% block body %}
+    <div class="card" id="alertDiv">
+        <h1>Error</h1>
+        <p id="alertMessageText"></p>
+    </div>
+
+    <h1 class="header">Charitybot Donations Dashboard</h1>
+
+    <div class="container">
+        <div class="card">
+            <h1 class="header">Donation List</h1>
+        </div>
+        <div class="card">
+            <table id="donationsTable">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Time Ago</th>
+                        <th scope="col">Timestamp</th>
+                        <th scope="col">Donor</th>
+                        <th scope="col">Message</th>
+                        <th scope="col">External Reference</th>
+                        <th scope="col">Internal Reference</th>
+                    </tr>
+                </thead>
+                <tbody id="donationsTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+{% block after_body %}
+    <script type="text/javascript" src="{{url_for('static', filename='js/console/donations.js')}}"></script>
+{% endblock %}

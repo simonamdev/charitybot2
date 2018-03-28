@@ -1,0 +1,4 @@
+[run]
+omit = tests/*
+       charitybot2/sources/mocks/*
+       charitybot2/reporter/external_api/*

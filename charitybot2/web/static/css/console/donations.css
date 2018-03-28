@@ -1,0 +1,28 @@
+html, body {
+    background-color: #fff;
+}
+
+.header {
+    padding: 0.5em;
+    text-align: center;
+}
+
+.card {
+    color: #000;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    margin: 0 auto;
+}
+
+.table-note {
+    overflow-wrap: break-word;
+}
+
+.marked-row {
+    color: #fff;
+    background-color: #e74c3c;
+}

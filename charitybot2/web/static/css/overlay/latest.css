@@ -1,0 +1,34 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.latest-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#latest-header {
+  vertical-align: middle;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  line-height: 100vh;
+  top: 0;
+  left: 0;
+  margin: 0;
+}
+
+#overlay-latest {
+  font-size: 4vw;
+  height: 100%;
+}
+
+.currency {
+  height: 100%;
+  font-size: 4vw;
+}

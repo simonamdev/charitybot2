@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block optional_head %}
+    <script>
+        var eventIdentifier = '{{ event_identifier }}';
+        var apiAddress = '{{ api_address }}';
+    </script>
+    <script src="{{ url_for('static', filename='js/common/ajax.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/common/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/console/event.css') }}" />
+{% endblock %}
+{% block body %}
+    <h1 id="eventHeader" class="header">{{ event_identifier }}</h1>
+    <div class="card" id="alertDiv">
+        <p id="alertDivText"></p>
+    </div>
+    <!-- Manual donation form -->
+    <div class="row">
+        <h2 class="text-center">New Donation Form</h2>
+    </div>
+    <form>
+        <div class="row">
+            <div class="large-4 columns">
+                <label>Donation Amount
+                    <input id="newDonationAmount" type="text" placeholder="Enter Amount Here" />
+                </label>
+            </div>
+            <div class="large-4 columns">
+                <label>Donor Name
+                    <input id="newDonationDonor" type="text" placeholder="Enter Name Here" />
+                </label>
+            </div>
+            <div class="large-4 columns">
+                <label>Notes
+                    <input id="newDonationNotes" type="text" placeholder="Enter anything else here" />
+                </label>
+            </div>
+            <input id="donationSubmitButton" class="button large-12" type="button" value="Submit Donation" onclick="submitDonation();" />
+        </div>
+    </form>
+{% endblock %}
+{% block after_body %}
+    <script type="text/javascript" src="{{url_for('static', filename='js/console/events.js')}}"></script>
+{% endblock %}

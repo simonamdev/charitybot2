@@ -1,0 +1,1 @@
+py.test --cov-report html --cov-config .coveragerc --cov=charitybot2 tests/
