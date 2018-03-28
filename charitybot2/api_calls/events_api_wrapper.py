@@ -1,5 +1,7 @@
 import json
 
+from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
+from charitybot2.models.event import NonExistentEventException
 from charitybot2.sources.url_call import UrlCall
 
 
@@ -28,7 +30,17 @@ class EventsApiWrapper:
         return event_identifiers
 
     def get_event_info(self, event_identifier):
-        return None
+        url = self._base_url + 'event/{}/'.format(event_identifier)
+        response = UrlCall(url=url, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)
+        event_exists = converted_content['exists']
+        if not event_exists:
+            raise NonExistentEventException('Event with identifier: {} does not exist'.format(event_identifier))
+        event_info = converted_content['info']
+        # Create the configuration from the values
+        event_config = EventConfigurationCreator(configuration_values=event_info).configuration
+        return event_config
 
     def register_event(self, event_configuration):
         return None

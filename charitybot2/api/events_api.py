@@ -63,6 +63,11 @@ def index():
     )
 
 
+"""
+Event Existence Route
+"""
+
+
 @app.route('/api/v2/event/<event_identifier>/exists/', methods=['GET'])
 def event_exists(event_identifier):
     exists = get_events_service().event_is_registered(event_identifier=event_identifier)
@@ -74,12 +79,42 @@ def event_exists(event_identifier):
     )
 
 
+"""
+Event Info Retrieval Route
+"""
+
+
 @app.route('/api/v2/events/', methods=['GET'])
 def event_identifiers():
     identifiers = get_events_service().get_all_event_identifiers()
     return jsonify(
         {
             'identifiers': identifiers
+        }
+    )
+
+
+"""
+Event Identifiers Route
+"""
+
+
+@app.route('/api/v2/event/<event_identifier>/', methods=['GET'])
+def event_info(event_identifier):
+    # Check if the event exists first
+    exists = get_events_service().event_is_registered(event_identifier=event_identifier)
+    if not exists:
+        return jsonify(
+            {
+                'exists': False,
+                'info': {}
+            }
+        )
+    configuration = get_events_service().get_event_configuration(event_identifier=event_identifier)
+    return jsonify(
+        {
+            'exists': True,
+            'info': configuration.configuration_values
         }
     )
 
