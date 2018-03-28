@@ -36,7 +36,7 @@ class EventRegister(EventCreator):
         # TODO: See if starting amount should be set here
 
     def _update_event(self):
-        self._event_repository.update_event(new_event_configuration=self._configuration)
+        self._event_repository.update_event_configuration(new_event_configuration=self._configuration)
 
     def event_is_registered(self):
         registered = self._event_repository.event_already_registered(identifier=self._configuration.identifier)

@@ -1,12 +1,15 @@
+import pytest
 from charitybot2.api.events_api import events_api, app, events_api_identity, port
 from charitybot2.api_calls.events_api_wrapper import EventsApiWrapper
+from charitybot2.models.event import NonExistentEventException
 from charitybot2.paths import events_api_path, test_repository_db_path
 from charitybot2.start_service import Service, ServiceRunner
 from helpers.event_config import get_test_event_configuration
-from helpers.setup_test_database import setup_test_database, register_test_event, wipe_database
+from helpers.setup_test_database import register_test_event, wipe_database
 
 events_api_wrapper = EventsApiWrapper(base_url=events_api.full_url)
 test_event_identifier = get_test_event_configuration().identifier
+
 
 service = Service(
     name='Events Service',
@@ -19,14 +22,20 @@ service_runner = ServiceRunner(service=service, file_path=events_api_path)
 default_number_of_test_events = 3
 test_events = []
 
+test_event_identifier_format = 'test_event_{}'
+first_test_event_identifier = test_event_identifier_format.format(0)
+non_existent_event_identifier = 'bla'
+
 
 def setup_test_events(count=default_number_of_test_events):
     wipe_database(test_repository_db_path)
-    test_internal_reference_string = 'test_event_{}'
+    test_internal_reference_string = test_event_identifier_format
     event_configurations = []
     for i in range(0, count):
         updated_values = {
-            'identifier': test_internal_reference_string.format(i)
+            'identifier': test_internal_reference_string.format(i),
+            'start_time': i,
+            'end_time': i + 1
         }
         event_configuration = get_test_event_configuration(updated_values=updated_values)
         register_test_event(test_repository_db_path, event_configuration=event_configuration)
@@ -56,37 +65,99 @@ class TestStartup:
 
 class TestEvents:
     def test_get_event_existence_of_existing_event(self):
-        assert None is not None
+        test_event_exists = events_api_wrapper.get_event_exists(event_identifier=first_test_event_identifier)
+        assert True is test_event_exists
 
     def test_get_event_existence_of_non_existent_event(self):
-        assert None is not None
+        non_existent_event_exists = events_api_wrapper.get_event_exists(event_identifier=non_existent_event_identifier)
+        assert False is non_existent_event_exists
 
     def test_get_all_event_identifiers(self):
-        assert None is not None
+        event_identifiers = events_api_wrapper.get_event_identifiers()
+        assert default_number_of_test_events == len(event_identifiers)
+        for i in range(0, default_number_of_test_events):
+            current_test_event_identifier = test_event_identifier_format.format(i)
+            assert event_identifiers[i] == current_test_event_identifier
 
     def test_get_existing_event_info(self):
-        assert None is not None
+        event_info = events_api_wrapper.get_event_info(event_identifier=first_test_event_identifier)
+        expected_start_time = 0
+        expected_end_time = 1
+        assert expected_start_time == event_info.start_time
+        assert expected_end_time == event_info.end_time
 
-    def test_get_non_existent_event_info_returns_none(self):
-        assert None is not None
+    def test_get_non_existent_event_info_throws_exception(self):
+        with pytest.raises(NonExistentEventException):
+            non_existent_event_info = events_api_wrapper.get_event_info(event_identifier=non_existent_event_identifier)
 
     def test_register_new_event(self):
-        assert None is not None
+        # Generate a new event configuration
+        new_test_event_identifier = 'creating_new_event_test'
+        updated_values = {
+            'identifier': new_test_event_identifier
+        }
+        test_event_configuration = get_test_event_configuration(updated_values=updated_values)
+        # Check number of events before adding the new one
+        event_identifiers = events_api_wrapper.get_event_identifiers()
+        assert default_number_of_test_events == len(event_identifiers)
+        # Register the new event
+        events_api_wrapper.register_event(event_configuration=test_event_configuration)
+        # Check the number of events has increased
+        event_identifiers = events_api_wrapper.get_event_identifiers()
+        assert default_number_of_test_events + 1 == len(event_identifiers)
 
     def test_update_existing_event(self):
-        assert None is not None
+        # Make sure that the event exists first
+        event_exists = events_api_wrapper.get_event_exists(event_identifier=first_test_event_identifier)
+        assert True is event_exists
+        # Generate new details for an existing event
+        new_start_time = 100
+        new_end_time = 101
+        new_target_amount = 333
+        updated_values = {
+            'identifier': first_test_event_identifier,
+            'start_time': new_start_time,
+            'end_time': new_end_time,
+            'target_amount': new_target_amount
+        }
+        # generate a new event configuration
+        new_test_event_configuration = get_test_event_configuration(updated_values=updated_values)
+        events_api_wrapper.update_event_configuration(event_configuration=new_test_event_configuration)
+        event_config = events_api_wrapper.get_event_info(event_identifier=first_test_event_identifier)
+        assert first_test_event_identifier == event_config.identifier
+        assert new_start_time == event_config.start_time
+        assert new_end_time == event_config.end_time
+        assert new_target_amount == event_config.target_amount
 
     def test_update_non_existent_event_throws_exception(self):
-        assert None is not None
+        updated_values = {
+            'identifier': non_existent_event_identifier
+        }
+        new_non_existent_test_event_configuration = get_test_event_configuration(updated_values=updated_values)
+        with pytest.raises(NonExistentEventException):
+            events_api_wrapper.update_event_configuration(event_configuration=new_non_existent_test_event_configuration)
 
     def test_get_event_total(self):
-        assert None is not None
+        actual_test_event_amount = events_api_wrapper.get_event_total_raised(event_identifier=first_test_event_identifier)
+        assert 0.0 == actual_test_event_amount
 
     def test_get_event_total_of_non_existent_event_throws_exception(self):
-        assert None is not None
+        with pytest.raises(NonExistentEventException):
+            total = events_api_wrapper.get_event_total_raised(event_identifier=non_existent_event_identifier)
 
     def test_update_event_total(self):
-        assert None is not None
+        # Check it is zero
+        actual_test_event_amount = events_api_wrapper.get_event_total_raised(
+            event_identifier=first_test_event_identifier)
+        assert 0.0 == actual_test_event_amount
+        # Update it to an amount
+        new_test_event_amount = 100.01
+        events_api_wrapper.update_event_total(event_identifier=first_test_event_identifier, new_total=new_test_event_amount)
+        # Retrieve the the new amount
+        actual_test_event_amount = events_api_wrapper.get_event_total_raised(
+            event_identifier=first_test_event_identifier)
+        assert new_test_event_amount == actual_test_event_amount
 
     def test_update_event_total_of_non_existent_event_throws_exception(self):
-        assert None is not None
+        with pytest.raises(NonExistentEventException):
+             events_api_wrapper.update_event_total(event_identifier=non_existent_event_identifier)

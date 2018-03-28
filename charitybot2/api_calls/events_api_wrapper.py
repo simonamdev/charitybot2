@@ -11,3 +11,27 @@ class EventsApiWrapper:
 
     def get_index(self):
         return json.loads(UrlCall(url=self._base_url, timeout=self._timeout).get().content.decode('utf-8'))
+
+    def get_event_exists(self, event_identifier):
+        return None
+
+    # This may require paging in future
+    def get_event_identifiers(self):
+        return None
+
+    def get_event_info(self, event_identifier):
+        return None
+
+    def register_event(self, event_configuration):
+        return None
+
+    def update_event_configuration(self, event_configuration):
+        return None
+
+    def get_event_total_raised(self, event_identifier):
+        return None
+
+    def update_event_total(self, event_identifier, new_total):
+        return None
+
+
