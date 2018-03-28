@@ -1,3 +1,4 @@
+import time
 from pypika import Query, Order, Table, functions as fn
 
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
@@ -162,6 +163,7 @@ class EventSQLiteRepository(SQLiteRepository):
         q = Query.from_(events_table) \
             .select(
                 'internalName',
+                'title',
                 'startTime',
                 'endTime'
             ).where(
@@ -173,8 +175,33 @@ class EventSQLiteRepository(SQLiteRepository):
         return [
             {
                 'identifier': row[0],
-                'start_time': row[1],
-                'end_time': row[2]
+                'title': row[1],
+                'start_time': row[2],
+                'end_time': row[3]
+            } for row in rows
+        ]
+
+    def get_upcoming_events(self, current_time=None, hours_in_advance=24):
+        current_time = int(time.time()) if current_time is None else current_time
+        advance_in_seconds = hours_in_advance * 60 * 60
+        q = Query.from_(events_table) \
+            .select(
+            'internalName',
+            'title',
+            'startTime',
+            'endTime'
+        ).where(
+            events_table.startTime > current_time
+        ).where(
+            events_table.endTime <= (current_time + advance_in_seconds)
+        )
+        rows = self.execute_query(query=fix_placeholders(q)).fetchall()
+        return [
+            {
+                'identifier': row[0],
+                'title': row[1],
+                'start_time': row[2],
+                'end_time': row[3]
             } for row in rows
         ]
 
@@ -191,4 +218,3 @@ class EventSQLiteRepository(SQLiteRepository):
             'update_delay': row[9]
         }
         return EventConfigurationCreator(configuration_values=configuration_values).configuration
-

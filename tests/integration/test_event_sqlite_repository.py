@@ -142,6 +142,27 @@ class TestEventSQLiteRepository:
         ongoing_events = self.test_event_repository.get_ongoing_events(current_time=3, buffer_in_minutes=0)
         assert 0 == len(ongoing_events)
 
+    def test_getting_upcoming_events(self):
+        upcoming_events = self.test_event_repository.get_upcoming_events(current_time=0, hours_in_advance=1)
+        # Ongoing events are excluded
+        assert 0 == len(upcoming_events)
+        # Register an event within the upcoming window
+        upcoming_event = {
+            'identifier': 'new_event',
+            'start_time': 7200,
+            'end_time': 7201
+        }
+        config_values = get_updated_test_config_values(updated_values=upcoming_event)
+        test_configuration = EventConfigurationCreator(configuration_values=config_values).configuration
+        self.test_event_repository.register_event(event_configuration=test_configuration)
+        upcoming_events = self.test_event_repository.get_upcoming_events(current_time=0, hours_in_advance=1)
+        assert 0 == len(upcoming_events)
+        upcoming_events = self.test_event_repository.get_upcoming_events(current_time=3900, hours_in_advance=1)
+        assert 1 == len(upcoming_events)
+        upcoming_events = self.test_event_repository.get_upcoming_events(current_time=7205, hours_in_advance=24)
+        assert 0 == len(upcoming_events)
+
+
 
 class TestEventSQLiteRepositoryExceptions:
     test_event_repository = None
@@ -176,3 +197,4 @@ class TestEventSQLiteRepositoryExceptions:
             self.test_event_repository.update_event_current_amount(
                 identifier=non_existent_event_identifier,
                 current_amount=5)
+
