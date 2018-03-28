@@ -74,6 +74,16 @@ def event_exists(event_identifier):
     )
 
 
+@app.route('/api/v2/events/', methods=['GET'])
+def event_identifiers():
+    identifiers = get_events_service().get_all_event_identifiers()
+    return jsonify(
+        {
+            'identifiers': identifiers
+        }
+    )
+
+
 @app.route('/destroy/')
 def destroy():
     if events_api.debug:

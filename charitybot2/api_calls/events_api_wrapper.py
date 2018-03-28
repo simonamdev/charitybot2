@@ -21,7 +21,11 @@ class EventsApiWrapper:
 
     # This may require paging in future
     def get_event_identifiers(self):
-        return None
+        url = self._base_url + 'events/'
+        response = UrlCall(url=url, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        event_identifiers = json.loads(decoded_content)['identifiers']
+        return event_identifiers
 
     def get_event_info(self, event_identifier):
         return None
