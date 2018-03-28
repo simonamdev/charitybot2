@@ -137,3 +137,9 @@ class TestEventsService:
     def test_setting_non_existent_event_target_throws_exception(self):
         with pytest.raises(EventNotRegisteredException):
             self.events_service.set_event_target(event_identifier=non_existent_event, target=10101.0)
+
+    def test_getting_ongoing_events(self):
+        assert None is not None
+
+    def test_getting_ongoing_events_with_no_events_present(self):
+        assert None is not None

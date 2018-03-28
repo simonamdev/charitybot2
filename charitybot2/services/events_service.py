@@ -66,3 +66,11 @@ class EventsService:
     """
     def set_event_target(self, event_identifier, target):
         self._event_repository.update_event_target_amount(identifier=event_identifier, target_amount=target)
+
+    """
+    Retrieve the events that are currently ongoing
+    Optional parameter <current_time> allows us to get ongoing events at arbitrary times. Leaving it none will use the current time
+    Optional parameter <buffer_in_minutes> is the amount of leeway to add in minutes at the start and end of a stream
+    """
+    def get_ongoing_events(self, current_time=None, buffer_in_minutes=15):
+        pass
