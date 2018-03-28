@@ -1,6 +1,7 @@
 import json
 
-from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
+from charitybot2.creators.event_configuration_creator import EventConfigurationCreator, \
+    InvalidEventConfigurationException
 from charitybot2.models.event import NonExistentEventException
 from charitybot2.sources.url_call import UrlCall
 
@@ -53,15 +54,15 @@ class EventsApiWrapper:
             return error_message
         return successful
 
-    def update_event_configuration(self, new_event_configuration):
-        url = self._base_url + 'event/{}/'.format(new_event_configuration.identifier)
+    def update_event(self, new_event_configuration):
+        url = self._base_url + 'event/{}/update/'.format(new_event_configuration.identifier)
         response = UrlCall(url=url, timeout=self._timeout).post(data=new_event_configuration.configuration_values)
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)
         successful = converted_content['success']
         if not successful:
             error_message = converted_content['error']
-            return error_message
+            raise NonExistentEventException(error_message)
         return successful
 
     def get_event_total_raised(self, event_identifier):

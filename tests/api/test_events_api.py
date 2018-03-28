@@ -124,7 +124,7 @@ class TestEvents:
         }
         # generate a new event configuration
         new_test_event_configuration = get_test_event_configuration(updated_values=updated_values)
-        events_api_wrapper.update_event_configuration(new_event_configuration=new_test_event_configuration)
+        events_api_wrapper.update_event(new_event_configuration=new_test_event_configuration)
         event_config = events_api_wrapper.get_event_info(event_identifier=first_test_event_identifier)
         assert first_test_event_identifier == event_config.identifier
         assert new_start_time == event_config.start_time
@@ -137,7 +137,7 @@ class TestEvents:
         }
         new_non_existent_test_event_configuration = get_test_event_configuration(updated_values=updated_values)
         with pytest.raises(NonExistentEventException):
-            events_api_wrapper.update_event_configuration(new_event_configuration=new_non_existent_test_event_configuration)
+            events_api_wrapper.update_event(new_event_configuration=new_non_existent_test_event_configuration)
 
     def test_get_event_total(self):
         actual_test_event_amount = events_api_wrapper.get_event_total_raised(event_identifier=first_test_event_identifier)
