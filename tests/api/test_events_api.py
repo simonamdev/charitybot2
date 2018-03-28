@@ -101,10 +101,12 @@ class TestEvents:
         event_identifiers = events_api_wrapper.get_event_identifiers()
         assert default_number_of_test_events == len(event_identifiers)
         # Register the new event
-        events_api_wrapper.register_event(event_configuration=test_event_configuration)
+        successful = events_api_wrapper.register_event(event_configuration=test_event_configuration)
+        assert True is successful
         # Check the number of events has increased
         event_identifiers = events_api_wrapper.get_event_identifiers()
         assert default_number_of_test_events + 1 == len(event_identifiers)
+        assert event_identifiers[0] == new_test_event_identifier
 
     def test_update_existing_event(self):
         # Make sure that the event exists first

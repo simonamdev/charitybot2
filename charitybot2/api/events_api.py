@@ -1,8 +1,11 @@
+from charitybot2.creators.event_configuration_creator import EventConfigurationCreator, \
+    InvalidEventConfigurationException
 from charitybot2.paths import production_repository_db_path, test_repository_db_path
 from charitybot2.services.events_service import EventsService
 from charitybot2.start_service import Service
 from flask import Flask, jsonify
 from flask import g
+from flask import request
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -69,7 +72,7 @@ Event Existence Route
 
 
 @app.route('/api/v2/event/<event_identifier>/exists/', methods=['GET'])
-def event_exists(event_identifier):
+def event_existence(event_identifier):
     exists = get_events_service().event_is_registered(event_identifier=event_identifier)
     return jsonify(
         {
@@ -99,24 +102,52 @@ Event Identifiers Route
 """
 
 
-@app.route('/api/v2/event/<event_identifier>/', methods=['GET'])
+@app.route('/api/v2/event/<event_identifier>/', methods=['GET', 'POST'])
 def event_info(event_identifier):
-    # Check if the event exists first
-    exists = get_events_service().event_is_registered(event_identifier=event_identifier)
-    if not exists:
+    event_exists = get_events_service().event_is_registered(event_identifier=event_identifier)
+    if request.method == 'POST':
+        # Check if the event exists first, so as to update it rather than create it in that case
+        if event_exists:
+            # Update the event
+            pass
+        else:
+            # Attempt to recreate the event configuration from the values
+            event_configuration_values = request.form.to_dict()
+            try:
+                event_configuration = EventConfigurationCreator(configuration_values=event_configuration_values).configuration
+            except InvalidEventConfigurationException as e:
+                # Return 500
+                return jsonify(
+                    {
+                        'success': False,
+                        'error': str(e)
+                    }
+                ), 500
+                pass
+            # Create the event
+            get_events_service().register_event(event_configuration=event_configuration)
+            return jsonify(
+                {
+                    'event_identifier': event_configuration.identifier,
+                    'success': True
+                }
+            )
+    else:
+        # Check if the event exists first
+        if not event_exists:
+            return jsonify(
+                {
+                    'exists': False,
+                    'info': {}
+                }
+            )
+        configuration = get_events_service().get_event_configuration(event_identifier=event_identifier)
         return jsonify(
             {
-                'exists': False,
-                'info': {}
+                'exists': True,
+                'info': configuration.configuration_values
             }
         )
-    configuration = get_events_service().get_event_configuration(event_identifier=event_identifier)
-    return jsonify(
-        {
-            'exists': True,
-            'info': configuration.configuration_values
-        }
-    )
 
 
 @app.route('/destroy/')

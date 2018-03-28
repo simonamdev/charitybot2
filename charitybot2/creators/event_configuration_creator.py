@@ -45,8 +45,20 @@ class EventConfigurationCreator:
         if not sorted(self._configuration_values.keys()) == sorted(self._keys_required):
             raise InvalidEventConfigurationException('Passed Configuration keys are incorrect')
         for key in self.number_keys:
-            if not isinstance(self._configuration_values[key], int):
-                raise InvalidEventConfigurationException('Number key: {} are required to be integers'.format(key))
+            config_value = self._configuration_values[key]
+            if not isinstance(config_value, int):
+                # Attempt to cast them first
+                cannot_cast = False
+                try:
+                    self._configuration_values[key] = int(config_value)
+                except TypeError:
+                    cannot_cast = True
+                if cannot_cast:
+                    raise InvalidEventConfigurationException('Number key: {} are required to be integers, not {} of value: {}'.format(
+                        key,
+                        type(key)),
+                        config_value
+                    )
 
     def __create_configuration(self):
         try:
