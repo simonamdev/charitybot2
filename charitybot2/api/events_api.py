@@ -17,6 +17,7 @@ events_api_identity = 'CB2 Events Service'
 address = '127.0.0.1'
 port = 8002
 debug_mode = False
+full_url = 'http://{}/{}/'.format(address, port)
 
 events_api = Service(
     name=events_api_identity,

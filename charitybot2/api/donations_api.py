@@ -14,6 +14,7 @@ donations_api_identity = 'CB2 Donations Service'
 address = '127.0.0.1'
 port = 8001
 debug_mode = False
+full_url = 'http://{}/{}/'.format(address, port)
 
 donations_api = Service(
     name=donations_api_identity,
