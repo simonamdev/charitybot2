@@ -157,7 +157,26 @@ class EventSQLiteRepository(SQLiteRepository):
         return [self.__convert_row_to_event_configuration(row=row) for row in events]
 
     def get_ongoing_events(self, current_time, buffer_in_minutes=15):
-        pass
+        # Convert the buffer to seconds
+        buffer_in_seconds = buffer_in_minutes * 60
+        q = Query.from_(events_table) \
+            .select(
+                'internalName',
+                'startTime',
+                'endTime'
+            ).where(
+                (events_table.startTime - buffer_in_seconds) <= current_time
+            ).where(
+                (events_table.endTime + buffer_in_seconds) >= current_time
+            )
+        rows = self.execute_query(query=fix_placeholders(q)).fetchall()
+        return [
+            {
+                'identifier': row[0],
+                'start_time': row[1],
+                'end_time': row[2]
+            } for row in rows
+        ]
 
     @staticmethod
     def __convert_row_to_event_configuration(row):

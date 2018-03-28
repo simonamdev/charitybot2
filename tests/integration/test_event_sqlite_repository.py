@@ -107,6 +107,7 @@ class TestEventSQLiteRepository:
     def test_getting_ongoing_events(self):
         # Register events
         number_of_test_events = 5
+        number_of_test_events_including_original_test_event = number_of_test_events + 1
         for i in range(0, number_of_test_events):
             update_values = {
                 'identifier': 'new_event_{}'.format(i),
@@ -120,13 +121,22 @@ class TestEventSQLiteRepository:
         ongoing_events = self.test_event_repository.get_ongoing_events(current_time=3, buffer_in_minutes=0)
         assert number_of_test_events == len(ongoing_events)
         ongoing_events = self.test_event_repository.get_ongoing_events(current_time=3, buffer_in_minutes=1)
-        assert number_of_test_events == len(ongoing_events)
+        assert number_of_test_events_including_original_test_event == len(ongoing_events)
         ongoing_events = self.test_event_repository.get_ongoing_events(current_time=999, buffer_in_minutes=0)
         assert 0 == len(ongoing_events)
         ongoing_events = self.test_event_repository.get_ongoing_events(current_time=65, buffer_in_minutes=1)
         assert 0 == len(ongoing_events)
         ongoing_events = self.test_event_repository.get_ongoing_events(current_time=64, buffer_in_minutes=1)
         assert number_of_test_events == len(ongoing_events)
+        ongoing_events = self.test_event_repository.get_ongoing_events(current_time=64, buffer_in_minutes=2)
+        assert number_of_test_events_including_original_test_event == len(ongoing_events)
+        # Try to get the original test event only
+        ongoing_events = self.test_event_repository.get_ongoing_events(current_time=0, buffer_in_minutes=0)
+        assert 1 == len(ongoing_events)
+        test_event = ongoing_events[0]
+        assert 0 == test_event['start_time']
+        assert 1 == test_event['end_time']
+        assert test_event_identifier == test_event['identifier']
 
     def test_getting_ongoing_events_with_no_events_present_returns_empty_list(self):
         ongoing_events = self.test_event_repository.get_ongoing_events(current_time=3, buffer_in_minutes=0)
