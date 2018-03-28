@@ -134,6 +134,8 @@ class EventSQLiteRepository(SQLiteRepository):
     def update_event_current_amount(self, identifier, current_amount):
         if not self.event_already_registered(identifier=identifier):
             raise EventNotRegisteredException('Event by {} is not registered yet'.format(identifier))
+        if not (isinstance(current_amount, float) or isinstance(current_amount, int)):
+            raise TypeError('Event Total must be float or int, not {}'.format(type(current_amount)))
         update_query = 'UPDATE `events` ' \
                        'SET currentAmount = ? ' \
                        'WHERE internalName = ?'

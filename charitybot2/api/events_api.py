@@ -193,7 +193,7 @@ Event Total Retrieval Route
 """
 
 
-@app.route('/api/v2/event/<event_identifier>/total/', methods=['GET'])
+@app.route('/api/v2/event/<event_identifier>/total/', methods=['GET', 'POST'])
 def event_total(event_identifier):
     exists = get_events_service().event_is_registered(event_identifier=event_identifier)
     if not exists:
@@ -205,10 +205,26 @@ def event_total(event_identifier):
             }
         ), 500
     total = get_events_service().get_event_total(event_identifier=event_identifier)
+    # If we are updating the total, then it is a POST request, otherwise we are only retrieving the total
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        try:
+            get_events_service().set_event_total(event_identifier=event_identifier, total=float(data['total']))
+        except ValueError:
+            return jsonify(
+                {
+                    'event_identifier': event_identifier,
+                    'exists': True,
+                    'success': False,
+                    'error': 'Total value is not of the correct type'
+                }
+            ), 500
+        total = data['total']
     return jsonify(
         {
             'event_identifier': event_identifier,
             'exists': True,
+            'success': True,
             'total': total
         }
     )

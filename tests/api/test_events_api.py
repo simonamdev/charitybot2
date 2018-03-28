@@ -160,6 +160,12 @@ class TestEvents:
             event_identifier=first_test_event_identifier)
         assert new_test_event_amount == actual_test_event_amount
 
+    def test_update_event_total_passing_incorrectly_typed_value(self):
+        # Update it to an amount
+        new_test_event_amount = 'blablablalba'
+        with pytest.raises(TypeError):
+            events_api_wrapper.update_event_total(event_identifier=first_test_event_identifier, new_total=new_test_event_amount)
+
     def test_update_event_total_of_non_existent_event_throws_exception(self):
         with pytest.raises(NonExistentEventException):
              events_api_wrapper.update_event_total(event_identifier=non_existent_event_identifier, new_total=10.1)
