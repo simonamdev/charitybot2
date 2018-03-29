@@ -2,10 +2,11 @@ import random
 import time
 
 import sqlite3
+
+from charitybot2.services.events_service import EventsService
 from faker import Faker
 from tqdm import tqdm
 
-from charitybot2.creators.event_creator import EventRegister
 from charitybot2.models.donation import Donation
 from charitybot2.paths import test_repository_db_path
 from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository
@@ -76,11 +77,9 @@ def wipe_database(path):
 
 def register_test_event(db_path, event_configuration):
     print('Registering event: {}'.format(event_configuration.identifier))
-    event_repository = EventSQLiteRepository(db_path=db_path)
-    event_register = EventRegister(
-        event_configuration=event_configuration,
-        event_repository=event_repository)
-    event_register.get_event()
+    events_service = EventsService(repository_path=db_path)
+    events_service.open_connections()
+    events_service.register_event(event_configuration=event_configuration)
 
 
 def register_donations(db_path, event_configuration, donation_count, donation_amount):

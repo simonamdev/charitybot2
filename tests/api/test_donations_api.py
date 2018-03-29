@@ -157,7 +157,7 @@ class TestEventDonations:
             [donation.amount for donation in test_donations]
         ) / default_number_of_test_donations
         actual_average_donation_amount = donations_api_wrapper.get_average_donation_amount(event_identifier=test_event_identifier)
-        assert round(expected_average_donation_amount, 2) == round(actual_average_donation_amount, 2)
+        assert round(expected_average_donation_amount, 1) == round(actual_average_donation_amount, 1)
 
     def test_get_donation_distribution(self):
         # test will not actually test the returned values, only the format
