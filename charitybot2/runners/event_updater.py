@@ -13,14 +13,18 @@ An event updater does the following:
     > Update details (target amount, times, etc)
     > Update total raised
     > Update donations
-    > Cache last seen donation ID
+    > Cache last seen donation ID   // donations service retrieval?
     > Log that the update has happened
 > If they are ongoing events and 10 seconds have passed since the last check:
     > Update target amount, or all details if available
     > Update total raised
     > Update donations
-    > Cache last seen donation ID
+    > Cache last seen donation ID  // donations service retrieval?
     > Log that the update has happened
+
+A persistent update log should ideally be created, one with a schema similar to this:
+event_identifier, time_of_last_update
+Last seen donation ID can be retrieved from the donation service rather than locally cached
 """
 
 
@@ -35,6 +39,16 @@ class EventUpdater:
 
     # This method must be overridden in the child objects, depending on whether it is for upcoming or ongoing events
     def retrieve_events(self):
-        return []
+        pass
+
+    def event_needs_to_be_updated(self, event_identifier, time_last_checked):
+        pass
+
+    def update_event_details(self, event_identifier):
+        pass
+
+    def update_event_donations(self, event_identifier):
+        pass
+
 
 
