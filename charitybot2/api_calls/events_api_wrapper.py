@@ -102,3 +102,14 @@ class EventsApiWrapper:
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)
         return converted_content['events']
+
+    def get_upcoming_events(self, current_time=None, hours_in_advance=24):
+        url = self._base_url + 'events/upcoming/'
+        query_params = {
+            'current_time': current_time,
+            'hours_in_advance': hours_in_advance
+        }
+        response = UrlCall(url=url, params=query_params, timeout=self._timeout).get()
+        decoded_content = response.content.decode('utf-8')
+        converted_content = json.loads(decoded_content)
+        return converted_content['events']

@@ -260,6 +260,34 @@ def ongoing_events():
     )
 
 
+"""
+Upcoming Event Retrieval Route
+"""
+
+
+@app.route('/api/v2/events/upcoming/', methods=['GET'])
+def upcoming_events():
+    try:
+        current_time_in_request = request.args.get('current_time')
+        current_time = int(current_time_in_request) if current_time_in_request is not None else int(time.time())
+        hours_in_advance_in_request = request.args.get('hours_in_advance')
+        hours_in_advance = int(hours_in_advance_in_request) if hours_in_advance_in_request is not None else 24
+    except ValueError:
+        current_time = int(time.time())
+        hours_in_advance = 24
+    current_upcoming_events = get_events_service().get_upcoming_events(
+        current_time=current_time,
+        hours_in_advance=hours_in_advance
+    )
+    return jsonify(
+        {
+            'events': current_upcoming_events,
+            'current_time': current_time,
+            'hours_in_advance': hours_in_advance
+        }
+    )
+
+
 @app.route('/destroy/')
 def destroy():
     if events_api.debug:

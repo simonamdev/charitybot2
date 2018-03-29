@@ -27,15 +27,15 @@ first_test_event_identifier = test_event_identifier_format.format(0)
 non_existent_event_identifier = 'bla'
 
 
-def setup_test_events(count=default_number_of_test_events):
+def setup_test_events(count=default_number_of_test_events, start_time_modifier=0):
     wipe_database(test_repository_db_path)
     test_internal_reference_string = test_event_identifier_format
     event_configurations = []
     for i in range(0, count):
         updated_values = {
             'identifier': test_internal_reference_string.format(i),
-            'start_time': i,
-            'end_time': i + 1
+            'start_time': start_time_modifier + i,
+            'end_time': start_time_modifier + i + 1
         }
         event_configuration = get_test_event_configuration(updated_values=updated_values)
         register_test_event(test_repository_db_path, event_configuration=event_configuration)
@@ -180,3 +180,15 @@ class TestEvents:
         assert 0 == len(ongoing_events)
         ongoing_events = events_api_wrapper.get_ongoing_events(buffer_in_minutes=5)
         assert 0 == len(ongoing_events)
+
+    def test_get_upcoming_events(self):
+        setup_test_events(count=0)
+        upcoming_events = events_api_wrapper.get_upcoming_events(current_time=0, hours_in_advance=0)
+        assert 0 == len(upcoming_events)
+        number_of_upcoming_test_events = 5
+        four_hours_in_advance = 12600
+        setup_test_events(count=number_of_upcoming_test_events, start_time_modifier=four_hours_in_advance)
+        upcoming_events = events_api_wrapper.get_upcoming_events(current_time=0, hours_in_advance=2)
+        assert 0 == len(upcoming_events)
+        upcoming_events = events_api_wrapper.get_upcoming_events(current_time=0, hours_in_advance=4)
+        assert number_of_upcoming_test_events == len(upcoming_events)
