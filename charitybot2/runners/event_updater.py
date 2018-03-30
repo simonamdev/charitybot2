@@ -1,3 +1,4 @@
+import time
 from charitybot2.api.donations_api import full_url as donations_api_url
 from charitybot2.api.events_api import full_url as events_api_url
 from charitybot2.api_calls.donations_api_wrapper import DonationsApiWrapper
@@ -42,6 +43,12 @@ class EventUpdater:
         pass
 
     def event_needs_to_be_updated(self, event_identifier, time_last_checked):
+        time_for_update = time_last_checked + self._minimum_time_for_update_in_seconds
+        current_time = int(time.time())
+        if current_time >= time_for_update:
+            return True
+
+    def get_event_update_details(self, event_identifier):
         pass
 
     def update_event_details(self, event_identifier):
