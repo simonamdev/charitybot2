@@ -10,7 +10,9 @@ test_event_config_values = {
     'target_amount': 100,
     'update_delay': 5,
     'currency_key': 'EUR',
-    'source_url': 'http://www.charitybot.net'
+    'source_details': {
+        'url': 'http://www.charitybot.net'
+    }
 }
 
 
