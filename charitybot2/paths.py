@@ -43,6 +43,7 @@ events_api_path = os.path.join(current_directory, 'api', 'events_api.py')
 # SQL Script paths
 init_donations_script_path = os.path.join(db_folder, 'init_donations.sql')
 init_events_script_path = os.path.join(db_folder, 'init_events.sql')
+init_event_log_script_path = os.path.join(db_folder, 'init_event_log.sql')
 init_logs_script_path = os.path.join(db_folder, 'init_logs.sql')
 init_heartbeat_script_path = os.path.join(db_folder, 'init_heartbeat.sql')
 init_test_sql_script_path = os.path.join(db_folder, 'init_test.sql')
