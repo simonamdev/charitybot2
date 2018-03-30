@@ -1,6 +1,13 @@
+import time
+from pypika import Query, Table, functions as fn
+
 from charitybot2.paths import init_event_log_script_path
 from charitybot2.persistence.sql_script import SQLScript
 from charitybot2.persistence.sqlite_repository import SQLiteRepository
+
+
+def fix_placeholders(query):
+    return str(query).replace('\'', '')
 
 
 class EventLogRepository(SQLiteRepository):
@@ -11,3 +18,6 @@ class EventLogRepository(SQLiteRepository):
     def __validate_repository(self):
         init_script = SQLScript(path=init_event_log_script_path)
         self.execute_query(query=init_script.return_sql(), commit=True)
+
+    def get_logged_events(self):
+        pass
