@@ -22,6 +22,10 @@ class SQLiteRepository:
         self.__open_connection()
 
     @property
+    def db_path(self):
+        return self._db_path
+
+    @property
     def debug(self):
         return self._debug
 

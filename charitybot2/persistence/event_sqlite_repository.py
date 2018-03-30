@@ -31,10 +31,6 @@ class EventSQLiteRepository(SQLiteRepository):
         super().__init__(db_path=db_path, debug=debug)
         self.__validate_repository()
 
-    @property
-    def db_path(self):
-        return self._db_path
-
     def __validate_repository(self):
         init_script = SQLScript(path=init_events_script_path)
         self.execute_query(query=init_script.return_sql(), commit=True)
