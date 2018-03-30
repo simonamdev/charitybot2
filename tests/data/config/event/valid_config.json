@@ -6,5 +6,8 @@
   "target_amount": 100,
   "update_delay": 5,
   "currency_key": "EUR",
-  "source_url": "http://www.charitybot.net"
+  "source_details": {
+    "source:": "TEST",
+    "url": "http://www.charitybot.net"
+  }
 }

@@ -28,7 +28,7 @@ class TestEventConfigurationCreator:
         get_updated_test_config_values(updated_values={'title': ''}),
         get_updated_test_config_values(updated_values={'start_time': 'never'}),
         get_updated_test_config_values(updated_values={'end_time': 'heat death of the universe'}),
-        get_updated_test_config_values(updated_values={'source_url': 'htt definitely not a url'})
+        # get_updated_test_config_values(updated_values={'source_url': 'htt definitely not a url'})
     ])
     def test_passing_incorrect_values_throws_exception(self, configuration_values):
         with pytest.raises(InvalidEventConfigurationException):

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `events` (
+CREATE TABLE IF NOT EXISTS `eventLog` (
     `internalName`     TEXT NOT NULL PRIMARY KEY,
     `externalName`     TEXT NOT NULL,
     `startTime`        INTEGER NOT NULL,
@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS `events` (
     `startingAmount`   REAL,
     `currentAmount`    REAL NOT NULL,
     `targetAmount`     INTEGER NOT NULL,
-    `source`           TEXT NOT NULL,
     `sourceUrl`        TEXT NOT NULL,
     `updateDelay`      INTEGER
 );

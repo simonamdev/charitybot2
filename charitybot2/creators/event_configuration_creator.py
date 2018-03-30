@@ -17,7 +17,7 @@ class EventConfigurationCreator:
         'end_time',
         'currency_key',
         'target_amount',
-        'source_url',
+        'source_details',
         'update_delay'
     )
 

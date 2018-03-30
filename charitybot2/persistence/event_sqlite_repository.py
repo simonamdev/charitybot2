@@ -1,5 +1,5 @@
 import time
-from pypika import Query, Order, Table, functions as fn
+from pypika import Query, Table, functions as fn
 
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreator
 from charitybot2.paths import init_events_script_path
@@ -68,7 +68,7 @@ class EventSQLiteRepository(SQLiteRepository):
     def register_event(self, event_configuration):
         if self.event_already_registered(identifier=event_configuration.identifier):
             raise EventAlreadyRegisteredException('Event by {} is already registered'.format(event_configuration.identifier))
-        register_query = 'INSERT INTO `events` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
+        register_query = 'INSERT INTO `events` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
         register_data = (
             event_configuration.identifier,
             event_configuration.title,
@@ -78,6 +78,7 @@ class EventSQLiteRepository(SQLiteRepository):
             0.0,
             0.0,
             event_configuration.target_amount,
+            event_configuration.source,
             event_configuration.source_url,
             event_configuration.update_delay)
         self.execute_query(query=register_query, data=register_data, commit=True)
@@ -214,7 +215,10 @@ class EventSQLiteRepository(SQLiteRepository):
             'end_time': row[3],
             'currency_key': row[4],
             'target_amount': row[7],
-            'source_url': row[8],
-            'update_delay': row[9]
+            'source_details': {
+                'source': row[8],
+                'url': row[9]
+            },
+            'update_delay': row[10]
         }
         return EventConfigurationCreator(configuration_values=configuration_values).configuration

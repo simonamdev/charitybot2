@@ -163,7 +163,6 @@ class TestEventSQLiteRepository:
         assert 0 == len(upcoming_events)
 
 
-
 class TestEventSQLiteRepositoryExceptions:
     test_event_repository = None
 

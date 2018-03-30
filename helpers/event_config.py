@@ -18,7 +18,7 @@ test_event_config_values = {
 
 
 test_justgiving_event_config_values = copy.deepcopy(test_event_config_values)
-test_justgiving_event_config_values['source_details']['source'] = 'JUSTGIVING'
+test_justgiving_event_config_values['source_details']['source'] = 'TEST'
 test_justgiving_event_config_values['source_details']['page_short_name'] = 'TEST'
 
 
