@@ -1,3 +1,4 @@
+from charitybot2.models.event_log import EventLog
 from charitybot2.persistence.event_log_repository import EventLogRepository
 
 
@@ -20,6 +21,7 @@ class TestEventLogRepository:
         # TODO
         logged_events = self.test_event_log_repository.get_logged_events()
         assert 1 == len(logged_events)
+        assert isinstance(logged_events[0], EventLog)
         assert test_event_identifier == logged_events[0].identifier
         test_event_log_time = 0
         assert test_event_log_time == logged_events[0].last_log_time
