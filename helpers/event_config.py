@@ -16,6 +16,10 @@ test_event_config_values = {
 }
 
 
+test_justgiving_event_config_values = copy.deepcopy(test_event_config_values)
+test_justgiving_event_config_values['source_details']['page_short_name'] = 'TEST'
+
+
 def get_updated_test_config_values(updated_values=None):
     valid_config_values = copy.deepcopy(test_event_config_values)
     if updated_values is not None:
