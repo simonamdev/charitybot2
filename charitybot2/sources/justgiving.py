@@ -8,9 +8,10 @@ class JustGivingFundraisingSource:
     fundraising_url = 'https://api.justgiving.com/v1/fundraising/pages/{}/'
     donations_url = fundraising_url + 'donations'
 
-    def __init__(self, event_identifier, page_short_name, api_key, limit=25):
+    def __init__(self, event_identifier, page_short_name, campaign_currency, api_key, limit=25):
         self._event_identifier = event_identifier
         self._page_short_name = page_short_name
+        self._campaign_currency = campaign_currency
         self._page_size = limit
         self._api_key = api_key
         self._headers = {
@@ -95,8 +96,16 @@ class JustGivingFundraisingSource:
 
     def _convert_to_donation(self, donation):
         # /Date(1505495742000+0000)/
+        # QUICK FIX TO ENSURE USD AMOUNTS ARE NOT SHOWN AS GBP AMOUNTS. NEEDS TO BE MORE ROBUST FOR EURO ASWELL
+        amount = donation['amount']
+        if not donation['donorLocalCurrencyCode'] == self._campaign_currency:
+            if donation['donorLocalCurrencyCode'] == 'EUR':
+                eur_to_usd = 1.22847  # Hardcoding is bad mmkay
+                amount = donation['donorLocalAmount'] * eur_to_usd
+            elif donation['donorLocalCurrencyCode'] == 'USD':
+                amount = donation['donorLocalAmount']
         return Donation(
-            amount=donation['amount'],
+            amount=amount,
             event_identifier=self._event_identifier,
             timestamp=int(donation['donationDate'].split('(')[1].split('+')[0]) // 1000,
             external_reference=str(donation['id']),

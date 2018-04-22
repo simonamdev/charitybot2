@@ -36,6 +36,7 @@ class JustgivingRunner:
         self._source = JustGivingFundraisingSource(
             event_identifier=self._event_configuration.identifier,
             page_short_name=self._page_short_name,
+            campaign_currency=self._event_configuration.currency,
             api_key=self._api_key,
             limit=self._limit
         )
