@@ -7,6 +7,7 @@ from charitybot2.models.donation import Donation, InvalidDonationException
 test_donation_amount = 50
 test_donation_event_identifier = 'event_identifier'
 test_donation_timestamp = 999999
+test_donation_currency_code = 'TEST'
 test_donation_internal_reference = 'internal_reference'
 test_donation_external_reference = 'external_reference'
 test_donation_notes = 'Automated'
@@ -15,6 +16,7 @@ test_donation_donor_name = 'donor'
 test_donation = Donation(
     amount=test_donation_amount,
     event_identifier=test_donation_event_identifier,
+    currency_code=test_donation_currency_code,
     timestamp=test_donation_timestamp,
     internal_reference=test_donation_internal_reference,
     external_reference=test_donation_external_reference,
@@ -27,6 +29,7 @@ class TestDonationInstantiation:
         (test_donation_amount, test_donation.amount),
         (test_donation_event_identifier, test_donation.event_identifier),
         (test_donation_timestamp, test_donation.timestamp),
+        (test_donation_currency_code, test_donation.currency_code),
         (test_donation_internal_reference, test_donation.internal_reference),
         (test_donation_external_reference, test_donation.external_reference),
         (test_donation_donor_name, test_donation.donor_name),
@@ -43,7 +46,10 @@ class TestDonationInstantiation:
         '1,2345.67'
     ])
     def test_passing_amount_string_with_commas_parses_properly(self, amount):
-        donation = Donation(amount=amount, event_identifier='event')
+        donation = Donation(
+            amount=amount,
+            event_identifier=test_donation_event_identifier,
+            currency_code=test_donation_currency_code)
         assert 12345.67 == donation.amount
 
     @pytest.mark.parametrize('amount', [
@@ -53,18 +59,30 @@ class TestDonationInstantiation:
         123.45432
     ])
     def test_donation_amount_rounding(self, amount):
-        donation = Donation(amount=amount, event_identifier='event')
+        donation = Donation(
+            amount=amount,
+            event_identifier=test_donation_event_identifier,
+            currency_code=test_donation_currency_code)
         assert 123.45 == donation.amount
 
     def test_donation_optional_defaults(self):
-        donation = Donation(amount=1, event_identifier='event')
+        donation = Donation(
+            amount=1,
+            event_identifier=test_donation_event_identifier,
+            currency_code=test_donation_currency_code)
         assert int(time.time()) + 2 >= donation.timestamp >= int(time.time()) - 2
         assert None is donation.notes
         assert True is donation.validity
 
     def test_two_donations_have_different_internal_references(self):
-        donation_one = Donation(amount=1, event_identifier='event')
-        donation_two = Donation(amount=2, event_identifier='event')
+        donation_one = Donation(
+            amount=1,
+            event_identifier=test_donation_event_identifier,
+            currency_code=test_donation_currency_code)
+        donation_two = Donation(
+            amount=2,
+            event_identifier=test_donation_event_identifier,
+            currency_code=test_donation_currency_code)
         assert not donation_one.internal_reference == donation_two.internal_reference
 
 
@@ -83,6 +101,7 @@ class TestDonationExceptions:
             Donation(
                 amount=amount,
                 event_identifier=event_identifier,
+                currency_code=test_donation_currency_code,
                 timestamp=timestamp,
                 internal_reference=internal_reference)
 
@@ -91,6 +110,7 @@ class TestDonationMethods:
     test_donation_dict = dict(
         amount=test_donation.amount,
         event_identifier=test_donation.event_identifier,
+        currency_code=test_donation_currency_code,
         timestamp=test_donation.timestamp,
         internal_reference=test_donation.internal_reference,
         external_reference=test_donation.external_reference,
@@ -102,6 +122,7 @@ class TestDonationMethods:
         donation = Donation.from_dict(self.test_donation_dict)
         assert test_donation.amount == donation.amount
         assert test_donation.event_identifier == donation.event_identifier
+        assert test_donation.currency_code == donation.currency_code
         assert test_donation.timestamp == donation.timestamp
         assert test_donation.internal_reference == donation.internal_reference
         assert test_donation.external_reference == donation.external_reference
@@ -129,6 +150,7 @@ class TestDonationMethods:
         donation = Donation.from_json(donation_json=donation_json)
         assert test_donation.amount == donation.amount
         assert test_donation.event_identifier == donation.event_identifier
+        assert test_donation.currency_code == donation.currency_code
         assert test_donation.timestamp == donation.timestamp
         assert test_donation.internal_reference == donation.internal_reference
         assert test_donation.notes == donation.notes

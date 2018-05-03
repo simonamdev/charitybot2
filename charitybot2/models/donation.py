@@ -24,6 +24,7 @@ class Donation:
     def __init__(self,
                  amount,
                  event_identifier,
+                 currency_code,
                  timestamp=None,
                  internal_reference=None,
                  external_reference=None,
@@ -32,6 +33,7 @@ class Donation:
                  valid=True):
         self._amount = amount
         self._event_identifier = event_identifier
+        self._currency_code = currency_code
         if timestamp is None:
             timestamp = int(time.time())
         self._timestamp = timestamp
@@ -88,6 +90,10 @@ class Donation:
         return self._event_identifier
 
     @property
+    def currency_code(self):
+        return self._currency_code
+
+    @property
     def timestamp(self):
         return self._timestamp
 
@@ -115,6 +121,7 @@ class Donation:
         return dict(
             amount=self.amount,
             event_identifier=self.event_identifier,
+            currency_code=self.currency_code,
             timestamp=self.timestamp,
             internal_reference=self.internal_reference,
             external_reference=self.external_reference,
@@ -133,6 +140,7 @@ class Donation:
             donation = Donation(
                 amount=float(donation_dict.get('amount')),
                 event_identifier=donation_dict.get('event_identifier'),
+                currency_code=donation_dict.get('currency_code'),
                 timestamp=int(donation_dict.get('timestamp')),
                 internal_reference=donation_dict.get('internal_reference'),
                 external_reference=donation_dict.get('external_reference'),
