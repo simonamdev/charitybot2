@@ -46,10 +46,11 @@ class DonationSQLiteRepository(SQLiteRepository):
         if self.donation_exists(donation_internal_reference=donation.internal_reference):
             raise DonationAlreadyRegisteredException('Donation with internal reference: {} already exists'.format(donation.internal_reference))
         donation_query = 'INSERT INTO `donations` ' \
-                         'VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?);'
+                         'VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
         donation_data = (
             donation.amount,
             donation.event_identifier,
+            donation.currency_code,
             donation.timestamp,
             donation.internal_reference,
             donation.external_reference,
@@ -136,11 +137,12 @@ class DonationSQLiteRepository(SQLiteRepository):
         donation = Donation(
             amount=row[1],
             event_identifier=row[2],
-            timestamp=row[3],
-            internal_reference=row[4],
-            external_reference=row[5],
-            donor_name=row[6],
-            notes=row[7],
-            valid=row[8]
+            currency_code=row[3],
+            timestamp=row[4],
+            internal_reference=row[5],
+            external_reference=row[6],
+            donor_name=row[7],
+            notes=row[8],
+            valid=row[9]
         )
         return donation

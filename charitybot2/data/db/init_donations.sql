@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS `donations` (
     `donationId`            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `amount`                REAL NOT NULL,
     `eventInternalName`     TEXT NOT NULL,
+    `currencyCode`          TEXT NOT NULL,
     `timeRecorded`          INTEGER NOT NULL,
     `internalReference`     TEXT NOT NULL,
     `externalReference`     TEXT,

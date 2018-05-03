@@ -13,6 +13,7 @@ test_range_min = 1
 test_range_max = 6
 test_range = range(test_range_min, test_range_max)
 test_event_identifier = 'donation_service_test_event'
+test_currency_code = 'TST'
 non_existent_event = 'blabalabla'
 
 
@@ -30,7 +31,11 @@ def setup_test_donations(service, test_range_values=test_range):
     donations = []
     for i in test_range_values:
         donations.append(
-            Donation(amount=i, event_identifier=test_event_identifier, timestamp=i)
+            Donation(
+                amount=i,
+                event_identifier=test_event_identifier,
+                currency_code=test_currency_code,
+                timestamp=i)
         )
     for donation in donations:
         service._donations_repository.record_donation(donation=donation)
@@ -334,6 +339,7 @@ class TestDonationsService:
         donation = Donation(
             amount=amount,
             event_identifier=test_event_identifier,
+            currency_code=test_currency_code,
             timestamp=timestamp,
             internal_reference=internal_reference,
             external_reference=external_reference,
@@ -369,6 +375,7 @@ class TestDonationsService:
             donation = Donation(
                 amount=amount,
                 event_identifier=test_event_identifier,
+                currency_code=test_currency_code,
                 timestamp=timestamp,
                 internal_reference=str(i),
                 external_reference=external_reference,
@@ -393,6 +400,7 @@ class TestDonationsService:
         donation = Donation(
             amount=amount,
             event_identifier=test_event_identifier,
+            currency_code=test_currency_code,
             timestamp=timestamp,
             internal_reference=internal_reference,
             external_reference=external_reference,
@@ -428,6 +436,7 @@ class TestDonationsService:
             donation = Donation(
                 amount=amount,
                 event_identifier=test_event_identifier,
+                currency_code=test_currency_code,
                 timestamp=timestamp,
                 internal_reference=str(i),
                 external_reference=external_reference,
@@ -452,6 +461,7 @@ class TestDonationsService:
             donation = Donation(
                 amount=amount,
                 event_identifier=test_event_identifier,
+                currency_code=test_currency_code,
                 timestamp=timestamp,
                 internal_reference=internal_reference,
                 external_reference=external_reference,
@@ -472,6 +482,7 @@ class TestDonationsService:
         donation = Donation(
             amount=amount,
             event_identifier=non_existent_event,
+            currency_code=test_currency_code,
             timestamp=timestamp,
             internal_reference=internal_reference,
             external_reference=external_reference,

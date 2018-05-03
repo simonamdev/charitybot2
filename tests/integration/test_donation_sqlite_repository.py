@@ -9,7 +9,11 @@ from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRep
 def setup_test_donations(repository):
     donations = []
     for i in range(1, 6):
-        donations.append(Donation(amount=i, event_identifier='event', timestamp=i))
+        donations.append(Donation(
+            amount=i,
+            event_identifier='event',
+            currency_code='TST',
+            timestamp=i))
     for donation in donations:
         repository.record_donation(donation=donation)
 
@@ -21,6 +25,7 @@ def get_new_test_database():
 class TestDonationSQLiteRepository:
     test_donation_repository = None
     test_event_identifier = 'event'
+    test_currency_code = 'TST'
 
     def setup_method(self):
         self.test_donation_repository = get_new_test_database()
@@ -94,6 +99,7 @@ class TestDonationSQLiteRepository:
         new_donation = Donation(
             amount=420,
             event_identifier='420',
+            currency_code=self.test_currency_code,
             timestamp=420,
             internal_reference='wololo',
             external_reference='wooooo',
@@ -101,6 +107,7 @@ class TestDonationSQLiteRepository:
         self.test_donation_repository.record_donation(donation=new_donation)
         latest_donation = self.test_donation_repository.get_latest_event_donation(event_identifier='420')
         assert new_donation.amount == latest_donation.amount
+        assert new_donation.currency_code == latest_donation.currency_code
         assert new_donation.timestamp == latest_donation.timestamp
         assert new_donation.event_identifier == latest_donation.event_identifier
         assert new_donation.internal_reference == latest_donation.internal_reference
@@ -114,6 +121,7 @@ class TestDonationSQLiteRepository:
             new_donation = Donation(
                 amount=i,
                 timestamp=i,
+                currency_code=self.test_currency_code,
                 event_identifier=test_event_identifier)
             self.test_donation_repository.record_donation(donation=new_donation)
         assert donation_count == self.test_donation_repository.get_donation_count(
@@ -127,7 +135,8 @@ class TestDonationSQLiteRepository:
             new_donation = Donation(
                 amount=i,
                 timestamp=i,
-                event_identifier=test_event_identifier)
+                event_identifier=test_event_identifier,
+                currency_code=self.test_currency_code)
             self.test_donation_repository.record_donation(donation=new_donation)
         count = self.test_donation_repository.get_donation_count(
             event_identifier=test_event_identifier,
@@ -147,12 +156,21 @@ class TestDonationSQLiteRepositoryExceptions:
         self.test_donation_repository.close_connection()
 
     def test_recording_already_recorded_donation(self):
-        donation = Donation(amount=500, event_identifier='wooo', timestamp=500, internal_reference='abcd')
+        donation = Donation(
+            amount=500,
+            event_identifier='wooo',
+            currency_code='TST',
+            timestamp=500,
+            internal_reference='abcd')
         self.test_donation_repository.record_donation(donation=donation)
         with pytest.raises(DonationAlreadyRegisteredException):
             self.test_donation_repository.record_donation(donation=donation)
 
     def test_recording_donations_with_no_identifier_is_valid(self):
         for i in range(5):
-            donation = Donation(amount=500, event_identifier='wooo', timestamp=500)
+            donation = Donation(
+                amount=500,
+                event_identifier='wooo',
+                currency_code='TST',
+                timestamp=500)
             self.test_donation_repository.record_donation(donation=donation)
