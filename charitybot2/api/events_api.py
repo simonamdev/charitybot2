@@ -109,7 +109,7 @@ def event_info(event_identifier):
     event_exists = get_events_service().event_is_registered(event_identifier=event_identifier)
     if request.method == 'POST':
         # Attempt to recreate the event configuration from the values
-        event_configuration_values = request.form.to_dict()
+        event_configuration_values = request.get_json()
         try:
             event_configuration = EventConfigurationCreator(
                 configuration_values=event_configuration_values).configuration
@@ -168,7 +168,7 @@ def update_event_info(event_identifier):
             }
         ), 500
     # Attempt to recreate the event configuration from the values
-    event_configuration_values = request.form.to_dict()
+    event_configuration_values = request.get_json()
     try:
         event_configuration = EventConfigurationCreator(
             configuration_values=event_configuration_values).configuration

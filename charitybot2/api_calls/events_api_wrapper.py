@@ -45,7 +45,9 @@ class EventsApiWrapper:
 
     def register_event(self, event_configuration):
         url = self._base_url + 'event/{}/'.format(event_configuration.identifier)
-        response = UrlCall(url=url, timeout=self._timeout).post(data=event_configuration.configuration_values)
+        print(event_configuration.configuration_values)
+        response = UrlCall(url=url, timeout=self._timeout).send_json(
+            data=event_configuration.configuration_values)
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)
         successful = converted_content['success']
@@ -56,7 +58,7 @@ class EventsApiWrapper:
 
     def update_event(self, new_event_configuration):
         url = self._base_url + 'event/{}/update/'.format(new_event_configuration.identifier)
-        response = UrlCall(url=url, timeout=self._timeout).post(data=new_event_configuration.configuration_values)
+        response = UrlCall(url=url, timeout=self._timeout).send_json(data=new_event_configuration.configuration_values)
         decoded_content = response.content.decode('utf-8')
         converted_content = json.loads(decoded_content)
         successful = converted_content['success']

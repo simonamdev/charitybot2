@@ -56,6 +56,17 @@ class UrlCall:
             )
         )
 
+    def send_json(self, data):
+        return self.make_request(
+            request_function=lambda: requests.post(
+                url=self.url,
+                headers=self.headers,
+                params=self.params,
+                timeout=self.timeout,
+                json=data
+            )
+        )
+
 
 def return_random_user_agent():
     with open(user_agents_file_path, 'r') as user_agent_file:

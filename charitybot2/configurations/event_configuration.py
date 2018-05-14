@@ -8,7 +8,7 @@ class EventConfiguration:
         self._configuration_values = configuration_values
 
     def __str__(self):
-        return json.dumps(self._configuration_values)
+        return json.dumps(self.configuration_values)
 
     @property
     def identifier(self):
