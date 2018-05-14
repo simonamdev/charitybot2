@@ -51,6 +51,8 @@ class TestEventDonations:
             donation = donations[i]
             assert isinstance(donation, Donation)
             assert test_donations[i].internal_reference == donation.internal_reference
+            assert test_donations[i].amount == donation.amount
+            assert test_donations[i].currency_code == donation.currency_code
 
     def test_retrieving_donations_with_lower_bound(self):
         # find out the second donation's timestamp
@@ -64,6 +66,8 @@ class TestEventDonations:
             donation = donations[i]
             assert isinstance(donation, Donation)
             assert test_donations[i].internal_reference == donation.internal_reference
+            assert test_donations[i].amount == donation.amount
+            assert test_donations[i].currency_code == donation.currency_code
 
     def test_retrieving_donations_with_upper_bound(self):
         # find out the second donation's timestamp
@@ -79,6 +83,8 @@ class TestEventDonations:
             assert isinstance(donation, Donation)
             test_donation = test_donations[i]
             assert test_donation.internal_reference == donation.internal_reference
+            assert test_donation.amount == donation.amount
+            assert test_donation.currency_code == donation.currency_code
 
     def test_retrieving_donations_with_lower_and_upper_bound(self):
         # Choose timestamps
@@ -95,6 +101,8 @@ class TestEventDonations:
             assert isinstance(donation, Donation)
             test_donation = test_donations[i]
             assert test_donation.internal_reference == donation.internal_reference
+            assert test_donation.amount == donation.amount
+            assert test_donation.currency_code == donation.currency_code
 
     def test_retrieving_donations_with_lower_and_upper_bound_and_limit(self):
         # Choose timestamps
@@ -112,11 +120,15 @@ class TestEventDonations:
             assert isinstance(donation, Donation)
             test_donation = test_donations[i]
             assert test_donation.internal_reference == donation.internal_reference
+            assert test_donation.amount == donation.amount
+            assert test_donation.currency_code == donation.currency_code
 
     def test_retrieving_latest_donation(self):
         latest_donation = donations_api_wrapper.get_latest_donation(event_identifier=test_event_identifier)
         assert isinstance(latest_donation, Donation)
         assert test_donations[0].internal_reference == latest_donation.internal_reference
+        assert test_donations[0].amount == latest_donation.amount
+        assert test_donations[0].currency_code == latest_donation.currency_code
 
     def test_retrieving_number_of_donations(self):
         actual_count = donations_api_wrapper.get_number_of_donations(event_identifier=test_event_identifier)
@@ -190,3 +202,5 @@ class TestEventDonations:
         assert default_number_of_test_donations + 1 == len(donations)
         latest_donation = donations_api_wrapper.get_latest_donation(event_identifier=test_event_identifier)
         assert new_donation.internal_reference == latest_donation.internal_reference
+        assert new_donation.amount == latest_donation.amount
+        assert new_donation.currency_code == latest_donation.currency_code
