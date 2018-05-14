@@ -62,7 +62,8 @@ class TestDonationsService:
         for donation in donations:
             assert donation.amount in test_range
             assert donation.timestamp in test_range
-            assert donation.event_identifier == test_event_identifier
+            assert test_currency_code == donation.currency_code
+            assert test_event_identifier == donation.event_identifier
 
     def test_get_all_donations_with_no_donations_present(self):
         donations = self.donations_service.get_all_donations(
@@ -81,6 +82,7 @@ class TestDonationsService:
         assert test_range[-1] == latest_donation.amount
         assert test_range[-1] == latest_donation.timestamp
         assert test_event_identifier == latest_donation.event_identifier
+        assert test_currency_code == latest_donation.currency_code
 
     def test_get_latest_donation_with_no_donations_present(self):
         latest_donation = self.donations_service.get_latest_donation(
@@ -102,6 +104,7 @@ class TestDonationsService:
             assert value == donation.amount
             assert value == donation.timestamp
             assert test_event_identifier == donation.event_identifier
+            assert test_currency_code == donation.currency_code
 
     def test_get_number_of_latest_donations_with_no_donations_present(self):
         limit = 3
@@ -124,9 +127,11 @@ class TestDonationsService:
         assert isinstance(latest_donations, list)
         assert limit == len(latest_donations)
         for i in range(limit, 1, -1):
-            assert i == latest_donations[i].amount
-            assert i == latest_donations[i].timestamp
-            assert test_event_identifier == latest_donations[i].event_identifer
+            latest_donation = latest_donations[i]
+            assert i == latest_donation.amount
+            assert i == latest_donation.timestamp
+            assert test_event_identifier == latest_donation.event_identifer
+            assert test_currency_code == latest_donation.currency_code
 
     def test_get_latest_donations_of_non_existent_event_throws_exception(self):
         with pytest.raises(EventNotRegisteredException):
@@ -141,6 +146,7 @@ class TestDonationsService:
         assert decreasing_test_range[0] == largest_donation.amount
         assert decreasing_test_range[0] == largest_donation.timestamp
         assert test_event_identifier == largest_donation.event_identifier
+        assert test_currency_code == largest_donation.currency_code
 
     def test_get_largest_donation_with_no_donations_present(self):
         largest_donation = self.donations_service.get_largest_donation(
@@ -177,6 +183,7 @@ class TestDonationsService:
             assert value == donation.amount
             assert value == donation.timestamp
             assert test_event_identifier == donation.event_identifier
+            assert test_currency_code == donation.currency_code
 
     def test_get_time_bounded_donations_with_no_bounds_and_limit(self):
         setup_test_donations(self.donations_service)
@@ -191,6 +198,7 @@ class TestDonationsService:
             assert value == donation.amount
             assert value == donation.timestamp
             assert test_event_identifier == donation.event_identifier
+            assert test_currency_code == donation.currency_code
 
     def test_get_time_bounded_donations_with_lower_bound_only(self):
         setup_test_donations(self.donations_service)
@@ -205,6 +213,7 @@ class TestDonationsService:
             assert value == donation.amount
             assert value == donation.timestamp
             assert test_event_identifier == donation.event_identifier
+            assert test_currency_code == donation.currency_code
 
     def test_get_time_bounded_donations_with_upper_bound_only(self):
         setup_test_donations(self.donations_service)
@@ -219,6 +228,7 @@ class TestDonationsService:
             assert value == donation.amount
             assert value == donation.timestamp
             assert test_event_identifier == donation.event_identifier
+            assert test_currency_code == donation.currency_code
 
     def test_get_time_bounded_donations_with_both_bounds(self):
         setup_test_donations(self.donations_service)
@@ -235,6 +245,7 @@ class TestDonationsService:
             assert value == donation.amount
             assert value == donation.timestamp
             assert test_event_identifier == donation.event_identifier
+            assert test_currency_code == donation.currency_code
 
     def test_get_time_bounded_donations_with_both_bounds_and_limit(self):
         setup_test_donations(self.donations_service)
@@ -253,6 +264,7 @@ class TestDonationsService:
             assert value == donation.amount
             assert value == donation.timestamp
             assert test_event_identifier == donation.event_identifier
+            assert test_currency_code == donation.currency_code
 
     def test_get_time_bounded_donations_with_no_donations_present(self):
         limit = 2
@@ -359,6 +371,7 @@ class TestDonationsService:
         assert timestamp == stored_donation.timestamp
         assert internal_reference == stored_donation.internal_reference
         assert external_reference == stored_donation.external_reference
+        assert test_currency_code == stored_donation.currency_code
         assert donor_name == stored_donation.donor_name
         assert notes == stored_donation.notes
 
@@ -418,6 +431,7 @@ class TestDonationsService:
         # Check the values
         assert amount == stored_donation.amount
         assert timestamp == stored_donation.timestamp
+        assert test_currency_code == stored_donation.currency_code
         assert internal_reference == stored_donation.internal_reference
         assert external_reference == stored_donation.external_reference
         assert donor_name == stored_donation.donor_name
