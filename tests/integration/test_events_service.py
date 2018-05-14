@@ -14,8 +14,17 @@ test_event_identifier = 'event_service-test_event'
 non_existent_event = 'foofoofoo'
 
 
+# Reference:
+# https://stackoverflow.com/questions/4527942/comparing-two-dictionaries-in-python
 def dictionaries_are_the_same(dict_a, dict_b):
-    return len(set(dict_a.items() ^ dict_b.items())) == 0
+    d1_keys = set(dict_a.keys())
+    d2_keys = set(dict_b.keys())
+    intersect_keys = d1_keys.intersection(d2_keys)
+    added = d1_keys - d2_keys
+    removed = d2_keys - d1_keys
+    modified = {o: (dict_a[o], dict_b[o]) for o in intersect_keys if dict_a[o] != dict_b[o]}
+    same = set(o for o in intersect_keys if dict_a[o] == dict_b[o])
+    return len(modified) == 0 and len(removed) == 0 and len(added) == 0
 
 
 def get_test_event_config(updated_values=None):
