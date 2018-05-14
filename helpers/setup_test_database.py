@@ -104,6 +104,7 @@ def register_donations(db_path, event_configuration, donation_count, donation_am
             amount=donation_amount,
             timestamp=shifting_time,
             event_identifier=event_configuration.identifier,
+            currency_code='TEST1',
             external_reference='N/A',
             notes='N/A',
             donor_name=donor_name)

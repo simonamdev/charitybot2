@@ -8,6 +8,7 @@ from helpers.setup_test_database import setup_test_database
 
 donations_api_wrapper = DonationsApiWrapper(base_url=donations_api.full_url)
 test_event_identifier = get_test_event_configuration().identifier
+test_currency_code = 'TEST2'
 
 service = Service(
     name='Donations Service',
@@ -173,7 +174,8 @@ class TestEventDonations:
         new_donation = Donation(
             amount=5.0,
             event_identifier=test_event_identifier,
-            internal_reference=test_donation_identifier
+            internal_reference=test_donation_identifier,
+            currency_code=test_currency_code
         )
         donations = donations_api_wrapper.get_donations(
             event_identifier=test_event_identifier
