@@ -106,6 +106,7 @@ def stop_api():
 
 if __name__ == '__main__':
     cli_args = overlay_service.create_service_argument_parser().parse_args()
-    debug_mode = cli_args.debug
+    # debug_mode = cli_args.debug
+    cli_args.port = overlay_port
     overlay_service = Service.create_from_args(name=overlay_identity, app=app, cli_args=cli_args)
     overlay_service.start()

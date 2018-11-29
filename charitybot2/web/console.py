@@ -96,5 +96,6 @@ def stop_console():
 if __name__ == '__main__':
     cli_args = console_service.create_service_argument_parser().parse_args()
     debug_mode = cli_args.debug
+    cli_args.port = console_port
     console_service = Service.create_from_args(name=console_identity, app=app, cli_args=cli_args)
     console_service.start()

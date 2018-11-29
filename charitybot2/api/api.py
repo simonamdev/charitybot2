@@ -306,5 +306,6 @@ def stop_api():
 
 if __name__ == '__main__':
     cli_args = private_api_service.create_service_argument_parser().parse_args()
+    cli_args.port = private_api_port
     private_api_service = Service.create_from_args(name=private_api_identity, app=app, cli_args=cli_args)
     private_api_service.start()
