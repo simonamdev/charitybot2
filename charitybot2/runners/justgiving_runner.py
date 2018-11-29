@@ -3,7 +3,7 @@ import time
 
 from charitybot2.creators.event_configuration_creator import EventConfigurationCreatorFromFile
 from charitybot2.persistence.donation_sqlite_repository import DonationSQLiteRepository
-from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository
+from charitybot2.persistence.event_sqlite_repository import EventSQLiteRepository, EventAlreadyRegisteredException
 from charitybot2.sources.justgiving import JustGivingFundraisingSource
 
 db_path = '../data/db/repository.db'
@@ -28,7 +28,10 @@ class JustgivingRunner:
         print('Registering event')
         event_config_creator = EventConfigurationCreatorFromFile(file_path=self._event_config_path)
         self._event_configuration = event_config_creator.configuration
-        self._event_repository.register_event(event_configuration=self._event_configuration)
+        try:
+            self._event_repository.register_event(event_configuration=self._event_configuration)
+        except EventAlreadyRegisteredException:
+            print('Skipping Event registration - Event already registered')
 
 
     def setup_source(self):
